@@ -1,11 +1,35 @@
+uuid: 19ba5a64-92cc-45e8-91f2-19a8422a5a78
 langcode: en
 status: true
 dependencies:
   config:
-    - image.style.hero_banner
     - image.style.responsive_large
     - image.style.responsive_medium
     - image.style.responsive_small
+  module:
+    - stanford_media
 id: hero_image
 label: 'Hero image'
-fallback_image_style: hero_banner
+image_style_mappings:
+  -
+    breakpoint_id: stanford_media.xl
+    multiplier: 1x
+    image_mapping_type: image_style
+    image_mapping: responsive_large
+  -
+    breakpoint_id: stanford_media.lg
+    multiplier: 1x
+    image_mapping_type: image_style
+    image_mapping: responsive_medium
+  -
+    breakpoint_id: stanford_media.md
+    multiplier: 1x
+    image_mapping_type: image_style
+    image_mapping: ''
+  -
+    breakpoint_id: stanford_media.xs
+    multiplier: 1x
+    image_mapping_type: image_style
+    image_mapping: responsive_small
+breakpoint_group: stanford_media
+fallback_image_style: responsive_large
