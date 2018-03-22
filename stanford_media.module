@@ -1,0 +1,187 @@
+<?php
+
+/**
+ * @file
+ * stanford_media.module
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\editor\Entity\Editor;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\entity_browser\EntityBrowserFormInterface;
+use Drupal\Core\Link;
+use Drupal\Core\Url;
+
+/**
+ * Implements hook_form_alter().
+ */
+function stanford_media_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+  if ($form_id == 'media_image_edit_form' && !empty($form_state->getUserInput())) {
+    $form['#attached']['library'][] = 'stanford_media.admin';
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function stanford_media_preprocess_dropzonejs(&$variables) {
+  // Adds additional things to the template for the dropzone js widget.
+  $variables['allowed_files'] = str_replace(' ', ', ', $variables['element']['#extensions']);
+  $url = Url::fromRoute('stanford_media.bulk_upload');
+  $link = Link::fromTextAndUrl('click here', $url)->toRenderable();
+  $link['#attributes']['target'] = '_blank';
+
+  $variables['help_text'] = t('To bulk upload to the media library %link', ['%link' => render($link)]);
+}
+
+/**
+ * Implements hook_inline_entity_form_entity_form_alter().
+ */
+function stanford_media_inline_entity_form_entity_form_alter(&$entity_form, FormStateInterface $form_state) {
+  $object = $form_state->getBuildInfo()['callback_object'];
+  if ($object instanceof EntityBrowserFormInterface && !empty($entity_form['name'])) {
+    // Adds a description for inline entity forms within the media browser.
+    $entity_form['name']['widget'][0]['value']['#description'] = t('This name will make it easy to find later in the library.');
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * Adds Linkit support for the link field in the entity embed dialog.
+ */
+function stanford_media_form_entity_embed_dialog_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if (isset($form['attributes']['data-entity-embed-display-settings'])) {
+
+    $editor = $form_state->getBuildInfo()['args'][0];
+
+    // Alter the media embed dialog form.
+    if (!($editor instanceof Editor)) {
+      return;
+    }
+
+    $entity = $form_state->get('entity');
+
+    /** @var \Drupal\stanford_media\MediaEmbedDialogManager $dialog_manager */
+    $dialog_manager = \Drupal::service('plugin.manager.media_embed_dialog_manager');
+
+    foreach ($dialog_manager->getDefinitions() as $plugin_id => $configuration) {
+      $plugin = $dialog_manager->createInstance($plugin_id, ['entity' => $entity]);
+
+      if ($plugin->isApplicable()) {
+        $plugin->alterDialogForm($form, $form_state);
+      }
+    }
+  }
+
+}
+
+/**
+ * Implements hook_preprocess_image_widget().
+ */
+function stanford_media_preprocess_image_widget(&$variables) {
+  if (isset($variables['data']['focal_point']) && !empty($variables['data']['preview'])) {
+    // Adds some focal point help text.
+    $variables['data']['preview']['help'] = [
+      '#prefix' => '<div class="focal-point-help-text description">',
+      '#suffix' => '</div>',
+      '#markup' => t('To set the focal point (the central focus area) of the image, click and drag the “+” on the image. If no focal point is set, the focal point will default to the center of the image.'),
+    ];
+  }
+}
+
+/**
+ * Implements hook_field_widget_WIDGET_TYPE_form_alter().
+ */
+function stanford_media_field_widget_entity_browser_entity_reference_form_alter(&$element, FormStateInterface $form_state, $context) {
+  /** @var  \Drupal\field\Entity\FieldConfig $field_definition */
+  $field_definition = $context['items']->getFieldDefinition();
+  $handler = $field_definition->getSetting('handler_settings');
+  if (!empty($handler['target_bundles'])) {
+    $element['entity_browser']['#widget_context']['target_bundles'] = $handler['target_bundles'];
+  }
+}
+
+/**
+ * Implements hook_theme_registry_alter().
+ */
+function stanford_media_theme_registry_alter(&$theme_registry) {
+  // Register the path to the template file and add an additional variable to
+  // image_formatter for link attributes.
+  $path = drupal_get_path('module', 'stanford_media') . '/templates';
+  $theme_registry['image_formatter']['path'] = $path;
+  $theme_registry['image_formatter']['variables']['attributes'] = NULL;
+  $theme_registry['entity_embed_container']['path'] = $path;
+  $theme_registry['media']['path'] = $path;
+  $theme_registry['dropzonejs']['path'] = $path;
+}
+
+/**
+ * Implements hook_entity_embed_alter().
+ */
+function stanford_media_entity_embed_alter(array &$build, EntityInterface $entity, array &$context) {
+  /** @var \Drupal\stanford_media\MediaEmbedDialogManager $dialog_manager */
+  $dialog_manager = \Drupal::service('plugin.manager.media_embed_dialog_manager');
+  foreach ($dialog_manager->getDefinitions() as $plugin_id => $configuration) {
+    $plugin = $dialog_manager->createInstance($plugin_id, ['entity' => $entity]);
+
+    if ($plugin->isApplicable()) {
+      $plugin->embedAlter($build, $entity, $context);
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function stanford_media_preprocess_media(&$variables) {
+  /** @var \Drupal\media\Entity\MediaType $media_type */
+  $media_type = \Drupal::entityTypeManager()->getStorage('media_type')
+    ->load($variables['media']->bundle());
+  $source_field = $media_type->getSource()
+    ->getConfiguration()['source_field'];
+
+  // We have to disable cache on media entities to allow wysiwyg references
+  // with different settings for each. Maybe theres a better way to cache it
+  // based on the configured settings.
+  // @todo: enable cache but cache per setting.
+  $variables['content'][$source_field]['#cache']['max-age'] = 0;
+  $variables['content'][$source_field]['0']['#cache']['max-age'] = 0;
+
+  // If the file media doesn't have a description, set the media name as the
+  // description. This should mostly be needed for the entity view page.
+  if ($variables['media']->bundle() == 'file' && empty($variables['content'][$source_field]['0']['#description'])) {
+    $variables['content'][$source_field]['0']['#description'] = $variables['name'];
+  }
+}
+
+/**
+ * Implements hook_field_widget_WIDGET_TYPE_form_alter().
+ */
+function stanford_media_field_widget_video_embed_field_textfield_form_alter(&$element, FormStateInterface $form_state, $context) {
+  $element['#element_validate'][] = 'stanford_media_save_video_media';
+}
+
+/**
+ * Create a new media entity when a video is uploaded.
+ *
+ * @param array $element
+ *   Managed file form element.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   Submitted form state.
+ */
+function stanford_media_save_video_media(array $element, FormStateInterface $form_state) {
+  \Drupal::service('stanford_media.field_save')->saveVideo($element, $form_state);
+}
+
+/**
+ * Create a new media entity when a file_managed file is uploaded.
+ *
+ * @param array $element
+ *   Managed file form element.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   Submitted form state.
+ */
+function stanford_media_save_file_managed_media(array $element, FormStateInterface $form_state) {
+  \Drupal::service('stanford_media.field_save')->saveFile($element, $form_state);
+}

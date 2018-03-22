@@ -1,0 +1,107 @@
+<?php
+
+/**
+ * @file
+ * stanford_media.install
+ */
+
+use Drupal\embed\Entity\EmbedButton;
+use Drupal\file\Entity\File;
+use Drupal\views\Entity\View;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
+
+/**
+ * Implements hook_install().
+ */
+function stanford_media_install() {
+  $config_factory = \Drupal::configFactory();
+
+  FieldConfig::load('media.video.field_media_video_file')->delete();
+  FieldStorageConfig::load('media.field_media_video_file')->delete();
+
+  // Media Image form.
+  $config = $config_factory->getEditable('core.entity_form_display.media.image.default');
+  foreach (['created', 'path', 'uid', 'status'] as $hide_field) {
+    $config->clear("content.$hide_field");
+    $config->set("hidden.$hide_field", TRUE);
+  }
+  $settings = [
+    'preview:image_style' => 'medium',
+    'offsets' => '50,50',
+    'progress_indicator' => 'throbber',
+    'preview_link' => FALSE,
+  ];
+  $config->set('content.field_media_image.settings', $settings);
+  $config->set('content.field_media_image.type', 'image_focal_point');
+  $config->save(TRUE);
+
+  // Media Image display.
+  $config = $config_factory->getEditable('core.entity_view_display.media.image.default');
+  $config->set('content.field_media_image.label', 'hidden');
+  $config->set('content.field_media_image.settings', [
+    'responsive_image_style' => 'hero_image',
+    'image_link' => '',
+  ]);
+  $config->set('content.field_media_image.type', 'responsive_image');
+  $config->save(TRUE);
+
+  // Media Image image field.
+  $config = $config_factory->getEditable('field.field.media.image.field_media_image');
+  $config->set('settings.alt_field_required', FALSE);
+  $config->set('settings.file_directory', 'media/image');
+  $config->save(TRUE);
+
+  // Media File form.
+  $config = $config_factory->getEditable('core.entity_form_display.media.file.default');
+  foreach (['created', 'path', 'uid', 'status'] as $hide_field) {
+    $config->clear("content.$hide_field");
+    $config->set("hidden.$hide_field", TRUE);
+  }
+  $config->save(TRUE);
+
+  // Media File display.
+  $config = $config_factory->getEditable('core.entity_view_display.media.file.default');
+  $config->set('content.field_media_file.label', 'hidden');
+  $config->save(TRUE);
+
+  // Media file allowed extensions.
+  $config = $config_factory->getEditable('field.field.media.file.field_media_file');
+  $config->set('settings.file_extensions', 'txt rtf doc docx ppt pptx xls xlsx pdf');
+  $config->save();
+
+  // Media Image image field.
+  $config = $config_factory->getEditable('field.field.media.file.field_media_file');
+  $config->set('settings.file_directory', 'media/file');
+  $config->save(TRUE);
+
+  $view = View::load('media');
+  $view->disable();
+  $view->save();
+
+  stanford_media_add_embed_button();
+}
+
+/**
+ * Edits the media browser button to have an icon.
+ */
+function stanford_media_add_embed_button() {
+  $icon = \Drupal::moduleHandler()
+      ->getModule('stanford_media')
+      ->getPath() . '/img/media.png';
+  $fs = \Drupal::service('file_system');
+
+  $directory = 'public://media/image/';
+  file_prepare_directory($directory, FILE_CREATE_DIRECTORY);
+
+  $destination = file_unmanaged_copy($icon, $directory . $fs->basename($icon));
+
+  if ($destination) {
+    $file = File::create(['uri' => $destination]);
+    $file->save();
+
+    EmbedButton::load('media_browser')
+      ->set('icon_uuid', $file->uuid())
+      ->save();
+  }
+}

@@ -1,0 +1,24 @@
+name: Sanford Media
+description: Provides media module configuration and plugins.
+core: 8.x
+package: media
+type: module
+version: 8.x-1.x
+dependencies:
+  - ckeditor
+  - dropzonejs
+  - dropzonejs_eb_widget
+  - editor
+  - embed
+  - entity_browser
+  - entity_browser_entity_form
+  - entity_embed
+  - entity_usage
+  - inline_entity_form
+  - linkit
+  - media
+  - video_embed_field
+  - video_embed_media
+  - views
+  - focal_point
+  - responsive_image

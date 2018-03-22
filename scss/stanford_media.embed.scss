@@ -1,0 +1,28 @@
+
+.embed-code {
+  .field--name-revision-log-message,
+  .ui-dialog .ui-widget-content.ui-dialog-buttonpane,
+  .image-widget .image-preview,
+  .form-type-managed-file input[type="submit"],
+  .form-type-managed-file label[for*="-0-upload"],
+  .entity-browser-show-selection,
+  .entity-browser-remove-selected-entity {
+    display: none;
+  }
+
+  img, iframe {
+    max-width: 300px;
+    max-height: 200px;
+    height: auto;
+    width: auto;
+  }
+
+  #entities {
+    float: left;
+    width: 50%;
+  }
+  .entities-list {
+    float: right;
+    width: 50%;
+  }
+}

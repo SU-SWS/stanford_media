@@ -1,0 +1,37 @@
+
+.dropzonejs-media {
+  padding: 0 20px;
+
+  .field--name-revision-log-message,
+  .ui-dialog .ui-widget-content.ui-dialog-buttonpane,
+  .form-type-managed-file input[type="submit"],
+  .entity-browser-show-selection,
+  .entity-browser-remove-selected-entity {
+    display: none;
+  }
+
+  img, iframe {
+    max-width: 300px;
+    max-height: 200px;
+    height: auto;
+    width: auto;
+  }
+
+  .entities-list {
+    display: none;
+  }
+
+  .image-preview {
+    width: 100%;
+  }
+
+}
+
+
+#entities > div {
+  border-bottom: 1px solid #ccc;
+  &:last-child {
+    border-bottom: none;
+  }
+}
+

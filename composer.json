@@ -1,0 +1,21 @@
+{
+  "name": "su-sws/stanford_media",
+  "description": "Stanford Media module for Drupal 8 Media management",
+  "type": "drupal-custom-module",
+  "homepage": "https://github.com/SU-SWS/stanford_media",
+  "authors": [],
+  "license": "GPL-2.0+",
+  "minimum-stability": "dev",
+  "require": {
+    "drupal/core": "^8.5.0",
+    "drupal/video_embed_field": "~2.0-alpha1",
+    "drupal/entity_browser": "2.x-dev",
+    "drupal/embed": "~1.0",
+    "drupal/entity_embed": "~1.0@beta",
+    "drupal/inline_entity_form": "~1.0@beta",
+    "drupal/dropzonejs": "~2.0@alpha",
+    "drupal/entity_usage": "~1.0@alpha",
+    "drupal/focal_point": "^1.0@beta",
+    "drupal/linkit": "~5.0-beta6"
+  }
+}

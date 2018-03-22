@@ -1,0 +1,20 @@
+langcode: en
+status: true
+dependencies:
+  content:
+    - 'file:file:db379e68-1d58-4e04-b962-5b17f1110cee'
+  module:
+    - entity_embed
+    - media
+label: 'Embed Media'
+id: media_browser
+type_id: entity
+type_settings:
+  entity_type: media
+  bundles: {  }
+  display_plugins:
+    - 'view_mode:media.full'
+  entity_browser: media_browser
+  entity_browser_settings:
+    display_review: false
+icon_uuid: db379e68-1d58-4e04-b962-5b17f1110cee

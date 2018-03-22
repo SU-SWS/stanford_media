@@ -1,0 +1,11 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - image.style.hero_banner
+    - image.style.responsive_large
+    - image.style.responsive_medium
+    - image.style.responsive_small
+id: hero_image
+label: 'Hero image'
+fallback_image_style: hero_banner

@@ -1,0 +1,38 @@
+autocomplete:
+  version: 8.0.3
+  js:
+    js/stanford_media.autocomplete.js: {}
+  css:
+    component:
+      css/stanford_media.autocomplete.css: {}
+  dependencies:
+    - linkit/linkit.base
+    - core/drupal.ajax
+    - core/jquery.ui.autocomplete
+    - core/underscore
+
+admin:
+  version: VERSION
+  css:
+    component:
+      css/stanford_media.admin.css: {}
+
+multi_step:
+  version: VERSION
+  css:
+    component:
+      css/stanford_media.multi_step.css: {}
+  js:
+    js/stanford_media.multi_step.js: {}
+
+embed:
+  version: VERSION
+  css:
+    component:
+      css/stanford_media.embed.css: {}
+
+dropzonejs:
+  version: VERSION
+  css:
+    component:
+      css/stanford_media.dropzonejs.css: {}
