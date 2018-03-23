@@ -23,14 +23,15 @@ interface MediaEmbedDialogInterface {
    * @return bool
    *   Plugin is applicable.
    */
-  function isApplicable();
+  public function isApplicable();
 
   /**
-   * Get the default input values of the plugin form.
+   * Get the default form values for the plugin form..
    *
-   * @return mixed
+   * @return array
+   *   Key value paired array of default configuration values.
    */
-  function getDefaultInput();
+  public function getDefaultInput();
 
   /**
    * Alter the dialog form in any neccessary way and add validation & submit.
@@ -40,28 +41,10 @@ interface MediaEmbedDialogInterface {
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Current Form State.
    */
-  function alterDialogForm(array &$form, FormStateInterface $form_state);
+  public function alterDialogForm(array &$form, FormStateInterface $form_state);
 
   /**
-   * Validate the dialog form.
-   *
-   * @param array $form
-   *   Original Form.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   Current Form State.
-   */
-  static function validateDialogForm(array &$form, FormStateInterface $form_state);
-
-  /**
-   * @param array $form
-   *   Original Form.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   Current Form State.
-   */
-  static function submitDialogForm(array &$form, FormStateInterface $form_state);
-
-  /**
-   * Add the prerender method to the media entity embed.
+   * Alter the embed media item before rendering, including adding a preRender.
    *
    * @param array $build
    *   The media entity build array.
@@ -69,8 +52,10 @@ interface MediaEmbedDialogInterface {
    *   Selected media entity.
    * @param array $context
    *   Context containing the display settings from the embed.
+   *
+   * @see stanford_media_entity_embed_alter()
    */
-  function embedAlter(array &$build, MediaInterface $entity, array &$context);
+  public function embedAlter(array &$build, MediaInterface $entity, array &$context);
 
   /**
    * Alter the medial element.
@@ -81,6 +66,6 @@ interface MediaEmbedDialogInterface {
    * @return array
    *   Altered render array.
    */
-  static function preRender(array $element);
+  public static function preRender(array $element);
 
 }

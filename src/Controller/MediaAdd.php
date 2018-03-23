@@ -14,9 +14,16 @@ use Drupal\Core\Url;
 use Drupal\stanford_media\BundleSuggestion;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Class MediaAdd.
+ *
+ * @package Drupal\stanford_media\Controller
+ */
 class MediaAdd extends EntityController {
 
   /**
+   * Finds which media type is appropriate.
+   *
    * @var \Drupal\stanford_media\BundleSuggestion
    */
   protected $bundleSuggestion;

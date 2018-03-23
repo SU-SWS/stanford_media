@@ -4,6 +4,7 @@ namespace Drupal\stanford_media\Plugin\EntityBrowser\Widget;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\dropzonejs\DropzoneJsUploadSave;
 use Drupal\entity_browser\WidgetValidationManager;
@@ -44,6 +45,7 @@ class DropzoneUpload extends MediaBrowserBase {
       $container->get('plugin.manager.entity_browser.widget_validation'),
       $container->get('stanford_media.bundle_suggestion'),
       $container->get('current_user'),
+      $container->get('messenger'),
       $container->get('dropzonejs.upload_save')
     );
   }
@@ -51,8 +53,8 @@ class DropzoneUpload extends MediaBrowserBase {
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, EntityTypeManagerInterface $entity_type_manager, WidgetValidationManager $validation_manager, BundleSuggestion $bundles, AccountProxyInterface $current_user, DropzoneJsUploadSave $dropzone_save) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $event_dispatcher, $entity_type_manager, $validation_manager, $bundles, $current_user);
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, EntityTypeManagerInterface $entity_type_manager, WidgetValidationManager $validation_manager, BundleSuggestion $bundles, AccountProxyInterface $current_user, MessengerInterface $messenger, DropzoneJsUploadSave $dropzone_save) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $event_dispatcher, $entity_type_manager, $validation_manager, $bundles, $current_user, $messenger);
     $this->dropzoneJsSave = $dropzone_save;
   }
 

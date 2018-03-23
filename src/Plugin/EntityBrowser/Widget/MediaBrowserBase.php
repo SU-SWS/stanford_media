@@ -5,6 +5,7 @@ namespace Drupal\stanford_media\Plugin\EntityBrowser\Widget;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\entity_browser\WidgetBase;
@@ -12,11 +13,19 @@ use Drupal\entity_browser\WidgetValidationManager;
 use Drupal\inline_entity_form\ElementSubmit;
 use Drupal\media\Entity\MediaType;
 use Drupal\stanford_media\BundleSuggestion;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * Class MediaBrowserBase for our entity browser widgets.
+ *
+ * @package Drupal\stanford_media\Plugin\EntityBrowser\Widget
+ */
 abstract class MediaBrowserBase extends WidgetBase {
 
   /**
+   * Finds which media type is appropriate.
+   *
    * @var \Drupal\stanford_media\BundleSuggestion
    */
   protected $bundleSuggestion;
@@ -29,12 +38,37 @@ abstract class MediaBrowserBase extends WidgetBase {
   protected $currentUser;
 
   /**
+   * Sets user messages.
+   *
+   * @var \Drupal\Core\Messenger\MessengerInterface
+   */
+  protected $messenger;
+
+  /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, EntityTypeManagerInterface $entity_type_manager, WidgetValidationManager $validation_manager, BundleSuggestion $bundles, AccountProxyInterface $current_user) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('event_dispatcher'),
+      $container->get('entity_type.manager'),
+      $container->get('plugin.manager.entity_browser.widget_validation'),
+      $container->get('stanford_media.bundle_suggestion'),
+      $container->get('current_user'),
+      $container->get('messenger')
+    );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, EntityTypeManagerInterface $entity_type_manager, WidgetValidationManager $validation_manager, BundleSuggestion $bundles, AccountProxyInterface $current_user, MessengerInterface $messenger) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $event_dispatcher, $entity_type_manager, $validation_manager);
     $this->bundleSuggestion = $bundles;
     $this->currentUser = $current_user;
+    $this->messenger = $messenger;
   }
 
   /**
@@ -108,8 +142,6 @@ abstract class MediaBrowserBase extends WidgetBase {
    *   Form state object.
    * @param array $additional_widget_parameters
    *   Additional parameters we dont need.
-   *
-   * @return array
    */
   protected function getEntityForm(array &$form, FormStateInterface $form_state, array $additional_widget_parameters) {
     if (isset($form['actions'])) {
@@ -127,7 +159,7 @@ abstract class MediaBrowserBase extends WidgetBase {
     // No entities to create forms/previews for.
     if (empty($media_entities)) {
       $form['entities']['#markup'] = NULL;
-      return $form;
+      return;
     }
 
     unset($form['actions']);
@@ -146,15 +178,13 @@ abstract class MediaBrowserBase extends WidgetBase {
 
     // Prompt the user of a successful addition.
     if (!empty($labels)) {
-      drupal_set_message($this->t('%name has been added to the media library', ['%name' => implode(', ', $labels)]));
+      $this->messenger->addMessage($this->t('%name has been added to the media library', ['%name' => implode(', ', $labels)]));
     }
 
     // Without this, IEF won't know where to hook into the widget. Don't pass
     // $original_form as the second argument to addCallback(), because it's not
     // just the entity browser part of the form, not the actual complete form.
     ElementSubmit::addCallback($form['actions']['submit'], $form_state->getCompleteForm());
-
-    return $form;
   }
 
   /**

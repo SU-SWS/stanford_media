@@ -29,17 +29,6 @@ class Image extends MediaEmbedDialogBase {
   }
 
   /**
-   * {@inheritdoc}
-   */
-  public function getDefaultInput() {
-    return [
-      'image_style' => NULL,
-      'alt_text' => NULL,
-      'title_text' => '',
-    ];
-  }
-
-  /**
    * Use Linkit functions but replace the autocomplete library with our own.
    *
    * {@inheritdoc}

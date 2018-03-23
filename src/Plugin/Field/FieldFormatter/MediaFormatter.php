@@ -6,8 +6,12 @@ use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\Plugin\Field\FieldFormatter\EntityReferenceEntityFormatter;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Render\Element;
 
+/**
+ * Class MediaFormatter.
+ *
+ * @package Drupal\stanford_media\Plugin\Field\FieldFormatter
+ */
 abstract class MediaFormatter extends EntityReferenceEntityFormatter {
 
   /**
@@ -22,10 +26,11 @@ abstract class MediaFormatter extends EntityReferenceEntityFormatter {
    * {@inheritdoc}
    */
   public static function defaultSettings() {
-    return [
-        'image_style' => NULL,
-        'link' => 0,
-      ] + parent::defaultSettings();
+    $settings = [
+      'image_style' => NULL,
+      'link' => 0,
+    ];
+    return $settings + parent::defaultSettings();
   }
 
   /**
@@ -48,7 +53,6 @@ abstract class MediaFormatter extends EntityReferenceEntityFormatter {
     ];
     return $elements;
   }
-
 
   /**
    * {@inheritdoc}
@@ -109,8 +113,8 @@ abstract class MediaFormatter extends EntityReferenceEntityFormatter {
   /**
    * Change the render array to use the desired image style.
    *
-   * @param $element
-   *   Render array to change
+   * @param mixed $element
+   *   Render array to change.
    *
    * @return array
    *   Altered render array.

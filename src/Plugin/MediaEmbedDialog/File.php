@@ -29,15 +29,6 @@ class File extends MediaEmbedDialogBase {
   /**
    * {@inheritdoc}
    */
-  public function getDefaultInput() {
-    return [
-      'description' => NULL,
-    ];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function alterDialogForm(array &$form, FormStateInterface $form_state) {
     parent::alterDialogForm($form, $form_state);
     $input = $this->getUserInput($form_state);

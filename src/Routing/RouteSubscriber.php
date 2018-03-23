@@ -16,7 +16,6 @@ class RouteSubscriber extends RouteSubscriberBase {
    */
   protected function alterRoutes(RouteCollection $collection) {
     if ($route = $collection->get('entity.media.add_page')) {
-      $route->setPath('/admin/content/media/add');
       $route->setDefault('_controller', MediaAdd::class . '::addPage');
     }
   }
