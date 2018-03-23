@@ -17,7 +17,7 @@ use Drupal\Core\Url;
  */
 function stanford_media_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
   if ($form_id == 'media_image_edit_form' && !empty($form_state->getUserInput())) {
-    $form['#attached']['library'][] = 'stanford_media.admin';
+    $form['#attached']['library'][] = 'stanford_media/admin';
   }
 }
 

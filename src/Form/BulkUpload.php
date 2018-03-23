@@ -292,9 +292,8 @@ class BulkUpload extends FormBase {
     // the actual complete form.
     ElementSubmit::addCallback($form['actions']['submit'], $form_state->getCompleteForm());
 
-    $form['#attached']['library'][] = 'stanford_media.dropzone';
+    $form['#attached']['library'][] = 'stanford_media/dropzone';
   }
-
 
   /**
    * Create media entities out of the uploaded files and their entities.

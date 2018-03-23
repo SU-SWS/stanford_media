@@ -46,7 +46,7 @@ class MultiStepSelection extends MultiStepDisplay {
     $form = parent::getForm($original_form, $form_state);
 
     $this->changeFormDisplay($form, $form_state);
-    $form['#attached']['library'][] = 'stanford_media.multi_step';
+    $form['#attached']['library'][] = 'stanford_media/multi_step';
     $form['selected']['message'] = [
       '#prefix' => '<div id="message">',
       '#suffix' => '</div>',

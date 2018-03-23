@@ -140,7 +140,7 @@ class DropzoneUpload extends MediaBrowserBase {
     // Disable the submit button until the upload sucesfully completed.
     $form['#attached']['library'][] = 'dropzonejs_eb_widget/common';
     $original_form['#attributes']['class'][] = 'dropzonejs-disable-submit';
-    $form['#attached']['library'][] = 'stanford_media.dropzonejs';
+    $form['#attached']['library'][] = 'stanford_media/dropzonejs';
 
     // Remove the upload after we have some files.
     if ($form_state->get(['dropzonejs', $this->uuid(), 'media'])) {

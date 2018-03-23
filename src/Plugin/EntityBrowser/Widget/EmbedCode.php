@@ -103,7 +103,7 @@ class EmbedCode extends MediaBrowserBase {
       $form['input']['#type'] = 'hidden';
     }
 
-    $form['#attached']['library'][] = 'stanford_media.embed';
+    $form['#attached']['library'][] = 'stanford_media/embed';
     return $form;
   }
 
