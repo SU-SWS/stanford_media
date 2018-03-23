@@ -8,14 +8,23 @@ use Drupal\field\Entity\FieldConfig;
 use Drupal\media\Entity\MediaType;
 use Drupal\video_embed_field\ProviderManager;
 
+/**
+ * Class BundleSuggestion.
+ *
+ * @package Drupal\stanford_media
+ */
 class BundleSuggestion {
 
   /**
+   * Entity Type manager.
+   *
    * @var \Drupal\Core\Entity\EntityTypeManager
    */
   protected $entityTypeManager;
 
   /**
+   * Video manager to validate the url matches an available provider.
+   *
    * @var \Drupal\video_embed_field\ProviderManager
    */
   protected $videoProvider;

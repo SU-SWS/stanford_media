@@ -5,6 +5,7 @@ namespace Drupal\stanford_media\Form;
 use Drupal\Core\Entity\EntityTypeManager;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Session\AccountProxy;
 use Drupal\Core\Url;
@@ -16,7 +17,7 @@ use Drupal\stanford_media\BundleSuggestion;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class BulkUpload.
+ * Class BulkUpload for bulk upload page.
  *
  * @package Drupal\stanford_media\Form
  */
@@ -51,6 +52,13 @@ class BulkUpload extends FormBase {
   protected $currentUser;
 
   /**
+   * Sets messages for the user.
+   *
+   * @var \Drupal\Core\Messenger\MessengerInterface
+   */
+  protected $messenger;
+
+  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
@@ -58,18 +66,20 @@ class BulkUpload extends FormBase {
       $container->get('entity_type.manager'),
       $container->get('stanford_media.bundle_suggestion'),
       $container->get('dropzonejs.upload_save'),
-      $container->get('current_user')
+      $container->get('current_user'),
+      $container->get('messenger')
     );
   }
 
   /**
    * {@inheritdoc}
    */
-  public function __construct(EntityTypeManager $entity_manager, BundleSuggestion $bundle_suggestion, DropzoneJsUploadSave $dropzone_save, AccountProxy $current_user) {
+  public function __construct(EntityTypeManager $entity_manager, BundleSuggestion $bundle_suggestion, DropzoneJsUploadSave $dropzone_save, AccountProxy $current_user, MessengerInterface $messenger) {
     $this->entityTypeManager = $entity_manager;
     $this->bundleSuggestion = $bundle_suggestion;
     $this->dropzoneSave = $dropzone_save;
     $this->currentUser = $current_user;
+    $this->messenger = $messenger;
   }
 
   /**
@@ -184,7 +194,7 @@ class BulkUpload extends FormBase {
 
     // Give a message and redirect the user to the media overview page if they
     // have permission to view that page.
-    drupal_set_message($this->t('Saved %count Media Items', ['%count' => $count]));
+    $this->messenger->addMessage($this->t('Saved %count Media Items', ['%count' => $count]));
     if ($this->currentUser->hasPermission('access media overview')) {
       $url = Url::fromUserInput('/admin/content/media');
       $form_state->setRedirectUrl($url);
@@ -292,9 +302,8 @@ class BulkUpload extends FormBase {
     // the actual complete form.
     ElementSubmit::addCallback($form['actions']['submit'], $form_state->getCompleteForm());
 
-    $form['#attached']['library'][] = 'stanford_media.dropzone';
+    $form['#attached']['library'][] = 'stanford_media/dropzone';
   }
-
 
   /**
    * Create media entities out of the uploaded files and their entities.

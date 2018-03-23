@@ -20,6 +20,8 @@ use Drupal\video_embed_field\ProviderManager;
 class YoutubeVideo extends MediaEmbedDialogBase {
 
   /**
+   * Video manager to validate the url matches an available provider.
+   *
    * @var \Drupal\video_embed_field\ProviderManager
    */
   protected $videoManager;
@@ -57,7 +59,6 @@ class YoutubeVideo extends MediaEmbedDialogBase {
       'loop' => 1,
     ];
   }
-
 
   /**
    * {@inheritdoc}
@@ -147,7 +148,7 @@ class YoutubeVideo extends MediaEmbedDialogBase {
       return;
     }
 
-    // Check if start at is in the correct time format
+    // Check if start at is in the correct time format.
     if (!(preg_match('/^\d{1}:\d{2}$/', $start) || preg_match('/^\d{2}:\d{2}$/', $start))) {
       $form_state->setError($form['attributes']['data-entity-embed-display-settings']['start'], t('Invalid Time Entry'));
       return;

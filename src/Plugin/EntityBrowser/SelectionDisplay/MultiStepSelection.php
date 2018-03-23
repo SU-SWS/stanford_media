@@ -46,7 +46,7 @@ class MultiStepSelection extends MultiStepDisplay {
     $form = parent::getForm($original_form, $form_state);
 
     $this->changeFormDisplay($form, $form_state);
-    $form['#attached']['library'][] = 'stanford_media.multi_step';
+    $form['#attached']['library'][] = 'stanford_media/multi_step';
     $form['selected']['message'] = [
       '#prefix' => '<div id="message">',
       '#suffix' => '</div>',
@@ -58,12 +58,12 @@ class MultiStepSelection extends MultiStepDisplay {
   /**
    * Alter the form and add the media labels.
    *
-   * @param $form
+   * @param array $form
    *   Form to change.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Current form state.
    */
-  protected function changeFormDisplay(&$form, FormStateInterface $form_state) {
+  protected function changeFormDisplay(array &$form, FormStateInterface $form_state) {
     $selected_entities = $form_state->get([
       'entity_browser',
       'selected_entities',
@@ -81,6 +81,8 @@ class MultiStepSelection extends MultiStepDisplay {
 
   /**
    * {@inheritdoc}
+   *
+   * Alters parent method to validate cardinality during ajax.
    */
   protected function executeJsCommand(FormStateInterface $form_state) {
     $triggering_element = $form_state->getTriggeringElement();
@@ -156,7 +158,7 @@ class MultiStepSelection extends MultiStepDisplay {
         $selected_entities[] = $added_entities[$entity_pair_info['entity_id']];
       }
 
-      $within_card = self::checkCardinality($selected_entities, $form_state);
+      $within_card = self::checkCardinality($form_state, $selected_entities);
       $form_state->set('process_ajax', $within_card);
     }
   }
@@ -164,15 +166,15 @@ class MultiStepSelection extends MultiStepDisplay {
   /**
    * Trim the number of entities and return IF they have been trimmed.
    *
-   * @param \Drupal\media\Entity\Media[] $entities
-   *   Selected entities.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Current form state.
+   * @param \Drupal\media\Entity\Media[] $entities
+   *   Selected entities.
    *
    * @return bool
    *   True if the number of entities is allowed with the cardinality.
    */
-  protected static function checkCardinality(&$entities = [], FormStateInterface $form_state) {
+  protected static function checkCardinality(FormStateInterface $form_state, array &$entities = []) {
     $original_count = count($entities);
     $cardinality = self::getCardinality($form_state);
     if ($cardinality >= 1) {
@@ -217,7 +219,7 @@ class MultiStepSelection extends MultiStepDisplay {
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Current form state.
    *
-   * @return integer
+   * @return int
    *   Cardinality.
    */
   protected static function getCardinality(FormStateInterface $form_state) {

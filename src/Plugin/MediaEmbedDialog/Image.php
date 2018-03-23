@@ -29,17 +29,6 @@ class Image extends MediaEmbedDialogBase {
   }
 
   /**
-   * {@inheritdoc}
-   */
-  public function getDefaultInput() {
-    return [
-      'image_style' => NULL,
-      'alt_text' => NULL,
-      'title_text' => '',
-    ];
-  }
-
-  /**
    * Use Linkit functions but replace the autocomplete library with our own.
    *
    * {@inheritdoc}
@@ -49,7 +38,7 @@ class Image extends MediaEmbedDialogBase {
   public static function processLinkitAutocomplete(&$element, FormStateInterface $form_state, &$complete_form) {
     Linkit::processLinkitAutocomplete($element, $form_state, $complete_form);
     // Replace linkit autocomplete library with our own to fix some nasty bugs.
-    $element['#attached']['library'] = ['stanford_media.autocomplete'];
+    $element['#attached']['library'] = ['stanford_media/autocomplete'];
     return $element;
   }
 

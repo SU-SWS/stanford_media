@@ -2,7 +2,7 @@ langcode: en
 status: true
 dependencies: {  }
 name: responsive_large
-label: 'Responsive Large'
+label: 'Responsive Large (2000)'
 effects:
   bf8fce22-5065-4030-8b53-0ac3be71685e:
     uuid: bf8fce22-5065-4030-8b53-0ac3be71685e

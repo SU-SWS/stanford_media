@@ -15,10 +15,51 @@ use Drupal\field\Entity\FieldStorageConfig;
  * Implements hook_install().
  */
 function stanford_media_install() {
+  $view = View::load('media');
+  $view->disable();
+  $view->save();
+
+  stanford_media_install_file();
+  stanford_media_install_image();
+  stanford_media_install_video();
+  stanford_media_add_embed_button();
+}
+
+/**
+ * Changes to the file media entity type.
+ */
+function stanford_media_install_file() {
   $config_factory = \Drupal::configFactory();
 
-  FieldConfig::load('media.video.field_media_video_file')->delete();
-  FieldStorageConfig::load('media.field_media_video_file')->delete();
+  // Media File form.
+  $config = $config_factory->getEditable('core.entity_form_display.media.file.default');
+  foreach (['created', 'path', 'uid', 'status'] as $hide_field) {
+    $config->clear("content.$hide_field");
+    $config->set("hidden.$hide_field", TRUE);
+  }
+  $config->save(TRUE);
+
+  // Media File display.
+  $config = $config_factory->getEditable('core.entity_view_display.media.file.default');
+  $config->set('content.field_media_file.label', 'hidden');
+  $config->save(TRUE);
+
+  // Media file allowed extensions.
+  $config = $config_factory->getEditable('field.field.media.file.field_media_file');
+  $config->set('settings.file_extensions', 'txt rtf doc docx ppt pptx xls xlsx pdf');
+  $config->save();
+
+  // Media File file field.
+  $config = $config_factory->getEditable('field.field.media.file.field_media_file');
+  $config->set('settings.file_directory', 'media/file');
+  $config->save(TRUE);
+}
+
+/**
+ * Changes to the image media entity type.
+ */
+function stanford_media_install_image() {
+  $config_factory = \Drupal::configFactory();
 
   // Media Image form.
   $config = $config_factory->getEditable('core.entity_form_display.media.image.default');
@@ -51,35 +92,59 @@ function stanford_media_install() {
   $config->set('settings.alt_field_required', FALSE);
   $config->set('settings.file_directory', 'media/image');
   $config->save(TRUE);
+}
 
-  // Media File form.
-  $config = $config_factory->getEditable('core.entity_form_display.media.file.default');
+/**
+ * Changes to the video media entity type.
+ */
+function stanford_media_install_video() {
+  // Delete video file field. We'll use the video embed field instead.
+  if ($field = FieldConfig::load('media.video.field_media_video_file')) {
+    $field->delete();
+  }
+  if ($storage = FieldStorageConfig::load('media.field_media_video_file')) {
+    $storage->delete();
+  }
+
+  $config_factory = \Drupal::configFactory();
+
+  $config = $config_factory->getEditable('core.entity_form_display.media.video.default');
   foreach (['created', 'path', 'uid', 'status'] as $hide_field) {
     $config->clear("content.$hide_field");
     $config->set("hidden.$hide_field", TRUE);
   }
-  $config->save(TRUE);
-
-  // Media File display.
-  $config = $config_factory->getEditable('core.entity_view_display.media.file.default');
-  $config->set('content.field_media_file.label', 'hidden');
-  $config->save(TRUE);
-
-  // Media file allowed extensions.
-  $config = $config_factory->getEditable('field.field.media.file.field_media_file');
-  $config->set('settings.file_extensions', 'txt rtf doc docx ppt pptx xls xlsx pdf');
+  $embed_settings = [
+    'settings' => [],
+    'third_party_settings' => [],
+    'type' => 'video_embed_field_textfield',
+    'weight' => 1,
+    'region' => 'content',
+  ];
+  $config->set('content.field_media_video_embed_field', $embed_settings);
+  $config->clear('hidden.field_media_video_embed_field');
   $config->save();
 
-  // Media Image image field.
-  $config = $config_factory->getEditable('field.field.media.file.field_media_file');
-  $config->set('settings.file_directory', 'media/file');
-  $config->save(TRUE);
+  // Set the source as the embed video field.
+  $config = $config_factory->getEditable('media.type.video');
+  $config->set('source', 'video_embed_field');
+  $config->set('source_configuration.source_field', 'field_media_video_embed_field');
+  $config->save();
 
-  $view = View::load('media');
-  $view->disable();
-  $view->save();
-
-  stanford_media_add_embed_button();
+  $config = $config_factory->getEditable('core.entity_view_display.media.video.default');
+  $config->clear('hidden.field_media_video_embed_field');
+  $embed_settings = [
+    'label' => 'hidden',
+    'settings' => [
+      'image_style' => 'thumbnail',
+      'link_image_to' => '',
+    ],
+    'third_party_settings' => [],
+    'type' => 'video_embed_field_thumbnail',
+    'weight' => '0',
+    'region' => 'content',
+  ];
+  $config->set('content.field_media_video_embed_field', $embed_settings);
+  $config->save();
 }
 
 /**

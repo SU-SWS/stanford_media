@@ -20,6 +20,8 @@ use Drupal\video_embed_field\ProviderManager;
 class VimeoVideo extends MediaEmbedDialogBase {
 
   /**
+   * Video manager to validate the url matches an available provider.
+   *
    * @var \Drupal\video_embed_field\ProviderManager
    */
   protected $videoManager;

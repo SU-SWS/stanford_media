@@ -7,7 +7,7 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
 
 /**
- * Class MediaEmbedManager
+ * Class MediaEmbedManager.
  *
  * @package Drupal\stanford_media
  */

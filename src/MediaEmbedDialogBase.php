@@ -55,19 +55,43 @@ abstract class MediaEmbedDialogBase extends PluginBase implements MediaEmbedDial
   /**
    * {@inheritdoc}
    */
-  public function alterDialogForm(array &$form, FormStateInterface $form_state) {
-    array_unshift($form['#validate'], [get_class($this), 'validateDialogForm']);
-    array_unshift($form['#submit'], [get_class($this), 'submitDialogForm']);
+  public function getDefaultInput() {
+    return [];
   }
 
   /**
    * {@inheritdoc}
    */
+  public function alterDialogForm(array &$form, FormStateInterface $form_state) {
+    if (method_exists($this, 'validateDialogForm')) {
+      array_unshift($form['#validate'], [
+        get_class($this),
+        'validateDialogForm',
+      ]);
+    }
+    if (method_exists($this, 'submitDialogForm')) {
+      array_unshift($form['#submit'], [get_class($this), 'submitDialogForm']);
+    }
+  }
+
+  /**
+   * Validate the dialog form.
+   *
+   * @param array $form
+   *   Original Form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Current Form State.
+   */
   public static function validateDialogForm(array &$form, FormStateInterface $form_state) {
   }
 
   /**
-   * {@inheritdoc}
+   * Submit handler for the dialog form.
+   *
+   * @param array $form
+   *   Original Form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Current Form State.
    */
   public static function submitDialogForm(array &$form, FormStateInterface $form_state) {
   }
