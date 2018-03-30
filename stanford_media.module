@@ -11,6 +11,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\entity_browser\EntityBrowserFormInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
+use Drupal\media\MediaForm;
 
 /**
  * Implements hook_form_alter().
@@ -119,6 +120,7 @@ function stanford_media_theme_registry_alter(&$theme_registry) {
   $theme_registry['dropzonejs']['path'] = $path;
 }
 
+
 /**
  * Implements hook_entity_embed_alter().
  */
@@ -162,7 +164,9 @@ function stanford_media_preprocess_media(&$variables) {
  * Implements hook_field_widget_WIDGET_TYPE_form_alter().
  */
 function stanford_media_field_widget_video_embed_field_textfield_form_alter(&$element, FormStateInterface $form_state, $context) {
-  $element['#element_validate'][] = 'stanford_media_save_video_media';
+  if (!$form_state->getBuildInfo()['callback_object'] instanceof MediaForm) {
+    $element['#element_validate'][] = 'stanford_media_save_video_media';
+  }
 }
 
 /**

@@ -109,7 +109,7 @@ function stanford_media_install_video() {
   $config_factory = \Drupal::configFactory();
 
   $config = $config_factory->getEditable('core.entity_form_display.media.video.default');
-  foreach (['created', 'path', 'uid', 'status'] as $hide_field) {
+  foreach (['path', 'uid', 'status'] as $hide_field) {
     $config->clear("content.$hide_field");
     $config->set("hidden.$hide_field", TRUE);
   }
