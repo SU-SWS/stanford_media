@@ -52,6 +52,20 @@ Install this module like any other module. [See Drupal Documentation](https://dr
 If using this module on an existing site with media module previously enabled, it will over-ride existing media module 
 configurations. Take extreme care if media entities already exist prior to this module.
 
+When using composer to declare this as a dependency, custom modifications are needed for the dropzone library. Add or
+modify the root composer.json file. Below is a possible example of what to add for the dropzone library to be installed
+into the correct directory.
+
+```
+"extra": {
+    "custom-installer": {
+        "docroot/libraries/{$name}/": [
+            "enyo/dropzone",
+        ]
+    }
+}
+```
+
 Configuration
 ---
 

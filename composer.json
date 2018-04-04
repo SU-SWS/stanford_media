@@ -7,6 +7,7 @@
   "license": "GPL-2.0+",
   "minimum-stability": "dev",
   "require": {
+    "enyo/dropzone": "^5.1",
     "drupal/core": "^8.5.0",
     "drupal/video_embed_field": "~2.0-alpha1",
     "drupal/entity_browser": "2.x-dev",
