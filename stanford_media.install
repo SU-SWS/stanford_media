@@ -22,7 +22,6 @@ function stanford_media_install() {
   stanford_media_install_file();
   stanford_media_install_image();
   stanford_media_install_video();
-  stanford_media_add_embed_button();
 }
 
 /**
