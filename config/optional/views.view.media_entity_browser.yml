@@ -12,8 +12,6 @@ dependencies:
     - media
     - stanford_media
     - user
-_core:
-  default_config_hash: hnzT7Mwai0CQ2L0lo1ey53Qc97VU0vVqyREDBoP1lT4
 id: media_entity_browser
 label: 'Stanford Media'
 module: views

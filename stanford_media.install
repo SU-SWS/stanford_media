@@ -15,10 +15,10 @@ use Drupal\field\Entity\FieldStorageConfig;
  * Implements hook_install().
  */
 function stanford_media_install() {
-  $view = View::load('media');
-  $view->disable();
-  $view->save();
-
+  if ($view = View::load('media')) {
+    $view->disable();
+    $view->save();
+  }
   stanford_media_install_file();
   stanford_media_install_image();
   stanford_media_install_video();
@@ -33,6 +33,10 @@ function stanford_media_install_file() {
 
   // Media File form.
   $config = $config_factory->getEditable('core.entity_form_display.media.file.default');
+  if (empty($config->get('content'))) {
+    return;
+  }
+
   foreach (['created', 'path', 'uid', 'status'] as $hide_field) {
     $config->clear("content.$hide_field");
     $config->set("hidden.$hide_field", TRUE);
@@ -63,6 +67,10 @@ function stanford_media_install_image() {
 
   // Media Image form.
   $config = $config_factory->getEditable('core.entity_form_display.media.image.default');
+  if (empty($config->get('content'))) {
+    return;
+  }
+
   foreach (['created', 'path', 'uid', 'status'] as $hide_field) {
     $config->clear("content.$hide_field");
     $config->set("hidden.$hide_field", TRUE);
@@ -109,6 +117,10 @@ function stanford_media_install_video() {
   $config_factory = \Drupal::configFactory();
 
   $config = $config_factory->getEditable('core.entity_form_display.media.video.default');
+  if (empty($config->get('content'))) {
+    return;
+  }
+
   foreach (['path', 'uid', 'status'] as $hide_field) {
     $config->clear("content.$hide_field");
     $config->set("hidden.$hide_field", TRUE);
@@ -151,22 +163,21 @@ function stanford_media_install_video() {
  * Edits the media browser button to have an icon.
  */
 function stanford_media_add_embed_button() {
-  $icon = \Drupal::moduleHandler()
-      ->getModule('stanford_media')
-      ->getPath() . '/img/media.png';
-  $fs = \Drupal::service('file_system');
+  if ($button = EmbedButton::load('media_browser')) {
+    $path = \Drupal::moduleHandler()->getModule('stanford_media')->getPath();
+    $icon = $path . '/img/media.png';
+    $fs = \Drupal::service('file_system');
 
-  $directory = 'public://media/image/';
-  file_prepare_directory($directory, FILE_CREATE_DIRECTORY);
+    $directory = 'public://media/image/';
+    file_prepare_directory($directory, FILE_CREATE_DIRECTORY);
 
-  $destination = file_unmanaged_copy($icon, $directory . $fs->basename($icon));
+    $destination = file_unmanaged_copy($icon, $directory . $fs->basename($icon));
 
-  if ($destination) {
-    $file = File::create(['uri' => $destination]);
-    $file->save();
+    if ($destination) {
+      $file = File::create(['uri' => $destination]);
+      $file->save();
 
-    EmbedButton::load('media_browser')
-      ->set('icon_uuid', $file->uuid())
-      ->save();
+      $button->set('icon_uuid', $file->uuid())->save();
+    }
   }
 }

@@ -8,8 +8,6 @@ dependencies:
     - media.type.image
   module:
     - image
-_core:
-  default_config_hash: Z-q-BsMo4WG234VrI7ezloYiI3MjbnKTZ_7YldIoo40
 id: media.image.thumbnail
 targetEntityType: media
 bundle: image
