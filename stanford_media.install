@@ -33,6 +33,8 @@ function stanford_media_install_file() {
 
   // Media File form.
   $config = $config_factory->getEditable('core.entity_form_display.media.file.default');
+  // Config doens't exist during profile installation since its an optional.
+  // @see https://dev.acquia.com/blog/optional-config-weirdness-in-drupal-8/09/11/2017/18866
   if (empty($config->get('content'))) {
     return;
   }
@@ -67,6 +69,8 @@ function stanford_media_install_image() {
 
   // Media Image form.
   $config = $config_factory->getEditable('core.entity_form_display.media.image.default');
+  // Config doens't exist during profile installation since its an optional.
+  // @see https://dev.acquia.com/blog/optional-config-weirdness-in-drupal-8/09/11/2017/18866
   if (empty($config->get('content'))) {
     return;
   }
@@ -117,6 +121,8 @@ function stanford_media_install_video() {
   $config_factory = \Drupal::configFactory();
 
   $config = $config_factory->getEditable('core.entity_form_display.media.video.default');
+  // Config doens't exist during profile installation since its an optional.
+  // @see https://dev.acquia.com/blog/optional-config-weirdness-in-drupal-8/09/11/2017/18866
   if (empty($config->get('content'))) {
     return;
   }
@@ -157,27 +163,4 @@ function stanford_media_install_video() {
   ];
   $config->set('content.field_media_video_embed_field', $embed_settings);
   $config->save();
-}
-
-/**
- * Edits the media browser button to have an icon.
- */
-function stanford_media_add_embed_button() {
-  if ($button = EmbedButton::load('media_browser')) {
-    $path = \Drupal::moduleHandler()->getModule('stanford_media')->getPath();
-    $icon = $path . '/img/media.png';
-    $fs = \Drupal::service('file_system');
-
-    $directory = 'public://media/image/';
-    file_prepare_directory($directory, FILE_CREATE_DIRECTORY);
-
-    $destination = file_unmanaged_copy($icon, $directory . $fs->basename($icon));
-
-    if ($destination) {
-      $file = File::create(['uri' => $destination]);
-      $file->save();
-
-      $button->set('icon_uuid', $file->uuid())->save();
-    }
-  }
 }
