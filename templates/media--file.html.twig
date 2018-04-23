@@ -20,9 +20,9 @@
 ] %}
 
 {% spaceless %}
-  <div{{ attributes.addClass(classes) }}>
+  <span{{ attributes.addClass(classes) }}>
     {% if content %}
-      {{ content|without('name') }}
+      {{ content|without('name')|render|striptags('<a><img><iframe>')|trim|raw }}
     {% endif %}
-  </div>
+  </span>
 {% endspaceless %}

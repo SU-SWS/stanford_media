@@ -1,0 +1,5 @@
+stanford_media.allowed_styles:
+  title: 'Embeddable Styles'
+  route_name: stanford_media.allowed_styles
+  base_route: entity.image_style.collection
+  weight: 100

@@ -5,6 +5,7 @@ namespace Drupal\stanford_media\Plugin\MediaEmbedDialog;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\media\MediaInterface;
 use Drupal\stanford_media\MediaEmbedDialogBase;
+use Drupal\stanford_media\MediaEmbedDialogInterface;
 
 /**
  * Changes embedded file media items.
@@ -33,7 +34,7 @@ class File extends MediaEmbedDialogBase {
     parent::alterDialogForm($form, $form_state);
     $input = $this->getUserInput($form_state);
 
-    $form['attributes'][$this->settingsKey]['description'] = [
+    $form['attributes'][MediaEmbedDialogInterface::SETTINGS_KEY]['description'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Description'),
       '#description' => $this->t('Optionally enter text to use as the link text.'),

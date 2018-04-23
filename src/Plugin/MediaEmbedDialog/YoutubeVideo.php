@@ -6,6 +6,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\media\MediaInterface;
 use Drupal\stanford_media\MediaEmbedDialogBase;
+use Drupal\stanford_media\MediaEmbedDialogInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\video_embed_field\ProviderManager;
 
@@ -85,7 +86,7 @@ class YoutubeVideo extends MediaEmbedDialogBase {
     $input = $this->getUserInput($form_state);
     unset($form['attributes']['data-align']);
 
-    $form['attributes'][$this->settingsKey]['start'] = [
+    $form['attributes'][MediaEmbedDialogInterface::SETTINGS_KEY]['start'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Start at'),
       '#description' => $this->t('Enter a time in the format mm:ss'),
@@ -93,25 +94,25 @@ class YoutubeVideo extends MediaEmbedDialogBase {
       '#default_value' => $this->getReadableTime($input['start']),
     ];
 
-    $form['attributes'][$this->settingsKey]['autoplay'] = [
+    $form['attributes'][MediaEmbedDialogInterface::SETTINGS_KEY]['autoplay'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Autoplay'),
       '#default_value' => $input['autoplay'],
     ];
 
-    $form['attributes'][$this->settingsKey]['rel'] = [
+    $form['attributes'][MediaEmbedDialogInterface::SETTINGS_KEY]['rel'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Show suggested videos when the video finishes'),
       '#default_value' => $input['rel'],
     ];
 
-    $form['attributes'][$this->settingsKey]['showinfo'] = [
+    $form['attributes'][MediaEmbedDialogInterface::SETTINGS_KEY]['showinfo'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Show video title and player actions'),
       '#default_value' => $input['showinfo'],
     ];
 
-    $form['attributes'][$this->settingsKey]['loop'] = [
+    $form['attributes'][MediaEmbedDialogInterface::SETTINGS_KEY]['loop'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Loop video when the video ends'),
       '#default_value' => $input['loop'],

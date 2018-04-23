@@ -134,6 +134,22 @@ function stanford_media_field_widget_entity_browser_entity_reference_form_alter(
 }
 
 /**
+ * Implements hook_theme().
+ */
+function stanford_media_theme($existing, $type, $theme, $path) {
+  return [
+    'media__image' => [
+      'template' => 'media--image',
+      'base hook' => 'media',
+    ],
+    'media__file' => [
+      'template' => 'media--file',
+      'base hook' => 'media',
+    ],
+  ];
+}
+
+/**
  * Implements hook_theme_registry_alter().
  */
 function stanford_media_theme_registry_alter(&$theme_registry) {
@@ -146,7 +162,6 @@ function stanford_media_theme_registry_alter(&$theme_registry) {
   $theme_registry['media']['path'] = $path;
   $theme_registry['dropzonejs']['path'] = $path;
 }
-
 
 /**
  * Implements hook_entity_embed_alter().

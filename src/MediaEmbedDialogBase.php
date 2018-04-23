@@ -10,19 +10,19 @@ use Drupal\media\MediaInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 
+/**
+ * Class MediaEmbedDialogBase.
+ *
+ * @package Drupal\stanford_media
+ */
 abstract class MediaEmbedDialogBase extends PluginBase implements MediaEmbedDialogInterface, ContainerFactoryPluginInterface {
 
   /**
+   * Load entity types like the image styles or others.
+   *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityTypeManager;
-
-  /**
-   * Constant key in the embed dialog.
-   *
-   * @var string
-   */
-  protected $settingsKey = 'data-entity-embed-display-settings';
 
   /**
    * Media entity being embeded.
@@ -30,6 +30,13 @@ abstract class MediaEmbedDialogBase extends PluginBase implements MediaEmbedDial
    * @var MediaInterface
    */
   protected $entity;
+
+  /**
+   * Constant key in the embed dialog.
+   *
+   * @var string
+   */
+  protected $settingsKey = 'data-entity-embed-display-settings';
 
   /**
    * {@inheritdoc}
@@ -63,6 +70,10 @@ abstract class MediaEmbedDialogBase extends PluginBase implements MediaEmbedDial
    * {@inheritdoc}
    */
   public function alterDialogForm(array &$form, FormStateInterface $form_state) {
+    // Hide captions from all forms unless the plugin changes it.
+    if (!empty($form['attributes']['data-caption'])) {
+      $form['attributes']['data-caption']['#type'] = 'hidden';
+    }
     if (method_exists($this, 'validateDialogForm')) {
       array_unshift($form['#validate'], [
         get_class($this),
@@ -130,8 +141,8 @@ abstract class MediaEmbedDialogBase extends PluginBase implements MediaEmbedDial
     $input = [];
     if (isset($form_state->getUserInput()['editor_object'])) {
       $editor_object = $form_state->getUserInput()['editor_object'];
-      if (isset($editor_object[$this->settingsKey])) {
-        $display_settings = Json::decode($editor_object[$this->settingsKey]);
+      if (isset($editor_object[MediaEmbedDialogInterface::SETTINGS_KEY])) {
+        $display_settings = Json::decode($editor_object[MediaEmbedDialogInterface::SETTINGS_KEY]);
         $input = $display_settings ?: [];
       }
     }

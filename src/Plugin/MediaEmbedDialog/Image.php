@@ -3,10 +3,14 @@
 namespace Drupal\stanford_media\Plugin\MediaEmbedDialog;
 
 use Drupal\Component\Serialization\Json;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\linkit\Element\Linkit;
 use Drupal\media\MediaInterface;
 use Drupal\stanford_media\MediaEmbedDialogBase;
+use Drupal\stanford_media\MediaEmbedDialogInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Changes embedded image media items.
@@ -17,6 +21,34 @@ use Drupal\stanford_media\MediaEmbedDialogBase;
  * )
  */
 class Image extends MediaEmbedDialogBase {
+
+  /**
+   * Used to get the config for allowed image styles.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+  protected $configFactory;
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('entity_type.manager'),
+      $container->get('config.factory')
+    );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function __construct($configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_manager, ConfigFactoryInterface $config_factory) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_manager);
+    $this->configFactory = $config_factory;
+  }
 
   /**
    * {@inheritdoc}
@@ -54,25 +86,42 @@ class Image extends MediaEmbedDialogBase {
     $image_field = $this->entity->get($source_field);
     $default_alt = $image_field->getValue()[0]['alt'];
 
-    $form['attributes'][$this->settingsKey]['image_style'] = [
+    $form['attributes'][MediaEmbedDialogInterface::SETTINGS_KEY]['image_style'] = [
       '#type' => 'select',
       '#title' => $this->t('Image Style'),
       '#options' => $this->getImageStyles(),
       '#default_value' => $input['image_style'],
       '#empty_option' => $this->t('None (original image)'),
     ];
-    $form['attributes'][$this->settingsKey]['alt_text'] = [
+    $form['attributes'][MediaEmbedDialogInterface::SETTINGS_KEY]['alt_text'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Alternative text'),
       '#description' => $this->t('This text will be used by screen readers, search engines, or when the image cannot be loaded.'),
       '#default_value' => $input['alt_text'] ?: $default_alt,
     ];
-    $this->buildLinkitField($form, $form_state);
-    $form['attributes'][$this->settingsKey]['title_text'] = [
+
+    // Change textfield into text format for more robust captions.
+    if (isset($form['attributes']['data-caption'])) {
+      $form['attributes']['data-caption']['#type'] = 'text_format';
+      $form['attributes']['data-caption']['#format'] = 'plain_text';
+      $form['attributes']['data-caption']['#allowed_formats'] = [
+        'minimal_html',
+        'plain_text',
+      ];
+    }
+
+    try {
+      $this->buildLinkitField($form, $form_state);
+    }
+    catch (\Exception $e) {
+      // No link field, no need for title text field.
+      return;
+    }
+    $form['attributes'][MediaEmbedDialogInterface::SETTINGS_KEY]['title_text'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Link Title Text'),
       '#description' => $this->t('Please describe wht the link above leads to. (ie. Stanford University Home Page'),
-      '#default_value' => $input['title_text'],
+      '#default_value' => $input['title_text'] ?: '',
       '#weight' => 199,
       '#states' => [
         'visible' => [
@@ -84,20 +133,45 @@ class Image extends MediaEmbedDialogBase {
   }
 
   /**
+   * {@inheritdoc}
+   */
+  public static function validateDialogForm(array &$form, FormStateInterface $form_state) {
+    parent::validateDialogForm($form, $form_state);
+
+    $caption = $form_state->getValue(['attributes', 'data-caption']);
+
+    // Clean up caption text format into plain string.
+    if (!empty($caption['value'])) {
+      /** @var \Drupal\Core\Render\Markup $caption */
+      $caption = check_markup($caption['value'], $caption['format'])->__toString();
+      $form_state->setValue(['attributes', 'data-caption'], $caption);
+    }
+  }
+
+  /**
    * Get all available image styles.
    *
    * @return array
    *   Keyed array of image styles and their labels.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    */
   protected function getImageStyles() {
     $styles = $this->entityTypeManager->getStorage('image_style')
       ->loadMultiple();
+
+    $config = $this->configFactory->get('stanford_media.embeddable_image_styles');
+    $allowed_styles = $config->get('allowed_styles') ?: array_keys($styles);
+
     $style_options = [];
     /** @var \Drupal\image\Entity\ImageStyle $style */
     foreach ($styles as $style) {
-      $style_options[$style->id()] = $style->label();
+      if (in_array($style->id(), $allowed_styles)) {
+        $style_options[$style->id()] = $style->label();
+      }
     }
     asort($style_options);
+
     return $style_options;
   }
 
@@ -108,6 +182,8 @@ class Image extends MediaEmbedDialogBase {
    *   Embed dialog form.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Embed dialog form state object.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    */
   protected function buildLinkitField(array &$form, FormStateInterface $form_state) {
     /** @var \Drupal\filter\Entity\FilterFormat $filter_format */
@@ -126,7 +202,7 @@ class Image extends MediaEmbedDialogBase {
     $input = [];
     if (isset($form_state->getUserInput()['editor_object'])) {
       $editor_object = $form_state->getUserInput()['editor_object'];
-      $display_settings = Json::decode($editor_object[$this->settingsKey]);
+      $display_settings = Json::decode($editor_object[MediaEmbedDialogInterface::SETTINGS_KEY]);
       $input = isset($display_settings['linkit']) ? $display_settings['linkit'] : [];
     }
 
@@ -151,7 +227,7 @@ class Image extends MediaEmbedDialogBase {
       ],
     ];
 
-    $form['attributes'][$this->settingsKey]['linkit'] = [
+    $form['attributes'][MediaEmbedDialogInterface::SETTINGS_KEY]['linkit'] = [
       '#type' => 'container',
       '#weight' => 99.5,
     ];
@@ -163,14 +239,14 @@ class Image extends MediaEmbedDialogBase {
     ];
 
 
-    $form['attributes'][$this->settingsKey]['linkit']['href_dirty_check'] = [
+    $form['attributes'][MediaEmbedDialogInterface::SETTINGS_KEY]['linkit']['href_dirty_check'] = [
       '#type' => 'hidden',
       '#default_value' => isset($input['href']) ? $input['href'] : '',
     ];
 
-    $form['attributes'][$this->settingsKey]['linkit']['href'] = $link_form;
+    $form['attributes'][MediaEmbedDialogInterface::SETTINGS_KEY]['linkit']['href'] = $link_form;
     foreach ($fields as $field) {
-      $form['attributes'][$this->settingsKey]['linkit'][$field] = [
+      $form['attributes'][MediaEmbedDialogInterface::SETTINGS_KEY]['linkit'][$field] = [
         '#title' => $field,
         '#type' => 'hidden',
         '#default_value' => isset($input[$field]) ? $input[$field] : '',

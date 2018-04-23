@@ -17,6 +17,8 @@ use Drupal\media\MediaInterface;
  */
 interface MediaEmbedDialogInterface {
 
+  const SETTINGS_KEY = 'data-entity-embed-display-settings';
+
   /**
    * Check if the given plugin is applicable for this media item.
    *
@@ -58,7 +60,7 @@ interface MediaEmbedDialogInterface {
   public function embedAlter(array &$build, MediaInterface $entity, array &$context);
 
   /**
-   * Alter the medial element.
+   * Alter the media element.
    *
    * @param array $element
    *   Original media render array.

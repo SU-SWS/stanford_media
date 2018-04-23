@@ -6,6 +6,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\media\MediaInterface;
 use Drupal\stanford_media\MediaEmbedDialogBase;
+use Drupal\stanford_media\MediaEmbedDialogInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\video_embed_field\ProviderManager;
 
@@ -84,30 +85,30 @@ class VimeoVideo extends MediaEmbedDialogBase {
     $input = $this->getUserInput($form_state);
     unset($form['attributes']['data-align']);
 
-    $form['attributes'][$this->settingsKey]['intro'] = [
+    $form['attributes'][MediaEmbedDialogInterface::SETTINGS_KEY]['intro'] = [
       '#markup' => $this->t('Some videos do not support all options below.'),
     ];
-    $form['attributes'][$this->settingsKey]['autoplay'] = [
+    $form['attributes'][MediaEmbedDialogInterface::SETTINGS_KEY]['autoplay'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Autoplay'),
       '#default_value' => $input['autoplay'],
     ];
-    $form['attributes'][$this->settingsKey]['loop'] = [
+    $form['attributes'][MediaEmbedDialogInterface::SETTINGS_KEY]['loop'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Loop video when the video ends'),
       '#default_value' => $input['loop'],
     ];
-    $form['attributes'][$this->settingsKey]['title'] = [
+    $form['attributes'][MediaEmbedDialogInterface::SETTINGS_KEY]['title'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Show Title'),
       '#default_value' => $input['title'],
     ];
-    $form['attributes'][$this->settingsKey]['byline'] = [
+    $form['attributes'][MediaEmbedDialogInterface::SETTINGS_KEY]['byline'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Show Byline'),
       '#default_value' => $input['byline'],
     ];
-    $form['attributes'][$this->settingsKey]['color'] = [
+    $form['attributes'][MediaEmbedDialogInterface::SETTINGS_KEY]['color'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Control Color'),
       '#default_value' => $input['color'],
