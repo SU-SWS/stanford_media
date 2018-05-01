@@ -66,6 +66,15 @@ into the correct directory.
 }
 ```
 
+When installing this module, it creates media entity types. One issue is when attempting to install the module on an
+install profile such as lightning or the standard install profiles. Each of these include media entity type 
+configurations which conflict with the ones in this module. Extra steps are necessary if existing entity bundles already
+exist. One solution is to temporarily move all the config files in this module into the `config/optional` directory and
+then proceed with installation. This should create any missing media bundles and create the entity browsers that are
+included with this module. The reason for the conflicts is due to dependencies of other modules. Other modules and other
+config files can declare dependency on the configurations of this module. If all configurations of this module were
+placed in the `config/optional` directory, it would cause dependency issues during module/profile installation.
+
 Configuration
 ---
 
