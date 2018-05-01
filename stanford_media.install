@@ -5,161 +5,36 @@
  * stanford_media.install
  */
 
-use Drupal\embed\Entity\EmbedButton;
 use Drupal\file\Entity\File;
 use Drupal\views\Entity\View;
-use Drupal\field\Entity\FieldConfig;
-use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\embed\Entity\EmbedButton;
 
 /**
  * Implements hook_install().
  */
 function stanford_media_install() {
+  // Disable the core view since we use our own.
   if ($view = View::load('media')) {
     $view->disable();
     $view->save();
   }
-  stanford_media_install_file();
-  stanford_media_install_image();
-  stanford_media_install_video();
-}
 
-/**
- * Changes to the file media entity type.
- */
-function stanford_media_install_file() {
-  $config_factory = \Drupal::configFactory();
+  // Copy the media browser icon over and set it on the embed button.
+  $module_handler = \Drupal::moduleHandler()->getModule('stanford_media');
+  $icon = $module_handler->getPath() . '/img/media.png';
+  $file_system = \Drupal::service('file_system');
 
-  // Media File form.
-  $config = $config_factory->getEditable('core.entity_form_display.media.file.default');
-  // Config doens't exist during profile installation since its an optional.
-  // @see https://dev.acquia.com/blog/optional-config-weirdness-in-drupal-8/09/11/2017/18866
-  if (empty($config->get('content'))) {
-    return;
+  $directory = 'public://media/image/';
+  file_prepare_directory($directory, FILE_CREATE_DIRECTORY);
+
+  $destination = file_unmanaged_copy($icon, $directory . $file_system->basename($icon));
+
+  if ($destination) {
+    $file = File::create(['uri' => $destination]);
+    $file->save();
+
+    EmbedButton::load('media_browser')
+      ->set('icon_uuid', $file->uuid())
+      ->save();
   }
-
-  foreach (['created', 'path', 'uid', 'status'] as $hide_field) {
-    $config->clear("content.$hide_field");
-    $config->set("hidden.$hide_field", TRUE);
-  }
-  $config->save(TRUE);
-
-  // Media File display.
-  $config = $config_factory->getEditable('core.entity_view_display.media.file.default');
-  $config->set('content.field_media_file.label', 'hidden');
-  $config->save(TRUE);
-
-  // Media file allowed extensions.
-  $config = $config_factory->getEditable('field.field.media.file.field_media_file');
-  $config->set('settings.file_extensions', 'txt rtf doc docx ppt pptx xls xlsx pdf');
-  $config->save();
-
-  // Media File file field.
-  $config = $config_factory->getEditable('field.field.media.file.field_media_file');
-  $config->set('settings.file_directory', 'media/file');
-  $config->save(TRUE);
-}
-
-/**
- * Changes to the image media entity type.
- */
-function stanford_media_install_image() {
-  $config_factory = \Drupal::configFactory();
-
-  // Media Image form.
-  $config = $config_factory->getEditable('core.entity_form_display.media.image.default');
-  // Config doens't exist during profile installation since its an optional.
-  // @see https://dev.acquia.com/blog/optional-config-weirdness-in-drupal-8/09/11/2017/18866
-  if (empty($config->get('content'))) {
-    return;
-  }
-
-  foreach (['created', 'path', 'uid', 'status'] as $hide_field) {
-    $config->clear("content.$hide_field");
-    $config->set("hidden.$hide_field", TRUE);
-  }
-  $settings = [
-    'preview:image_style' => 'medium',
-    'offsets' => '50,50',
-    'progress_indicator' => 'throbber',
-    'preview_link' => FALSE,
-  ];
-  $config->set('content.field_media_image.settings', $settings);
-  $config->set('content.field_media_image.type', 'image_focal_point');
-  $config->save(TRUE);
-
-  // Media Image display.
-  $config = $config_factory->getEditable('core.entity_view_display.media.image.default');
-  $config->set('content.field_media_image.label', 'hidden');
-  $config->set('content.field_media_image.settings', [
-    'responsive_image_style' => 'hero_image',
-    'image_link' => '',
-  ]);
-  $config->set('content.field_media_image.type', 'responsive_image');
-  $config->save(TRUE);
-
-  // Media Image image field.
-  $config = $config_factory->getEditable('field.field.media.image.field_media_image');
-  $config->set('settings.alt_field_required', FALSE);
-  $config->set('settings.file_directory', 'media/image');
-  $config->save(TRUE);
-}
-
-/**
- * Changes to the video media entity type.
- */
-function stanford_media_install_video() {
-  // Delete video file field. We'll use the video embed field instead.
-  if ($field = FieldConfig::load('media.video.field_media_video_file')) {
-    $field->delete();
-  }
-  if ($storage = FieldStorageConfig::load('media.field_media_video_file')) {
-    $storage->delete();
-  }
-
-  $config_factory = \Drupal::configFactory();
-
-  $config = $config_factory->getEditable('core.entity_form_display.media.video.default');
-  // Config doens't exist during profile installation since its an optional.
-  // @see https://dev.acquia.com/blog/optional-config-weirdness-in-drupal-8/09/11/2017/18866
-  if (empty($config->get('content'))) {
-    return;
-  }
-
-  foreach (['path', 'uid', 'status'] as $hide_field) {
-    $config->clear("content.$hide_field");
-    $config->set("hidden.$hide_field", TRUE);
-  }
-  $embed_settings = [
-    'settings' => [],
-    'third_party_settings' => [],
-    'type' => 'video_embed_field_textfield',
-    'weight' => 1,
-    'region' => 'content',
-  ];
-  $config->set('content.field_media_video_embed_field', $embed_settings);
-  $config->clear('hidden.field_media_video_embed_field');
-  $config->save();
-
-  // Set the source as the embed video field.
-  $config = $config_factory->getEditable('media.type.video');
-  $config->set('source', 'video_embed_field');
-  $config->set('source_configuration.source_field', 'field_media_video_embed_field');
-  $config->save();
-
-  $config = $config_factory->getEditable('core.entity_view_display.media.video.default');
-  $config->clear('hidden.field_media_video_embed_field');
-  $embed_settings = [
-    'label' => 'hidden',
-    'settings' => [
-      'image_style' => 'thumbnail',
-      'link_image_to' => '',
-    ],
-    'third_party_settings' => [],
-    'type' => 'video_embed_field_thumbnail',
-    'weight' => '0',
-    'region' => 'content',
-  ];
-  $config->set('content.field_media_video_embed_field', $embed_settings);
-  $config->save();
 }

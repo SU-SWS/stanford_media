@@ -2,5 +2,5 @@ stanford_media.embeddable_image_styles:
   type: config_object
   mapping:
     allowed_styles:
-      type: array
+      type: sequence
       label: 'Available Styles'

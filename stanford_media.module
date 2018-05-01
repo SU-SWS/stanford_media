@@ -15,32 +15,6 @@ use Drupal\media\MediaForm;
 use Drupal\file\Entity\File;
 
 /**
- * Implements hook_ENTITY_TYPE_presave().
- */
-function stanford_media_embed_button_presave(EntityInterface $entity) {
-  if ($entity->id() == 'media_browser' && empty($entity->icon_uuid)) {
-
-    // Edits the media browser button to have an icon.
-    // Config doens't exist during profile installation since its an optional.
-    // @see https://dev.acquia.com/blog/optional-config-weirdness-in-drupal-8/09/11/2017/18866
-    $path = \Drupal::moduleHandler()->getModule('stanford_media')->getPath();
-    $icon = $path . '/img/media.png';
-    $fs = \Drupal::service('file_system');
-
-    $directory = 'public://media/image/';
-    file_prepare_directory($directory, FILE_CREATE_DIRECTORY);
-
-    $destination = file_unmanaged_copy($icon, $directory . $fs->basename($icon));
-
-    if ($destination) {
-      $file = File::create(['uri' => $destination]);
-      $file->save();
-      $entity->set('icon_uuid', $file->uuid());
-    }
-  }
-}
-
-/**
  * Implements hook_form_alter().
  */
 function stanford_media_form_alter(&$form, FormStateInterface $form_state, $form_id) {
