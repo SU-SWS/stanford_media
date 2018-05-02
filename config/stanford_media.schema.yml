@@ -4,3 +4,10 @@ stanford_media.embeddable_image_styles:
     allowed_styles:
       type: sequence
       label: 'Available Styles'
+
+stanford_media.allowed_caption_formats:
+  type: config_object
+  mapping:
+    allowed_formats:
+      type: sequence
+      label: 'Allowed Image Caption Formats'

@@ -86,14 +86,17 @@ class Image extends MediaEmbedDialogBase {
     $image_field = $this->entity->get($source_field);
     $default_alt = $image_field->getValue()[0]['alt'];
 
-    $form['attributes'][MediaEmbedDialogInterface::SETTINGS_KEY]['image_style'] = [
+    $attribute_settings = &$form['attributes'][MediaEmbedDialogInterface::SETTINGS_KEY];
+
+    // Image style options.
+    $attribute_settings['image_style'] = [
       '#type' => 'select',
       '#title' => $this->t('Image Style'),
       '#options' => $this->getImageStyles(),
       '#default_value' => $input['image_style'],
       '#empty_option' => $this->t('None (original image)'),
     ];
-    $form['attributes'][MediaEmbedDialogInterface::SETTINGS_KEY]['alt_text'] = [
+    $attribute_settings['alt_text'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Alternative text'),
       '#description' => $this->t('This text will be used by screen readers, search engines, or when the image cannot be loaded.'),
@@ -102,12 +105,17 @@ class Image extends MediaEmbedDialogBase {
 
     // Change textfield into text format for more robust captions.
     if (isset($form['attributes']['data-caption'])) {
-      $form['attributes']['data-caption']['#type'] = 'text_format';
-      $form['attributes']['data-caption']['#format'] = 'plain_text';
-      $form['attributes']['data-caption']['#allowed_formats'] = [
-        'minimal_html',
-        'plain_text',
-      ];
+      $caption_field = $form['attributes']['data-caption'];
+      $caption_field['#type'] = 'text_format';
+      $caption_field['#format'] = 'minimal_html';
+
+      $allowed_format_config = $this->configFactory->get('stanford_media.allowed_caption_formats');
+      if ($allowed_formats = $allowed_format_config->get('allowed_formats')) {
+        $caption_field['#allowed_formats'] = $allowed_formats;
+      }
+
+      $attribute_settings['caption'] = $caption_field;
+      unset($form['attributes']['data-caption']);
     }
 
     try {
@@ -117,7 +125,7 @@ class Image extends MediaEmbedDialogBase {
       // No link field, no need for title text field.
       return;
     }
-    $form['attributes'][MediaEmbedDialogInterface::SETTINGS_KEY]['title_text'] = [
+    $attribute_settings['title_text'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Link Title Text'),
       '#description' => $this->t('Please describe wht the link above leads to. (ie. Stanford University Home Page'),
@@ -129,7 +137,6 @@ class Image extends MediaEmbedDialogBase {
         ],
       ],
     ];
-
   }
 
   /**
@@ -137,14 +144,28 @@ class Image extends MediaEmbedDialogBase {
    */
   public static function validateDialogForm(array &$form, FormStateInterface $form_state) {
     parent::validateDialogForm($form, $form_state);
+    $caption_path = [
+      'attributes',
+      MediaEmbedDialogInterface::SETTINGS_KEY,
+      'caption',
+    ];
+    $caption = $form_state->getValue($caption_path);
+    // Clear the caption values from the container. We'll set the data-caption
+    // value later so that core can handle the caption stuff.
+    $form_state->unsetValue($caption_path);
 
-    $caption = $form_state->getValue(['attributes', 'data-caption']);
+    if (!$caption) {
+      return;
+    }
 
-    // Clean up caption text format into plain string.
     if (!empty($caption['value'])) {
-      /** @var \Drupal\Core\Render\Markup $caption */
-      $caption = check_markup($caption['value'], $caption['format'])->__toString();
-      $form_state->setValue(['attributes', 'data-caption'], $caption);
+      // Clean up the caption and escape special characters so it can be used in
+      // the json string.
+      $caption = check_markup(htmlspecialchars_decode($caption['value']), $caption['format'])->__toString();
+      $form_state->setValue([
+        'attributes',
+        'data-caption',
+      ], htmlspecialchars($caption));
     }
   }
 
@@ -160,6 +181,8 @@ class Image extends MediaEmbedDialogBase {
     $styles = $this->entityTypeManager->getStorage('image_style')
       ->loadMultiple();
 
+    // If we have a config file that limits the image styles, lets use only
+    // those. Otherwise we'll use all styles.
     $config = $this->configFactory->get('stanford_media.embeddable_image_styles');
     $allowed_styles = $config->get('allowed_styles') ?: array_keys($styles);
 
@@ -184,6 +207,7 @@ class Image extends MediaEmbedDialogBase {
    *   Embed dialog form state object.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   protected function buildLinkitField(array &$form, FormStateInterface $form_state) {
     /** @var \Drupal\filter\Entity\FilterFormat $filter_format */
@@ -282,7 +306,7 @@ class Image extends MediaEmbedDialogBase {
     $linkit_settings = $form_state->getValue($linkit_key);
 
     $href = $linkit_settings['href'];
-    // No link: unset values to clean up embed code.
+    // No link: unset values to clean up the embed code.
     if (!$href) {
       $form_state->unsetValue($linkit_key);
       return;

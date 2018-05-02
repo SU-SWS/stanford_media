@@ -6,8 +6,7 @@ dependencies:
     - image.style.thumbnail
     - media.type.image
   module:
-    - image
-    - path
+    - focal_point
 id: media.image.default
 targetEntityType: media
 bundle: image
@@ -34,5 +33,5 @@ content:
 hidden:
   created: true
   path: true
-  uid: true
   status: true
+  uid: true

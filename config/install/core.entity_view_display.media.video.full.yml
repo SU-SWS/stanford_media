@@ -25,5 +25,6 @@ content:
     region: content
 hidden:
   created: true
+  name: true
   thumbnail: true
   uid: true

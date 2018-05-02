@@ -56,29 +56,43 @@ function stanford_media_inline_entity_form_entity_form_alter(&$entity_form, Form
  * Adds Linkit support for the link field in the entity embed dialog.
  */
 function stanford_media_form_entity_embed_dialog_alter(&$form, FormStateInterface $form_state, $form_id) {
-  if (isset($form['attributes']['data-entity-embed-display-settings'])) {
-
-    $editor = $form_state->getBuildInfo()['args'][0];
-    // Alter the media embed dialog form only.
-    if (!($editor instanceof Editor)) {
-      return;
-    }
-
-    /** @var \Drupal\media\MediaInterface $entity */
-    $entity = $form_state->get('entity');
-    /** @var \Drupal\stanford_media\MediaEmbedDialogManager $dialog_manager */
-    $dialog_manager = \Drupal::service('plugin.manager.media_embed_dialog_manager');
-
-    foreach ($dialog_manager->getDefinitions() as $plugin_id => $configuration) {
-      /** @var \Drupal\stanford_media\MediaEmbedDialogInterface $plugin */
-      $plugin = $dialog_manager->createInstance($plugin_id, ['entity' => $entity]);
-
-      if ($plugin->isApplicable()) {
-        $plugin->alterDialogForm($form, $form_state);
-      }
-    }
+  if (!isset($form['attributes']['data-entity-embed-display-settings'])) {
+    return;
   }
 
+  $editor = $form_state->getBuildInfo()['args'][0];
+  // Alter the media embed dialog form only.
+  if (!($editor instanceof Editor)) {
+    return;
+  }
+
+  /** @var \Drupal\media\MediaInterface $entity */
+  $entity = $form_state->get('entity');
+  /** @var \Drupal\stanford_media\MediaEmbedDialogManager $dialog_manager */
+  $dialog_manager = \Drupal::service('plugin.manager.media_embed_dialog_manager');
+
+  foreach ($dialog_manager->getDefinitions() as $plugin_id => $configuration) {
+    /** @var \Drupal\stanford_media\MediaEmbedDialogInterface $plugin */
+    $plugin = $dialog_manager->createInstance($plugin_id, ['entity' => $entity]);
+
+    if ($plugin->isApplicable()) {
+      // Alter the dialog form for each plugin.
+      // @see \Drupal\stanford_media\MediaEmbedDialogInterface::alterDialogForm()
+      $plugin->alterDialogForm($form, $form_state);
+
+      // Adds validate method.
+      array_unshift($form['#validate'], [
+        get_class($plugin),
+        'validateDialogForm',
+      ]);
+
+      // Adds submit method.
+      array_unshift($form['#submit'], [
+        get_class($plugin),
+        'submitDialogForm',
+      ]);
+    }
+  }
 }
 
 /**
@@ -147,6 +161,8 @@ function stanford_media_entity_embed_alter(array &$build, EntityInterface $entit
     $plugin = $dialog_manager->createInstance($plugin_id, ['entity' => $entity]);
 
     if ($plugin->isApplicable()) {
+      $build['entity']['#display_settings'] = $context['data-entity-embed-display-settings'];
+      $build['entity']['#pre_render'][] = [get_class($plugin), 'preRender'];
       $plugin->embedAlter($build, $entity, $context);
     }
   }

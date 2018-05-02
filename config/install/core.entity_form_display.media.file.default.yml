@@ -6,7 +6,6 @@ dependencies:
     - media.type.file
   module:
     - file
-    - path
 id: media.file.default
 targetEntityType: media
 bundle: file
@@ -30,5 +29,5 @@ content:
 hidden:
   created: true
   path: true
-  uid: true
   status: true
+  uid: true

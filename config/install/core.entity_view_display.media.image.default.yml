@@ -3,10 +3,9 @@ status: true
 dependencies:
   config:
     - field.field.media.image.field_media_image
-    - image.style.medium
     - media.type.image
   module:
-    - image
+    - responsive_image
 id: media.image.default
 targetEntityType: media
 bundle: image
@@ -23,5 +22,6 @@ content:
     region: content
 hidden:
   created: true
+  name: true
   thumbnail: true
   uid: true

@@ -70,39 +70,25 @@ abstract class MediaEmbedDialogBase extends PluginBase implements MediaEmbedDial
    * {@inheritdoc}
    */
   public function alterDialogForm(array &$form, FormStateInterface $form_state) {
+    // Unsets the back action buttons since it doesn't do anything from inside
+    // the dialog form. This will prevent users from accidentally going back to
+    // the media browser listing modal.
+    unset($form['actions']['back']);
+
     // Hide captions from all forms unless the plugin changes it.
     if (!empty($form['attributes']['data-caption'])) {
       $form['attributes']['data-caption']['#type'] = 'hidden';
     }
-    if (method_exists($this, 'validateDialogForm')) {
-      array_unshift($form['#validate'], [
-        get_class($this),
-        'validateDialogForm',
-      ]);
-    }
-    if (method_exists($this, 'submitDialogForm')) {
-      array_unshift($form['#submit'], [get_class($this), 'submitDialogForm']);
-    }
   }
 
   /**
-   * Validate the dialog form.
-   *
-   * @param array $form
-   *   Original Form.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   Current Form State.
+   * {@inheritdoc}
    */
   public static function validateDialogForm(array &$form, FormStateInterface $form_state) {
   }
 
   /**
-   * Submit handler for the dialog form.
-   *
-   * @param array $form
-   *   Original Form.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   Current Form State.
+   * {@inheritdoc}
    */
   public static function submitDialogForm(array &$form, FormStateInterface $form_state) {
   }
@@ -111,8 +97,6 @@ abstract class MediaEmbedDialogBase extends PluginBase implements MediaEmbedDial
    * {@inheritdoc}
    */
   public function embedAlter(array &$build, MediaInterface $entity, array &$context) {
-    $build['entity']['#display_settings'] = $context['data-entity-embed-display-settings'];
-    $build['entity']['#pre_render'][] = [get_class($this), 'preRender'];
   }
 
   /**

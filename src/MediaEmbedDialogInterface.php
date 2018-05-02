@@ -46,6 +46,26 @@ interface MediaEmbedDialogInterface {
   public function alterDialogForm(array &$form, FormStateInterface $form_state);
 
   /**
+   * Validate the dialog form within the plugin.
+   *
+   * @param array $form
+   *   Original Form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Current Form State.
+   */
+  public static function validateDialogForm(array &$form, FormStateInterface $form_state);
+
+  /**
+   * Operate on the dialog form submit before the reset of it takes place.
+   *
+   * @param array $form
+   *   Original Form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Current Form State.
+   */
+  public static function submitDialogForm(array &$form, FormStateInterface $form_state);
+
+  /**
    * Alter the embed media item before rendering, including adding a preRender.
    *
    * @param array $build
