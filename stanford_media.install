@@ -13,12 +13,6 @@ use Drupal\embed\Entity\EmbedButton;
  * Implements hook_install().
  */
 function stanford_media_install() {
-  // Disable the core view since we use our own.
-  if ($view = View::load('media')) {
-    $view->disable();
-    $view->save();
-  }
-
   // Copy the media browser icon over and set it on the embed button.
   $module_handler = \Drupal::moduleHandler()->getModule('stanford_media');
   $icon = $module_handler->getPath() . '/img/media.png';
