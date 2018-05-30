@@ -67,10 +67,12 @@ module.exports = function(grunt) {
       // Additional configuration options can be found at https://github.com/sindresorhus/grunt-sass
       options: {
         includePaths: [
-          "node_modules/bourbon/core",
-          "node_modules/bourbon-neat/core",
-          "node_modules/neat-omega",
-          "node_modules"
+          "scss",
+          "node_modules/bourbon/app/assets/stylesheets",
+          "node_modules/bourbon-neat/app/assets/stylesheets",
+          "node_modules/neat-omega/core",
+          "node_modules/decanter/scss",
+          "node_modules",
         ],
         sourceMap: false,
         // This controls the compiled css and can be changed to nested, compact or compressed.

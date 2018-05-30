@@ -30,6 +30,10 @@ function stanford_media_form_alter(&$form, FormStateInterface $form_state, $form
   if ($form_id == 'media_image_edit_form' && !empty($form_state->getUserInput())) {
     $form['#attached']['library'][] = 'stanford_media/admin';
   }
+  if (strpos($form_id, 'entity_browser_') !== FALSE) {
+    $form['selection_display']['#prefix'] = '<div class="selection-action-wrapper">';
+    $form['selection_display']['#suffix'] = '</div>';
+  }
 }
 
 /**

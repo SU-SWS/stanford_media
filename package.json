@@ -1,28 +1,38 @@
 {
-  "name": "Stanford Media",
-  "version": "0.1.0",
-  "repository": "https://github.com/SU-SWS/stanford_media",
-  "dependencies": {
-    "bourbon": "^5.0.0-beta.7",
-    "bourbon-neat": "^2.0.0",
-    "neat-omega": "^2.0.7",
-    "font-awesome": "~4.7.0",
-    "fastclick": "^1.0.6",
-    "grunt": "^1.0.1",
+  "name": "stanford_media",
+  "version": "1.0.0",
+  "description": "Stanford media browser",
+  "main": "Gruntfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SU-SWS/stanford_media.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SU-SWS/stanford_media/issues"
+  },
+  "homepage": "https://github.com/SU-SWS/stanford_media#readme",
+  "devDependencies": {
+    "bourbon": "^4.2.7",
+    "bourbon-neat": "^1.8.0",
+    "decanter": "^2.0.0",
+    "grunt": "^1.0.2",
     "grunt-autoprefixer": "^3.0.3",
     "grunt-available-tasks": "^0.6.3",
     "grunt-browser-sync": "^2.2.0",
     "grunt-contrib-concat": "^0.5.1",
     "grunt-contrib-imagemin": "^1.0.0",
-    "grunt-contrib-uglify": "^0.11.0",
+    "grunt-contrib-uglify": "^3.3.0",
     "grunt-contrib-watch": "^1.0.0",
     "grunt-drush": "^0.0.7",
     "grunt-notify": "^0.4.3",
-    "grunt-sass": "^1.1.0",
+    "grunt-sass": "^2.1.0",
     "grunt-svgmin": "^3.1.2",
-  },
-  "description": "Install with `npm install` and compile scss files with `npm sass` or `npm watch`.",
-  "main": "Gruntfile.js",
-  "author": "",
-  "license": "MIT"
+    "neat-omega": "^3.0.1",
+    "normalize.css": "^8.0.0"
+  }
 }
