@@ -414,10 +414,15 @@ display:
         - user.permissions
       tags:
         - 'config:core.entity_view_display.media.file.default'
-        - 'config:core.entity_view_display.media.image.default'
-        - 'config:core.entity_view_display.media.image.thumbnail'
-        - 'config:core.entity_view_display.media.video.default'
+        - extensions
         - 'config:core.entity_view_display.media.video.full'
+        - extensions
+        - 'config:core.entity_view_display.media.image.default'
+        - extensions
+        - 'config:core.entity_view_display.media.image.thumbnail'
+        - extensions
+        - 'config:core.entity_view_display.media.video.default'
+        - extensions
   file_browser:
     display_plugin: entity_browser
     id: file_browser
@@ -540,10 +545,15 @@ display:
         - user.permissions
       tags:
         - 'config:core.entity_view_display.media.file.default'
+        - extensions
         - 'config:core.entity_view_display.media.image.default'
+        - extensions
         - 'config:core.entity_view_display.media.image.thumbnail'
+        - extensions
         - 'config:core.entity_view_display.media.video.default'
+        - extensions
         - 'config:core.entity_view_display.media.video.full'
+        - extensions
   image_browser:
     display_plugin: entity_browser
     id: image_browser
@@ -666,10 +676,15 @@ display:
         - user.permissions
       tags:
         - 'config:core.entity_view_display.media.file.default'
+        - extensions
         - 'config:core.entity_view_display.media.image.default'
+        - extensions
         - 'config:core.entity_view_display.media.image.thumbnail'
+        - extensions
         - 'config:core.entity_view_display.media.video.default'
+        - extensions
         - 'config:core.entity_view_display.media.video.full'
+        - extensions
   media_browser:
     display_plugin: entity_browser
     id: media_browser
@@ -689,10 +704,15 @@ display:
         - user.permissions
       tags:
         - 'config:core.entity_view_display.media.file.default'
+        - extensions
         - 'config:core.entity_view_display.media.image.default'
+        - extensions
         - 'config:core.entity_view_display.media.image.thumbnail'
+        - extensions
         - 'config:core.entity_view_display.media.video.default'
+        - extensions
         - 'config:core.entity_view_display.media.video.full'
+        - extensions
   use_detail:
     display_plugin: page
     id: use_detail
@@ -757,7 +777,7 @@ display:
           table: entity_usage
           field: count
           relationship: media_to_usage_entity
-          group_type: group
+          group_type: count
           admin_label: ''
           label: Uses
           exclude: false
@@ -820,6 +840,7 @@ display:
         title: false
         style: false
         row: false
+        group_by: false
       arguments:
         mid:
           id: mid
@@ -930,6 +951,7 @@ display:
           separator: ''
           hide_empty: false
           default_field_elements: true
+      group_by: true
     cache_metadata:
       max-age: -1
       contexts:
@@ -1708,10 +1730,15 @@ display:
         - user.permissions
       tags:
         - 'config:core.entity_view_display.media.file.default'
+        - extensions
         - 'config:core.entity_view_display.media.image.default'
+        - extensions
         - 'config:core.entity_view_display.media.image.thumbnail'
+        - extensions
         - 'config:core.entity_view_display.media.video.default'
+        - extensions
         - 'config:core.entity_view_display.media.video.full'
+        - extensions
   video_browser:
     display_plugin: entity_browser
     id: video_browser
@@ -1834,7 +1861,12 @@ display:
         - user.permissions
       tags:
         - 'config:core.entity_view_display.media.file.default'
+        - extensions
         - 'config:core.entity_view_display.media.image.default'
+        - extensions
         - 'config:core.entity_view_display.media.image.thumbnail'
+        - extensions
         - 'config:core.entity_view_display.media.video.default'
+        - extensions
         - 'config:core.entity_view_display.media.video.full'
+        - extensions
