@@ -12,6 +12,46 @@ use Drupal\entity_browser\EntityBrowserFormInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
 use Drupal\media\MediaForm;
+use Drupal\file\Entity\File;
+
+/**
+ * Implements hook_ENTITY_TYPE_presave().
+ *
+ * The uuid of the icon file changes so we want to set it when the embed button
+ * is saved.
+ */
+function stanford_media_embed_button_presave(EntityInterface $entity) {
+  if ($entity->id() == 'media_browser') {
+    /** @var \Drupal\Core\Entity\EntityRepositoryInterface $repository */
+    $repository = \Drupal::service('entity.repository');
+
+    // File does exist already, so lets bail.
+    if ($entity->icon_uuid && $repository->loadEntityByUuid('file', $entity->icon_uuid)) {
+      return;
+    }
+
+    // Copy the media browser icon over and set it on the embed button.
+    $module_handler = \Drupal::moduleHandler()->getModule('stanford_media');
+    $icon = $module_handler->getPath() . '/img/media.png';
+    $file_system = \Drupal::service('file_system');
+
+    $directory = 'public://media/image/';
+    file_prepare_directory($directory, FILE_CREATE_DIRECTORY);
+
+    $destination = file_unmanaged_copy($icon, $directory . $file_system->basename($icon), FILE_EXISTS_REPLACE);
+
+    if ($destination) {
+      $file_properties = [
+        'uri' => $destination,
+        'uuid' => '3ed72229-7529-4cf5-b679-1d7a86b1030a',
+      ];
+
+      $file = File::create($file_properties);
+      $file->save();
+      $entity->set('icon_uuid', $file->uuid());
+    }
+  }
+}
 
 /**
  * Implements hook_ENTITY_TYPE_presave().
