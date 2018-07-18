@@ -3,9 +3,11 @@
 namespace Drupal\stanford_media\Plugin\views\field;
 
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\views\Plugin\views\field\FieldPluginBase;
 use Drupal\views\ResultRow;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Field handler to link entity usage entities.
@@ -17,6 +19,31 @@ use Drupal\views\ResultRow;
 class EntityUsageLink extends FieldPluginBase {
 
   /**
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('entity_type.manager')
+    );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+    $this->entityTypeManager = $entity_type_manager;
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function query() {
@@ -24,8 +51,8 @@ class EntityUsageLink extends FieldPluginBase {
     // Add the field.
     $params = $this->options['group_type'] != 'group' ? ['function' => $this->options['group_type']] : [];
 
-    $this->field_alias = $this->query->addField($this->tableAlias, 're_type', NULL, $params);
-    $this->field_alias_id = $this->query->addField($this->tableAlias, 're_id', NULL, $params);
+    $this->field_alias = $this->query->addField($this->tableAlias, 'source_type', NULL, $params);
+    $this->field_alias_id = $this->query->addField($this->tableAlias, 'source_id', NULL, $params);
     $this->addAdditionalFields();
   }
 
@@ -42,11 +69,11 @@ class EntityUsageLink extends FieldPluginBase {
   public function render(ResultRow $values) {
     $type = $values->{$this->field_alias};
     $id = $values->{$this->field_alias_id};
-    if(!$type || !$id){
+    if (!$type || !$id) {
       return '';
     }
 
-    $child = \Drupal::entityTypeManager()->getStorage($type)->load($id);
+    $child = $this->entityTypeManager->getStorage($type)->load($id);
     $parent = $this->getParent($child);
     return $parent->toLink()->toRenderable();
   }
