@@ -22,7 +22,7 @@
 {% spaceless %}
   <span{{ attributes.addClass(classes) }}>
     {% if content %}
-      {{ content|without('name')|render|striptags('<a><img><iframe>')|trim|raw }}
+      {{ content|without('name')|render|striptags('<a><img><iframe><picture><source>')|trim|raw }}
     {% endif %}
   </span>
 {% endspaceless %}
