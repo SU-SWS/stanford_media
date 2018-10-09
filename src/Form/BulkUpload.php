@@ -229,7 +229,7 @@ class BulkUpload extends FormBase {
    *
    * @param array $form
    *   Form structure.
-   * @param FormStateInterface $form_state
+   * @param  \Drupal\Core\Form\FormStateInterface $form_state
    *   Form state object.
    *
    * @return \Drupal\file\FileInterface[]

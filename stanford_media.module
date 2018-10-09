@@ -124,7 +124,7 @@ function stanford_media_form_entity_embed_dialog_alter(&$form, FormStateInterfac
   /** @var \Drupal\stanford_media\MediaEmbedDialogManager $dialog_manager */
   $dialog_manager = \Drupal::service('plugin.manager.media_embed_dialog_manager');
 
-  foreach ($dialog_manager->getDefinitions() as $plugin_id => $configuration) {
+  foreach (array_keys($dialog_manager->getDefinitions()) as $plugin_id) {
     /** @var \Drupal\stanford_media\MediaEmbedDialogInterface $plugin */
     $plugin = $dialog_manager->createInstance($plugin_id, ['entity' => $entity]);
 
@@ -210,7 +210,7 @@ function stanford_media_theme_registry_alter(&$theme_registry) {
 function stanford_media_entity_embed_alter(array &$build, EntityInterface $entity, array &$context) {
   /** @var \Drupal\stanford_media\MediaEmbedDialogManager $dialog_manager */
   $dialog_manager = \Drupal::service('plugin.manager.media_embed_dialog_manager');
-  foreach ($dialog_manager->getDefinitions() as $plugin_id => $configuration) {
+  foreach (array_keys($dialog_manager->getDefinitions()) as $plugin_id) {
     $plugin = $dialog_manager->createInstance($plugin_id, ['entity' => $entity]);
 
     if ($plugin->isApplicable()) {

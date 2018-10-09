@@ -34,6 +34,7 @@ class BundleSuggestion {
    *
    * @param \Drupal\Core\Entity\EntityTypeManager $entity_type_manager
    *   The entity type manager.
+   * @param \Drupal\video_embed_field\ProviderManager $providers
    */
   public function __construct(EntityTypeManager $entity_type_manager, ProviderManager $providers) {
     $this->entityTypeManager = $entity_type_manager;

@@ -10,7 +10,8 @@
     display: none;
   }
 
-  img, iframe {
+  img,
+  iframe {
     max-width: 300px;
     max-height: 200px;
     height: auto;
@@ -30,8 +31,9 @@
 
 #entities > div {
   border-bottom: 1px solid #ccc;
+
   &:last-child {
-    border-bottom: none;
+    border-bottom: 0;
   }
 }
 
