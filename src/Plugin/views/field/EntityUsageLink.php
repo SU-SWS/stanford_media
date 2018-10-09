@@ -4,7 +4,6 @@ namespace Drupal\stanford_media\Plugin\views\field;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\views\Plugin\views\field\FieldPluginBase;
 use Drupal\views\ResultRow;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -19,6 +18,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class EntityUsageLink extends FieldPluginBase {
 
   /**
+   * Entity type manager service.
+   *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityTypeManager;
@@ -59,13 +60,6 @@ class EntityUsageLink extends FieldPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function buildOptionsForm(&$form, FormStateInterface $form_state) {
-    parent::buildOptionsForm($form, $form_state);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function render(ResultRow $values) {
     $type = $values->{$this->field_alias};
     $id = $values->{$this->field_alias_id};
@@ -79,9 +73,13 @@ class EntityUsageLink extends FieldPluginBase {
   }
 
   /**
+   * Get the parent entity from a child entity.
+   *
    * @param \Drupal\Core\Entity\EntityInterface $child
+   *   Child entity.
    *
    * @return \Drupal\Core\Entity\EntityInterface
+   *   Parent entity of the child.
    */
   private function getParent(EntityInterface $child) {
     if (method_exists($child, 'getParentEntity')) {

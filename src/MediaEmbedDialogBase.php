@@ -27,7 +27,7 @@ abstract class MediaEmbedDialogBase extends PluginBase implements MediaEmbedDial
   /**
    * Media entity being embeded.
    *
-   * @var MediaInterface
+   * @var \Drupal\media\MediaInterface
    */
   protected $entity;
 

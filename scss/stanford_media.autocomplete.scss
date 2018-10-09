@@ -1,22 +1,22 @@
 .js {
 
   input.form-linkit-autocomplete {
-    background-image: url(../img/throbber-inactive.png);
+    background-image: url('../img/throbber-inactive.png');
     background-position: 100% center;
     background-repeat: no-repeat;
+
+    &.ui-autocomplete-loading {
+      background-image: url('../img/throbber-active.gif');
+      background-position: 100% center;
+    }
   }
 
   &[dir="rtl"] input.form-linkit-autocomplete {
     background-position: 0 center;
-  }
 
-  input.form-linkit-autocomplete.ui-autocomplete-loading {
-    background-image: url(../img/throbber-active.gif);
-    background-position: 100% center;
-  }
-
-  &[dir="rtl"] input.form-linkit-autocomplete.ui-autocomplete-loading {
-    background-position: 0 center;
+    &.ui-autocomplete-loading {
+      background-position: 0 center;
+    }
   }
 }
 

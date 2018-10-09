@@ -2,7 +2,6 @@
 
 namespace Drupal\stanford_media\Plugin\MediaEmbedDialog;
 
-use Drupal\Component\Serialization\Json;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -274,10 +273,9 @@ class Image extends MediaEmbedDialogBase {
       'data-entity-substitution',
     ];
 
-
     $form['attributes'][MediaEmbedDialogInterface::SETTINGS_KEY]['linkit']['href_dirty_check'] = [
       '#type' => 'hidden',
-      '#default_value' => isset($input['href']) ? $linkit_input['href'] : '',
+      '#default_value' => $linkit_input['href'] ?: '',
     ];
 
     $form['attributes'][MediaEmbedDialogInterface::SETTINGS_KEY]['linkit']['href'] = $link_form;

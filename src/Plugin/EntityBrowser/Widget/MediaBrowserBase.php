@@ -101,10 +101,10 @@ abstract class MediaBrowserBase extends WidgetBase {
   /**
    * {@inheritdoc}
    */
-  public function getForm(array &$original_form, FormStateInterface $form_state, array $additional_widget_parameters) {
-    $form = parent::getForm($original_form, $form_state, $additional_widget_parameters);
+  public function getForm(array &$original_form, FormStateInterface $form_state, array $widget_params) {
+    $form = parent::getForm($original_form, $form_state, $widget_params);
     $original_form['#attributes']['class'][] = Html::cleanCssIdentifier($this->id());
-    $this->getEntityForm($form, $form_state, $additional_widget_parameters);
+    $this->getEntityForm($form, $form_state, $widget_params);
     return $form;
   }
 
@@ -140,10 +140,10 @@ abstract class MediaBrowserBase extends WidgetBase {
    *   Original form from getFrom().
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Form state object.
-   * @param array $additional_widget_parameters
+   * @param array $widget_params
    *   Additional parameters we dont need.
    */
-  protected function getEntityForm(array &$form, FormStateInterface $form_state, array $additional_widget_parameters) {
+  protected function getEntityForm(array &$form, FormStateInterface $form_state, array $widget_params) {
     if (isset($form['actions'])) {
       $form['actions']['#weight'] = 100;
     }

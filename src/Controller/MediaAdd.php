@@ -54,7 +54,7 @@ class MediaAdd extends EntityController {
   /**
    * {@inheritdoc}
    */
-  public function addPage($entity_type_id, $b = null, $c = null) {
+  public function addPage($entity_type_id) {
     $page = parent::addPage($entity_type_id);
     $bulk_bundles = [];
 

@@ -9,17 +9,22 @@ use Drupal\file\Entity\File;
 use Drupal\Core\Session\AccountProxyInterface;
 
 /**
- * @file
- * Contains \Drupal\stanford_media\MediaInfo.
+ * Service to save media field data into media entities.
+ *
+ * @package Drupal\stanford_media
  */
 class MediaFieldSave {
 
   /**
+   * Entity type manager service.
+   *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityTypeManager;
 
   /**
+   * Current user object.
+   *
    * @var \Drupal\Core\Session\AccountProxyInterface
    */
   protected $accountProxy;
@@ -28,7 +33,9 @@ class MediaFieldSave {
    * MediaFieldSave constructor.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_manager
+   *   Entity Manager service.
    * @param \Drupal\Core\Session\AccountProxyInterface $account_proxy
+   *   Current account.
    */
   public function __construct(EntityTypeManagerInterface $entity_manager, AccountProxyInterface $account_proxy) {
     $this->entityTypeManager = $entity_manager;
@@ -39,8 +46,10 @@ class MediaFieldSave {
    * Checks if a video already exists in the media browser.
    *
    * @param string $uri
+   *   Video url.
    *
    * @return string|null
+   *   Existing video url.
    */
   protected function videoExists($uri) {
     $select = Database::getConnection()
@@ -74,6 +83,10 @@ class MediaFieldSave {
    *   Managed file form element.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Submitted form state.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \Drupal\Core\Entity\EntityStorageException
    */
   public function saveFile(array $element, FormStateInterface $form_state) {
     $parents = $form_state->getTriggeringElement()['#array_parents'];
@@ -121,9 +134,9 @@ class MediaFieldSave {
 
           $source_field = $media_entity->getSource()
             ->getConfiguration()['source_field'];
-          // If we don't save file at this point Media entity creates another file
-          // entity with same uri for the thumbnail. That should probably be fixed
-          // in Media entity, but this workaround should work for now.
+          // If we don't save file at this point Media entity creates another
+          // file entity with same uri for the thumbnail. That should probably
+          // be fixed in Media entity, but this workaround should work for now.
           $media_entity->$source_field->entity->save();
           $media_entity->save();
         }
@@ -131,6 +144,18 @@ class MediaFieldSave {
     }
   }
 
+  /**
+   * Save the video to a media object.
+   *
+   * @param array $element
+   *   Video field form element.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Current form state.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \Drupal\Core\Entity\EntityStorageException
+   */
   public function saveVideo(array $element, FormStateInterface $form_state) {
     $parents = $form_state->getTriggeringElement()['#array_parents'];
     $button_key = array_pop($parents);
@@ -144,7 +169,7 @@ class MediaFieldSave {
 
       $media_bundle = 'video';
 
-      // Check if video is already in media browser
+      // Check if video is already in media browser.
       $video_data_uri = $this->videoExists($uri);
 
       // If the video doesn't already exist in the media browser, create it.
@@ -175,4 +200,5 @@ class MediaFieldSave {
       }
     }
   }
+
 }
