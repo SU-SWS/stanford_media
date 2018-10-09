@@ -172,19 +172,6 @@ class MediaFieldSave {
           ->create($media_data);
 
         $media_entity->save();
-
-        // TODO: use services to grab target id, then use entity_usage services.
-        // $video_data_entity_id = $video_data->getVideoTargetId($uri);
-        //$add_usage = \Drupal::service('entity_usage.usage');
-        //$add_usage->add(
-        //  $t_id,
-        //  $t_type,
-        //  $re_id,
-        //  $re_type,
-        //  $method = 'entity_reference',
-        //  $count = 1
-        //);
-
       }
     }
   }
