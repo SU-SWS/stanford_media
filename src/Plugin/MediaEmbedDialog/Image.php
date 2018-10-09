@@ -277,7 +277,7 @@ class Image extends MediaEmbedDialogBase {
 
     $form['attributes'][MediaEmbedDialogInterface::SETTINGS_KEY]['linkit']['href_dirty_check'] = [
       '#type' => 'hidden',
-      '#default_value' => isset($input['href']) ? $linkit_input['href'] : '',
+      '#default_value' => $linkit_input['href'] ?: '',
     ];
 
     $form['attributes'][MediaEmbedDialogInterface::SETTINGS_KEY]['linkit']['href'] = $link_form;

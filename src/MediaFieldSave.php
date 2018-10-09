@@ -28,7 +28,9 @@ class MediaFieldSave {
    * MediaFieldSave constructor.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_manager
+   *   Entity Manager service.
    * @param \Drupal\Core\Session\AccountProxyInterface $account_proxy
+   *   Current account.
    */
   public function __construct(EntityTypeManagerInterface $entity_manager, AccountProxyInterface $account_proxy) {
     $this->entityTypeManager = $entity_manager;
@@ -39,8 +41,10 @@ class MediaFieldSave {
    * Checks if a video already exists in the media browser.
    *
    * @param string $uri
+   *   Video url.
    *
    * @return string|null
+   *   Existing video url.
    */
   protected function videoExists($uri) {
     $select = Database::getConnection()

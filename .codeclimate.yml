@@ -75,7 +75,7 @@ plugins:
       UnusedFormalParameter:
         enabled: false
       Naming/ShortVariable:
-        enabled: true
+        enabled: false
     config:
       # https://phpmd.org/rules/index.html
       # The following sets include everything except the controversial set.
