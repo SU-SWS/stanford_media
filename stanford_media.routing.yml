@@ -4,7 +4,7 @@ stanford_media.bulk_upload:
     _form: '\Drupal\stanford_media\Form\BulkUpload'
     _title: 'Upload Files(s)'
   requirements:
-    _permission: 'administer media'
+    _custom_access: '\Drupal\stanford_media\Form\BulkUpload::access'
   options:
     _admin_route: TRUE
 
@@ -14,6 +14,6 @@ stanford_media.allowed_styles:
     _form: '\Drupal\stanford_media\Form\AllowedStyles'
     _title: 'Allowed Embedded Image Styles'
   requirements:
-    _permission: 'administer media'
+    _permission: 'administer media types'
   options:
     _admin_route: TRUE

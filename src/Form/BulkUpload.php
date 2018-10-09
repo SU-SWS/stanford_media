@@ -2,11 +2,13 @@
 
 namespace Drupal\stanford_media\Form;
 
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityTypeManager;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Render\Element;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Session\AccountProxy;
 use Drupal\Core\Url;
 use Drupal\dropzonejs\DropzoneJsUploadSave;
@@ -80,6 +82,24 @@ class BulkUpload extends FormBase {
     $this->dropzoneSave = $dropzone_save;
     $this->currentUser = $current_user;
     $this->messenger = $messenger;
+  }
+
+  /**
+   * Check if the given account has access.
+   *
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   Current user.
+   *
+   * @return \Drupal\Core\Access\AccessResultInterface
+   *   Access Result.
+   */
+  public function access(AccountInterface $account) {
+    foreach (array_keys($this->bundleSuggestion->getUploadBundles()) as $media_type) {
+      if ($account->hasPermission("create $media_type media")) {
+        return AccessResult::allowed();
+      }
+    }
+    return AccessResult::forbidden();
   }
 
   /**
