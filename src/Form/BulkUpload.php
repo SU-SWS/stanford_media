@@ -257,7 +257,7 @@ class BulkUpload extends FormBase {
 
         if ($media_type) {
           // Validate the media bundle allows for the size of file.
-          $additional_validators = [
+          $validators = [
             'file_validate_size' => [
               $this->bundleSuggestion->getMaxFileSizeBundle($media_type),
               0,
@@ -270,7 +270,7 @@ class BulkUpload extends FormBase {
             $this->bundleSuggestion->getUploadPath($media_type),
             $this->bundleSuggestion->getAllExtensions(),
             $this->currentUser,
-            $additional_validators
+            $validators
           );
         }
       }

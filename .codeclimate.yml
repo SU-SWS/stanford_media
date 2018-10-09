@@ -5,6 +5,8 @@ checks:
   method-complexity:
     config:
       threshold: 10
+  argument-count:
+    enabled: false
 
 plugins:
   # https://docs.codeclimate.com/docs/eslint

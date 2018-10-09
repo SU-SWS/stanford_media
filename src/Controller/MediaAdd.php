@@ -46,8 +46,8 @@ class MediaAdd extends EntityController {
   /**
    * {@inheritdoc}
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, EntityTypeBundleInfoInterface $entity_type_bundle_info, EntityRepositoryInterface $entity_repository, RendererInterface $renderer, TranslationInterface $string_translation, UrlGeneratorInterface $url_generator, BundleSuggestion $bundle_suggestion) {
-    parent::__construct($entity_type_manager, $entity_type_bundle_info, $entity_repository, $renderer, $string_translation, $url_generator);
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, EntityTypeBundleInfoInterface $bundle_info, EntityRepositoryInterface $entity_repository, RendererInterface $renderer, TranslationInterface $string_translation, UrlGeneratorInterface $url_generator, BundleSuggestion $bundle_suggestion) {
+    parent::__construct($entity_type_manager, $bundle_info, $entity_repository, $renderer, $string_translation, $url_generator);
     $this->bundleSuggestion = $bundle_suggestion;
   }
 

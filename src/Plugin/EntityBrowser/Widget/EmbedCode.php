@@ -86,8 +86,8 @@ class EmbedCode extends MediaBrowserBase {
   /**
    * {@inheritdoc}
    */
-  public function getForm(array &$original_form, FormStateInterface $form_state, array $additional_widget_parameters) {
-    $form = parent::getForm($original_form, $form_state, $additional_widget_parameters);
+  public function getForm(array &$original_form, FormStateInterface $form_state, array $widget_params) {
+    $form = parent::getForm($original_form, $form_state, $widget_params);
     $providers = $this->videoProvider->getProvidersOptionList();
     /** @var \Drupal\Core\StringTranslation\TranslatableMarkup $provider */
     foreach ($providers as &$provider) {

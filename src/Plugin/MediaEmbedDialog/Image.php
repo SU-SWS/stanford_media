@@ -124,8 +124,8 @@ class Image extends MediaEmbedDialogBase {
       $caption_field['#format'] = 'minimal_html';
       unset($caption_field['#element_validate']);
 
-      $allowed_format_config = $this->configFactory->get('stanford_media.allowed_caption_formats');
-      if ($allowed_formats = $allowed_format_config->get('allowed_formats')) {
+      $format_config = $this->configFactory->get('stanford_media.allowed_caption_formats');
+      if ($allowed_formats = $format_config->get('allowed_formats')) {
         $caption_field['#allowed_formats'] = $allowed_formats;
       }
 
