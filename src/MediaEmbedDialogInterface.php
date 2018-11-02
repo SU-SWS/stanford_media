@@ -88,6 +88,6 @@ interface MediaEmbedDialogInterface {
    * @return array
    *   Altered render array.
    */
-  public static function preRender(array $element);
+  public function preRender(array $element);
 
 }

@@ -2,13 +2,9 @@
 
 namespace Drupal\stanford_media\Plugin\MediaEmbedDialog;
 
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\media\MediaInterface;
-use Drupal\stanford_media\MediaEmbedDialogBase;
 use Drupal\stanford_media\MediaEmbedDialogInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\video_embed_field\ProviderManager;
 
 /**
  * Changes embedded video media items with vimeo provider.
@@ -18,35 +14,7 @@ use Drupal\video_embed_field\ProviderManager;
  *   media_type = "video"
  * )
  */
-class VimeoVideo extends MediaEmbedDialogBase {
-
-  /**
-   * Video manager to validate the url matches an available provider.
-   *
-   * @var \Drupal\video_embed_field\ProviderManager
-   */
-  protected $videoManager;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static(
-      $configuration,
-      $plugin_id,
-      $plugin_definition,
-      $container->get('entity_type.manager'),
-      $container->get('video_embed_field.provider_manager')
-    );
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function __construct($configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_manager, ProviderManager $video_manager) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_manager);
-    $this->videoManager = $video_manager;
-  }
+class VimeoVideo extends VideoEmbedBase {
 
   /**
    * {@inheritdoc}
@@ -58,6 +26,7 @@ class VimeoVideo extends MediaEmbedDialogBase {
       'title' => 1,
       'byline' => 1,
       'color' => '',
+      'class' => '',
     ];
   }
 
@@ -138,14 +107,19 @@ class VimeoVideo extends MediaEmbedDialogBase {
   /**
    * {@inheritdoc}
    */
-  public static function preRender(array $element) {
+  public function preRender(array $element) {
     if (!empty($element['#display_settings'])) {
       $field = static::getMediaSourceField($element['#media']);
       foreach ($element['#display_settings'] as $key => $value) {
-        if ($key == 'color' && empty($value)) {
+        if ($key == 'color' || $key == 'class' || empty($value)) {
           continue;
         }
         $element[$field][0]['children']['#query'][$key] = $value;
+      }
+
+      // Add the class to the container instead of the iframe.
+      if (!empty($element['#display_settings']['class'])) {
+        $element[$field]['#attributes']['class'][] = $element['#display_settings']['class'];
       }
     }
     return $element;

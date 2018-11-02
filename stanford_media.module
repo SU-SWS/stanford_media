@@ -215,7 +215,7 @@ function stanford_media_entity_embed_alter(array &$build, EntityInterface $entit
 
     if ($plugin->isApplicable()) {
       $build['entity']['#display_settings'] = $context['data-entity-embed-display-settings'];
-      $build['entity']['#pre_render'][] = [get_class($plugin), 'preRender'];
+      $build['entity']['#pre_render'][] = [$plugin, 'preRender'];
       $plugin->embedAlter($build, $entity, $context);
     }
   }
@@ -282,4 +282,12 @@ function stanford_media_save_video_media(array $element, FormStateInterface $for
 function stanford_media_save_file_managed_media(array $element, FormStateInterface $form_state) {
   \Drupal::service('stanford_media.field_save')
     ->saveFile($element, $form_state);
+}
+
+/**
+ * Implements hook_ckeditor_css_alter().
+ */
+function stanford_media_ckeditor_css_alter(array &$css, Editor $editor) {
+  // Add special styles to wysiwyg embeded videos.
+  $css[] = drupal_get_path('module','stanford_media') . '/css/stanford_media.video_preview.css';
 }

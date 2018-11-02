@@ -338,7 +338,7 @@ class Image extends MediaEmbedDialogBase {
   /**
    * {@inheritdoc}
    */
-  public static function preRender(array $element) {
+  public function preRender(array $element) {
     $source_field = static::getMediaSourceField($element['#media']);
 
     if (!empty($element['#display_settings']['alt_text'])) {

@@ -1,0 +1,4 @@
+// Disables the iframe so that a user can double click on the media entity and edit it's properties.
+.media--type-video iframe {
+  pointer-events: none;
+}
