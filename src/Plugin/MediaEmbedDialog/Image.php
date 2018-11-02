@@ -84,7 +84,6 @@ class Image extends MediaEmbedDialogBase {
       'linkit' => [],
     ];
     return $input + parent::getDefaultInput();
-
   }
 
   /**
@@ -363,7 +362,11 @@ class Image extends MediaEmbedDialogBase {
     else {
       unset($element[$source_field][0]['#image_style']);
     }
-
+    // Caption is provided in another caption entry from the wysiwyg.
+    $field_map = $element['#media']->getSource()->getFieldMap();
+    if (isset($field_map['caption'])) {
+      unset($element[$field_map['caption']]);
+    }
     return $element;
   }
 
