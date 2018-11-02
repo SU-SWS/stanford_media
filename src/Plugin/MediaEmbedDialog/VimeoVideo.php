@@ -2,6 +2,7 @@
 
 namespace Drupal\stanford_media\Plugin\MediaEmbedDialog;
 
+use Drupal\Component\Utility\Html;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\media\MediaInterface;
 use Drupal\stanford_media\MediaEmbedDialogInterface;
@@ -119,7 +120,9 @@ class VimeoVideo extends VideoEmbedBase {
 
       // Add the class to the container instead of the iframe.
       if (!empty($element['#display_settings']['class'])) {
-        $element[$field]['#attributes']['class'][] = $element['#display_settings']['class'];
+        foreach (explode(' ', $element['#display_settings']['class']) as $class) {
+          $element[$field]['#attributes']['class'][] = Html::cleanCssIdentifier($class);
+        }
       }
     }
     return $element;
