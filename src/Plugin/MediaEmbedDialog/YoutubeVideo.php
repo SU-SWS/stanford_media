@@ -2,9 +2,7 @@
 
 namespace Drupal\stanford_media\Plugin\MediaEmbedDialog;
 
-use Drupal\Component\Utility\Html;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\media\MediaInterface;
 use Drupal\stanford_media\MediaEmbedDialogInterface;
 
 /**
@@ -12,7 +10,8 @@ use Drupal\stanford_media\MediaEmbedDialogInterface;
  *
  * @MediaEmbedDialog(
  *   id = "youtube_video",
- *   media_type = "video"
+ *   media_type = "video",
+ *   video_provider = "youtube"
  * )
  */
 class YoutubeVideo extends VideoEmbedBase {
@@ -21,31 +20,13 @@ class YoutubeVideo extends VideoEmbedBase {
    * {@inheritdoc}
    */
   public function getDefaultInput() {
-    return [
+    $config = parent::getDefaultInput();
+    $config += [
       'start' => 0,
-      'autoplay' => 0,
       'rel' => 0,
       'showinfo' => 1,
-      'loop' => 1,
-      'class' => '',
     ];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function isApplicable() {
-    if ($this->entity instanceof MediaInterface && $this->entity->bundle() == 'video') {
-
-      $source_field = static::getMediaSourceField($this->entity);
-      $url = $this->entity->get($source_field)->getValue()[0]['value'];
-      $provider = $this->videoManager->loadProviderFromInput($url);
-
-      if ($provider->getPluginId() == 'youtube') {
-        return TRUE;
-      }
-    }
-    return FALSE;
+    return $config;
   }
 
   /**
@@ -157,15 +138,8 @@ class YoutubeVideo extends VideoEmbedBase {
         }
         $element[$field][0]['children']['#query'][$key] = $value;
       }
-
-      // Add the class to the container instead of the iframe.
-      if (!empty($element['#display_settings']['class'])) {
-        foreach (explode(' ', $element['#display_settings']['class']) as $class) {
-          $element[$field][0]['#attributes']['class'][] = Html::cleanCssIdentifier($class);
-        }
-      }
     }
-    return $element;
+    return parent::preRender($element);
   }
 
 }

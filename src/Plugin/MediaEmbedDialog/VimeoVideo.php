@@ -2,9 +2,7 @@
 
 namespace Drupal\stanford_media\Plugin\MediaEmbedDialog;
 
-use Drupal\Component\Utility\Html;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\media\MediaInterface;
 use Drupal\stanford_media\MediaEmbedDialogInterface;
 
 /**
@@ -12,7 +10,8 @@ use Drupal\stanford_media\MediaEmbedDialogInterface;
  *
  * @MediaEmbedDialog(
  *   id = "vimeo_video",
- *   media_type = "video"
+ *   media_type = "video",
+ *   video_provider = "vimeo"
  * )
  */
 class VimeoVideo extends VideoEmbedBase {
@@ -21,30 +20,13 @@ class VimeoVideo extends VideoEmbedBase {
    * {@inheritdoc}
    */
   public function getDefaultInput() {
-    return [
-      'autoplay' => 0,
-      'loop' => 0,
+    $config = parent::getDefaultInput();
+    $config += [
       'title' => 1,
       'byline' => 1,
       'color' => '',
-      'class' => '',
     ];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function isApplicable() {
-    if ($this->entity instanceof MediaInterface && $this->entity->bundle() == 'video') {
-      $source_field = static::getMediaSourceField($this->entity);
-      $url = $this->entity->get($source_field)->getValue()[0]['value'];
-      $provider = $this->videoManager->loadProviderFromInput($url);
-
-      if ($provider->getPluginId() == 'vimeo') {
-        return TRUE;
-      }
-    }
-    return FALSE;
+    return $config;
   }
 
   /**
@@ -117,15 +99,8 @@ class VimeoVideo extends VideoEmbedBase {
         }
         $element[$field][0]['children']['#query'][$key] = $value;
       }
-
-      // Add the class to the container instead of the iframe.
-      if (!empty($element['#display_settings']['class'])) {
-        foreach (explode(' ', $element['#display_settings']['class']) as $class) {
-          $element[$field][0]['#attributes']['class'][] = Html::cleanCssIdentifier($class);
-        }
-      }
     }
-    return $element;
+    return parent::preRender($element);
   }
 
 }
