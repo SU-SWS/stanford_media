@@ -6,6 +6,8 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\linkit\Element\Linkit;
+use Drupal\media\Entity\Media;
+use Drupal\media\Entity\MediaType;
 use Drupal\media\MediaInterface;
 use Drupal\stanford_media\MediaEmbedDialogBase;
 use Drupal\stanford_media\MediaEmbedDialogInterface;
@@ -338,7 +340,9 @@ class Image extends MediaEmbedDialogBase {
    * {@inheritdoc}
    */
   public function preRender(array $element) {
-    $source_field = static::getMediaSourceField($element['#media']);
+    /** @var MediaInterface $entity */
+    $entity = $element['#media'];
+    $source_field = static::getMediaSourceField($entity);
 
     if (!empty($element['#display_settings']['alt_text'])) {
       $element[$source_field][0]['#item_attributes']['alt'] = $element['#display_settings']['alt_text'];
@@ -362,11 +366,14 @@ class Image extends MediaEmbedDialogBase {
     else {
       unset($element[$source_field][0]['#image_style']);
     }
+
+    $media_type = MediaType::load($entity->bundle());
     // Caption is provided in another caption entry from the wysiwyg.
-    $field_map = $element['#media']->getSource()->getFieldMap();
+    $field_map = $media_type->getFieldMap();
     if (isset($field_map['caption'])) {
       unset($element[$field_map['caption']]);
     }
+
     return $element;
   }
 
