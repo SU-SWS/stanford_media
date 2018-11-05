@@ -122,6 +122,7 @@ class Image extends MediaEmbedDialogBase {
       $caption_field = $form['attributes']['data-caption'];
       $caption_field['#type'] = 'text_format';
       $caption_field['#format'] = 'minimal_html';
+      $caption_field['#description'] = $this->t('Enter information about this image to credit owner or to provide additional context.');
       unset($caption_field['#element_validate']);
 
       $format_config = $this->configFactory->get('stanford_media.allowed_caption_formats');
