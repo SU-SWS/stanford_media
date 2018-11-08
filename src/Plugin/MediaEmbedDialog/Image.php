@@ -6,7 +6,6 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\linkit\Element\Linkit;
-use Drupal\media\Entity\Media;
 use Drupal\media\Entity\MediaType;
 use Drupal\media\MediaInterface;
 use Drupal\stanford_media\MediaEmbedDialogBase;
@@ -344,6 +343,7 @@ class Image extends MediaEmbedDialogBase {
     /** @var MediaInterface $entity */
     $entity = $element['#media'];
     $source_field = static::getMediaSourceField($entity);
+
 
     if (!empty($element['#display_settings']['alt_text'])) {
       $element[$source_field][0]['#item_attributes']['alt'] = $element['#display_settings']['alt_text'];
