@@ -340,10 +340,9 @@ class Image extends MediaEmbedDialogBase {
    * {@inheritdoc}
    */
   public function preRender(array $element) {
-    /** @var MediaInterface $entity */
+    /** @var \Drupal\media\MediaInterface $entity */
     $entity = $element['#media'];
     $source_field = static::getMediaSourceField($entity);
-
 
     if (!empty($element['#display_settings']['alt_text'])) {
       $element[$source_field][0]['#item_attributes']['alt'] = $element['#display_settings']['alt_text'];
@@ -374,7 +373,6 @@ class Image extends MediaEmbedDialogBase {
     if (isset($field_map['caption'])) {
       unset($element[$field_map['caption']]);
     }
-
     return $element;
   }
 
