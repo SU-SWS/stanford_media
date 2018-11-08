@@ -15,6 +15,7 @@ use Drupal\dropzonejs\DropzoneJsUploadSave;
 use Drupal\file\Entity\File;
 use Drupal\inline_entity_form\ElementSubmit;
 use Drupal\media\Entity\Media;
+use Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationManager;
 use Drupal\stanford_media\BundleSuggestion;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -61,6 +62,13 @@ class BulkUpload extends FormBase {
   protected $messenger;
 
   /**
+   * Media Duplicate Validation manager service.
+   *
+   * @var \Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationManager
+   */
+  protected $duplicationManager;
+
+  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
@@ -69,19 +77,21 @@ class BulkUpload extends FormBase {
       $container->get('stanford_media.bundle_suggestion'),
       $container->get('dropzonejs.upload_save'),
       $container->get('current_user'),
-      $container->get('messenger')
+      $container->get('messenger'),
+      $container->get('plugin.manager.media_duplicate_validation')
     );
   }
 
   /**
    * {@inheritdoc}
    */
-  public function __construct(EntityTypeManager $entity_manager, BundleSuggestion $bundle_suggestion, DropzoneJsUploadSave $dropzone_save, AccountProxy $current_user, MessengerInterface $messenger) {
+  public function __construct(EntityTypeManager $entity_manager, BundleSuggestion $bundle_suggestion, DropzoneJsUploadSave $dropzone_save, AccountProxy $current_user, MessengerInterface $messenger, MediaDuplicateValidationManager $duplication_manager) {
     $this->entityTypeManager = $entity_manager;
     $this->bundleSuggestion = $bundle_suggestion;
     $this->dropzoneSave = $dropzone_save;
     $this->currentUser = $current_user;
     $this->messenger = $messenger;
+    $this->duplicationManager = $duplication_manager;
   }
 
   /**
@@ -114,7 +124,7 @@ class BulkUpload extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $save_step = TRUE;
-
+dpm($form_state);
     // If files have already been uploaded, we don't want to allow upload again.
     if (empty($form_state->get(['dropzonejs', 'media']))) {
       $form['upload'] = [
@@ -156,6 +166,7 @@ class BulkUpload extends FormBase {
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
     parent::validateForm($form, $form_state);
+    $this->validateDuplicates($form, $form_state);
 
     // Dont create the media entities if any errors exist.
     if ($form_state::hasAnyErrors()) {
@@ -175,6 +186,29 @@ class BulkUpload extends FormBase {
         // in Media entity, but this workaround should work for now.
         $media_entity->$source_field->entity->save();
         $media_entity->save();
+      }
+    }
+  }
+
+  /**
+   * Check if the uploaded files are duplicates of existing items.
+   *
+   * @param array $form
+   *   Complete form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Current form state.
+   */
+  protected function validateDuplicates(array &$form, FormStateInterface $form_state) {
+    $files = $form_state->getValue(['upload', 'uploaded_files']);
+
+    foreach ($this->duplicationManager->getDefinitions() as $definition) {
+      /** @var \Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationInterface $plugin */
+      $plugin = $this->duplicationManager->createInstance($definition['id']);
+
+      foreach($files as $file){
+        if(!$plugin->isUnique($file['path'])){
+          $form_state->setError($form['upload'], $this->t('This file already exists'));
+        }
       }
     }
   }
