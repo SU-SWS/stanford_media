@@ -357,6 +357,27 @@ class Image extends MediaEmbedDialogBase {
       unset($element['#display_settings']['linkit']['href']);
       $element[$source_field][0]['#attributes'] = $element['#display_settings']['linkit'];
     }
+    $this->setElementImageStyle($element);
+
+    $media_type = MediaType::load($entity->bundle());
+    // Caption is provided in another caption entry from the wysiwyg.
+    $field_map = $media_type->getFieldMap();
+    if (isset($field_map['caption'])) {
+      unset($element[$field_map['caption']]);
+    }
+    return $element;
+  }
+
+  /**
+   * Set the image style as appropriate for the render element.
+   *
+   * @param array $element
+   *   Render array element.
+   */
+  protected function setElementImageStyle(array &$element){
+    /** @var \Drupal\media\MediaInterface $entity */
+    $entity = $element['#media'];
+    $source_field = static::getMediaSourceField($entity);
 
     if (!empty($element['#display_settings']['image_style'])) {
       $element[$source_field]['#formatter'] = 'image';
@@ -366,14 +387,6 @@ class Image extends MediaEmbedDialogBase {
     else {
       unset($element[$source_field][0]['#image_style']);
     }
-
-    $media_type = MediaType::load($entity->bundle());
-    // Caption is provided in another caption entry from the wysiwyg.
-    $field_map = $media_type->getFieldMap();
-    if (isset($field_map['caption'])) {
-      unset($element[$field_map['caption']]);
-    }
-    return $element;
   }
 
 }
