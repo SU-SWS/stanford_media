@@ -1,0 +1,7 @@
+name: 'media_duplicate_validation'
+type: module
+description: 'Media Validation plugins to help prevent duplication of media items'
+core: 8.x
+package: 'Custom'
+dependencies:
+  - media
