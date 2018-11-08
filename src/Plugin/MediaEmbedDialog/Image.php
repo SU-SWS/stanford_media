@@ -309,11 +309,7 @@ class Image extends MediaEmbedDialogBase {
       'data-entity-embed-display-settings',
     ], $settings);
 
-    $linkit_key = [
-      'attributes',
-      'data-entity-embed-display-settings',
-      'linkit',
-    ];
+    $linkit_key = ['attributes', 'data-entity-embed-display-settings', 'linkit'];
     $linkit_settings = $form_state->getValue($linkit_key);
     $href = $linkit_settings['href'];
     // No link: unset values to clean up the embed code.
