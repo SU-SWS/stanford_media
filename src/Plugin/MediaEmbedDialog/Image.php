@@ -357,7 +357,7 @@ class Image extends MediaEmbedDialogBase {
       unset($element['#display_settings']['linkit']['href']);
       $element[$source_field][0]['#attributes'] = $element['#display_settings']['linkit'];
     }
-    $this->setElementImageStyle($element);
+    $this->setElementImageStyle($element, $source_field);
 
     $media_type = MediaType::load($entity->bundle());
     // Caption is provided in another caption entry from the wysiwyg.
@@ -373,12 +373,10 @@ class Image extends MediaEmbedDialogBase {
    *
    * @param array $element
    *   Render array element.
+   * @param string $source_field
+   *   Source field machine name.
    */
-  protected function setElementImageStyle(array &$element){
-    /** @var \Drupal\media\MediaInterface $entity */
-    $entity = $element['#media'];
-    $source_field = static::getMediaSourceField($entity);
-
+  protected function setElementImageStyle(array &$element, $source_field) {
     if (!empty($element['#display_settings']['image_style'])) {
       $element[$source_field]['#formatter'] = 'image';
       $element[$source_field][0]['#theme'] = 'image_formatter';;
