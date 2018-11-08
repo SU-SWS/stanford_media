@@ -36,3 +36,9 @@ dropzonejs:
   css:
     component:
       css/stanford_media.dropzonejs.css: {}
+
+video_preview:
+  version: VERSION
+  css:
+    component:
+      css/stanford_media.video_preview.css: {}

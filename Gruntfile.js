@@ -80,14 +80,17 @@ module.exports = function(grunt) {
         precision: 10
       },
       dist: {
-        files: {
-          // Compiled styles.
-          'css/stanford_media.admin.css':              'scss/stanford_media.admin.scss',
-          'css/stanford_media.multi_step.css':         'scss/stanford_media.multi_step.scss',
-          'css/stanford_media.dropzonejs.css':         'scss/stanford_media.dropzonejs.scss',
-          'css/stanford_media.embed.css':              'scss/stanford_media.embed.scss',
-          'css/stanford_media.autocomplete.css':       'scss/stanford_media.autocomplete.scss'
-        }
+        files: [{
+          expand: true,
+          cwd: 'scss',
+          src: ['**/[a-z]*.scss'],
+          dest: 'css',
+          ext: '.css',
+          extDot: 'last',
+          rename: function(dest, src) {
+            return dest + '/' + src.replace('scss', 'css');
+          }
+        }]
       }
     },
     drush: {
