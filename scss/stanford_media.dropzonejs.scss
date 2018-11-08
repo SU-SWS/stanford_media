@@ -11,7 +11,7 @@
   }
 
   img,
-  iframe {
+  iframe:not(.cke_wysiwyg_frame) {
     max-width: 300px;
     max-height: 200px;
     height: auto;

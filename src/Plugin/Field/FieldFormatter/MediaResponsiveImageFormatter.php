@@ -37,7 +37,7 @@ class MediaResponsiveImageFormatter extends MediaFormatter {
   /**
    * {@inheritdoc}
    */
-  public static function preRender($element) {
+  public function preRender($element) {
     $element['field_media_image']['#formatter'] = 'responsive_image';
     foreach (Element::children($element['field_media_image']) as $delta) {
       $item = &$element['field_media_image'][$delta];

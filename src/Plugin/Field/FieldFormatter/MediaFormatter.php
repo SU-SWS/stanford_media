@@ -100,7 +100,7 @@ abstract class MediaFormatter extends EntityReferenceEntityFormatter {
 
     foreach ($elements as &$element) {
       $element['#stanford_media_image_style'] = $style;
-      $element['#pre_render'][] = [static::class, 'preRender'];
+      $element['#pre_render'][] = [$this, 'preRender'];
 
       if ($this->getSetting('link')) {
         $element['#stanford_media_url'] = $parent->toUrl();
@@ -119,7 +119,7 @@ abstract class MediaFormatter extends EntityReferenceEntityFormatter {
    * @return array
    *   Altered render array.
    */
-  public static function preRender($element) {
+  public function preRender($element) {
     // Do some changes here.
     return $element;
   }
