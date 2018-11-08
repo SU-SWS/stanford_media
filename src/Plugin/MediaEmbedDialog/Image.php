@@ -6,6 +6,7 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\linkit\Element\Linkit;
+use Drupal\media\Entity\MediaType;
 use Drupal\media\MediaInterface;
 use Drupal\stanford_media\MediaEmbedDialogBase;
 use Drupal\stanford_media\MediaEmbedDialogInterface;
@@ -84,7 +85,6 @@ class Image extends MediaEmbedDialogBase {
       'linkit' => [],
     ];
     return $input + parent::getDefaultInput();
-
   }
 
   /**
@@ -121,6 +121,7 @@ class Image extends MediaEmbedDialogBase {
       $caption_field = $form['attributes']['data-caption'];
       $caption_field['#type'] = 'text_format';
       $caption_field['#format'] = 'minimal_html';
+      $caption_field['#description'] = $this->t('Enter information about this image to credit owner or to provide additional context.');
       unset($caption_field['#element_validate']);
 
       $format_config = $this->configFactory->get('stanford_media.allowed_caption_formats');
@@ -308,11 +309,7 @@ class Image extends MediaEmbedDialogBase {
       'data-entity-embed-display-settings',
     ], $settings);
 
-    $linkit_key = [
-      'attributes',
-      'data-entity-embed-display-settings',
-      'linkit',
-    ];
+    $linkit_key = ['attributes', 'data-entity-embed-display-settings', 'linkit'];
     $linkit_settings = $form_state->getValue($linkit_key);
     $href = $linkit_settings['href'];
     // No link: unset values to clean up the embed code.
@@ -339,7 +336,9 @@ class Image extends MediaEmbedDialogBase {
    * {@inheritdoc}
    */
   public function preRender(array $element) {
-    $source_field = static::getMediaSourceField($element['#media']);
+    /** @var \Drupal\media\MediaInterface $entity */
+    $entity = $element['#media'];
+    $source_field = static::getMediaSourceField($entity);
 
     if (!empty($element['#display_settings']['alt_text'])) {
       $element[$source_field][0]['#item_attributes']['alt'] = $element['#display_settings']['alt_text'];
@@ -354,7 +353,26 @@ class Image extends MediaEmbedDialogBase {
       unset($element['#display_settings']['linkit']['href']);
       $element[$source_field][0]['#attributes'] = $element['#display_settings']['linkit'];
     }
+    $this->setElementImageStyle($element, $source_field);
 
+    $media_type = MediaType::load($entity->bundle());
+    // Caption is provided in another caption entry from the wysiwyg.
+    $field_map = $media_type->getFieldMap();
+    if (isset($field_map['caption'])) {
+      unset($element[$field_map['caption']]);
+    }
+    return $element;
+  }
+
+  /**
+   * Set the image style as appropriate for the render element.
+   *
+   * @param array $element
+   *   Render array element.
+   * @param string $source_field
+   *   Source field machine name.
+   */
+  protected function setElementImageStyle(array &$element, $source_field) {
     if (!empty($element['#display_settings']['image_style'])) {
       $element[$source_field]['#formatter'] = 'image';
       $element[$source_field][0]['#theme'] = 'image_formatter';;
@@ -363,8 +381,6 @@ class Image extends MediaEmbedDialogBase {
     else {
       unset($element[$source_field][0]['#image_style']);
     }
-
-    return $element;
   }
 
 }
