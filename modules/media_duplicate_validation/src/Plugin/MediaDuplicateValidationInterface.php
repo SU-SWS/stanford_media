@@ -20,7 +20,7 @@ interface MediaDuplicateValidationInterface {
    * @return bool
    *   If the file is unique as defined by the plugin.
    */
-  public function isUniqueFile($uri);
+  public function isUnique($uri);
 
   /**
    * Find any similar media entities to the given file uri.
@@ -43,5 +43,12 @@ interface MediaDuplicateValidationInterface {
    *   Media entity that has been saved.
    */
   public function mediaSave(MediaInterface $entity);
+
+  /**
+   * @param \Drupal\media\MediaInterface $entity
+   *
+   * @return mixed
+   */
+  public function mediaDelete(MediaInterface $entity);
 
 }

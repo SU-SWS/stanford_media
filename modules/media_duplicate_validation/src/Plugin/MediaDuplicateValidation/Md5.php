@@ -19,15 +19,21 @@ class Md5 extends MediaDuplicateValidationBase {
   /**
    * {@inheritdoc}
    */
-  public function isUniqueFile($uri) {
+  public function isUnique($uri) {
     $md5 = md5(file_get_contents($uri));
     $existing_md5s = $this->getExistingMd5();
 
     return !in_array($md5, $existing_md5s);
   }
 
+  /**
+   * Get existing md5 data.
+   *
+   * @return array
+   *   Keyed array of existing media md5 data.
+   */
   protected function getExistingMd5() {
-    if ($cache = $this->cache->get('media_duplicate_validation:md5')) {
+    if ($cache = $this->cache->get($this->getCacheId())) {
       return $cache->data;
     }
 
@@ -42,7 +48,7 @@ class Md5 extends MediaDuplicateValidationBase {
         $md5s[$media->id()] = md5(file_get_contents($file->getFileUri()));
       }
     }
-    $this->cache->set('media_duplicate_validation:md5', $md5s);
+    $this->cache->set($this->getCacheId(), $md5s);
     return $md5s;
   }
 
@@ -50,7 +56,12 @@ class Md5 extends MediaDuplicateValidationBase {
    * {@inheritdoc}
    */
   public function getSimilarItems($uri) {
-    // TODO: Implement getSimilarItems() method.
+    $md5 = md5(file_get_contents($uri));
+    $existing_md5s = $this->getExistingMd5();
+    if ($media_id = array_search($md5, $existing_md5s)) {
+      return [Media::load($media_id)];
+    }
+    return [];
   }
 
   /**
@@ -58,7 +69,7 @@ class Md5 extends MediaDuplicateValidationBase {
    */
   public function mediaSave(MediaInterface $entity) {
     $md5s = [];
-    if ($cache = $this->cache->get('media_duplicate_validation:md5')) {
+    if ($cache = $this->cache->get($this->getCacheId())) {
       $md5s = $cache->data;
     }
 
@@ -67,7 +78,7 @@ class Md5 extends MediaDuplicateValidationBase {
       $md5s[$entity->id()] = md5(file_get_contents($file->getFileUri()));
     }
 
-    $this->cache->set('media_duplicate_validation:md5', $md5s);
+    $this->cache->set($this->getCacheId(), $md5s);
   }
 
 }

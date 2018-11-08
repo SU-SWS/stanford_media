@@ -8,7 +8,7 @@ use Drupal\media\MediaInterface;
 use Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationBase;
 
 /**
- * Class Md5
+ * Class ColorMean.
  *
  * @MediaDuplicateValidation(
  *   id = "color_mean"
@@ -21,34 +21,80 @@ class ColorMean extends MediaDuplicateValidationBase {
   /**
    * {@inheritdoc}
    */
-  public function isUniqueFile($uri) {
+  public function isUnique($uri) {
     if (!($image_mean = $this->getColorMean($uri))) {
       return TRUE;
     }
+    return empty($this->getSimilarItems($uri));
+  }
 
-    $means = [];
-    if ($cache = $this->cache->get('media_duplicate_validation:color_mean')) {
-      $means = $cache->data;
+  /**
+   * Get the configured threshold that indicates images are similar.
+   *
+   * @return int
+   *   Numerical difference of images.
+   */
+  public function getThreshold() {
+    return self::THRESHOLD;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getSimilarItems($uri) {
+    if (!($image_mean = $this->getColorMean($uri))) {
+      return [];
     }
 
-    foreach ($means as $mean) {
+    $similar_media = [];
+
+    foreach ($this->getExistingMeans() as $media_id => $mean) {
       $hammeringDistance = 0;
       for ($x = 0; $x < 64; $x++) {
         if ($image_mean[$x] != $mean[$x]) {
           $hammeringDistance++;
         }
       }
-      if ($hammeringDistance > self::THRESHOLD) {
-        return FALSE;
+      if ($hammeringDistance < self::THRESHOLD) {
+        $similar_media[$media_id] = Media::load($media_id);
       }
     }
-    return TRUE;
+
+    return array_filter($similar_media);
   }
 
   /**
-   * @param $uri
+   * Get existing media image data.
+   *
+   * @return array
+   *   Keyed array of color mean data.
+   */
+  protected function getExistingMeans() {
+    if (($cache = $this->cache->get($this->getCacheId())) && !empty($cache->data)) {
+      return $cache->data;
+    }
+    $means = [];
+    /** @var \Drupal\media\MediaInterface $media */
+    foreach (Media::loadMultiple() as $media) {
+      $fid = $media->getSource()->getSourceFieldValue($media);
+      if ($file = File::load($fid)) {
+        if ($color_mean = $this->getColorMean($file->getFileUri())) {
+          $means[$media->id()] = $color_mean;
+        }
+      }
+    }
+    $this->cache->set($this->getCacheId(), $means);
+    return $means;
+  }
+
+  /**
+   * Get the array of data from the provided image URI.
+   *
+   * @param string $uri
+   *   Image path.
    *
    * @return array|bool
+   *   Array of color data or false if its not an image.
    */
   protected function getColorMean($uri) {
     $image = $this->createImage($uri);
@@ -62,37 +108,11 @@ class ColorMean extends MediaDuplicateValidationBase {
   }
 
   /**
-   * {@inheritdoc}
-   */
-  public function getSimilarItems($uri) {
-    if (!($image_mean = $this->getColorMean($uri))) {
-      return [];
-    }
-
-    $similar_media = [];
-    $means = [];
-    if ($cache = $this->cache->get('media_duplicate_validation:color_mean')) {
-      $means = $cache->data;
-    }
-
-    foreach ($means as $media_id => $mean) {
-      $hammeringDistance = 0;
-      for ($x = 0; $x < 64; $x++) {
-        if ($image_mean[$x] != $mean[$x]) {
-          $hammeringDistance++;
-        }
-      }
-      if ($hammeringDistance > self::THRESHOLD) {
-        $similar_media[$media_id] = Media::load($media_id);
-      }
-    }
-  }
-
-  /**
    * Returns array with mime type and if its jpg or png. Returns false if it
    * isn't jpg or png.
    *
-   * @param string $path Path to image.
+   * @param string $path
+   *   Path to image.
    *
    * @return array|bool
    */
@@ -115,7 +135,8 @@ class ColorMean extends MediaDuplicateValidationBase {
   /**
    * Returns image resource or false if it's not jpg or png
    *
-   * @param string $path Path to image
+   * @param string $path
+   *   Path to image
    *
    * @return bool|resource
    */
@@ -138,7 +159,8 @@ class ColorMean extends MediaDuplicateValidationBase {
   /**
    * Resize the image to a 8x8 square and returns as image resource.
    *
-   * @param string $path Path to image
+   * @param string $path
+   *   Path to image
    *
    * @return resource Image resource identifier
    */
@@ -157,7 +179,8 @@ class ColorMean extends MediaDuplicateValidationBase {
   /**
    * Returns the mean value of the colors and the list of all pixel's colors.
    *
-   * @param resource $resource Image resource identifier
+   * @param resource $resource
+   *   Image resource identifier
    *
    * @return array
    */
@@ -179,7 +202,8 @@ class ColorMean extends MediaDuplicateValidationBase {
    * Returns an array with 1 and zeros. If a color is bigger than the mean
    * value of colors it is 1
    *
-   * @param array $colorMean Color Mean details.
+   * @param array $colorMean
+   *   Color Mean details.
    *
    * @return array
    */
@@ -198,16 +222,18 @@ class ColorMean extends MediaDuplicateValidationBase {
     $file = File::load($entity->getSource()->getSourceFieldValue($entity));
     if ($file) {
       $color_mean = $this->getColorMean($file->getFileUri());
+
+      // Its not an image, we don't want to track it.
       if (!$color_mean) {
         return;
       }
 
       $means = [];
-      if ($cache = $this->cache->get('media_duplicate_validation:color_mean')) {
+      if ($cache = $this->cache->get($this->getCacheId())) {
         $means = $cache->data;
       }
       $means[$entity->id()] = $color_mean;
-      $this->cache->set('media_duplicate_validation:color_mean', $means);
+      $this->cache->set($this->getCacheId(), $means);
     }
   }
 

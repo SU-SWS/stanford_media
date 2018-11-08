@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Entity\EntityInterface;
 
 /**
  * Implements hook_help().
@@ -32,7 +33,9 @@ function media_duplicate_validation_test_images() {
   foreach ($duplicate_manager->getDefinitions() as $definition) {
     /** @var \Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationInterface $plugin */
     $plugin = $duplicate_manager->createInstance($definition['id']);
-    dpm($plugin->isUniqueImage($image));
+    dpm(($definition['id']));
+    dpm($plugin->isUnique($image));
+    dpm($plugin->getSimilarItems($image));
   }
 
   //  $small = 'public://media/image/small_lake.jpg';
@@ -47,7 +50,7 @@ function media_duplicate_validation_test_images() {
 /**
  * Implements hook_ENTITY_TYPE_insert().
  */
-function media_duplicate_validation_media_insert(Drupal\Core\Entity\EntityInterface $entity) {
+function media_duplicate_validation_media_insert(EntityInterface $entity) {
   /** @var \Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationManager $duplicate_manager */
   $duplicate_manager = \Drupal::service('plugin.manager.media_duplicate_validation');
 
@@ -61,6 +64,20 @@ function media_duplicate_validation_media_insert(Drupal\Core\Entity\EntityInterf
 /**
  * Implements hook_ENTITY_TYPE_update().
  */
-function media_duplicate_validation_media_update(Drupal\Core\Entity\EntityInterface $entity) {
+function media_duplicate_validation_media_update(EntityInterface $entity) {
   media_duplicate_validation_media_insert($entity);
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_delete().
+ */
+function media_duplicate_validation_media_delete(EntityInterface $entity) {
+  /** @var \Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationManager $duplicate_manager */
+  $duplicate_manager = \Drupal::service('plugin.manager.media_duplicate_validation');
+
+  foreach ($duplicate_manager->getDefinitions() as $definition) {
+    /** @var \Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationInterface $plugin */
+    $plugin = $duplicate_manager->createInstance($definition['id']);
+    $plugin->mediaDelete($entity);
+  }
 }
