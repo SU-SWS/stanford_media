@@ -16,15 +16,14 @@ use Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationBase;
  */
 class ColorMean extends MediaDuplicateValidationBase {
 
+  const DATABASE_TABLE = 'media_validate_color_mean';
+
   const THRESHOLD = 5;
 
   /**
    * {@inheritdoc}
    */
   public function isUnique($uri) {
-    if (!($image_mean = $this->getColorMean($uri))) {
-      return TRUE;
-    }
     return empty($this->getSimilarItems($uri));
   }
 
@@ -48,43 +47,25 @@ class ColorMean extends MediaDuplicateValidationBase {
 
     $similar_media = [];
 
-    foreach ($this->getExistingMeans() as $media_id => $mean) {
+    $query = $this->database->select(self::DATABASE_TABLE, 't')
+      ->fields('t')
+      ->execute();
+
+    foreach ($query->fetchAllKeyed() as $mid => $data) {
+      $data = unserialize($data);
+
       $hammeringDistance = 0;
       for ($x = 0; $x < 64; $x++) {
-        if ($image_mean[$x] != $mean[$x]) {
+        if ($image_mean[$x] != $data[$x]) {
           $hammeringDistance++;
         }
       }
       if ($hammeringDistance < self::THRESHOLD) {
-        $similar_media[$media_id] = Media::load($media_id);
+        $similar_media[$mid] = Media::load($mid);
       }
     }
 
     return array_filter($similar_media);
-  }
-
-  /**
-   * Get existing media image data.
-   *
-   * @return array
-   *   Keyed array of color mean data.
-   */
-  protected function getExistingMeans() {
-    if (($cache = $this->cache->get($this->getCacheId())) && !empty($cache->data)) {
-      return $cache->data;
-    }
-    $means = [];
-    /** @var \Drupal\media\MediaInterface $media */
-    foreach (Media::loadMultiple() as $media) {
-      $fid = $media->getSource()->getSourceFieldValue($media);
-      if ($file = File::load($fid)) {
-        if ($color_mean = $this->getColorMean($file->getFileUri())) {
-          $means[$media->id()] = $color_mean;
-        }
-      }
-    }
-    $this->cache->set($this->getCacheId(), $means);
-    return $means;
   }
 
   /**
@@ -220,21 +201,50 @@ class ColorMean extends MediaDuplicateValidationBase {
    */
   public function mediaSave(MediaInterface $entity) {
     $file = File::load($entity->getSource()->getSourceFieldValue($entity));
-    if ($file) {
-      $color_mean = $this->getColorMean($file->getFileUri());
-
-      // Its not an image, we don't want to track it.
-      if (!$color_mean) {
-        return;
-      }
-
-      $means = [];
-      if ($cache = $this->cache->get($this->getCacheId())) {
-        $means = $cache->data;
-      }
-      $means[$entity->id()] = $color_mean;
-      $this->cache->set($this->getCacheId(), $means);
+    if ($file && ($color_mean = $this->getColorMean($file->getFileUri()))) {
+      $this->database->merge(self::DATABASE_TABLE)
+        ->fields([
+          'mid' => $entity->id(),
+          'color_mean' => serialize($color_mean),
+        ])
+        ->key('mid', $entity->id())
+        ->execute();
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function mediaDelete(MediaInterface $entity) {
+    $this->database->delete(self::DATABASE_TABLE)
+      ->condition('mid', $entity->id())
+      ->execute();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function schema() {
+    $schema[self::DATABASE_TABLE] = [
+      'description' => 'Media validation information for color_mean plugin',
+      'fields' => [
+        'mid' => [
+          'description' => 'The media entity ID.',
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+          'default' => 0,
+        ],
+        'color_mean' => [
+          'description' => 'The color mean data of the media file.',
+          'type' => 'blob',
+          'size' => 'normal',
+          'serialize' => TRUE,
+        ],
+      ],
+      'primary key' => ['mid'],
+    ];
+    return $schema;
   }
 
 }

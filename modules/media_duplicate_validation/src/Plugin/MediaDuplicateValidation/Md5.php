@@ -16,40 +16,13 @@ use Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationBase;
  */
 class Md5 extends MediaDuplicateValidationBase {
 
+  const DATABASE_TABLE = 'media_validate_md5';
+
   /**
    * {@inheritdoc}
    */
   public function isUnique($uri) {
-    $md5 = md5(file_get_contents($uri));
-    $existing_md5s = $this->getExistingMd5();
-
-    return !in_array($md5, $existing_md5s);
-  }
-
-  /**
-   * Get existing md5 data.
-   *
-   * @return array
-   *   Keyed array of existing media md5 data.
-   */
-  protected function getExistingMd5() {
-    if ($cache = $this->cache->get($this->getCacheId())) {
-      return $cache->data;
-    }
-
-    $md5s = [];
-
-    // This should only need to be executed 1 time ever. All other md5s get
-    // set during entity save.
-    /** @var Media $media */
-    foreach (Media::loadMultiple() as $media) {
-      $file = File::load($media->getSource()->getSourceFieldValue($media));
-      if ($file) {
-        $md5s[$media->id()] = md5(file_get_contents($file->getFileUri()));
-      }
-    }
-    $this->cache->set($this->getCacheId(), $md5s);
-    return $md5s;
+    return empty($this->getSimilarItems($uri));
   }
 
   /**
@@ -57,28 +30,68 @@ class Md5 extends MediaDuplicateValidationBase {
    */
   public function getSimilarItems($uri) {
     $md5 = md5(file_get_contents($uri));
-    $existing_md5s = $this->getExistingMd5();
-    if ($media_id = array_search($md5, $existing_md5s)) {
-      return [Media::load($media_id)];
+    $query = $this->database->select(self::DATABASE_TABLE, 't')
+      ->fields('t', ['mid'])
+      ->condition('md5', $md5)
+      ->execute();
+
+    $similar = [];
+    while ($media_id = $query->fetchField()) {
+      $similar[$media_id] = Media::load($media_id);
     }
-    return [];
+
+    return $similar;
   }
 
   /**
    * {@inheritdoc}
    */
   public function mediaSave(MediaInterface $entity) {
-    $md5s = [];
-    if ($cache = $this->cache->get($this->getCacheId())) {
-      $md5s = $cache->data;
-    }
-
     $file = File::load($entity->getSource()->getSourceFieldValue($entity));
     if ($file) {
-      $md5s[$entity->id()] = md5(file_get_contents($file->getFileUri()));
+      $this->database->merge(self::DATABASE_TABLE)
+        ->fields([
+          'mid' => $entity->id(),
+          'md5' => md5(file_get_contents($file->getFileUri())),
+        ])
+        ->key('mid', $entity->id())
+        ->execute();
     }
+  }
 
-    $this->cache->set($this->getCacheId(), $md5s);
+  /**
+   * {@inheritdoc}
+   */
+  public function mediaDelete(MediaInterface $entity) {
+    $this->database->delete(self::DATABASE_TABLE)
+      ->condition('mid', $entity->id())
+      ->execute();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function schema() {
+    $schema[self::DATABASE_TABLE] = [
+      'description' => 'Media validation information for md5 plugin',
+      'fields' => [
+        'mid' => [
+          'description' => 'The media entity ID.',
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+          'default' => 0,
+        ],
+        'md5' => [
+          'description' => 'The md5 hash of the media file.',
+          'type' => 'varchar',
+          'not null' => TRUE,
+          'length' => '254',
+        ],
+      ],
+      'primary key' => ['mid'],
+    ];
+    return $schema;
   }
 
 }

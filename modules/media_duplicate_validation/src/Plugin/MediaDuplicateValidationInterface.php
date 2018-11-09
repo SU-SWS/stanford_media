@@ -51,4 +51,14 @@ interface MediaDuplicateValidationInterface {
    */
   public function mediaDelete(MediaInterface $entity);
 
+  /**
+   * If the plugin requires a database table, define it here.
+   *
+   * @see hook_schema()
+   *
+   * @return array
+   *   Database schema definition.
+   */
+  public function schema();
+
 }
