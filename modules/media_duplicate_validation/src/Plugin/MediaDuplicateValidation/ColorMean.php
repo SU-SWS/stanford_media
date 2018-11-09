@@ -84,7 +84,7 @@ class ColorMean extends MediaDuplicateValidationBase {
       if ($total_difference <= $this->getThreshold()) {
         $likeness = 100 - $total_difference;
 
-        while(isset($similar_media["$likeness"])){
+        while (isset($similar_media["$likeness"])) {
           $likeness -= .01;
         }
 
@@ -129,6 +129,9 @@ class ColorMean extends MediaDuplicateValidationBase {
    */
   protected static function mimeType($path) {
     $mime = getimagesize($path);
+    if (!$mime) {
+      return FALSE;
+    }
     $return = [$mime[0], $mime[1]];
 
     switch ($mime['mime']) {

@@ -124,7 +124,7 @@ class BulkUpload extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $save_step = TRUE;
-//    dpm($form_state);
+    //    dpm($form_state);
     // If files have already been uploaded, we don't want to allow upload again.
     if (empty($form_state->get(['dropzonejs', 'media']))) {
       $form['upload'] = [
@@ -205,12 +205,14 @@ class BulkUpload extends FormBase {
       /** @var \Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationInterface $plugin */
       $plugin = $this->duplicationManager->createInstance($definition['id']);
 
+      $form_state->set('media_original_upload', $files);
       foreach ($files as $delta => $file) {
         if (!$plugin->isUnique($file['path'])) {
+          $form_state->set('media_similar_items', $plugin->getSimilarItems($file['path']));
+          $form_state->setError($form['upload'], $this->t('This file already exists'));
         }
       }
     }
-    $form_state->setError($form['upload'], $this->t('This file already exists'));
   }
 
   /**
