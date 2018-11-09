@@ -227,16 +227,15 @@ class DropzoneUpload extends MediaBrowserBase {
       foreach ($files as $delta => $file) {
         if (!$plugin->isUnique($file['path'])) {
           $form_state->set('media_similar_items', $plugin->getSimilarItems($file['path']));
+          $form_state->setError($form['widget']['upload'], $this->t('This file already exists'));
         }
       }
     }
-    $form_state->setError($form['widget']['upload'], $this->t('This file already exists'));
 
     // Dont create the media entities if any errors exist.
-    if ($form_state::hasAnyErrors()) {
-      return;
+    if (!$form_state::hasAnyErrors()) {
+      parent::validate($form, $form_state);
     }
-    parent::validate($form, $form_state);
   }
 
 }
