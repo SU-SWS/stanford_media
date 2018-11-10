@@ -59,6 +59,7 @@ class MediaDuplicateValidationManager extends DefaultPluginManager {
       foreach ($plugin->schema() as $name => $table_definition) {
         if (!$this->database->schema()->tableExists($name)) {
           $this->database->schema()->createTable($name, $table_definition);
+          $plugin->populateTable();
         }
       }
     }

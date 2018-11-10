@@ -346,7 +346,6 @@ class ColorMean extends MediaDuplicateValidationBase {
       ],
       'primary key' => ['mid'],
     ];
-    $this->database->schema()->dropTable(self::DATABASE_TABLE);
     for ($i = 1; $i <= self::RESIZE_DIMENSION; $i++) {
       $schema[self::DATABASE_TABLE]['fields']['row_' . $i] = [
         'type' => 'int',

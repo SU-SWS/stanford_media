@@ -61,4 +61,9 @@ interface MediaDuplicateValidationInterface {
    */
   public function schema();
 
+  /**
+   * Perform necessary action when the table is created.
+   */
+  public function populateTable();
+
 }

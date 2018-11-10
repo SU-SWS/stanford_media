@@ -140,6 +140,8 @@ class BulkUpload extends FormBase {
       $save_step = FALSE;
     }
 
+    dpm($form_state);
+
     $form['actions'] = [
       '#type' => 'actions',
       '#weight' => 99,
@@ -199,11 +201,10 @@ class BulkUpload extends FormBase {
    *   Current form state.
    */
   protected function validateDuplicates(array &$form, FormStateInterface $form_state) {
-
-    //place this before any script you want to calculate time
-    $time_start = microtime(TRUE);
-
     $files = $form_state->getValue(['upload', 'uploaded_files'], []);
+
+    // todo: remove this performance test.
+    $time_start = microtime(TRUE);
 
     foreach ($this->duplicationManager->getDefinitions() as $definition) {
       /** @var \Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationInterface $plugin */
@@ -218,12 +219,10 @@ class BulkUpload extends FormBase {
       }
     }
 
+    // todo: remove this performance test.
     $time_end = microtime(TRUE);
-
-    //dividing with 60 will give the execution time in minutes otherwise seconds
-    $execution_time = ($time_end - $time_start);
-    \Drupal::logger('thistest')->alert($execution_time);
-    \Drupal::messenger()->addMessage($execution_time);
+    $execution_time = $time_end - $time_start;
+    \Drupal::messenger()->addMessage((string) $execution_time);
   }
 
   /**

@@ -6,6 +6,7 @@ use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\PluginBase;
+use Drupal\media\Entity\Media;
 use Drupal\media\MediaInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -54,6 +55,15 @@ abstract class MediaDuplicateValidationBase extends PluginBase implements MediaD
    */
   public function schema() {
     return [];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function populateTable() {
+    foreach (Media::loadMultiple() as $media) {
+      $this->mediaSave($media);
+    }
   }
 
 }
