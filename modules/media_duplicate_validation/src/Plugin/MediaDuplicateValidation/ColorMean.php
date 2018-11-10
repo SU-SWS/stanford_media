@@ -57,42 +57,98 @@ class ColorMean extends MediaDuplicateValidationBase {
    * {@inheritdoc}
    */
   public function getSimilarItems($uri) {
-    if (!($image_colors = $this->getColorMean($uri))) {
+    // Uri is not an image, this plugin is not appropriate.
+    if (!($image_colors = $this->getColorData($uri))) {
       return [];
     }
 
     $similar_media = [];
+    $mids = $this->getCloseMids($image_colors);
 
-    $query = $this->database->select(self::DATABASE_TABLE, 't')
-      ->fields('t')
-      ->execute();
+    /** @var \Drupal\media\Entity\Media $entity */
+    foreach (Media::loadMultiple($mids) as $entity) {
 
-    foreach ($query->fetchAllKeyed() as $mid => $data) {
-      $data = unserialize($data);
+      /** @var \Drupal\file\Entity\File $file */
+      $file = File::load($entity->getSource()->getSourceFieldValue($entity));
+      $file_likeness = $this->getLikeness($uri, $file->getFileUri());
 
-      $different_pixels = 0;
-      foreach ($data as $x_position => $row) {
-        foreach ($row as $y_position => $color_value) {
-          $difference = abs($color_value - $image_colors[$x_position][$y_position]) / 265;
-          if ((100 * $difference) > self::COLOR_THRESHOLD) {
-            $different_pixels++;
-          }
-        }
-      }
+      // The percent likeness is within the threshold we have defined.
+      if (100 - $file_likeness <= self::THRESHOLD) {
 
-      $total_difference = 100 * ($different_pixels / (count($data) * count($data[0])));
-      if ($total_difference <= $this->getThreshold()) {
-        $likeness = 100 - $total_difference;
-
-        while (isset($similar_media["$likeness"])) {
-          $likeness -= .01;
+        // In case multiple images have the same likeness, change the percent
+        // just a tiny bit so it can still be part of the set.
+        while (isset($similar_media["$file_likeness"])) {
+          $file_likeness -= .01;
         }
 
-        $similar_media["$likeness"] = Media::load($mid);
+        $similar_media["$file_likeness"] = $entity;
       }
     }
     krsort($similar_media);
+
+    $similar_media[] = TRUE;
     return array_filter($similar_media);
+  }
+
+  /**
+   * The percent likeness between to file uris.
+   *
+   * @param string $image_one
+   *   Image Uri.
+   * @param string $image_two
+   *   Image Uri.
+   *
+   * @return float|int
+   *   Percent of the image that is deemed similar.
+   */
+  protected function getLikeness($image_one, $image_two) {
+    $image_one_colors = $this->getColorData($image_one);
+    $image_two_colors = $this->getColorData($image_two);
+
+    $different_pixels = 0;
+    foreach ($image_one_colors as $row_number => $row) {
+      foreach ($row as $column_number => $color_value) {
+
+        $difference = abs($color_value - $image_two_colors[$row_number][$column_number]) / 265;
+        if ((100 * $difference) > self::COLOR_THRESHOLD) {
+          $different_pixels++;
+        }
+      }
+    }
+
+    $total_difference = 100 * ($different_pixels / pow(self::RESIZE_DIMENSION, 2));
+    return 100 - $total_difference;
+  }
+
+  /**
+   * Get a subset of all the images based on the column and row data.
+   *
+   * @param array $color_data
+   *   Gray scale multi-dimension array of pixel information.
+   *
+   * @return array
+   *   Array of media ids that are within the tolerance.
+   */
+  protected function getCloseMids(array $color_data) {
+    $averages = $this->getRowColumnAverages($color_data);
+    $query = $this->database->select(self::DATABASE_TABLE, 't')
+      ->fields('t', ['mid']);
+    for ($i = 1; $i <= self::RESIZE_DIMENSION; $i++) {
+      $color_difference = 100 / 265 * self::COLOR_THRESHOLD;
+
+      $query->condition('column_' . $i, $averages['columns'][$i - 1] - $color_difference, '>=');
+      $query->condition('column_' . $i, $averages['columns'][$i - 1] + $color_difference, '<=');
+
+      $query->condition('row_' . $i, $averages['rows'][$i - 1] - $color_difference, '>=');
+      $query->condition('row_' . $i, $averages['rows'][$i - 1] + $color_difference, '<=');
+    }
+    $result = $query->execute();
+
+    $mids = [];
+    while ($mid = $result->fetchField()) {
+      $mids[] = $mid;
+    }
+    return $mids;
   }
 
   /**
@@ -104,17 +160,23 @@ class ColorMean extends MediaDuplicateValidationBase {
    * @return array|bool
    *   Array of color data or false if its not an image.
    */
-  public static function getColorMean($uri) {
-    $image = self::createImage($uri);
+  public function getColorData($uri) {
+    static $color_data = [];
+    if (isset($color_data[$uri])) {
+      return $color_data[$uri];
+    }
+
+    $image = $this->createImage($uri);
 
     // File is not an jpg or png.
     if (!$image) {
       return FALSE;
     }
 
-    $resized_image = self::resizeImage($image, self::mimeType($uri));
+    $resized_image = $this->resizeImage($image, $this->mimeType($uri));
     imagefilter($resized_image, IMG_FILTER_GRAYSCALE);
-    return self::getColorValues($resized_image);
+    $color_data[$uri] = $this->getColorValues($resized_image);
+    return $color_data[$uri];
   }
 
   /**
@@ -127,7 +189,7 @@ class ColorMean extends MediaDuplicateValidationBase {
    * @return array|bool
    *   Mime data or false if its not a jpg or png.
    */
-  protected static function mimeType($path) {
+  protected function mimeType($path) {
     $mime = getimagesize($path);
     if (!$mime) {
       return FALSE;
@@ -154,8 +216,8 @@ class ColorMean extends MediaDuplicateValidationBase {
    *
    * @return bool|resource
    */
-  protected static function createImage($path) {
-    $mime = self::mimeType($path);
+  protected function createImage($path) {
+    $mime = $this->mimeType($path);
     switch ($mime[2]) {
       case 'jpg':
         return imagecreatefromjpeg($path);
@@ -176,7 +238,7 @@ class ColorMean extends MediaDuplicateValidationBase {
    * @return resource
    *   Resized source resource.
    */
-  protected static function resizeImage($source, array $mime_data) {
+  protected function resizeImage($source, array $mime_data) {
     $resized = imagecreatetruecolor(self::RESIZE_DIMENSION, self::RESIZE_DIMENSION);
     imagecopyresized($resized, $source, 0, 0, 0, 0, self::RESIZE_DIMENSION, self::RESIZE_DIMENSION, $mime_data[0], $mime_data[1]);
     return $resized;
@@ -191,7 +253,7 @@ class ColorMean extends MediaDuplicateValidationBase {
    * @return array
    *   Array of data of the color information.
    */
-  protected static function getColorValues($resource) {
+  protected function getColorValues($resource) {
     $colorList = [];
     for ($a = 0; $a < self::RESIZE_DIMENSION; $a++) {
       for ($b = 0; $b < self::RESIZE_DIMENSION; $b++) {
@@ -207,15 +269,57 @@ class ColorMean extends MediaDuplicateValidationBase {
    */
   public function mediaSave(MediaInterface $entity) {
     $file = File::load($entity->getSource()->getSourceFieldValue($entity));
-    if ($file && ($color_mean = self::getColorMean($file->getFileUri()))) {
+    if ($file && ($color = $this->getColorData($file->getFileUri()))) {
+      $fields = ['mid' => $entity->id()];
+
+      $averages = $this->getRowColumnAverages($color);
+      foreach ($averages['columns'] as $column_number => $value) {
+        $fields['column_' . ($column_number + 1)] = $value;
+      }
+      foreach ($averages['rows'] as $row_number => $value) {
+        $fields['row_' . ($row_number + 1)] = $value;
+      }
+
       $this->database->merge(self::DATABASE_TABLE)
-        ->fields([
-          'mid' => $entity->id(),
-          'color_mean' => serialize($color_mean),
-        ])
+        ->fields($fields)
         ->key('mid', $entity->id())
         ->execute();
     }
+  }
+
+  /**
+   * Get the average colors for each role and column for the given pixel data.
+   *
+   * @param array $color_data
+   *   Gray scale multi-dimension array of pixel information.
+   *
+   * @return array
+   *   Keyed array of average color values for each row and column.
+   */
+  protected function getRowColumnAverages(array $color_data) {
+    $sums = [];
+
+    foreach ($color_data as $row_number => $row) {
+      foreach ($row as $column_number => $pixel_value) {
+        if (!isset($sums['columns'][$column_number])) {
+          $sums['columns'][$column_number] = 0;
+        }
+        $sums['columns'][$column_number] += $pixel_value;
+
+        if (!isset($sums['rows'][$row_number])) {
+          $sums['rows'][$row_number] = 0;
+        }
+        $sums['rows'][$row_number] += $pixel_value;
+      }
+    }
+
+    foreach ($sums['columns'] as &$column_value) {
+      $column_value = $column_value / self::RESIZE_DIMENSION;
+    }
+    foreach ($sums['rows'] as &$row_value) {
+      $row_value = $row_value / self::RESIZE_DIMENSION;
+    }
+    return $sums;
   }
 
   /**
@@ -241,15 +345,22 @@ class ColorMean extends MediaDuplicateValidationBase {
           'not null' => TRUE,
           'default' => 0,
         ],
-        'color_mean' => [
-          'description' => 'The color mean data of the media file.',
-          'type' => 'blob',
-          'size' => 'normal',
-          'serialize' => TRUE,
-        ],
       ],
       'primary key' => ['mid'],
     ];
+    $this->database->schema()->dropTable(self::DATABASE_TABLE);
+    for ($i = 1; $i <= self::RESIZE_DIMENSION; $i++) {
+      $schema[self::DATABASE_TABLE]['fields']['row_' . $i] = [
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ];
+      $schema[self::DATABASE_TABLE]['fields']['column_' . $i] = [
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ];
+    }
     return $schema;
   }
 
