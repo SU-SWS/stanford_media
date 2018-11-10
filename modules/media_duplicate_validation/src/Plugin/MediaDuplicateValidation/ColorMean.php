@@ -85,8 +85,6 @@ class ColorMean extends MediaDuplicateValidationBase {
       }
     }
     krsort($similar_media);
-
-    $similar_media[] = TRUE;
     return array_filter($similar_media);
   }
 
