@@ -124,7 +124,6 @@ class BulkUpload extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $save_step = TRUE;
-    //    dpm($form_state);
     // If files have already been uploaded, we don't want to allow upload again.
     if (empty($form_state->get(['dropzonejs', 'media']))) {
       $form['upload'] = [
@@ -140,8 +139,6 @@ class BulkUpload extends FormBase {
       $save_step = FALSE;
     }
 
-    dpm($form_state);
-
     $form['actions'] = [
       '#type' => 'actions',
       '#weight' => 99,
@@ -154,6 +151,7 @@ class BulkUpload extends FormBase {
       ],
     ];
 
+    $form['#attached']['library'][] = 'stanford_media/dropzonejs';
     $form['#attached']['library'][] = 'dropzonejs/widget';
     // Disable the submit button until the upload sucesfully completed.
     $form['#attached']['library'][] = 'dropzonejs_eb_widget/common';
@@ -214,7 +212,10 @@ class BulkUpload extends FormBase {
       foreach ($files as $delta => $file) {
         if (!$plugin->isUnique($file['path'])) {
           $form_state->set('media_similar_items', $plugin->getSimilarItems($file['path']));
-          $form_state->setError($form['upload'], $this->t('This file already exists: @count times', ['@count' => count($form_state->get('media_similar_items'))]));
+//          $form_state->setError($form['upload'], $this->t('The file "@name" already exists @count times', [
+//            '@name' => basename($file['path']),
+//            '@count' => count($form_state->get('media_similar_items')),
+//          ]));
         }
       }
     }

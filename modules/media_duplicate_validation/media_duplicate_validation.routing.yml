@@ -1,0 +1,8 @@
+media_duplicate_validation.check_image:
+  path: '/media-duplicate-validation/check-image'
+  defaults:
+    _controller: '\Drupal\media_duplicate_validation\Controller\CheckFile::checkFile'
+    _format: json
+  methods: [POST]
+  requirements:
+    _access: 'TRUE'

@@ -152,8 +152,8 @@ class DropzoneUpload extends MediaBrowserBase {
     // Disable the submit button until the upload sucesfully completed.
     $form['#attached']['library'][] = 'dropzonejs_eb_widget/common';
     $original_form['#attributes']['class'][] = 'dropzonejs-disable-submit';
-    $form['#attached']['library'][] = 'stanford_media/dropzonejs';
 
+    $form['#attached']['library'][] = 'stanford_media/dropzonejs';
     // Remove the upload after we have some files.
     if ($form_state->get(['dropzonejs', $this->uuid(), 'media'])) {
       $form['upload']['#type'] = 'hidden';
@@ -227,7 +227,11 @@ class DropzoneUpload extends MediaBrowserBase {
       foreach ($files as $delta => $file) {
         if (!$plugin->isUnique($file['path'])) {
           $form_state->set('media_similar_items', $plugin->getSimilarItems($file['path']));
-          $form_state->setError($form['widget']['upload'], $this->t('This file already exists'));
+
+          $form_state->setError($form['widget']['upload'], $this->t('The file "@name" already exists @count times', [
+            '@name' => basename($file['path']),
+            '@count' => count($form_state->get('media_similar_items')),
+          ]));
         }
       }
     }
