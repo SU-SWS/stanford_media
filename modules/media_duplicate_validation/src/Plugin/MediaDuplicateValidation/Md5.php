@@ -37,7 +37,12 @@ class Md5 extends MediaDuplicateValidationBase {
 
     $similar = [];
     while ($media_id = $query->fetchField()) {
-      $similar[$media_id] = Media::load($media_id);
+      /** @var MediaInterface $media */
+      $media = Media::load($media_id);
+      $file = File::load($media->getSource()->getSourceFieldValue($media));
+      if ($file && $file->getFileUri() != $uri) {
+        $similar[$media_id] = $media;
+      }
     }
 
     return $similar;

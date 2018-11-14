@@ -4,7 +4,8 @@
   Drupal.behaviors.stanfordMediaDropzone = {
     attach: function attach(context) {
 
-      var events = ["drop",
+      var events = [
+        "drop",
         "dragstart",
         "dragend",
         "dragenter",
@@ -36,24 +37,45 @@
 
 
       $.each(drupalSettings.dropzonejs.instances, function (i, dropzone) {
-        dropzone.instance.on('addedfile', function( file){
-          console.log(file);
-console.log(file.previewElement);
+        dropzone.instance.on('addedfile', function (file) {
+          // console.log('added', file);
+          // console.log(dropzone);
 
 
+          /*
           file._approveIcon = Dropzone.createElement("<div class='dropzonejs-approve-icon' title='Approve'></div>");
           file.previewElement.appendChild(file._approveIcon);
           file._approveIcon.addEventListener('click', function () {
             file._approveIcon.classList.add('approved');
             dropzone.instance.processFile(file);
           });
-          dropzone.instance.cancelUpload(file);
-          $('span[data-dz-errormessage]', file.previewElement).html('File already exists.');
+
+          */
+
+          // dropzone.instance.cancelUpload(file);
+          // dropzone.instance.options.error(file, 'Image already exists');
         });
 
-        dropzone.instance.on('processing', function (file) {
-          $('.dz-error-message, .dz-error-mark', file.previewElement).remove();
-        });
+
+        // dropzone.instance.on('sending', function (file, xhr, formData) {
+        //   console.log('sending', file);
+        //   console.log(xhr);
+        //   console.log(formData);
+        // });
+        //
+        // dropzone.instance.on('processing', function (file) {
+        //   $('.dz-error-message, .dz-error-mark', file.previewElement).remove();
+        // });
+        // dropzone.instance.on('success', function (file, responseText, e) {
+        //   console.log('sucssess', file.dataURL);
+        //   console.log(responseText);
+        //   console.log(e);
+        // });
+        //
+        // dropzone.instance.on('complete', function (file) {
+        //   console.log('complete', file);
+        // });
+
       })
     }
   };

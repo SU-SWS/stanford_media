@@ -70,6 +70,9 @@ class ColorMean extends MediaDuplicateValidationBase {
 
       /** @var \Drupal\file\Entity\File $file */
       $file = File::load($entity->getSource()->getSourceFieldValue($entity));
+      if ($uri == $file->getFileUri()) {
+        continue;
+      }
       $file_likeness = $this->getLikeness($uri, $file->getFileUri());
 
       // The percent likeness is within the threshold we have defined.
