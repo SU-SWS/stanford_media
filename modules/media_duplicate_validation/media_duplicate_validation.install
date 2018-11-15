@@ -11,5 +11,6 @@
 function media_duplicate_validation_install(){
   /** @var \Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationManager $duplicate_manager */
   $duplicate_manager = \Drupal::service('plugin.manager.media_duplicate_validation');
+  // Build the tables and queue up any data population.
   $duplicate_manager->buildPluginSchemas();
 }

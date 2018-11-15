@@ -8,7 +8,12 @@ use Drupal\media\MediaInterface;
 use Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationBase;
 
 /**
- * Class ColorMean.
+ * Compares an image to other images.
+ *
+ * To do this we resize all images to a 25x25 grayscale image. Then comparing
+ * the average color value of each row and column we collect a subset of similar
+ * images. Then we compare pixel by pixel and with the thresholds we can mark
+ * each one as similar or not.
  *
  * @MediaDuplicateValidation(
  *   id = "color_mean"
@@ -22,29 +27,19 @@ class ColorMean extends MediaDuplicateValidationBase {
   const DATABASE_TABLE = 'media_validate_color_mean';
 
   /**
-   * Percent different that considers one pixel different from another.
+   * Percent different each color can be to be considered the same.
    */
-  const COLOR_THRESHOLD = 20;
+  const PIXEL_TOLLERANCE = 20;
 
   /**
-   * Total percent of the image different threshold.
+   * Total percent that is different but still considered similar.
    */
-  const THRESHOLD = 10;
+  const IMAGE_TOLLERANCE = 10;
 
   /**
    * The dimensions to resize the images to compare against.
    */
   const RESIZE_DIMENSION = 25;
-
-  /**
-   * Get the configured threshold that indicates images are similar.
-   *
-   * @return int
-   *   Numerical difference of images.
-   */
-  public function getThreshold() {
-    return self::THRESHOLD;
-  }
 
   /**
    * {@inheritdoc}
@@ -64,7 +59,7 @@ class ColorMean extends MediaDuplicateValidationBase {
       $file_likeness = $this->getLikeness($file->getFileUri(), $similar_file->getFileUri());
 
       // The percent likeness is within the threshold we have defined.
-      if (100 - $file_likeness <= self::THRESHOLD) {
+      if (100 - $file_likeness <= self::IMAGE_TOLLERANCE) {
 
         // In case multiple images have the same likeness, change the percent
         // just a tiny bit so it can still be part of the set.
@@ -77,6 +72,8 @@ class ColorMean extends MediaDuplicateValidationBase {
         $similar_media["$file_likeness"] = $similar_entity;
       }
     }
+
+    // Reverse sort by the keys to put the most relevant at the front.
     krsort($similar_media);
     return array_filter($similar_media);
   }
@@ -97,23 +94,34 @@ class ColorMean extends MediaDuplicateValidationBase {
     $image_two_colors = $this->getColorData($image_two);
 
     $different_pixels = 0;
+
+    // Go pixel by pixel and find how many different pixels the two images have.
     foreach ($image_one_colors as $row_number => $row) {
       foreach ($row as $column_number => $color_value) {
 
-        $difference = abs($color_value - $image_two_colors[$row_number][$column_number]) / 265;
-        if ((100 * $difference) > self::COLOR_THRESHOLD) {
+        // Each pixel can be between 0 and 255. Use 256 to include 0 as a
+        // possible value.
+        $difference = abs($color_value - $image_two_colors[$row_number][$column_number]) / 256;
+
+        // Percent difference is greater than the allowed tollerance, its
+        // different.
+        if ((100 * $difference) > self::PIXEL_TOLLERANCE) {
           $different_pixels++;
         }
       }
     }
 
-    $total_difference = 100 * ($different_pixels / pow(self::RESIZE_DIMENSION, 2));
-    return 100 - $total_difference;
+    // Calculate the percent of the image that is different.
+    $total_pixels = pow(self::RESIZE_DIMENSION, 2);
+    $similarity = 100 * (($total_pixels - $different_pixels) / $total_pixels);
+    return $similarity;
   }
 
   /**
    * Get a subset of all the images based on the column and row data.
    *
+   * @param \Drupal\media\MediaInterface $entity
+   *   Media entity we are comparing.
    * @param array $color_data
    *   Gray scale multi-dimension array of pixel information.
    *
@@ -131,7 +139,7 @@ class ColorMean extends MediaDuplicateValidationBase {
 
       // Calculate the number of color values that are considered "similar"
       // given the percent threshold.
-      $color_difference = 100 / 265 * self::COLOR_THRESHOLD;
+      $color_difference = 100 / 255 * self::PIXEL_TOLLERANCE;
 
       // Add conditions to the query for row and columns.
       $query->condition('column_' . $i, $averages['columns'][$i - 1] - $color_difference, '>=');
@@ -162,16 +170,16 @@ class ColorMean extends MediaDuplicateValidationBase {
   public function getColorData($uri) {
     static $color_data = [];
     if (isset($color_data[$uri])) {
+      // We've already gotten the data for this URI, lets use that.
       return $color_data[$uri];
-    }
+    };
 
-    $image = $this->createImage($uri);
-
-    // File is not an jpg or png.
-    if (!$image) {
+    // If the file is not an jpg or png we'll skip it.
+    if (!($image = $this->createImage($uri))) {
       return FALSE;
     }
 
+    // Resize and greyscale the image first.
     $resized_image = $this->resizeImage($image, $this->mimeType($uri));
     imagefilter($resized_image, IMG_FILTER_GRAYSCALE);
     $color_data[$uri] = $this->getColorValues($resized_image);
@@ -256,6 +264,7 @@ class ColorMean extends MediaDuplicateValidationBase {
     $colorList = [];
     for ($a = 0; $a < self::RESIZE_DIMENSION; $a++) {
       for ($b = 0; $b < self::RESIZE_DIMENSION; $b++) {
+        // Find the color value at each pixel.
         $rgb = imagecolorat($resource, $a, $b);
         $colorList[$a][$b] = $rgb & 0xFF;
       }
@@ -267,7 +276,10 @@ class ColorMean extends MediaDuplicateValidationBase {
    * {@inheritdoc}
    */
   public function mediaSave(MediaInterface $entity) {
-    $file = File::load($entity->getSource()->getSourceFieldValue($entity));
+    $file = $this->getFile($entity);
+
+    // Populate our data table with the column and row data for fast loopup
+    // later.
     if ($file && ($color = $this->getColorData($file->getFileUri()))) {
       $fields = ['mid' => $entity->id()];
 
@@ -298,20 +310,25 @@ class ColorMean extends MediaDuplicateValidationBase {
   protected function getRowColumnAverages(array $color_data) {
     $sums = [];
 
+    // Sum up the color values in each row and in each column.
     foreach ($color_data as $row_number => $row) {
       foreach ($row as $column_number => $pixel_value) {
+
         if (!isset($sums['columns'][$column_number])) {
+          // New column.
           $sums['columns'][$column_number] = 0;
         }
         $sums['columns'][$column_number] += $pixel_value;
 
         if (!isset($sums['rows'][$row_number])) {
+          // New Row.
           $sums['rows'][$row_number] = 0;
         }
         $sums['rows'][$row_number] += $pixel_value;
       }
     }
 
+    // Calculate the average color for for each row and column.
     foreach ($sums['columns'] as &$column_value) {
       $column_value = $column_value / self::RESIZE_DIMENSION;
     }
@@ -325,6 +342,7 @@ class ColorMean extends MediaDuplicateValidationBase {
    * {@inheritdoc}
    */
   public function mediaDelete(MediaInterface $entity) {
+    // Remove the data from the database.
     $this->database->delete(self::DATABASE_TABLE)
       ->condition('mid', $entity->id())
       ->execute();
@@ -347,6 +365,8 @@ class ColorMean extends MediaDuplicateValidationBase {
       ],
       'primary key' => ['mid'],
     ];
+
+    // Create "Rows" and "Columns" as fields within the table.
     for ($i = 1; $i <= self::RESIZE_DIMENSION; $i++) {
       $schema[self::DATABASE_TABLE]['fields']['row_' . $i] = [
         'type' => 'int',

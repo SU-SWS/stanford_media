@@ -26,6 +26,7 @@ class Md5 extends MediaDuplicateValidationBase {
     if (!$file) {
       return [];
     }
+
     $md5 = md5(file_get_contents($file->getFileUri()));
     $query = $this->database->select(self::DATABASE_TABLE, 't')
       ->fields('t', ['mid'])
@@ -36,6 +37,9 @@ class Md5 extends MediaDuplicateValidationBase {
     $similar_media = [];
     $key = 100;
     while ($media_id = $query->fetchField()) {
+      // If the md5 are the same, the file is 100% identical. There might be
+      // multiple duplicates, so each key will decrease a tiny bit to allow it
+      // to still be in the list of similar items.
       $similar_media["$key"] = Media::load($media_id);
       $key -= '.01';
     }
