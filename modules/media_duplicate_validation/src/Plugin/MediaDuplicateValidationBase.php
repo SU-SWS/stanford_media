@@ -5,6 +5,8 @@ namespace Drupal\media_duplicate_validation\Plugin;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\PluginBase;
+use Drupal\Core\Queue\QueueFactory;
+use Drupal\Core\Queue\QueueInterface;
 use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
 use Drupal\media\MediaInterface;
@@ -25,6 +27,13 @@ abstract class MediaDuplicateValidationBase extends PluginBase implements MediaD
   protected $database;
 
   /**
+   * Cron queue service.
+   *
+   * @var \Drupal\Core\Queue\QueueFactory
+   */
+  protected $queue;
+
+  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
@@ -32,16 +41,18 @@ abstract class MediaDuplicateValidationBase extends PluginBase implements MediaD
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('database')
+      $container->get('database'),
+      $container->get('queue')
     );
   }
 
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, Connection $database) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, Connection $database, QueueFactory $queue) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->database = $database;
+    $this->queue = $queue;
   }
 
   /**
@@ -61,8 +72,14 @@ abstract class MediaDuplicateValidationBase extends PluginBase implements MediaD
    * {@inheritdoc}
    */
   public function populateTable() {
+    /** @var \Drupal\Core\Queue\QueueInterface $queue */
+    $queue = $this->queue->get('media_duplicate_validation');
+
     foreach (Media::loadMultiple() as $media) {
-      $this->mediaSave($media);
+      $item = new \stdClass();
+      $item->plugin = $this->getPluginId();
+      $item->mid = $media->id();
+      $queue->createItem($item);
     }
   }
 
