@@ -28,7 +28,6 @@
 
 }
 
-
 #entities > div {
   border-bottom: 1px solid #ccc;
 
@@ -50,5 +49,24 @@
 
   &.approved {
     background-image: url(../img/approve-icon.png);
+  }
+}
+
+[data-drupal-selector="edit-similar-items"] {
+  .form-radios {
+    display: flex;
+    flex-wrap: wrap;
+
+    > div:first-child {
+      width: 100%;
+    }
+
+    > div {
+      width: 33%;
+    }
+  }
+
+  label span.media {
+    display: block;
   }
 }

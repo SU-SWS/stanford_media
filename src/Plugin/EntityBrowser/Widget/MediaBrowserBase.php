@@ -243,6 +243,7 @@ abstract class MediaBrowserBase extends WidgetBase {
         '#title' => $this->t('Similar Items'),
         '#open' => TRUE,
         '#tree' => TRUE,
+        '#weight' => -99,
       ];
       $preview['similar_items'][$entity->id()]['similar_selection'] = [
         '#type' => 'radios',
