@@ -2,7 +2,6 @@
 
 namespace Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidation;
 
-use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
 use Drupal\media\MediaInterface;
 use Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationBase;
@@ -187,8 +186,7 @@ class ColorMean extends MediaDuplicateValidationBase {
   }
 
   /**
-   * Returns array with mime type and if its jpg or png. Returns false if it
-   * isn't jpg or png.
+   * Getmime type information if its jpg or png.
    *
    * @param string $path
    *   Path to image.
@@ -207,27 +205,29 @@ class ColorMean extends MediaDuplicateValidationBase {
       case 'image/jpeg':
         $return[] = 'jpg';
         return $return;
+
       case 'image/png':
         $return[] = 'png';
         return $return;
-      default:
-        return FALSE;
     }
+    return FALSE;
   }
 
   /**
-   * Returns image resource or false if it's not jpg or png
+   * Create an image resource from a give file path.
    *
    * @param string $path
-   *   Path to image
+   *   Path to image.
    *
    * @return bool|resource
+   *   Image resource or false if not an image.
    */
   protected function createImage($path) {
     $mime = $this->mimeType($path);
     switch ($mime[2]) {
       case 'jpg':
         return imagecreatefromjpeg($path);
+
       case 'png':
         return imagecreatefrompng($path);
     }
@@ -238,7 +238,7 @@ class ColorMean extends MediaDuplicateValidationBase {
    * Resize the image to a square and returns as image resource.
    *
    * @param resource $source
-   *   Image resource
+   *   Image resource.
    * @param array $mime_data
    *   Array of mime type data.
    *
@@ -255,7 +255,7 @@ class ColorMean extends MediaDuplicateValidationBase {
    * Returns the mean value of the colors and the list of all pixel's colors.
    *
    * @param resource $resource
-   *   Image resource identifier
+   *   Image resource.
    *
    * @return array
    *   Array of data of the color information.

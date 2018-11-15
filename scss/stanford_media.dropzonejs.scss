@@ -44,11 +44,11 @@
   top: -8px;
   left: -8px;
   z-index: 500;
-  background-image: url(../img/approve-icon-empty.png);
+  background-image: url('../img/approve-icon-empty.png');
   background-size: cover;
 
   &.approved {
-    background-image: url(../img/approve-icon.png);
+    background-image: url('../img/approve-icon.png');
   }
 }
 

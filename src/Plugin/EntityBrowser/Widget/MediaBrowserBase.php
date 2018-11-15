@@ -10,9 +10,7 @@ use Drupal\Core\Render\Element;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\entity_browser\WidgetBase;
 use Drupal\entity_browser\WidgetValidationManager;
-use Drupal\file\Entity\File;
 use Drupal\inline_entity_form\ElementSubmit;
-use Drupal\media\Entity\Media;
 use Drupal\media\Entity\MediaType;
 use Drupal\media\MediaInterface;
 use Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationManager;
@@ -198,9 +196,14 @@ abstract class MediaBrowserBase extends WidgetBase {
   }
 
   /**
-   * @param \Drupal\media\MediaInterface $entity
+   * Build the inline enitity form and if applicable, similar entity selection.
    *
-   * @return mixed
+   * @param \Drupal\media\MediaInterface $entity
+   *   Entity for the inline form.
+   *
+   * @return array
+   *   Form array for the given entity.
+   *
    * @throws \Drupal\Component\Plugin\Exception\PluginException
    */
   protected function buildEntityPreview(MediaInterface $entity) {

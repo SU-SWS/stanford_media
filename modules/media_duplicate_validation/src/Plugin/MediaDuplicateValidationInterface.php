@@ -14,7 +14,7 @@ interface MediaDuplicateValidationInterface {
   /**
    * Find any similar media entities to the given file uri.
    *
-   * @param MediaInterface $entity
+   * @param \Drupal\media\MediaInterface $entity
    *   Media item entity.
    *
    * @return \Drupal\media\Entity\Media[]
@@ -34,9 +34,10 @@ interface MediaDuplicateValidationInterface {
   public function mediaSave(MediaInterface $entity);
 
   /**
-   * @param \Drupal\media\MediaInterface $entity
+   * Perform any necessary action when a media entity is deleted.
    *
-   * @return mixed
+   * @param \Drupal\media\MediaInterface $entity
+   *   Deleted entity.
    */
   public function mediaDelete(MediaInterface $entity);
 

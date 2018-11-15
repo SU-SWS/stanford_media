@@ -8,7 +8,7 @@ use Drupal\media\MediaInterface;
 use Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationBase;
 
 /**
- * Class Md5
+ * Duplication plugin to check md5 hash of the entire file contents.
  *
  * @MediaDuplicateValidation(
  *   id = "md5"

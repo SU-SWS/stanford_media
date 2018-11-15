@@ -12,9 +12,7 @@ use Drupal\media\MediaInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class MediaDuplicateValidationBase
- *
- * @package Drupal\media_duplicate_validation\Plugin
+ * Base class for duplicate validation plugins.
  */
 abstract class MediaDuplicateValidationBase extends PluginBase implements MediaDuplicateValidationInterface, ContainerFactoryPluginInterface {
 
