@@ -46,6 +46,9 @@ class ColorMean extends MediaDuplicateValidationBase {
     return self::THRESHOLD;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function getSimilarItems(MediaInterface $entity) {
     if (!($file = $this->getFile($entity, ['image']))) {
       return [];
@@ -71,7 +74,7 @@ class ColorMean extends MediaDuplicateValidationBase {
 
         // Cast the keys to strings so that they retain decimals values if
         // necessary.
-        $similar_media["$file_likeness"] = $entity;
+        $similar_media["$file_likeness"] = $similar_entity;
       }
     }
     krsort($similar_media);
@@ -122,7 +125,8 @@ class ColorMean extends MediaDuplicateValidationBase {
     $query = $this->database->select(self::DATABASE_TABLE, 't')
       ->fields('t', ['mid']);
 
-    $query->condition('mid', $entity->id(), '!=');
+    // Excludes the entity we are checking against.
+    $query->condition('mid', $entity->id(), '<>');
     for ($i = 1; $i <= self::RESIZE_DIMENSION; $i++) {
 
       // Calculate the number of color values that are considered "similar"
@@ -142,6 +146,7 @@ class ColorMean extends MediaDuplicateValidationBase {
     while ($mid = $result->fetchField()) {
       $mids[] = $mid;
     }
+
     return Media::loadMultiple($mids);
   }
 

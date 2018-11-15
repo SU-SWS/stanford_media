@@ -237,6 +237,7 @@ abstract class MediaBrowserBase extends WidgetBase {
         $similar_choices[$media->id()] .= '</div>';
         $similar_choices[$media->id()] .= render($media_display);
       }
+
       $preview['similar_items'] = [
         '#type' => 'details',
         '#title' => $this->t('Similar Items'),
@@ -249,7 +250,6 @@ abstract class MediaBrowserBase extends WidgetBase {
         '#title' => $this->t('Use an existing item instead'),
         '#options' => $similar_choices,
         '#required' => TRUE,
-        '#original_id' => $entity->id(),
       ];
 
     }

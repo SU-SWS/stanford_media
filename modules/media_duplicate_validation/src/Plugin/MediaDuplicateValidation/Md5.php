@@ -30,14 +30,14 @@ class Md5 extends MediaDuplicateValidationBase {
     $query = $this->database->select(self::DATABASE_TABLE, 't')
       ->fields('t', ['mid'])
       ->condition('md5', $md5)
-      ->condition('mid', $entity->id(), '!=')
+      ->condition('mid', $entity->id(), '<>')
       ->execute();
 
     $similar_media = [];
     $key = 100;
     while ($media_id = $query->fetchField()) {
-      $similar_media[$key] = Media::load($media_id);
-      $key--;
+      $similar_media["$key"] = Media::load($media_id);
+      $key -= '.01';
     }
     return array_filter($similar_media);
   }
