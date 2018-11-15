@@ -12,26 +12,15 @@ use Drupal\media\MediaInterface;
 interface MediaDuplicateValidationInterface {
 
   /**
-   * Ask if the provided file uri is unique in some sense.
-   *
-   * @param string $uri
-   *   File path uri.
-   *
-   * @return bool
-   *   If the file is unique as defined by the plugin.
-   */
-  public function isUnique($uri);
-
-  /**
    * Find any similar media entities to the given file uri.
    *
-   * @param string $uri
-   *   File path uri.
+   * @param MediaInterface $entity
+   *   Media item entity.
    *
    * @return \Drupal\media\Entity\Media[]
    *   Array of similar entities.
    */
-  public function getSimilarItems($uri);
+  public function getSimilarItems(MediaInterface $entity);
 
   /**
    * Perform any necessary actions after a media entity has been saved.

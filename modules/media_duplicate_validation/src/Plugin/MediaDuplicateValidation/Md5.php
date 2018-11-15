@@ -21,31 +21,25 @@ class Md5 extends MediaDuplicateValidationBase {
   /**
    * {@inheritdoc}
    */
-  public function isUnique($uri) {
-    return empty($this->getSimilarItems($uri));
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getSimilarItems($uri) {
-    $md5 = md5(file_get_contents($uri));
+  public function getSimilarItems(MediaInterface $entity) {
+    $file = $this->getFile($entity);
+    if (!$file) {
+      return [];
+    }
+    $md5 = md5(file_get_contents($file->getFileUri()));
     $query = $this->database->select(self::DATABASE_TABLE, 't')
       ->fields('t', ['mid'])
       ->condition('md5', $md5)
+      ->condition('mid', $entity->id(), '!=')
       ->execute();
 
-    $similar = [];
+    $similar_media = [];
+    $key = 100;
     while ($media_id = $query->fetchField()) {
-      /** @var MediaInterface $media */
-      $media = Media::load($media_id);
-      $file = File::load($media->getSource()->getSourceFieldValue($media));
-      if ($file && $file->getFileUri() != $uri) {
-        $similar[$media_id] = $media;
-      }
+      $similar_media[$key] = Media::load($media_id);
+      $key--;
     }
-
-    return $similar;
+    return array_filter($similar_media);
   }
 
   /**

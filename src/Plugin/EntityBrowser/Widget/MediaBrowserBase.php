@@ -220,8 +220,7 @@ abstract class MediaBrowserBase extends WidgetBase {
 
       /** @var \Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationInterface $plugin */
       $plugin = $this->duplicationManager->createInstance($definition['id']);
-      $file = File::load($entity->getSource()->getSourceFieldValue($entity));
-      $similar_media = array_merge($similar_media, $plugin->getSimilarItems($file->getFileUri()));
+      $similar_media = array_merge($similar_media, $plugin->getSimilarItems($entity));
 
       if (empty($similar_media)) {
         continue;

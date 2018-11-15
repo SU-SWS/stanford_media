@@ -37,13 +37,6 @@ class ColorMean extends MediaDuplicateValidationBase {
   const RESIZE_DIMENSION = 25;
 
   /**
-   * {@inheritdoc}
-   */
-  public function isUnique($uri) {
-    return empty($this->getSimilarItems($uri));
-  }
-
-  /**
    * Get the configured threshold that indicates images are similar.
    *
    * @return int
@@ -53,27 +46,19 @@ class ColorMean extends MediaDuplicateValidationBase {
     return self::THRESHOLD;
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  public function getSimilarItems($uri) {
-    // Uri is not an image, this plugin is not appropriate.
-    if (!($image_colors = $this->getColorData($uri))) {
+  public function getSimilarItems(MediaInterface $entity) {
+    if (!($file = $this->getFile($entity, ['image']))) {
       return [];
     }
+    $image_colors = $this->getColorData($file->getFileUri());
 
     $similar_media = [];
-    $mids = $this->getCloseMids($image_colors);
 
     /** @var \Drupal\media\Entity\Media $entity */
-    foreach (Media::loadMultiple($mids) as $entity) {
+    foreach ($this->getCloseMedia($entity, $image_colors) as $similar_entity) {
 
-      /** @var \Drupal\file\Entity\File $file */
-      $file = File::load($entity->getSource()->getSourceFieldValue($entity));
-      if ($uri == $file->getFileUri()) {
-        continue;
-      }
-      $file_likeness = $this->getLikeness($uri, $file->getFileUri());
+      $similar_file = $this->getFile($similar_entity, ['image']);
+      $file_likeness = $this->getLikeness($file->getFileUri(), $similar_file->getFileUri());
 
       // The percent likeness is within the threshold we have defined.
       if (100 - $file_likeness <= self::THRESHOLD) {
@@ -84,6 +69,8 @@ class ColorMean extends MediaDuplicateValidationBase {
           $file_likeness -= .01;
         }
 
+        // Cast the keys to strings so that they retain decimals values if
+        // necessary.
         $similar_media["$file_likeness"] = $entity;
       }
     }
@@ -130,13 +117,19 @@ class ColorMean extends MediaDuplicateValidationBase {
    * @return array
    *   Array of media ids that are within the tolerance.
    */
-  protected function getCloseMids(array $color_data) {
+  protected function getCloseMedia(MediaInterface $entity, array $color_data) {
     $averages = $this->getRowColumnAverages($color_data);
     $query = $this->database->select(self::DATABASE_TABLE, 't')
       ->fields('t', ['mid']);
+
+    $query->condition('mid', $entity->id(), '!=');
     for ($i = 1; $i <= self::RESIZE_DIMENSION; $i++) {
+
+      // Calculate the number of color values that are considered "similar"
+      // given the percent threshold.
       $color_difference = 100 / 265 * self::COLOR_THRESHOLD;
 
+      // Add conditions to the query for row and columns.
       $query->condition('column_' . $i, $averages['columns'][$i - 1] - $color_difference, '>=');
       $query->condition('column_' . $i, $averages['columns'][$i - 1] + $color_difference, '<=');
 
@@ -149,7 +142,7 @@ class ColorMean extends MediaDuplicateValidationBase {
     while ($mid = $result->fetchField()) {
       $mids[] = $mid;
     }
-    return $mids;
+    return Media::loadMultiple($mids);
   }
 
   /**

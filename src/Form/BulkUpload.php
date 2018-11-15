@@ -15,7 +15,6 @@ use Drupal\dropzonejs\DropzoneJsUploadSave;
 use Drupal\file\Entity\File;
 use Drupal\inline_entity_form\ElementSubmit;
 use Drupal\media\Entity\Media;
-use Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationManager;
 use Drupal\stanford_media\BundleSuggestion;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -62,13 +61,6 @@ class BulkUpload extends FormBase {
   protected $messenger;
 
   /**
-   * Media Duplicate Validation manager service.
-   *
-   * @var \Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationManager
-   */
-  protected $duplicationManager;
-
-  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
@@ -77,21 +69,19 @@ class BulkUpload extends FormBase {
       $container->get('stanford_media.bundle_suggestion'),
       $container->get('dropzonejs.upload_save'),
       $container->get('current_user'),
-      $container->get('messenger'),
-      $container->get('plugin.manager.media_duplicate_validation')
+      $container->get('messenger')
     );
   }
 
   /**
    * {@inheritdoc}
    */
-  public function __construct(EntityTypeManager $entity_manager, BundleSuggestion $bundle_suggestion, DropzoneJsUploadSave $dropzone_save, AccountProxy $current_user, MessengerInterface $messenger, MediaDuplicateValidationManager $duplication_manager) {
+  public function __construct(EntityTypeManager $entity_manager, BundleSuggestion $bundle_suggestion, DropzoneJsUploadSave $dropzone_save, AccountProxy $current_user, MessengerInterface $messenger) {
     $this->entityTypeManager = $entity_manager;
     $this->bundleSuggestion = $bundle_suggestion;
     $this->dropzoneSave = $dropzone_save;
     $this->currentUser = $current_user;
     $this->messenger = $messenger;
-    $this->duplicationManager = $duplication_manager;
   }
 
   /**
@@ -124,6 +114,7 @@ class BulkUpload extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $save_step = TRUE;
+
     // If files have already been uploaded, we don't want to allow upload again.
     if (empty($form_state->get(['dropzonejs', 'media']))) {
       $form['upload'] = [
@@ -151,7 +142,6 @@ class BulkUpload extends FormBase {
       ],
     ];
 
-    $form['#attached']['library'][] = 'stanford_media/dropzonejs';
     $form['#attached']['library'][] = 'dropzonejs/widget';
     // Disable the submit button until the upload sucesfully completed.
     $form['#attached']['library'][] = 'dropzonejs_eb_widget/common';
@@ -166,7 +156,6 @@ class BulkUpload extends FormBase {
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
     parent::validateForm($form, $form_state);
-    $this->validateDuplicates($form, $form_state);
 
     // Dont create the media entities if any errors exist.
     if ($form_state::hasAnyErrors()) {
@@ -188,42 +177,6 @@ class BulkUpload extends FormBase {
         $media_entity->save();
       }
     }
-  }
-
-  /**
-   * Check if the uploaded files are duplicates of existing items.
-   *
-   * @param array $form
-   *   Complete form.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   Current form state.
-   */
-  protected function validateDuplicates(array &$form, FormStateInterface $form_state) {
-    $files = $form_state->getValue(['upload', 'uploaded_files'], []);
-
-    // todo: remove this performance test.
-    $time_start = microtime(TRUE);
-
-    foreach ($this->duplicationManager->getDefinitions() as $definition) {
-      /** @var \Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationInterface $plugin */
-      $plugin = $this->duplicationManager->createInstance($definition['id']);
-
-      $form_state->set('media_original_upload', $files);
-      foreach ($files as $delta => $file) {
-        if (!$plugin->isUnique($file['path'])) {
-          $form_state->set('media_similar_items', $plugin->getSimilarItems($file['path']));
-//          $form_state->setError($form['upload'], $this->t('The file "@name" already exists @count times', [
-//            '@name' => basename($file['path']),
-//            '@count' => count($form_state->get('media_similar_items')),
-//          ]));
-        }
-      }
-    }
-
-    // todo: remove this performance test.
-    $time_end = microtime(TRUE);
-    $execution_time = $time_end - $time_start;
-    \Drupal::messenger()->addMessage((string) $execution_time);
   }
 
   /**
