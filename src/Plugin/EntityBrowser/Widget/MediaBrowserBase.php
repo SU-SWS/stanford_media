@@ -247,7 +247,8 @@ abstract class MediaBrowserBase extends WidgetBase {
       ];
       $preview['similar_items'][$entity->id()]['similar_selection'] = [
         '#type' => 'radios',
-        '#title' => $this->t('Use an existing item instead'),
+        '#title' => $this->t('Use an existing item instead?'),
+        '#description' => $this->t('To prevent duplication, perhaps one of these existing items will work.'),
         '#options' => $similar_choices,
         '#required' => TRUE,
       ];
@@ -258,22 +259,33 @@ abstract class MediaBrowserBase extends WidgetBase {
   }
 
   /**
+   * Select the entities the user wants if they selected to use existing.
+   *
    * @param array $element
+   *   Form element array.
    * @param array $form
+   *   Complete form.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Current form state.
    */
   protected function cleanDuplicates(array &$element, array &$form, FormStateInterface $form_state) {
-    $similar_choices = $form_state->getValue('similar_items', []);
-    $selected_items = [];
-    foreach ($similar_choices as $original_id => $selection) {
-      $selected_items[$original_id] = Media::load($original_id);
+    $selected_items = $form_state->get(['entity_browser', 'selected_entities']);
 
-      if ($selection['similar_selection']) {
-        $selected_items[$original_id]->delete();
-        unset($selected_items[$original_id]);
-        $selected_items[$selection['similar_selection']] = Media::load($selection['similar_selection']);
+    /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
+    foreach ($selected_items as $delta => $entity) {
+      $chosen_id = $form_state->getValue([
+        'similar_items',
+        $entity->id(),
+        'similar_selection',
+      ]);
+
+      if ($chosen_id) {
+        $entity->delete();
+        $selected_items[$delta] = $this->entityTypeManager->getStorage($entity->getEntityTypeId())
+          ->load($chosen_id);
       }
     }
+
     $form_state->set(['entity_browser', 'selected_entities'], $selected_items);
   }
 

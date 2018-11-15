@@ -49,7 +49,7 @@ class CronMediaValidationPopulate extends QueueWorkerBase implements ContainerFa
     $plugin = $this->duplicationManager->createInstance($data->plugin);
     if ($media = Media::load($data->mid)) {
       // Perform the media save method which should store any necessary data.
-      $plugin->mediaSave($media->id());
+      $plugin->mediaSave($media);
     }
   }
 
