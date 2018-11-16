@@ -17,7 +17,82 @@ use Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidation\ColorMean;
  *
  * @group media_duplicate_validation
  */
-class ColorMeanTest extends ValidationTestBase {
+class ColorMeanTest extends KernelTestBase {
+
+  /**
+   * @var \Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationManager
+   */
+  protected $duplicationManager;
+
+  /**
+   * @var \Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidation\ColorMean
+   */
+  protected $plugin;
+
+  /**
+   * @var \Drupal\media\MediaInterface
+   */
+  protected $mediaEntity;
+
+  protected static $modules = [
+    'system',
+    'media_duplicate_validation',
+    'media',
+    'user',
+    'image',
+    'file',
+    'field',
+  ];
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function setUp() {
+    parent::setUp();
+    $this->installEntitySchema('media');
+    $this->installEntitySchema('file');
+    $this->installSchema('file', ['file_usage']);
+    $this->installEntitySchema('user');
+    $this->installEntitySchema('field_storage_config');
+    $this->installEntitySchema('field_config');
+
+    $this->duplicationManager = \Drupal::service('plugin.manager.media_duplicate_validation');
+    $this->plugin = $this->duplicationManager->createInstance('color_mean');
+    $this->duplicationManager->buildPluginSchemas();
+
+    MediaType::create([
+      'id' => 'image',
+      'label' => 'image',
+      'source' => 'image',
+      'source_configuration' => ['source_field' => 'field_media_image'],
+    ])->save();
+
+    FieldStorageConfig::create([
+      'id' => 'media.field_media_image',
+      'field_name' => 'field_media_image',
+      'entity_type' => 'media',
+      'type' => 'image',
+      'module' => 'image',
+    ])->save();
+    FieldConfig::create([
+      'id' => 'media.image.field_media_image',
+      'field_name' => 'field_media_image',
+      'entity_type' => 'media',
+      'bundle' => 'image',
+      'label' => 'Image',
+      'field_type' => 'image',
+    ])->save();
+
+    $path = 'public://logo.png';
+    file_unmanaged_copy(__DIR__ . '/../assets/logo.png', $path);
+    $file = File::create(['uri' => $path]);
+    $file->save();
+    $this->mediaEntity = Media::create([
+      'bundle' => 'image',
+      'field_media_image' => $file->id(),
+    ]);
+    $this->mediaEntity->save();
+  }
 
   /**
    * @covers ::schema
@@ -82,7 +157,7 @@ class ColorMeanTest extends ValidationTestBase {
    */
   public function testSimilarItems() {
     $path = 'public://smaller_logo_2.jpg';
-    file_unmanaged_copy(__DIR__ . '/assets/smaller_logo.jpg', $path);
+    file_unmanaged_copy(__DIR__ . '/../assets/smaller_logo.jpg', $path);
     $file = File::create(['uri' => $path]);
     $file->save();
     Media::create([
@@ -91,7 +166,7 @@ class ColorMeanTest extends ValidationTestBase {
     ])->save();
 
     $path = 'public://smaller_logo.jpg';
-    file_unmanaged_copy(__DIR__ . '/assets/smaller_logo.jpg', $path);
+    file_unmanaged_copy(__DIR__ . '/../assets/smaller_logo.jpg', $path);
     $file = File::create(['uri' => $path]);
     $file->save();
     $new_entity = Media::create([
@@ -118,7 +193,7 @@ class ColorMeanTest extends ValidationTestBase {
    */
   public function testDifferentItems() {
     $path = 'public://different_logo.png';
-    file_unmanaged_copy(__DIR__ . '/assets/different_logo.png', $path);
+    file_unmanaged_copy(__DIR__ . '/../assets/different_logo.png', $path);
     $file = File::create(['uri' => $path]);
     $file->save();
     $new_entity = Media::create([
@@ -132,7 +207,7 @@ class ColorMeanTest extends ValidationTestBase {
 
   public function testGif() {
     $path = 'public://gif_logo.gif';
-    file_unmanaged_copy(__DIR__ . '/assets/gif_logo.gif', $path);
+    file_unmanaged_copy(__DIR__ . '/../assets/gif_logo.gif', $path);
     $file = File::create(['uri' => $path]);
     $file->save();
     $new_entity = Media::create([
@@ -149,7 +224,7 @@ class ColorMeanTest extends ValidationTestBase {
    */
   public function testNonImage() {
     $path = 'public://testfile.txt';
-    file_unmanaged_copy(__DIR__ . '/assets/testfile.txt', $path);
+    file_unmanaged_copy(__DIR__ . '/../assets/testfile.txt', $path);
     $file = File::create(['uri' => $path]);
     $file->save();
     $new_entity = Media::create([

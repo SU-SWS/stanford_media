@@ -20,8 +20,15 @@
     "drupal/focal_point": "^1.0@beta",
     "drupal/linkit": "~5.0-beta6"
   },
+  "autoload": {
+    "psr-4": {
+      "Drupal\\stanford_media\\": "./src",
+      "Drupal\\media_duplicate_validation\\": "./modules/media_duplicate_validation/src"
+    }
+  },
   "autoload-dev": {
     "psr-4": {
+      "Drupal\\Tests\\stanford_media\\": "./tests/src",
       "Drupal\\Tests\\media_duplicate_validation\\": "./modules/media_duplicate_validation/tests/src"
     }
   }

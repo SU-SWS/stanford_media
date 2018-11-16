@@ -2,12 +2,13 @@
 
 namespace Drupal\Tests\media_duplicate_validation\Kernel\Plugin\MediaDuplicateValidation;
 
+use Drupal\KernelTests\KernelTestBase;
+use Drupal\media\Entity\MediaType;
+use Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidation\Md5;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\file\Entity\File;
-use Drupal\KernelTests\KernelTestBase;
 use Drupal\media\Entity\Media;
-use Drupal\media\Entity\MediaType;
 
 /**
  * Class ColorMeanTest.
@@ -16,7 +17,7 @@ use Drupal\media\Entity\MediaType;
  *
  * @group media_duplicate_validation
  */
-abstract class ValidationTestBase extends KernelTestBase {
+class Md5Test extends KernelTestBase {
 
   /**
    * @var \Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationManager
@@ -56,7 +57,7 @@ abstract class ValidationTestBase extends KernelTestBase {
     $this->installEntitySchema('field_config');
 
     $this->duplicationManager = \Drupal::service('plugin.manager.media_duplicate_validation');
-    $this->plugin = $this->duplicationManager->createInstance('color_mean');
+    $this->plugin = $this->duplicationManager->createInstance('md5');
     $this->duplicationManager->buildPluginSchemas();
 
     MediaType::create([
@@ -83,7 +84,7 @@ abstract class ValidationTestBase extends KernelTestBase {
     ])->save();
 
     $path = 'public://logo.png';
-    file_unmanaged_copy(__DIR__ . '/assets/logo.png', $path);
+    file_unmanaged_copy(__DIR__ . '/../assets/logo.png', $path);
     $file = File::create(['uri' => $path]);
     $file->save();
     $this->mediaEntity = Media::create([
@@ -91,6 +92,52 @@ abstract class ValidationTestBase extends KernelTestBase {
       'field_media_image' => $file->id(),
     ]);
     $this->mediaEntity->save();
+  }
+
+  /**
+   * @covers ::schema
+   */
+  public function testDatabase() {
+    $schema = \Drupal::database()->schema();
+    $this->assertTrue($schema->tableExists(Md5::DATABASE_TABLE));
+    $this->assertTrue($schema->fieldExists(Md5::DATABASE_TABLE, 'mid'));
+    $this->assertTrue($schema->fieldExists(Md5::DATABASE_TABLE, 'md5'));
+  }
+
+  /**
+   * @covers ::mediaSave
+   * @covers ::mediaDelete
+   */
+  public function testMediaSaveDelete() {
+    $mid = $this->mediaEntity->id();
+    $this->assertNotEmpty(\Drupal::database()
+      ->select(Md5::DATABASE_TABLE, 't')
+      ->fields('t')
+      ->condition('mid', $mid)
+      ->execute()
+      ->fetchAssoc());
+    $this->mediaEntity->delete();
+    $this->assertEmpty(\Drupal::database()
+      ->select(Md5::DATABASE_TABLE, 't')
+      ->fields('t')
+      ->condition('mid', $mid)
+      ->execute()
+      ->fetchAssoc());
+  }
+
+  /**
+   * @covers ::getSimilarItems
+   */
+  public function testSimilarItems() {
+    $path = 'public://logo.png';
+    file_unmanaged_copy(__DIR__ . '/../assets/logo2.png', $path);
+    $file = File::create(['uri' => $path]);
+    $file->save();
+    Media::create([
+      'bundle' => 'image',
+      'field_media_image' => $file->id(),
+    ])->save();
+    $this->assertNotEmpty($this->plugin->getSimilarItems($this->mediaEntity));
   }
 
 }
