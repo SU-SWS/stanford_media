@@ -6,6 +6,7 @@ use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
+use Drupal\media\MediaInterface;
 use Drupal\media_duplicate_validation\Annotation\MediaDuplicateValidation;
 
 /**
@@ -63,6 +64,31 @@ class MediaDuplicateValidationManager extends DefaultPluginManager {
         }
       }
     }
+  }
+
+  /**
+   * Get similar media entities as defined by all plugins.
+   *
+   * @param \Drupal\media\MediaInterface $entity
+   *   Media entity to compare.
+   * @param int $length
+   *   Optionally only get a given number of similar items.
+   *
+   * @return \Drupal\media\MediaInterface[]
+   *   Array of simliar media entities.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\PluginException
+   */
+  public function getSimilarEntities(MediaInterface $entity, $length = NULL) {
+    $similar_media = [];
+    foreach ($this->getDefinitions() as $definition) {
+      /** @var \Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationInterface $plugin */
+      $plugin = $this->createInstance($definition['id']);
+      $similar_media = array_merge($similar_media, $plugin->getSimilarItems($entity));
+    }
+
+    krsort($similar_media);
+    return array_slice($similar_media, 0, $length);
   }
 
 }

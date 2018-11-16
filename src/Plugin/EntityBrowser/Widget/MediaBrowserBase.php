@@ -218,21 +218,14 @@ abstract class MediaBrowserBase extends WidgetBase {
     $form = [];
     $media_view_builder = $this->entityTypeManager->getViewBuilder('media');
 
-    $similar_media = [];
-    foreach ($this->duplicationManager->getDefinitions() as $definition) {
-      /** @var \Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationInterface $plugin */
-      $plugin = $this->duplicationManager->createInstance($definition['id']);
-      $similar_media = array_merge($similar_media, $plugin->getSimilarItems($entity));
-    }
-
-    if (empty($similar_media)) {
+    if (empty($similar_media = $this->duplicationManager->getSimilarEntities($entity, 3))) {
       return [];
     }
 
     $this->messenger->addWarning($this->t('Similar items exist for file %name', ['%name' => $entity->label()]));
     $similar_choices = [$this->t('Add new')];
 
-    foreach (array_slice($similar_media, 0, 3) as $media) {
+    foreach ($similar_media as $media) {
       $media_display = $media_view_builder->view($media, 'preview');
       $similar_choices[$media->id()] = '<div class="media-label label">';
       $similar_choices[$media->id()] .= $this->t('Use %name', ['%name' => $media->label()])

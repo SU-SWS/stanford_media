@@ -134,12 +134,7 @@ class DropzoneUpload extends MediaBrowserBase {
 
     $allowed_bundles = $this->getAllowedBundles($form_state);
     $allowed_extensions = $this->bundleSuggestion->getMultipleBundleExtensions($allowed_bundles);
-    $cardinality = $form_state->get([
-      'entity_browser',
-      'validators',
-      'cardinality',
-      'cardinality',
-    ]);
+    $cardinality = $form_state->get(['entity_browser', 'validators', 'cardinality', 'cardinality']);
 
     $form['upload'] = [
       '#title' => $this->t('File upload'),
@@ -151,16 +146,14 @@ class DropzoneUpload extends MediaBrowserBase {
       '#max_files' => $cardinality ?: 1,
       '#clientside_resize' => FALSE,
     ];
-    if ($form['upload']['#max_files'] == -1) {
-      $form['upload']['#max_files'] = 100;
-    }
+    $form['upload']['#max_files'] = $form['upload']['#max_files'] == -1 ? 100 : $form['upload']['#max_files'];
 
+    $form['#attached']['library'][] = 'stanford_media/dropzonejs';
     $form['#attached']['library'][] = 'dropzonejs/widget';
     // Disable the submit button until the upload sucesfully completed.
     $form['#attached']['library'][] = 'dropzonejs_eb_widget/common';
     $original_form['#attributes']['class'][] = 'dropzonejs-disable-submit';
 
-    $form['#attached']['library'][] = 'stanford_media/dropzonejs';
     // Remove the upload after we have some files.
     if ($form_state->get(['dropzonejs', $this->uuid(), 'media'])) {
       $form['upload']['#type'] = 'hidden';

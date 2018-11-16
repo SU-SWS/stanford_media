@@ -308,22 +308,15 @@ class ColorMean extends MediaDuplicateValidationBase {
    *   Keyed array of average color values for each row and column.
    */
   protected function getRowColumnAverages(array $color_data) {
-    $sums = [];
+    $sums = [
+      'columns' => array_fill(0, self::RESIZE_DIMENSION, 0),
+      'rows' => array_fill(0, self::RESIZE_DIMENSION, 0),
+    ];
 
     // Sum up the color values in each row and in each column.
     foreach ($color_data as $row_number => $row) {
       foreach ($row as $column_number => $pixel_value) {
-
-        if (!isset($sums['columns'][$column_number])) {
-          // New column.
-          $sums['columns'][$column_number] = 0;
-        }
         $sums['columns'][$column_number] += $pixel_value;
-
-        if (!isset($sums['rows'][$row_number])) {
-          // New Row.
-          $sums['rows'][$row_number] = 0;
-        }
         $sums['rows'][$row_number] += $pixel_value;
       }
     }
@@ -368,16 +361,13 @@ class ColorMean extends MediaDuplicateValidationBase {
 
     // Create "Rows" and "Columns" as fields within the table.
     for ($i = 1; $i <= self::RESIZE_DIMENSION; $i++) {
-      $schema[self::DATABASE_TABLE]['fields']['row_' . $i] = [
+      $field_schema = [
         'type' => 'int',
         'not null' => TRUE,
         'default' => 0,
       ];
-      $schema[self::DATABASE_TABLE]['fields']['column_' . $i] = [
-        'type' => 'int',
-        'not null' => TRUE,
-        'default' => 0,
-      ];
+      $schema[self::DATABASE_TABLE]['fields']['row_' . $i] = $field_schema;
+      $schema[self::DATABASE_TABLE]['fields']['column_' . $i] = $field_schema;
     }
     return $schema;
   }
