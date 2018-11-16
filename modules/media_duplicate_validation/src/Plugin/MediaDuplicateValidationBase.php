@@ -55,6 +55,12 @@ abstract class MediaDuplicateValidationBase extends PluginBase implements MediaD
   /**
    * {@inheritdoc}
    */
+  public function mediaSave(MediaInterface $entity) {
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function mediaDelete(MediaInterface $entity) {
   }
 

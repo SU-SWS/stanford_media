@@ -30,7 +30,12 @@ class CronMediaValidationPopulate extends QueueWorkerBase implements ContainerFa
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static($container->get('plugin.manager.media_duplicate_validation'));
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('plugin.manager.media_duplicate_validation')
+    );
   }
 
   /**

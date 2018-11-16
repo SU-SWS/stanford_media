@@ -10,9 +10,7 @@ use Drupal\media\Entity\Media;
 use Drupal\media\Entity\MediaType;
 
 /**
- * Class MediaDuplicateValidationManagerTest
- *
- * @coversDefaultClass \Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationManager
+ * Base test class.a
  */
 abstract class MediaDuplicateValidationTestBase extends KernelTestBase {
 

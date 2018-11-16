@@ -55,7 +55,6 @@ class ColorMean extends MediaDuplicateValidationBase {
 
     $similar_media = [];
 
-
     /** @var \Drupal\media\Entity\Media $entity */
     foreach ($this->getCloseMedia($entity, $image_colors) as $similar_entity) {
 
@@ -281,6 +280,7 @@ class ColorMean extends MediaDuplicateValidationBase {
    * {@inheritdoc}
    */
   public function mediaSave(MediaInterface $entity) {
+    parent::mediaSave($entity);
     $file = $this->getFile($entity);
 
     // Populate our data table with the column and row data for fast loopup
@@ -340,6 +340,7 @@ class ColorMean extends MediaDuplicateValidationBase {
    * {@inheritdoc}
    */
   public function mediaDelete(MediaInterface $entity) {
+    parent::mediaDelete($entity);
     // Remove the data from the database.
     $this->database->delete(self::DATABASE_TABLE)
       ->condition('mid', $entity->id())
@@ -350,6 +351,7 @@ class ColorMean extends MediaDuplicateValidationBase {
    * {@inheritdoc}
    */
   public function schema() {
+    $schema = parent::schema();
     $schema[self::DATABASE_TABLE] = [
       'description' => 'Media validation information for color_mean plugin',
       'fields' => [

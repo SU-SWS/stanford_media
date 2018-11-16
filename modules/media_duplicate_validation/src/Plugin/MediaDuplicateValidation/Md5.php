@@ -50,6 +50,7 @@ class Md5 extends MediaDuplicateValidationBase {
    * {@inheritdoc}
    */
   public function mediaSave(MediaInterface $entity) {
+    parent::mediaSave($entity);
     $file = File::load($entity->getSource()->getSourceFieldValue($entity));
     if ($file) {
       $this->database->merge(self::DATABASE_TABLE)
@@ -66,6 +67,7 @@ class Md5 extends MediaDuplicateValidationBase {
    * {@inheritdoc}
    */
   public function mediaDelete(MediaInterface $entity) {
+    parent::mediaDelete($entity);
     $this->database->delete(self::DATABASE_TABLE)
       ->condition('mid', $entity->id())
       ->execute();
@@ -75,6 +77,7 @@ class Md5 extends MediaDuplicateValidationBase {
    * {@inheritdoc}
    */
   public function schema() {
+    $schema = parent::schema();
     $schema[self::DATABASE_TABLE] = [
       'description' => 'Media validation information for md5 plugin',
       'fields' => [
