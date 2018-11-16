@@ -134,7 +134,7 @@ class DropzoneUpload extends MediaBrowserBase {
 
     $allowed_bundles = $this->getAllowedBundles($form_state);
     $allowed_extensions = $this->bundleSuggestion->getMultipleBundleExtensions($allowed_bundles);
-    $cardinality = $form_state->get(['entity_browser', 'validators', 'cardinality', 'cardinality']);
+    $validators = $form_state->get(['entity_browser', 'validators']);
 
     $form['upload'] = [
       '#title' => $this->t('File upload'),
@@ -143,7 +143,7 @@ class DropzoneUpload extends MediaBrowserBase {
       '#dropzone_description' => $this->configuration['dropzone_description'],
       '#max_filesize' => $this->bundleSuggestion->getMaxFilesize(),
       '#extensions' => $allowed_extensions,
-      '#max_files' => $cardinality ?: 1,
+      '#max_files' => $validators['cardinality']['cardinality'] ?? 1,
       '#clientside_resize' => FALSE,
     ];
     $form['upload']['#max_files'] = $form['upload']['#max_files'] == -1 ? 100 : $form['upload']['#max_files'];
