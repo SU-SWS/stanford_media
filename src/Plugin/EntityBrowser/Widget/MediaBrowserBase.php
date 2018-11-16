@@ -216,23 +216,11 @@ abstract class MediaBrowserBase extends WidgetBase {
    */
   protected function getSimilarForm(MediaInterface $entity) {
     $form = [];
-    $media_view_builder = $this->entityTypeManager->getViewBuilder('media');
 
     if (empty($similar_media = $this->duplicationManager->getSimilarEntities($entity, 3))) {
       return [];
     }
-
     $this->messenger->addWarning($this->t('Similar items exist for file %name', ['%name' => $entity->label()]));
-    $similar_choices = [$this->t('Add new')];
-
-    foreach ($similar_media as $media) {
-      $media_display = $media_view_builder->view($media, 'preview');
-      $similar_choices[$media->id()] = '<div class="media-label label">';
-      $similar_choices[$media->id()] .= $this->t('Use %name', ['%name' => $media->label()])
-        ->render();
-      $similar_choices[$media->id()] .= '</div>';
-      $similar_choices[$media->id()] .= render($media_display);
-    }
 
     $form['similar_items'] = [
       '#type' => 'details',
@@ -245,11 +233,34 @@ abstract class MediaBrowserBase extends WidgetBase {
       '#type' => 'radios',
       '#title' => $this->t('Use an existing item instead?'),
       '#description' => $this->t('To prevent duplication, perhaps one of these existing items will work.'),
-      '#options' => $similar_choices,
+      '#options' => [$this->t('Add new')] + $this->getRadioOptions($similar_media),
       '#required' => TRUE,
     ];
 
     return $form;
+  }
+
+  /**
+   * Get an keyed array that can be used in form api as a radio button options.
+   *
+   * @param \Drupal\media\MediaInterface[] $entities
+   *   Array of media entities.
+   *
+   * @return array
+   *   Array of keyed values for radio buttons.
+   */
+  protected function getRadioOptions(array $entities) {
+    $media_view_builder = $this->entityTypeManager->getViewBuilder('media');
+    $options = [];
+    foreach ($entities as $media) {
+      $media_display = $media_view_builder->view($media, 'preview');
+      $options[$media->id()] = '<div class="media-label label">';
+      $options[$media->id()] .= $this->t('Use %name', ['%name' => $media->label()])
+        ->render();
+      $options[$media->id()] .= '</div>';
+      $options[$media->id()] .= render($media_display);
+    }
+    return $options;
   }
 
   /**
