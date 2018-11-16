@@ -34,3 +34,5 @@ config.rb
 .CVS
 cgi-bin
 node_modules
+
+sherakama
