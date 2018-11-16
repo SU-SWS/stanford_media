@@ -220,20 +220,21 @@ abstract class MediaBrowserBase extends WidgetBase {
     if (empty($similar_media = $this->duplicationManager->getSimilarEntities($entity, 3))) {
       return [];
     }
-    $this->messenger->addWarning($this->t('Similar items exist for file %name', ['%name' => $entity->label()]));
 
     $form['similar_items'] = [
       '#type' => 'details',
-      '#title' => $this->t('Similar Items'),
+      '#title' => $this->t('Select and use an existing item below, or continue to add your new file. '),
+      '#description' => $this->t('We see that a similar item already exists in the Media Library.'),
       '#open' => TRUE,
       '#tree' => TRUE,
       '#weight' => -99,
+      '#attributes' => ['class' => ['similar-items-wrapper']],
     ];
     $form['similar_items'][$entity->id()]['similar_selection'] = [
       '#type' => 'radios',
       '#title' => $this->t('Use an existing item instead?'),
       '#description' => $this->t('To prevent duplication, perhaps one of these existing items will work.'),
-      '#options' => [$this->t('Add new')] + $this->getRadioOptions($similar_media),
+      '#options' => $this->getRadioOptions($similar_media) + [$this->t('Add new')],
       '#required' => TRUE,
     ];
 
