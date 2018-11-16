@@ -28,7 +28,7 @@ class ColorMean extends MediaDuplicateValidationBase {
   /**
    * Percent different each color can be to be considered the same.
    */
-  const PIXEL_TOLLERANCE = 20;
+  const PIXEL_TOLLERANCE = 25;
 
   /**
    * Total percent that is different but still considered similar.
@@ -47,9 +47,14 @@ class ColorMean extends MediaDuplicateValidationBase {
     if (!($file = $this->getFile($entity, ['image']))) {
       return [];
     }
-    $image_colors = $this->getColorData($file->getFileUri());
+
+    // The file failed because its either not an image or its a gif.
+    if (!($image_colors = $this->getColorData($file->getFileUri()))) {
+      return [];
+    }
 
     $similar_media = [];
+
 
     /** @var \Drupal\media\Entity\Media $entity */
     foreach ($this->getCloseMedia($entity, $image_colors) as $similar_entity) {
