@@ -181,7 +181,15 @@ abstract class MediaBrowserBase extends WidgetBase {
     // Build the entity form.
     foreach ($media_entities as $entity) {
       $labels[] = $entity->label();
-      $form['entities'][$entity->id()] = $this->buildEntityPreview($entity);
+
+      $form['entities'][$entity->id()]['entity_form'] = [
+        '#type' => 'inline_entity_form',
+        '#entity_type' => $entity->getEntityTypeId(),
+        '#bundle' => $entity->bundle(),
+        '#default_value' => $entity,
+        '#form_mode' => 'media_browser',
+      ];
+      $form['entities'][$entity->id()] += $this->getSimilarForm($entity);
     }
 
     // Prompt the user of a successful addition.
@@ -206,59 +214,49 @@ abstract class MediaBrowserBase extends WidgetBase {
    *
    * @throws \Drupal\Component\Plugin\Exception\PluginException
    */
-  protected function buildEntityPreview(MediaInterface $entity) {
-    $preview = [];
-    $preview['entity_form'] = [
-      '#type' => 'inline_entity_form',
-      '#entity_type' => $entity->getEntityTypeId(),
-      '#bundle' => $entity->bundle(),
-      '#default_value' => $entity,
-      '#form_mode' => 'media_browser',
-    ];
-
-    $similar_media = [];
+  protected function getSimilarForm(MediaInterface $entity) {
+    $form = [];
     $media_view_builder = $this->entityTypeManager->getViewBuilder('media');
 
+    $similar_media = [];
     foreach ($this->duplicationManager->getDefinitions() as $definition) {
-
       /** @var \Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationInterface $plugin */
       $plugin = $this->duplicationManager->createInstance($definition['id']);
       $similar_media = array_merge($similar_media, $plugin->getSimilarItems($entity));
-
-      if (empty($similar_media)) {
-        continue;
-      }
-
-      $this->messenger->addWarning($this->t('Similar items exist for file %name', ['%name' => $entity->label()]));
-      $similar_choices = [$this->t('Add new')];
-
-      foreach (array_slice($similar_media, 0, 3) as $media) {
-        $media_display = $media_view_builder->view($media, 'preview');
-        $similar_choices[$media->id()] = '<div class="media-label label">';
-        $similar_choices[$media->id()] .= $this->t('Use %name', ['%name' => $media->label()])
-          ->render();
-        $similar_choices[$media->id()] .= '</div>';
-        $similar_choices[$media->id()] .= render($media_display);
-      }
-
-      $preview['similar_items'] = [
-        '#type' => 'details',
-        '#title' => $this->t('Similar Items'),
-        '#open' => TRUE,
-        '#tree' => TRUE,
-        '#weight' => -99,
-      ];
-      $preview['similar_items'][$entity->id()]['similar_selection'] = [
-        '#type' => 'radios',
-        '#title' => $this->t('Use an existing item instead?'),
-        '#description' => $this->t('To prevent duplication, perhaps one of these existing items will work.'),
-        '#options' => $similar_choices,
-        '#required' => TRUE,
-      ];
-
     }
 
-    return $preview;
+    if (empty($similar_media)) {
+      return [];
+    }
+
+    $this->messenger->addWarning($this->t('Similar items exist for file %name', ['%name' => $entity->label()]));
+    $similar_choices = [$this->t('Add new')];
+
+    foreach (array_slice($similar_media, 0, 3) as $media) {
+      $media_display = $media_view_builder->view($media, 'preview');
+      $similar_choices[$media->id()] = '<div class="media-label label">';
+      $similar_choices[$media->id()] .= $this->t('Use %name', ['%name' => $media->label()])
+        ->render();
+      $similar_choices[$media->id()] .= '</div>';
+      $similar_choices[$media->id()] .= render($media_display);
+    }
+
+    $form['similar_items'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Similar Items'),
+      '#open' => TRUE,
+      '#tree' => TRUE,
+      '#weight' => -99,
+    ];
+    $form['similar_items'][$entity->id()]['similar_selection'] = [
+      '#type' => 'radios',
+      '#title' => $this->t('Use an existing item instead?'),
+      '#description' => $this->t('To prevent duplication, perhaps one of these existing items will work.'),
+      '#options' => $similar_choices,
+      '#required' => TRUE,
+    ];
+
+    return $form;
   }
 
   /**
