@@ -223,7 +223,7 @@ abstract class MediaBrowserBase extends WidgetBase {
 
     $form['similar_items'] = [
       '#type' => 'details',
-      '#title' => $this->t('Select and use an existing item below, or continue to add your new file. '),
+      '#title' => $this->t('Select and use an existing item below, or continue to add your new file.'),
       '#description' => $this->t('We see that a similar item already exists in the Media Library.'),
       '#open' => TRUE,
       '#tree' => TRUE,
