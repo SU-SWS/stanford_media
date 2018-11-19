@@ -105,7 +105,9 @@ class MediaDuplicateValidationManager extends DefaultPluginManager {
     /** @var \Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationInterface $plugin */
     $plugin = $this->createInstance($plugin_id);
     foreach (array_keys($plugin->schema()) as $table) {
-      $this->database->schema()->dropTable($table);
+      if ($this->database->schema()->tableExists($table)) {
+        $this->database->schema()->dropTable($table);
+      }
     }
   }
 
