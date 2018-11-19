@@ -28,7 +28,6 @@ function media_duplicate_validation_help($route_name, RouteMatchInterface $route
  * Implements hook_modules_installed().
  */
 function media_duplicate_validation_modules_installed($modules) {
-  \Drupal::logger('mytest')->alert(var_export($modules, true));
   /** @var \Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationManager $duplicate_manager */
   $duplicate_manager = \Drupal::service('plugin.manager.media_duplicate_validation');
   $duplicate_manager->buildPluginSchemas();
