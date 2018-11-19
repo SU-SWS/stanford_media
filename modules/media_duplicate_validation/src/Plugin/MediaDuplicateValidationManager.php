@@ -94,10 +94,10 @@ class MediaDuplicateValidationManager extends DefaultPluginManager {
   /**
    * Remove any tables associated to the given plugin as defined in schema().
    *
-   * @see \Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationInterface::schema()
-   *
    * @param string $plugin_id
    *   Plugin id.
+   *
+   * @see \Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationInterface::schema()
    *
    * @throws \Drupal\Component\Plugin\Exception\PluginException
    */
