@@ -25,7 +25,7 @@
       /**
        * Reset any focal point widget within the context.
        *
-       * @param context
+       * @param {Object} context
        *   Context of which to reset the focal point on.
        */
       function resetFocalPoint(context) {
