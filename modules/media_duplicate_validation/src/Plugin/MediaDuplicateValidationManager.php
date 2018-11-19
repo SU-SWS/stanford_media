@@ -91,4 +91,22 @@ class MediaDuplicateValidationManager extends DefaultPluginManager {
     return array_slice($similar_media, 0, $length);
   }
 
+  /**
+   * Remove any tables associated to the given plugin as defined in schema().
+   *
+   * @see \Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationInterface::schema()
+   *
+   * @param string $plugin_id
+   *   Plugin id.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\PluginException
+   */
+  public function removeSchemas($plugin_id) {
+    /** @var \Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationInterface $plugin */
+    $plugin = $this->createInstance($plugin_id);
+    foreach (array_keys($plugin->schema()) as $table) {
+      $this->database->schema()->dropTable($table);
+    }
+  }
+
 }

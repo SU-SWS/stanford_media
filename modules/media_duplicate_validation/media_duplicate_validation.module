@@ -25,12 +25,26 @@ function media_duplicate_validation_help($route_name, RouteMatchInterface $route
 }
 
 /**
- * Implements hook_cache_flush().
+ * Implements hook_modules_installed().
  */
-function media_duplicate_validation_cache_flush() {
+function media_duplicate_validation_modules_installed($modules) {
   /** @var \Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationManager $duplicate_manager */
   $duplicate_manager = \Drupal::service('plugin.manager.media_duplicate_validation');
   $duplicate_manager->buildPluginSchemas();
+}
+
+/**
+ * Implements hook_module_preuninstall().
+ */
+function media_duplicate_validation_module_preuninstall($module) {
+  /** @var \Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationManager $duplicate_manager */
+  $duplicate_manager = \Drupal::service('plugin.manager.media_duplicate_validation');
+
+  foreach ($duplicate_manager->getDefinitions() as $definition) {
+    if ($definition['provider'] == $module) {
+      $duplicate_manager->removeSchemas($definition['id']);
+    }
+  }
 }
 
 /**
