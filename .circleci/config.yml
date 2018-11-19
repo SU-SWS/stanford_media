@@ -1,0 +1,48 @@
+# CircleCI integration with Drupal 8.
+
+## Defines images and working directory.
+defaults: &defaults
+  docker:
+    - image: pookmish/drupal8ci:latest
+    - image: selenium/standalone-chrome:latest
+    - image: mariadb:10.3
+      environment:
+        MYSQL_ALLOW_EMPTY_PASSWORD: 1
+  working_directory: /var/www/html
+
+#Jobs
+
+## Job to run Unit and Kernel tests.
+unit_tests: &unit_tests
+  <<: *defaults
+  steps:
+    - run:
+        command: |
+          composer create-project drupal-composer/drupal-project:8.x-dev /var/www/html --stability dev --no-interaction --no-install
+          composer require su-sws/stanford_media:dev-${CIRCLE_BRANCH}
+          ln -s web docroot
+          cd docroot && ../vendor/bin/drush si minimal --db-url=mysql://root@127.0.0.1/drupal8 -y
+    - checkout:
+        path: docroot/modules/custom/stanford_media
+    - run:
+        command: |
+          cp docroot/modules/custom/stanford_media/.circleci/config/phpunit.xml docroot/core/
+          cd docroot && ../vendor/bin/phpunit -c core modules/custom
+    - store_test_results:
+        path: /var/www/html/artifacts/phpunit
+    - store_artifacts:
+        path: /var/www/html/artifacts
+
+
+# Declare all of the jobs we should run.
+version: 2
+jobs:
+  unit-tests:
+    <<: *unit_tests
+
+# Declare a workflow that runs all of our jobs in parallel.
+workflows:
+  version: 2
+  test_and_lint:
+    jobs:
+      - unit-tests
