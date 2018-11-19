@@ -41,6 +41,13 @@ class ColorMean extends MediaDuplicateValidationBase {
   const RESIZE_DIMENSION = 25;
 
   /**
+   * Keyed array of image color data with the image uri as the key.
+   *
+   * @var array
+   */
+  protected $imageColors = [];
+
+  /**
    * {@inheritdoc}
    */
   public function getSimilarItems(MediaInterface $entity) {
@@ -175,11 +182,9 @@ class ColorMean extends MediaDuplicateValidationBase {
    *   Array of color data or false if its not an image.
    */
   public function getColorData($uri) {
-    $color_data = &drupal_static(self::class . '::' . __FUNCTION__, []);
-    static $color_data = [];
-    if (isset($color_data[$uri])) {
+    if (isset($this->imageColors[$uri])) {
       // We've already gotten the data for this URI, lets use that.
-      return $color_data[$uri];
+      return $this->imageColors[$uri];
     };
 
     // If the file is not an jpg or png we'll skip it.
@@ -190,8 +195,8 @@ class ColorMean extends MediaDuplicateValidationBase {
     // Resize and greyscale the image first.
     $resized_image = $this->resizeImage($image, $this->mimeType($uri));
     imagefilter($resized_image, IMG_FILTER_GRAYSCALE);
-    $color_data[$uri] = $this->getColorValues($resized_image);
-    return $color_data[$uri];
+    $this->imageColors[$uri] = $this->getColorValues($resized_image);
+    return $this->imageColors[$uri];
   }
 
   /**

@@ -16,6 +16,9 @@ use Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationBase;
  */
 class Md5 extends MediaDuplicateValidationBase {
 
+  /**
+   * Database table used for this plugin.
+   */
   const DATABASE_TABLE = self::DATABASE_PREFIX . 'md5';
 
   /**
