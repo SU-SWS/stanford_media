@@ -1,0 +1,5 @@
+services:
+  plugin.manager.media_duplicate_validation:
+    class: Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationManager
+    arguments: ['@database']
+    parent: default_plugin_manager

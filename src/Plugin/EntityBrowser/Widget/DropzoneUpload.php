@@ -9,6 +9,7 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\dropzonejs\DropzoneJsUploadSave;
 use Drupal\entity_browser\WidgetValidationManager;
 use Drupal\file\Entity\File;
+use Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationManager;
 use Drupal\stanford_media\BundleSuggestion;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -33,6 +34,13 @@ class DropzoneUpload extends MediaBrowserBase {
   protected $dropzoneJsSave;
 
   /**
+   * Media duplicate validation manager service.
+   *
+   * @var \Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationManager
+   */
+  protected $duplicationManager;
+
+  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
@@ -46,6 +54,7 @@ class DropzoneUpload extends MediaBrowserBase {
       $container->get('stanford_media.bundle_suggestion'),
       $container->get('current_user'),
       $container->get('messenger'),
+      $container->get('plugin.manager.media_duplicate_validation'),
       $container->get('dropzonejs.upload_save')
     );
   }
@@ -53,8 +62,8 @@ class DropzoneUpload extends MediaBrowserBase {
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, EntityTypeManagerInterface $entity_type_manager, WidgetValidationManager $validation_manager, BundleSuggestion $bundles, AccountProxyInterface $current_user, MessengerInterface $messenger, DropzoneJsUploadSave $dropzone_save) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $event_dispatcher, $entity_type_manager, $validation_manager, $bundles, $current_user, $messenger);
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, EntityTypeManagerInterface $entity_type_manager, WidgetValidationManager $validation_manager, BundleSuggestion $bundles, AccountProxyInterface $current_user, MessengerInterface $messenger, MediaDuplicateValidationManager $duplication_manager, DropzoneJsUploadSave $dropzone_save) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $event_dispatcher, $entity_type_manager, $validation_manager, $bundles, $current_user, $messenger, $duplication_manager);
     $this->dropzoneJsSave = $dropzone_save;
   }
 
@@ -98,8 +107,8 @@ class DropzoneUpload extends MediaBrowserBase {
   public function prepareEntities(array $form, FormStateInterface $form_state) {
     $media_entities = [];
 
-    if ($form_state->get(['dropzonejs', $this->uuid(), 'media'])) {
-      return $form_state->get(['dropzonejs', $this->uuid(), 'media']);
+    if ($entities = $form_state->get(['dropzonejs', $this->uuid(), 'media'])) {
+      return $entities;
     }
 
     // Get the files and make media entities.
@@ -122,10 +131,10 @@ class DropzoneUpload extends MediaBrowserBase {
    */
   public function getForm(array &$original_form, FormStateInterface $form_state, array $additional_widget_parameters) {
     $form = parent::getForm($original_form, $form_state, $additional_widget_parameters);
-    $storage = $form_state->getStorage();
 
     $allowed_bundles = $this->getAllowedBundles($form_state);
     $allowed_extensions = $this->bundleSuggestion->getMultipleBundleExtensions($allowed_bundles);
+    $validators = $form_state->get(['entity_browser', 'validators']);
 
     $form['upload'] = [
       '#title' => $this->t('File upload'),
@@ -134,15 +143,16 @@ class DropzoneUpload extends MediaBrowserBase {
       '#dropzone_description' => $this->configuration['dropzone_description'],
       '#max_filesize' => $this->bundleSuggestion->getMaxFilesize(),
       '#extensions' => $allowed_extensions,
-      '#max_files' => !empty($storage['entity_browser']['validators']['cardinality']['cardinality']) ? $storage['entity_browser']['validators']['cardinality']['cardinality'] : 1,
+      '#max_files' => $validators['cardinality']['cardinality'] ?? 1,
       '#clientside_resize' => FALSE,
     ];
+    $form['upload']['#max_files'] = $form['upload']['#max_files'] == -1 ? 100 : $form['upload']['#max_files'];
 
+    $form['#attached']['library'][] = 'stanford_media/dropzonejs';
     $form['#attached']['library'][] = 'dropzonejs/widget';
     // Disable the submit button until the upload sucesfully completed.
     $form['#attached']['library'][] = 'dropzonejs_eb_widget/common';
     $original_form['#attributes']['class'][] = 'dropzonejs-disable-submit';
-    $form['#attached']['library'][] = 'stanford_media/dropzonejs';
 
     // Remove the upload after we have some files.
     if ($form_state->get(['dropzonejs', $this->uuid(), 'media'])) {

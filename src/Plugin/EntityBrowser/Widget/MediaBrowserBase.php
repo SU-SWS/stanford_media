@@ -12,6 +12,8 @@ use Drupal\entity_browser\WidgetBase;
 use Drupal\entity_browser\WidgetValidationManager;
 use Drupal\inline_entity_form\ElementSubmit;
 use Drupal\media\Entity\MediaType;
+use Drupal\media\MediaInterface;
+use Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationManager;
 use Drupal\stanford_media\BundleSuggestion;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -45,6 +47,13 @@ abstract class MediaBrowserBase extends WidgetBase {
   protected $messenger;
 
   /**
+   * Media duplicate validation manager service.
+   *
+   * @var \Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationManager
+   */
+  protected $duplicationManager;
+
+  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
@@ -57,18 +66,20 @@ abstract class MediaBrowserBase extends WidgetBase {
       $container->get('plugin.manager.entity_browser.widget_validation'),
       $container->get('stanford_media.bundle_suggestion'),
       $container->get('current_user'),
-      $container->get('messenger')
+      $container->get('messenger'),
+      $container->get('plugin.manager.media_duplicate_validation')
     );
   }
 
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, EntityTypeManagerInterface $entity_type_manager, WidgetValidationManager $validation_manager, BundleSuggestion $bundles, AccountProxyInterface $current_user, MessengerInterface $messenger) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, EntityTypeManagerInterface $entity_type_manager, WidgetValidationManager $validation_manager, BundleSuggestion $bundles, AccountProxyInterface $current_user, MessengerInterface $messenger, MediaDuplicateValidationManager $duplication_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $event_dispatcher, $entity_type_manager, $validation_manager);
     $this->bundleSuggestion = $bundles;
     $this->currentUser = $current_user;
     $this->messenger = $messenger;
+    $this->duplicationManager = $duplication_manager;
   }
 
   /**
@@ -118,7 +129,7 @@ abstract class MediaBrowserBase extends WidgetBase {
     // This will save any changes such as media title etc.
     $children = Element::children($element['entities']);
     foreach ($children as $child) {
-      $entity_form = $element['entities'][$child];
+      $entity_form = $element['entities'][$child]['entity_form'];
 
       if (!isset($entity_form['#ief_element_submit'])) {
         continue;
@@ -130,7 +141,10 @@ abstract class MediaBrowserBase extends WidgetBase {
     }
 
     $media_entities = $this->prepareEntities($form, $form_state);
-    $this->selectEntities($media_entities, $form_state);
+    $this->cleanDuplicates($element, $form, $form_state);
+    if (empty($form_state->get(['entity_browser', 'selected_entities']))) {
+      $this->selectEntities($media_entities, $form_state);
+    }
   }
 
   /**
@@ -167,13 +181,15 @@ abstract class MediaBrowserBase extends WidgetBase {
     // Build the entity form.
     foreach ($media_entities as $entity) {
       $labels[] = $entity->label();
-      $form['entities'][$entity->id()] = [
+
+      $form['entities'][$entity->id()]['entity_form'] = [
         '#type' => 'inline_entity_form',
         '#entity_type' => $entity->getEntityTypeId(),
         '#bundle' => $entity->bundle(),
         '#default_value' => $entity,
         '#form_mode' => 'media_browser',
       ];
+      $form['entities'][$entity->id()] += $this->getSimilarForm($entity);
     }
 
     // Prompt the user of a successful addition.
@@ -185,6 +201,98 @@ abstract class MediaBrowserBase extends WidgetBase {
     // $original_form as the second argument to addCallback(), because it's not
     // just the entity browser part of the form, not the actual complete form.
     ElementSubmit::addCallback($form['actions']['submit'], $form_state->getCompleteForm());
+  }
+
+  /**
+   * Build the inline enitity form and if applicable, similar entity selection.
+   *
+   * @param \Drupal\media\MediaInterface $entity
+   *   Entity for the inline form.
+   *
+   * @return array
+   *   Form array for the given entity.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\PluginException
+   */
+  protected function getSimilarForm(MediaInterface $entity) {
+    $form = [];
+
+    if (empty($similar_media = $this->duplicationManager->getSimilarEntities($entity, 3))) {
+      return [];
+    }
+
+    $form['similar_items'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Similar Items'),
+      '#description' => $this->t('We see that a similar item already exists in the Media Library.'),
+      '#open' => TRUE,
+      '#tree' => TRUE,
+      '#weight' => -99,
+      '#attributes' => ['class' => ['similar-items-wrapper']],
+    ];
+    $form['similar_items'][$entity->id()]['similar_selection'] = [
+      '#type' => 'radios',
+      '#title' => $this->t('Select and use an existing item below, or continue to add your new file.'),
+      '#description' => $this->t('To prevent duplication, perhaps one of these existing items might work.'),
+      '#options' => $this->getRadioOptions($similar_media) + [$this->t('Add new')],
+      '#required' => TRUE,
+    ];
+
+    return $form;
+  }
+
+  /**
+   * Get an keyed array that can be used in form api as a radio button options.
+   *
+   * @param \Drupal\media\MediaInterface[] $entities
+   *   Array of media entities.
+   *
+   * @return array
+   *   Array of keyed values for radio buttons.
+   */
+  protected function getRadioOptions(array $entities) {
+    $media_view_builder = $this->entityTypeManager->getViewBuilder('media');
+    $options = [];
+    foreach ($entities as $media) {
+      $media_display = $media_view_builder->view($media, 'preview');
+      $options[$media->id()] = '<div class="media-label label">';
+      $options[$media->id()] .= $this->t('Use %name', ['%name' => $media->label()])
+        ->render();
+      $options[$media->id()] .= '</div>';
+      $options[$media->id()] .= render($media_display);
+    }
+    return $options;
+  }
+
+  /**
+   * Select the entities the user wants if they selected to use existing.
+   *
+   * @param array $element
+   *   Form element array.
+   * @param array $form
+   *   Complete form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Current form state.
+   */
+  protected function cleanDuplicates(array &$element, array &$form, FormStateInterface $form_state) {
+    $selected_items = $form_state->get(['entity_browser', 'selected_entities']);
+
+    /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
+    foreach ($selected_items as $delta => $entity) {
+      $chosen_id = $form_state->getValue([
+        'similar_items',
+        $entity->id(),
+        'similar_selection',
+      ]);
+
+      if ($chosen_id) {
+        $entity->delete();
+        $selected_items[$delta] = $this->entityTypeManager->getStorage($entity->getEntityTypeId())
+          ->load($chosen_id);
+      }
+    }
+
+    $form_state->set(['entity_browser', 'selected_entities'], $selected_items);
   }
 
   /**

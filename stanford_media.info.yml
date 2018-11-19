@@ -18,6 +18,7 @@ dependencies:
   - inline_entity_form
   - linkit
   - media
+  - media_duplicate_validation
   - video_embed_field
   - video_embed_media
   - views

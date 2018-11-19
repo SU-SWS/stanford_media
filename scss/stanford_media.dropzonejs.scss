@@ -28,7 +28,6 @@
 
 }
 
-
 #entities > div {
   border-bottom: 1px solid #ccc;
 
@@ -37,3 +36,37 @@
   }
 }
 
+.dropzone .dz-preview .dropzonejs-approve-icon {
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  z-index: 500;
+  background-image: url('../img/approve-icon-empty.png');
+  background-size: cover;
+
+  &.approved {
+    background-image: url('../img/approve-icon.png');
+  }
+}
+
+[data-drupal-selector="edit-similar-items"] {
+  .form-radios {
+    display: flex;
+    flex-wrap: wrap;
+
+    > div:last-child {
+      width: 100%;
+    }
+
+    > div {
+      width: 33%;
+    }
+  }
+
+  label span.media {
+    display: block;
+  }
+}

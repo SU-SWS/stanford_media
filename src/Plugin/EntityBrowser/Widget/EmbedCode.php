@@ -7,6 +7,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\entity_browser\WidgetValidationManager;
+use Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationManager;
 use Drupal\stanford_media\BundleSuggestion;
 use Drupal\video_embed_field\ProviderManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -44,6 +45,7 @@ class EmbedCode extends MediaBrowserBase {
       $container->get('stanford_media.bundle_suggestion'),
       $container->get('current_user'),
       $container->get('messenger'),
+      $container->get('plugin.manager.media_duplicate_validation'),
       $container->get('video_embed_field.provider_manager')
     );
   }
@@ -51,8 +53,8 @@ class EmbedCode extends MediaBrowserBase {
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, EntityTypeManagerInterface $entity_type_manager, WidgetValidationManager $validation_manager, BundleSuggestion $bundles, AccountProxyInterface $current_user, MessengerInterface $messenger, ProviderManager $video_provider) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $event_dispatcher, $entity_type_manager, $validation_manager, $bundles, $current_user, $messenger);
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, EntityTypeManagerInterface $entity_type_manager, WidgetValidationManager $validation_manager, BundleSuggestion $bundles, AccountProxyInterface $current_user, MessengerInterface $messenger, MediaDuplicateValidationManager $duplication_manager, ProviderManager $video_provider) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $event_dispatcher, $entity_type_manager, $validation_manager, $bundles, $current_user, $messenger, $duplication_manager);
     $this->videoProvider = $video_provider;
   }
 

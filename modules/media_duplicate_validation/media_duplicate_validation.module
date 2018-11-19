@@ -1,0 +1,86 @@
+<?php
+
+/**
+ * @file
+ * Contains media_duplicate_validation.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Entity\EntityInterface;
+
+/**
+ * Implements hook_help().
+ */
+function media_duplicate_validation_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the media_duplicate_validation module.
+    case 'help.page.media_duplicate_validation':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Media Validation plugins to help prevent duplication of media items') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_modules_installed().
+ */
+function media_duplicate_validation_modules_installed($modules) {
+  /** @var \Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationManager $duplicate_manager */
+  $duplicate_manager = \Drupal::service('plugin.manager.media_duplicate_validation');
+  $duplicate_manager->buildPluginSchemas();
+}
+
+/**
+ * Implements hook_module_preuninstall().
+ */
+function media_duplicate_validation_module_preuninstall($module) {
+  /** @var \Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationManager $duplicate_manager */
+  $duplicate_manager = \Drupal::service('plugin.manager.media_duplicate_validation');
+
+  foreach ($duplicate_manager->getDefinitions() as $definition) {
+    if ($definition['provider'] == $module) {
+      $duplicate_manager->removeSchemas($definition['id']);
+    }
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ */
+function media_duplicate_validation_media_insert(EntityInterface $entity) {
+  /** @var \Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationManager $duplicate_manager */
+  $duplicate_manager = \Drupal::service('plugin.manager.media_duplicate_validation');
+
+  // Perform any necessary actions when a media entity is saved for each plugin.
+  foreach ($duplicate_manager->getDefinitions() as $definition) {
+    /** @var \Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationInterface $plugin */
+    $plugin = $duplicate_manager->createInstance($definition['id']);
+    $plugin->mediaSave($entity);
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_update().
+ */
+function media_duplicate_validation_media_update(EntityInterface $entity) {
+  media_duplicate_validation_media_insert($entity);
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_delete().
+ */
+function media_duplicate_validation_media_delete(EntityInterface $entity) {
+  /** @var \Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationManager $duplicate_manager */
+  $duplicate_manager = \Drupal::service('plugin.manager.media_duplicate_validation');
+
+  // Perform any necessary actions when a media entity is deleted for each
+  // plugin.
+  foreach ($duplicate_manager->getDefinitions() as $definition) {
+    /** @var \Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationInterface $plugin */
+    $plugin = $duplicate_manager->createInstance($definition['id']);
+    $plugin->mediaDelete($entity);
+  }
+}
