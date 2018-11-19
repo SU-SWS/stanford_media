@@ -218,7 +218,7 @@ class ColorMean extends MediaDuplicateValidationBase {
   }
 
   /**
-   * Create an image resource from a give file path.
+   * Create an image resource from a given file path.
    *
    * @param string $path
    *   Path to image.
