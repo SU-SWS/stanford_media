@@ -56,6 +56,10 @@ class ColorMean extends MediaDuplicateValidationBase {
     $similar_media = [];
 
     /** @var \Drupal\media\Entity\Media $entity */
+    // After finding all the media entities that might be close enough to be
+    // considered similar, we'll find which ones are within the similarity
+    // tolerance. Then based on the percent of similarity, create an array with
+    // the similarity as the key.
     foreach ($this->getCloseMedia($entity, $image_colors) as $similar_entity) {
 
       $similar_file = $this->getFile($similar_entity, ['image']);
@@ -171,6 +175,7 @@ class ColorMean extends MediaDuplicateValidationBase {
    *   Array of color data or false if its not an image.
    */
   public function getColorData($uri) {
+    $color_data = &drupal_static(self::class . '::' . __FUNCTION__, []);
     static $color_data = [];
     if (isset($color_data[$uri])) {
       // We've already gotten the data for this URI, lets use that.
@@ -235,6 +240,7 @@ class ColorMean extends MediaDuplicateValidationBase {
       case 'png':
         return imagecreatefrompng($path);
     }
+    $this->logger->info('Unable to create image from @path. Path is not an jpg or png', ['@path' => $path]);
     return FALSE;
   }
 

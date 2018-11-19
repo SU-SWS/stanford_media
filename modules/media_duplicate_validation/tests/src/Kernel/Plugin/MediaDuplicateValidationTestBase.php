@@ -63,6 +63,7 @@ abstract class MediaDuplicateValidationTestBase extends KernelTestBase {
       'type' => 'image',
       'module' => 'image',
     ])->save();
+
     FieldConfig::create([
       'id' => 'media.image.field_media_image',
       'field_name' => 'field_media_image',

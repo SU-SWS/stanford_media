@@ -3,6 +3,7 @@
 namespace Drupal\media_duplicate_validation\Plugin;
 
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\PluginBase;
 use Drupal\Core\Queue\QueueFactory;
@@ -31,6 +32,13 @@ abstract class MediaDuplicateValidationBase extends PluginBase implements MediaD
   protected $queue;
 
   /**
+   * Database logging service.
+   *
+   * @var \Drupal\Core\Logger\LoggerChannelInterface
+   */
+  protected $logger;
+
+  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
@@ -39,17 +47,19 @@ abstract class MediaDuplicateValidationBase extends PluginBase implements MediaD
       $plugin_id,
       $plugin_definition,
       $container->get('database'),
-      $container->get('queue')
+      $container->get('queue'),
+      $container->get('logger.factory')
     );
   }
 
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, Connection $database, QueueFactory $queue) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, Connection $database, QueueFactory $queue, LoggerChannelFactoryInterface $logger_factory) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->database = $database;
     $this->queue = $queue;
+    $this->logger = $logger_factory->get($this->getPluginId());
   }
 
   /**
@@ -78,10 +88,13 @@ abstract class MediaDuplicateValidationBase extends PluginBase implements MediaD
     /** @var \Drupal\Core\Queue\QueueInterface $queue */
     $queue = $this->queue->get('media_duplicate_validation');
 
-    foreach (Media::loadMultiple() as $media) {
+    $query = $this->database->select('media', 'm')
+      ->fields('m', ['mid'])
+      ->execute();
+    while ($mid = $query->fetchField()) {
       $item = new \stdClass();
       $item->plugin = $this->getPluginId();
-      $item->mid = $media->id();
+      $item->mid = $mid;
       $queue->createItem($item);
     }
   }
