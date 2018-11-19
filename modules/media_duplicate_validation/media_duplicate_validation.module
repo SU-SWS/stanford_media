@@ -40,6 +40,7 @@ function media_duplicate_validation_media_insert(EntityInterface $entity) {
   /** @var \Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationManager $duplicate_manager */
   $duplicate_manager = \Drupal::service('plugin.manager.media_duplicate_validation');
 
+  // Perform any necessary actions when a media entity is saved for each plugin.
   foreach ($duplicate_manager->getDefinitions() as $definition) {
     /** @var \Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationInterface $plugin */
     $plugin = $duplicate_manager->createInstance($definition['id']);
@@ -61,6 +62,8 @@ function media_duplicate_validation_media_delete(EntityInterface $entity) {
   /** @var \Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationManager $duplicate_manager */
   $duplicate_manager = \Drupal::service('plugin.manager.media_duplicate_validation');
 
+  // Perform any necessary actions when a media entity is deleted for each
+  // plugin.
   foreach ($duplicate_manager->getDefinitions() as $definition) {
     /** @var \Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationInterface $plugin */
     $plugin = $duplicate_manager->createInstance($definition['id']);

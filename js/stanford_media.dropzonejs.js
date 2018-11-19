@@ -4,6 +4,9 @@
     attach: function attach(context, settings) {
       $('.similar-items-wrapper', context).once().each(function (i, wrapper) {
         var $entityForm = $(wrapper).siblings('[data-drupal-selector="edit-entity-form"]');
+        // Hide the entity form until the user choose if they want to add a new
+        // media entity or use an existing item. If they plan to use an existing
+        // item, there's no point to populating this form.
         $entityForm.hide();
 
         // Use change events here instead of in the form api because its much
@@ -23,6 +26,7 @@
        * Reset any focal point widget within the context.
        *
        * @param context
+       *   Context of which to reset the focal point on.
        */
       function resetFocalPoint(context) {
         $(".focal-point-indicator", context).each(function () {
