@@ -12,6 +12,11 @@ use Drupal\media\MediaInterface;
 interface MediaDuplicateValidationInterface {
 
   /**
+   * Prefix on all plugin tables if they use a table.
+   */
+  const DATABASE_PREFIX = 'media_duplicate_validation__';
+
+  /**
    * Find any similar media entities to the given file uri.
    *
    * @param \Drupal\media\MediaInterface $entity

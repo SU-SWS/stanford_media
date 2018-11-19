@@ -23,7 +23,7 @@ class ColorMean extends MediaDuplicateValidationBase {
   /**
    * Database table used for this plugin.
    */
-  const DATABASE_TABLE = 'media_validate_color_mean';
+  const DATABASE_TABLE = self::DATABASE_PREFIX . 'color_mean';
 
   /**
    * Percent different each color can be to be considered the same.
