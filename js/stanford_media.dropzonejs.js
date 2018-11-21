@@ -11,7 +11,7 @@
 
         // Use change events here instead of in the form api because its much
         // harder to add listeners to the entire inline entity form.
-        $(wrapper).find('input[type="radio"]').change(function () {
+        $('input[type="radio"]', wrapper).change(function () {
           if (this.value == '0') {
             $entityForm.show();
             resetFocalPoint($entityForm);
@@ -19,7 +19,8 @@
           else {
             $entityForm.hide();
           }
-        })
+        });
+        $('a', wrapper).attr('target', '_blank');
       });
 
       /**
