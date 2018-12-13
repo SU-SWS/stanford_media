@@ -29,7 +29,7 @@ class MediaEmbedDialogManager extends DefaultPluginManager {
       'Plugin/MediaEmbedDialog',
       $namespaces,
       $module_handler,
-      'Drupal\stanford_media\MediaEmbedDialogInterface',
+      'Drupal\stanford_media\Plugin\MediaEmbedDialogInterface',
       'Drupal\stanford_media\Annotation\MediaEmbedDialog'
     );
     $this->alterInfo('media_embed_dialog_info');

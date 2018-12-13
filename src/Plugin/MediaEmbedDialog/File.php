@@ -4,7 +4,6 @@ namespace Drupal\stanford_media\Plugin\MediaEmbedDialog;
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\media\MediaInterface;
-use Drupal\stanford_media\Plugin\MediaEmbedDialogBase;
 use Drupal\stanford_media\Plugin\MediaEmbedDialogInterface;
 
 /**

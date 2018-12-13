@@ -4,7 +4,6 @@ namespace Drupal\stanford_media\Plugin\MediaEmbedDialog;
 
 use Drupal\Component\Utility\Html;
 use Drupal\media\MediaInterface;
-use Drupal\stanford_media\Plugin\MediaEmbedDialogBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\video_embed_field\ProviderManager;
