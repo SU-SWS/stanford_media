@@ -123,29 +123,23 @@ function stanford_media_form_entity_embed_dialog_alter(&$form, FormStateInterfac
 
   /** @var \Drupal\media\MediaInterface $entity */
   $entity = $form_state->get('entity');
-  /** @var \Drupal\stanford_media\MediaEmbedDialogManager $dialog_manager */
+  /** @var \Drupal\stanford_media\Plugin\MediaEmbedDialogManager $dialog_manager */
   $dialog_manager = \Drupal::service('plugin.manager.media_embed_dialog_manager');
 
   foreach (array_keys($dialog_manager->getDefinitions()) as $plugin_id) {
-    /** @var \Drupal\stanford_media\MediaEmbedDialogInterface $plugin */
+    /** @var \Drupal\stanford_media\Plugin\MediaEmbedDialogInterface $plugin */
     $plugin = $dialog_manager->createInstance($plugin_id, ['entity' => $entity]);
 
     if ($plugin->isApplicable()) {
       // Alter the dialog form for each plugin.
-      // @see \Drupal\stanford_media\MediaEmbedDialogInterface::alterDialogForm()
+      // @see \Drupal\stanford_media\Plugin\MediaEmbedDialogInterface::alterDialogForm()
       $plugin->alterDialogForm($form, $form_state);
 
       // Adds validate method.
-      array_unshift($form['#validate'], [
-        get_class($plugin),
-        'validateDialogForm',
-      ]);
+      array_unshift($form['#validate'], [$plugin, 'validateDialogForm']);
 
       // Adds submit method.
-      array_unshift($form['#submit'], [
-        get_class($plugin),
-        'submitDialogForm',
-      ]);
+      array_unshift($form['#submit'], [$plugin, 'submitDialogForm']);
     }
   }
 }
@@ -330,6 +324,6 @@ function stanford_media_media_source_info_alter(array &$definitions) {
 /**
  * Implements hook_audio_embed_field_provider_info_alter().
  */
-function stanford_media_audio_embed_field_provider_info_alter(&$defintions) {
-  $defintions['soundcloud']['class'] = StanfordSoundCloud::class;
+function stanford_media_audio_embed_field_provider_info_alter(&$definitions) {
+  $definitions['soundcloud']['class'] = StanfordSoundCloud::class;
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\stanford_media;
+namespace Drupal\stanford_media\Service;
 
 use Drupal\Component\Utility\Bytes;
 use Drupal\Core\Entity\EntityTypeManager;
@@ -239,7 +239,7 @@ class BundleSuggestion {
    *   A url or string to embed.
    *
    * @return \Drupal\media\Entity\MediaType
-   *   Media type that matcheds input.
+   *   Media type that matches the input.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException

@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\stanford_media;
+namespace Drupal\stanford_media\Plugin;
 
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;

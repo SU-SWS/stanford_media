@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\stanford_media;
+namespace Drupal\stanford_media\Plugin;
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\media\MediaInterface;
@@ -53,7 +53,7 @@ interface MediaEmbedDialogInterface {
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Current Form State.
    */
-  public static function validateDialogForm(array &$form, FormStateInterface $form_state);
+  public function validateDialogForm(array &$form, FormStateInterface $form_state);
 
   /**
    * Operate on the dialog form submit before the reset of it takes place.
@@ -63,7 +63,7 @@ interface MediaEmbedDialogInterface {
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Current Form State.
    */
-  public static function submitDialogForm(array &$form, FormStateInterface $form_state);
+  public function submitDialogForm(array &$form, FormStateInterface $form_state);
 
   /**
    * Alter the embed media item before rendering, including adding a preRender.

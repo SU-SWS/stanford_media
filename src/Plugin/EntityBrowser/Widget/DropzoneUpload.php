@@ -10,7 +10,7 @@ use Drupal\dropzonejs\DropzoneJsUploadSave;
 use Drupal\entity_browser\WidgetValidationManager;
 use Drupal\file\Entity\File;
 use Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationManager;
-use Drupal\stanford_media\BundleSuggestion;
+use Drupal\stanford_media\Service\BundleSuggestion;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\stanford_media;
+namespace Drupal\stanford_media\Service;
 
 use Drupal\Core\Database\Database;
 use Drupal\Core\Entity\EntityTypeManagerInterface;

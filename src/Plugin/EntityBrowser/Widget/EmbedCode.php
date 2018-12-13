@@ -8,8 +8,9 @@ use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\entity_browser\WidgetValidationManager;
 use Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationManager;
-use Drupal\stanford_media\BundleSuggestion;
-use Drupal\video_embed_field\ProviderManager;
+use Drupal\stanford_media\Service\BundleSuggestion;
+use Drupal\video_embed_field\ProviderManager as VideoProviderManager;
+use Drupal\audio_embed_field\ProviderManager as AudioProviderManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -32,6 +33,13 @@ class EmbedCode extends MediaBrowserBase {
   protected $videoProvider;
 
   /**
+   * Audio provider manager service.
+   *
+   * @var \Drupal\audio_embed_field\ProviderManager
+   */
+  protected $audioProvider;
+
+  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
@@ -46,16 +54,18 @@ class EmbedCode extends MediaBrowserBase {
       $container->get('current_user'),
       $container->get('messenger'),
       $container->get('plugin.manager.media_duplicate_validation'),
-      $container->get('video_embed_field.provider_manager')
+      $container->get('video_embed_field.provider_manager'),
+      $container->get('audio_embed_field.provider_manager')
     );
   }
 
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, EntityTypeManagerInterface $entity_type_manager, WidgetValidationManager $validation_manager, BundleSuggestion $bundles, AccountProxyInterface $current_user, MessengerInterface $messenger, MediaDuplicateValidationManager $duplication_manager, ProviderManager $video_provider) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, EntityTypeManagerInterface $entity_type_manager, WidgetValidationManager $validation_manager, BundleSuggestion $bundles, AccountProxyInterface $current_user, MessengerInterface $messenger, MediaDuplicateValidationManager $duplication_manager, VideoProviderManager $video_provider, AudioProviderManager $audio_provider) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $event_dispatcher, $entity_type_manager, $validation_manager, $bundles, $current_user, $messenger, $duplication_manager);
     $this->videoProvider = $video_provider;
+    $this->audioProvider = $audio_provider;
   }
 
   /**
@@ -90,16 +100,10 @@ class EmbedCode extends MediaBrowserBase {
    */
   public function getForm(array &$original_form, FormStateInterface $form_state, array $widget_params) {
     $form = parent::getForm($original_form, $form_state, $widget_params);
-    $providers = $this->videoProvider->getProvidersOptionList();
-    /** @var \Drupal\Core\StringTranslation\TranslatableMarkup $provider */
-    foreach ($providers as &$provider) {
-      $provider = $provider->render();
-    }
-    $providers = implode(', ', $providers);
     $form['input'] = [
       '#type' => 'textfield',
-      '#title' => $this->t('Video Url'),
-      '#description' => $this->t('Enter the url of the video. This will display as an embedded video on the page. Compatible providers are: %providers', ['%providers' => $providers]),
+      '#title' => $this->t('Shareable Url'),
+      '#description' => $this->t('Enter the url to the sharable content. This will display as an embedded content on the page. Compatible providers are: %providers', ['%providers' => $this->getSharableProviderNames()]),
       '#required' => TRUE,
       '#placeholder' => $this->t('Enter a URL...'),
     ];
@@ -110,6 +114,34 @@ class EmbedCode extends MediaBrowserBase {
 
     $form['#attached']['library'][] = 'stanford_media/embed';
     return $form;
+  }
+
+  /**
+   * Get a list of all available embed code providers.
+   *
+   * @return string
+   */
+  protected function getSharableProviderNames() {
+    $sharable_provider = [];
+
+    $video_providers = $this->videoProvider->getProvidersOptionList();
+    /** @var \Drupal\Core\StringTranslation\TranslatableMarkup $provider */
+    foreach ($video_providers as $provider_id => $provider) {
+      $sharable_provider['Video'][0] = $this->t('Video:')->render();
+      $sharable_provider['Video'][] = $provider->render();
+    }
+
+    $audio_providers = $this->audioProvider->getProvidersOptionList();
+    foreach ($audio_providers as $provider_id => $provider) {
+      $sharable_provider['Audio'][0] = $this->t('Audio:')->render();
+      $sharable_provider['Audio'][] = $provider->render();
+    }
+
+    foreach ($sharable_provider as &$providers) {
+      $providers = implode(', ', $providers);
+    }
+
+    return str_replace(':,',':', implode('; ', array_filter($sharable_provider)));
   }
 
   /**
