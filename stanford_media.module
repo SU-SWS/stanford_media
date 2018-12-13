@@ -14,6 +14,7 @@ use Drupal\Core\Url;
 use Drupal\media\MediaForm;
 use Drupal\file\Entity\File;
 use Drupal\stanford_media\Plugin\media\Source\Image;
+use Drupal\stanford_media\Plugin\audio_embed_field\Provider\StanfordSoundCloud;
 
 /**
  * Implements hook_ENTITY_TYPE_presave().
@@ -324,4 +325,11 @@ function stanford_media_preprocess_media__image(&$variables) {
  */
 function stanford_media_media_source_info_alter(array &$definitions) {
   $definitions['image']['class'] = Image::class;
+}
+
+/**
+ * Implements hook_audio_embed_field_provider_info_alter().
+ */
+function stanford_media_audio_embed_field_provider_info_alter(&$defintions) {
+  $defintions['soundcloud']['class'] = StanfordSoundCloud::class;
 }

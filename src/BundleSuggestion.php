@@ -6,7 +6,8 @@ use Drupal\Component\Utility\Bytes;
 use Drupal\Core\Entity\EntityTypeManager;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\media\Entity\MediaType;
-use Drupal\video_embed_field\ProviderManager;
+use Drupal\video_embed_field\ProviderManager as VideoProviderManager;
+use Drupal\audio_embed_field\ProviderManager as AudioProviderManager;
 
 /**
  * Class BundleSuggestion.
@@ -30,16 +31,26 @@ class BundleSuggestion {
   protected $videoProvider;
 
   /**
+   * Audio provider manager service.
+   *
+   * @var \Drupal\audio_embed_field\ProviderManager
+   */
+  protected $audioProvider;
+
+  /**
    * MediaHelper constructor.
    *
    * @param \Drupal\Core\Entity\EntityTypeManager $entity_type_manager
    *   The entity type manager.
-   * @param \Drupal\video_embed_field\ProviderManager $providers
+   * @param \Drupal\video_embed_field\ProviderManager $video_providers
    *   Video provider manager service.
+   * @param \Drupal\audio_embed_field\ProviderManager $audio_providers
+   *   Audio provider manager service.
    */
-  public function __construct(EntityTypeManager $entity_type_manager, ProviderManager $providers) {
+  public function __construct(EntityTypeManager $entity_type_manager, VideoProviderManager $video_providers, AudioProviderManager $audio_providers) {
     $this->entityTypeManager = $entity_type_manager;
-    $this->videoProvider = $providers;
+    $this->videoProvider = $video_providers;
+    $this->audioProvider = $audio_providers;
   }
 
   /**
@@ -235,6 +246,7 @@ class BundleSuggestion {
    */
   public function getBundleFromInput($input) {
     $video_provider = $this->videoProvider->loadProviderFromInput($input);
+    $audio_provider = $this->audioProvider->loadProviderFromInput($input);
     foreach ($this->getMediaBundles() as $media_type) {
       $source_field = $media_type->getSource()
         ->getConfiguration()['source_field'];
@@ -242,6 +254,10 @@ class BundleSuggestion {
       $field = FieldConfig::loadByName('media', $media_type->id(), $source_field);
 
       if ($video_provider && $field->getType() == 'video_embed_field') {
+        return $media_type;
+      }
+
+      if ($audio_provider && $field->getType() == 'audio_embed_field') {
         return $media_type;
       }
     }

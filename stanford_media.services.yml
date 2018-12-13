@@ -3,16 +3,15 @@ services:
     class: Drupal\stanford_media\Routing\RouteSubscriber
     tags:
       - { name: event_subscriber }
+
   stanford_media.bundle_suggestion:
     class: '\Drupal\stanford_media\BundleSuggestion'
-    arguments:
-      - '@entity_type.manager'
-      - '@video_embed_field.provider_manager'
+    arguments: ['@entity_type.manager', '@video_embed_field.provider_manager', '@audio_embed_field.provider_manager']
+
   stanford_media.field_save:
     class: '\Drupal\stanford_media\MediaFieldSave'
-    arguments:
-      - '@entity_type.manager'
-      - '@current_user'
+    arguments: ['@entity_type.manager', '@current_user']
+
   plugin.manager.media_embed_dialog_manager:
     class: Drupal\stanford_media\MediaEmbedDialogManager
     parent: default_plugin_manager

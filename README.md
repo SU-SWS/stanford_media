@@ -45,6 +45,11 @@ If a content type is using a traditional image field or uses the video embed fie
 browsers above, upon submission of the form, a media entity will be generated automatically. This allows for reusable
 media entities in other areas of the site, such as in the WYSIWYG.
 
+### Media Duplicate Validation
+To try to reduce the amount of duplicate images, the media duplicate validation will compare newly uploaded images and 
+documents and compare them to existing items. If an item is similar enough, the user will be presented with the options
+to use an existing item, or continue to add the new item. Additional duplication plugins can be added when necessary.
+
 Installation
 ---
 
