@@ -52,26 +52,21 @@ class BundleSuggestionManager extends DefaultPluginManager {
    * {@inheritdoc}
    */
   public function getDefinitions() {
-    $valid_definitions = $this->getCachedDefinitions();
-    if (!isset($valid_definitions)) {
+    $definitions = parent::getDefinitions();
 
-      $definitions = $this->findDefinitions();
-      $valid_definitions = [];
+    $valid_definitions = [];
+    // Find out which plugins should be used based on their field_types.
+    foreach ($definitions as $plugin_id => $definition) {
+      foreach ($definition['field_types'] as $field_type) {
 
-      // Find out which plugins should be used based on their field_types.
-      foreach ($definitions as $plugin_id => $definition) {
-        foreach ($definition['field_types'] as $field_type) {
-
-          // A field for this plugin exists, so we can use this plugin.
-          if ($this->fieldManager->getFieldMapByFieldType($field_type)) {
-            $valid_definitions[$plugin_id] = $definition;
-            continue 2;
-          }
+        // A field for this plugin exists, so we can use this plugin.
+        if ($this->fieldManager->getFieldMapByFieldType($field_type)) {
+          $valid_definitions[$plugin_id] = $definition;
+          continue 2;
         }
       }
-
-      $this->setCachedDefinitions($valid_definitions);
     }
+
     return $valid_definitions;
   }
 

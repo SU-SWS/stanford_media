@@ -98,7 +98,8 @@ class AudioEmbedField extends MediaSourceBase {
    * {@inheritdoc}
    */
   public function getMetadata(MediaInterface $media, $name) {
-    if (!$url = $this->getAudioUrl($media)) {
+    $url = $this->getAudioUrl($media);
+    if (!$url) {
       return FALSE;
     }
     $provider = $this->providerManager->loadProviderFromInput($url);
@@ -108,11 +109,7 @@ class AudioEmbedField extends MediaSourceBase {
       return call_user_func([$this, $function], $media, $provider);
     }
 
-    $data = NULL;
     switch ($name) {
-      case 'default_name':
-        return $provider->getName();
-
       case 'id':
         return $provider->getIdFromInput($url) ?: FALSE;
 
@@ -121,7 +118,21 @@ class AudioEmbedField extends MediaSourceBase {
         return $definition['id'];
     }
     return parent::getMetadata($media, $name);
+  }
 
+  /**
+   * Get provider name for the media element.
+   *
+   * @param \Drupal\media\MediaInterface $media
+   *   Media object.
+   * @param \Drupal\audio_embed_field\ProviderPluginInterface $provider
+   *   Video provider.
+   *
+   * @return string
+   *   Name of audio provider.
+   */
+  protected function getMetaDataDefaultName(MediaInterface $media, ProviderPluginInterface $provider) {
+    return $provider->getName();
   }
 
   /**
@@ -134,7 +145,7 @@ class AudioEmbedField extends MediaSourceBase {
    *   Method name or null if no method exists.
    */
   protected function getMetaDataFunction($name) {
-    // non-alpha and non-numeric characters become spaces
+    // Non-alpha and non-numeric characters become spaces
     $function = preg_replace('/[^a-z0-9]+/i', ' ', $name);
     $function = ucwords(trim($function));
     $function = str_replace(" ", "", $function);

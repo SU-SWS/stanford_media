@@ -28,6 +28,14 @@ class StanfordSoundCloud extends SoundCloud {
   /**
    * {@inheritdoc}
    */
+  public function getName() {
+    $video_data = static::getVideoData($this->getInput());
+    return $video_data['title'];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public static function getIdFromInput($input) {
     $video_data = static::getVideoData($input);
     if (!$video_data) {
