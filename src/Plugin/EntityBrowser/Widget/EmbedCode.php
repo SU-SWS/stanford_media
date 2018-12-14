@@ -50,7 +50,7 @@ class EmbedCode extends MediaBrowserBase {
     $form['input'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Shareable Url'),
-      '#description' => $this->t('Enter the url to the sharable content. This will display as an embedded content on the page. Compatible providers are: %providers', ['%providers' => $this->getSharableProviderNames()]),
+      '#description' => $this->t('Enter the url to the sharable content. This will display as an embedded content on the page.'),
       '#required' => TRUE,
       '#placeholder' => $this->t('Enter a URL...'),
     ];

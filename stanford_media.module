@@ -289,7 +289,7 @@ function stanford_media_save_file_managed_media(array $element, FormStateInterfa
  */
 function stanford_media_ckeditor_css_alter(array &$css, Editor $editor) {
   // Add special styles to wysiwyg embeded videos.
-  $css[] = drupal_get_path('module', 'stanford_media') . '/css/stanford_media.video_preview.css';
+  $css[] = drupal_get_path('module', 'stanford_media') . '/css/stanford_media.embed_preview.css';
 }
 
 /**
