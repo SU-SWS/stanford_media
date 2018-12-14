@@ -4,6 +4,7 @@ namespace Drupal\stanford_media\Service;
 
 use Drupal\Component\Utility\Bytes;
 use Drupal\Core\Entity\EntityTypeManager;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\media\Entity\MediaType;
 use Drupal\stanford_media\Plugin\BundleSuggestionManager;
@@ -30,15 +31,26 @@ class BundleSuggestion {
   protected $bundleSuggesters;
 
   /**
+   * Module handler service.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected $moduleHandler;
+
+  /**
    * MediaHelper constructor.
    *
    * @param \Drupal\Core\Entity\EntityTypeManager $entity_type_manager
    *   The entity type manager.
-   * @param $bundle_suggest_manager
+   * @param \Drupal\stanford_media\Plugin\BundleSuggestionManager $bundle_suggest_manager
+   *   Bundle Suggestion plugin manager.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   Module handler service.
    */
-  public function __construct(EntityTypeManager $entity_type_manager, BundleSuggestionManager $bundle_suggest_manager) {
+  public function __construct(EntityTypeManager $entity_type_manager, BundleSuggestionManager $bundle_suggest_manager, ModuleHandlerInterface $module_handler) {
     $this->entityTypeManager = $entity_type_manager;
     $this->bundleSuggesters = $bundle_suggest_manager;
+    $this->moduleHandler = $module_handler;
   }
 
   /**
@@ -124,16 +136,20 @@ class BundleSuggestion {
   }
 
   /**
-   * Load the media type from the file uri.
+   * Get a suggested media type bundle as decided from the plugins.
    *
-   * @param string $uri
+   * @param string $input
    *   The file uri.
    *
    * @return \Drupal\media\Entity\MediaType|null
    *   Media type bundle if one matches.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\PluginException
    */
-  public function getBundleFromFile($uri) {
-    return $this->bundleSuggesters->getSuggestedBundle($uri);
+  public function getSuggestedBundle($input) {
+    $bundle = $this->bundleSuggesters->getSuggestedBundle($input);
+    $this->moduleHandler->alter('stanford_media_bundle_suggestion', $bundle, $input);
+    return $bundle;
   }
 
   /**
@@ -205,19 +221,6 @@ class BundleSuggestion {
       $path .= '/';
     }
     return $path;
-  }
-
-  /**
-   * Get the media bundle that corresponds to the input string.
-   *
-   * @param string $input
-   *   A url or string to embed.
-   *
-   * @return \Drupal\media\Entity\MediaType
-   *   Media type that matches the input.
-   */
-  public function getBundleFromInput($input) {
-    return $this->bundleSuggesters->getSuggestedBundle($input);
   }
 
   /**

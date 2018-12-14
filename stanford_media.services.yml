@@ -5,7 +5,7 @@ services:
       - { name: event_subscriber }
   stanford_media.bundle_suggestion:
     class: '\Drupal\stanford_media\Service\BundleSuggestion'
-    arguments: ['@entity_type.manager', '@plugin.manager.bundle_suggestion_manager']
+    arguments: ['@entity_type.manager', '@plugin.manager.bundle_suggestion_manager', '@module_handler']
   stanford_media.field_save:
     class: '\Drupal\stanford_media\Service\MediaFieldSave'
     arguments: ['@entity_type.manager', '@current_user']

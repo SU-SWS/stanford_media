@@ -5,7 +5,6 @@ package: media
 type: module
 version: 8.x-1.x
 dependencies:
-  - drupal:audio_embed_field
   - drupal:ckeditor
   - drupal:dropzonejs
   - drupal:dropzonejs_eb_widget

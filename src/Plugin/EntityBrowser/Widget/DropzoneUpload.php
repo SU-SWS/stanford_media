@@ -115,7 +115,7 @@ class DropzoneUpload extends MediaBrowserBase {
     foreach ($this->getFiles($form, $form_state) as $file) {
       if ($file instanceof File) {
         /** @var \Drupal\media\Entity\MediaType $media_type */
-        $media_type = $this->bundleSuggestion->getBundleFromFile($file->getFileUri());
+        $media_type = $this->bundleSuggestion->getSuggestedBundle($file->getFileUri());
         $media = $this->prepareMediaEntity($media_type, $file);
         $media->save();
         $media_entities[] = $media;
@@ -188,7 +188,7 @@ class DropzoneUpload extends MediaBrowserBase {
       'uploaded_files',
     ], []) as $file) {
       if (!empty($file['path']) && file_exists($file['path'])) {
-        $bundle = $this->bundleSuggestion->getBundleFromFile($file['path']);
+        $bundle = $this->bundleSuggestion->getSuggestedBundle($file['path']);
         $additional_validators = [
           'file_validate_size' => [$this->bundleSuggestion->getMaxFileSizeBundle($bundle), 0],
         ];

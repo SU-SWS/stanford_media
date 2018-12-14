@@ -26,7 +26,7 @@ class EmbedCode extends MediaBrowserBase {
     $media_entities = [];
     $value = $form_state->getValue('input');
 
-    $media_type = $this->bundleSuggestion->getBundleFromInput($value);
+    $media_type = $this->bundleSuggestion->getSuggestedBundle($value);
     if (!$value || !$media_type) {
       return [];
     }
@@ -69,7 +69,7 @@ class EmbedCode extends MediaBrowserBase {
   public function validate(array &$form, FormStateInterface $form_state) {
     parent::validate($form, $form_state);
     $value = trim($form_state->getValue('input'));
-    $bundle = $this->bundleSuggestion->getBundleFromInput($value);
+    $bundle = $this->bundleSuggestion->getSuggestedBundle($value);
     if (!$bundle) {
       $form_state->setError($form['widget']['input'], $this->t('Invalid embed string.'));
     }
