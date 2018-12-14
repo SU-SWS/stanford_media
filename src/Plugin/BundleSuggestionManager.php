@@ -23,7 +23,7 @@ class BundleSuggestionManager extends DefaultPluginManager {
   protected $fieldManager;
 
   /**
-   * Constructs a MediaEmbedManager object.
+   * Constructs a BundleSuggestionManager object.
    *
    * @param \Traversable $namespaces
    *   An object that implements \Traversable which contains the root paths
@@ -32,6 +32,8 @@ class BundleSuggestionManager extends DefaultPluginManager {
    *   Cache backend instance to use.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler to invoke the alter hook with.
+   * @param \Drupal\Core\Entity\EntityFieldManagerInterface $field_manager
+   *   Field manager service.
    */
   public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler, EntityFieldManagerInterface $field_manager) {
     parent::__construct(
@@ -77,8 +79,10 @@ class BundleSuggestionManager extends DefaultPluginManager {
    * With a provided input string from the user, find an media bundle to match.
    *
    * @param string $input
+   *   User entered data, such as a url or file path.
    *
    * @return \Drupal\media\Entity\MediaType|null
+   *   Suggested bundle to match the input.
    *
    * @throws \Drupal\Component\Plugin\Exception\PluginException
    */

@@ -7,7 +7,7 @@ use Drupal\video_embed_field\ProviderManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class Video.
+ * Video embed field plugin suggestion.
  *
  * @BundleSuggestion (
  *   id = "video_embed",
@@ -39,7 +39,7 @@ class VideoEmbed extends BundleSuggestionBase {
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition,  EntityTypeManagerInterface $entity_type_manager, ProviderManager $video_provider) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, ProviderManager $video_provider) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager);
     $this->videoProvider = $video_provider;
   }
@@ -49,15 +49,16 @@ class VideoEmbed extends BundleSuggestionBase {
    */
   public function getBundleFromString($input) {
     $video_provider_id = $this->videoProvider->loadProviderFromInput($input);
-    if(!$video_provider_id){
-
+    if (!$video_provider_id) {
+      return NULL;
     }
 
     foreach ($this->getMediaBundles() as $media_type) {
       $source_field = $media_type->getSource()
         ->getConfiguration()['source_field'];
 
-      $field = $this->entityTypeManager->getStorage('field_config')->load("media.{$media_type->id()}.$source_field");
+      $field = $this->entityTypeManager->getStorage('field_config')
+        ->load("media.{$media_type->id()}.$source_field");
 
       if ($video_provider_id && $field->getType() == 'video_embed_field') {
         return $media_type;

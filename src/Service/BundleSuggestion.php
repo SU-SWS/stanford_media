@@ -42,14 +42,14 @@ class BundleSuggestion {
    *
    * @param \Drupal\Core\Entity\EntityTypeManager $entity_type_manager
    *   The entity type manager.
-   * @param \Drupal\stanford_media\Plugin\BundleSuggestionManager $bundle_suggest_manager
+   * @param \Drupal\stanford_media\Plugin\BundleSuggestionManager $suggestion_manager
    *   Bundle Suggestion plugin manager.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   Module handler service.
    */
-  public function __construct(EntityTypeManager $entity_type_manager, BundleSuggestionManager $bundle_suggest_manager, ModuleHandlerInterface $module_handler) {
+  public function __construct(EntityTypeManager $entity_type_manager, BundleSuggestionManager $suggestion_manager, ModuleHandlerInterface $module_handler) {
     $this->entityTypeManager = $entity_type_manager;
-    $this->bundleSuggesters = $bundle_suggest_manager;
+    $this->bundleSuggesters = $suggestion_manager;
     $this->moduleHandler = $module_handler;
   }
 

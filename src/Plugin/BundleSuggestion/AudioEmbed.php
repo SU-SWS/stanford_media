@@ -7,7 +7,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class Audio
+ * Class AudioEmbed for audio_embed_field module suggestion.
  *
  * @BundleSuggestion (
  *   id = "audio_embed",
@@ -48,7 +48,7 @@ class AudioEmbed extends BundleSuggestionBase {
    * {@inheritdoc}
    */
   public function getBundleFromString($input) {
-    $audio_provider_definition = $this->audioProvider->loadDefinitionFromInput($input);
+    $audio_provider_def = $this->audioProvider->loadDefinitionFromInput($input);
 
     /** @var \Drupal\media\MediaTypeInterface $media_type */
     foreach ($this->getMediaBundles() as $media_type) {
@@ -61,9 +61,9 @@ class AudioEmbed extends BundleSuggestionBase {
       $allowed_providers = $field->getSetting('allowed_providers');
 
       if (
-        $audio_provider_definition &&
+        $audio_provider_def &&
         $field->getType() == 'audio_embed_field' &&
-        (empty($allowed_providers) || in_array($audio_provider_definition['id'], $allowed_providers))
+        (empty($allowed_providers) || in_array($audio_provider_def['id'], $allowed_providers))
       ) {
         return $media_type;
       }

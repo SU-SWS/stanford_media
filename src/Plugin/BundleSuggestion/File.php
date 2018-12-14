@@ -8,7 +8,7 @@ use Drupal\media\Entity\MediaType;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class File
+ * Upload file plugin suggestion.
  *
  * @BundleSuggestion (
  *   id = "file",
