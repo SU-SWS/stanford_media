@@ -12,7 +12,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @BundleSuggestion (
  *   id = "file",
- *   fieldTypes = {
+ *   field_types = {
  *     "file",
  *     "image"
  *   }

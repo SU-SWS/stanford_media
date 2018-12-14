@@ -11,7 +11,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @BundleSuggestion (
  *   id = "audio_embed",
- *   fieldTypes = {"audio_embed_field"}
+ *   field_types = {"audio_embed_field"}
  * )
  */
 class AudioEmbed extends BundleSuggestionBase {
