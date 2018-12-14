@@ -100,12 +100,12 @@ class AudioEmbedField extends MediaSourceBase {
   public function getMetadata(MediaInterface $media, $name) {
     $url = $this->getAudioUrl($media);
     if (!$url) {
-      return FALSE;
+      return parent::getMetadata($media, $name);
     }
     $provider = $this->providerManager->loadProviderFromInput($url);
     $definition = $this->providerManager->loadDefinitionFromInput($url);
 
-    if ($function = $this->getMetaDataFunction($name)) {
+    if ($function = $this->getMetaDataMethod($name)) {
       return call_user_func([$this, $function], $media, $provider);
     }
 
@@ -117,7 +117,25 @@ class AudioEmbedField extends MediaSourceBase {
       case 'source_name':
         return $definition['id'];
     }
-    return parent::getMetadata($media, $name);
+  }
+
+  /**
+   * Get a method name if one exists for the given meta data name.
+   *
+   * @param string $name
+   *   Meta data name.
+   *
+   * @return string|null
+   *   Method name or null if no method exists.
+   */
+  protected function getMetaDataMethod($name) {
+    $function = preg_replace('/[^a-z0-9]+/i', ' ', $name);
+    $function = ucwords(trim($function));
+    $function = str_replace(" ", "", $function);
+    $function = "getMetaData$function";
+    if (method_exists($this, $function)) {
+      return $function;
+    }
   }
 
   /**
@@ -133,26 +151,6 @@ class AudioEmbedField extends MediaSourceBase {
    */
   protected function getMetaDataDefaultName(MediaInterface $media, ProviderPluginInterface $provider) {
     return $provider->getName();
-  }
-
-  /**
-   * Get a separate function if one exists for the given meta data name.
-   *
-   * @param string $name
-   *   Meta data name.
-   *
-   * @return string|null
-   *   Method name or null if no method exists.
-   */
-  protected function getMetaDataFunction($name) {
-    // Non-alpha and non-numeric characters become spaces
-    $function = preg_replace('/[^a-z0-9]+/i', ' ', $name);
-    $function = ucwords(trim($function));
-    $function = str_replace(" ", "", $function);
-    $function = "getMetaData$function";
-    if (method_exists($this, $function)) {
-      return $function;
-    }
   }
 
   /**

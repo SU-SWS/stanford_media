@@ -177,6 +177,7 @@ class DropzoneUpload extends MediaBrowserBase {
    *   Array of uploaded files.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   protected function getFiles(array $form, FormStateInterface $form_state) {
