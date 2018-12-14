@@ -4,6 +4,9 @@ stanford_media.embeddable_image_styles:
     allowed_styles:
       type: sequence
       label: 'Available Styles'
+      sequence:
+        type: string
+        id: "Image style Machine name"
 
 stanford_media.allowed_caption_formats:
   type: config_object
@@ -11,3 +14,6 @@ stanford_media.allowed_caption_formats:
     allowed_formats:
       type: sequence
       label: 'Allowed Image Caption Formats'
+      sequence:
+        type: string
+        id: "Image style Machine name"
