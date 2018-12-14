@@ -3,6 +3,7 @@
 namespace Drupal\stanford_media\Plugin;
 
 use Drupal\Core\Cache\CacheBackendInterface;
+use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
 use Drupal\stanford_media\Annotation\BundleSuggestion;
@@ -15,6 +16,13 @@ use Drupal\stanford_media\Annotation\BundleSuggestion;
 class BundleSuggestionManager extends DefaultPluginManager {
 
   /**
+   * Field manager service.
+   *
+   * @var \Drupal\Core\Entity\EntityFieldManagerInterface
+   */
+  protected $fieldManager;
+
+  /**
    * Constructs a MediaEmbedManager object.
    *
    * @param \Traversable $namespaces
@@ -25,7 +33,7 @@ class BundleSuggestionManager extends DefaultPluginManager {
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler to invoke the alter hook with.
    */
-  public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler) {
+  public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler, EntityFieldManagerInterface $field_manager) {
     parent::__construct(
       'Plugin/BundleSuggestion',
       $namespaces,
@@ -35,6 +43,34 @@ class BundleSuggestionManager extends DefaultPluginManager {
     );
     $this->alterInfo('bundle_suggestion_info');
     $this->setCacheBackend($cache_backend, 'bundle_suggestion_info_plugins');
+    $this->fieldManager = $field_manager;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getDefinitions() {
+    $valid_definitions = $this->getCachedDefinitions();
+    if (!isset($valid_definitions)) {
+
+      $definitions = $this->findDefinitions();
+      $valid_definitions = [];
+
+      // Find out which plugins should be used based on their field_types.
+      foreach ($definitions as $plugin_id => $definition) {
+        foreach ($definition['field_types'] as $field_type) {
+
+          // A field for this plugin exists, so we can use this plugin.
+          if ($this->fieldManager->getFieldMapByFieldType($field_type)) {
+            $valid_definitions[$plugin_id] = $definition;
+            continue 2;
+          }
+        }
+      }
+
+      $this->setCachedDefinitions($valid_definitions);
+    }
+    return $valid_definitions;
   }
 
   /**
@@ -43,24 +79,17 @@ class BundleSuggestionManager extends DefaultPluginManager {
    * @param string $input
    *
    * @return \Drupal\media\Entity\MediaType|null
+   *
+   * @throws \Drupal\Component\Plugin\Exception\PluginException
    */
   public function getSuggestedBundle($input) {
     foreach ($this->getDefinitions() as $definition) {
-      try {
-        /** @var \Drupal\stanford_media\Plugin\BundleSuggestionInterface $plugin */
-        $plugin = $this->createInstance($definition['id']);
-      }
-      catch (\Exception $e) {
-        // The plugin has some dependency that isn't resolved. So we can skip
-        // it.
-        continue;
-      }
-
+      /** @var \Drupal\stanford_media\Plugin\BundleSuggestionInterface $plugin */
+      $plugin = $this->createInstance($definition['id']);
       if ($bundle = $plugin->getBundleFromString($input)) {
         return $bundle;
       }
     }
-
   }
 
 }

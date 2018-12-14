@@ -44,22 +44,15 @@ class BundleSuggestion {
   /**
    * Get the available extension the user can upload.
    *
-   * @return string
+   * @return array
    *   All available extensions.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   public function getAllExtensions() {
-    $media_types = $this->getMediaBundles();
-
-    $extensions = [];
-    /** @var \Drupal\media\Entity\MediaType $media_type */
-    foreach ($media_types as $media_type) {
-      $extensions[] = $this->getBundleExtensions($media_type);
-    }
-
-    return implode(' ', array_filter($extensions));
+    $media_types = $this->getUploadBundles();
+    return $this->getMultipleBundleExtensions(array_keys($media_types));
   }
 
   /**
@@ -75,11 +68,11 @@ class BundleSuggestion {
     $upload_bundles = [];
     $media_types = $this->getMediaBundles();
 
-    /** @var \Drupal\media\Entity\MediaType $media_type */
     foreach ($media_types as $media_type) {
       $source_field = $media_type->getSource()
         ->getConfiguration()['source_field'];
       $field = FieldConfig::loadByName('media', $media_type->id(), $source_field);
+
       if (!empty($field->getSetting('file_extensions'))) {
         $upload_bundles[$media_type->id()] = $media_type;
       }
@@ -94,17 +87,19 @@ class BundleSuggestion {
    * @param \Drupal\media\Entity\MediaType $media_type
    *   Media type entity object.
    *
-   * @return string|null
+   * @return array
    *   All file extensions for the given media type.
    */
   public function getBundleExtensions(MediaType $media_type) {
     $source_field = $media_type->getSource()
       ->getConfiguration()['source_field'];
+
     if ($source_field) {
       $field = FieldConfig::loadByName('media', $media_type->id(), $source_field);
-      return $field->getSetting('file_extensions') ?: '';
+      $extensions = $field->getSetting('file_extensions') ?: '';
+      return array_filter(explode(' ', $extensions));
     }
-    return NULL;
+    return [];
   }
 
   /**
@@ -113,8 +108,8 @@ class BundleSuggestion {
    * @param array $media_types
    *   Array of machine names of the allowed bundles.
    *
-   * @return string
-   *   All file extensions for the give media types.
+   * @return array
+   *   Array of available file extensions.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
@@ -123,9 +118,9 @@ class BundleSuggestion {
     $media_types = $this->getMediaBundles($media_types);
     $extensions = [];
     foreach ($media_types as $media_type) {
-      $extensions[] = $this->getBundleExtensions($media_type);
+      $extensions = array_merge($extensions, $this->getBundleExtensions($media_type));
     }
-    return implode(' ', array_filter($extensions));
+    return array_unique(array_filter($extensions));
   }
 
   /**
@@ -152,7 +147,7 @@ class BundleSuggestion {
    */
   public function getMaxFilesize() {
     $max_filesize = Bytes::toInt(file_upload_max_size());
-    $media_types = $this->getMediaBundles();
+    $media_types = $this->getUploadBundles();
 
     foreach ($media_types as $media_type) {
 
@@ -199,11 +194,13 @@ class BundleSuggestion {
     $source_field = $media_type->getSource()
       ->getConfiguration()['source_field'];
     $path = 'public://';
+
     if ($source_field) {
       $field = FieldConfig::loadByName('media', $media_type->id(), $source_field);
       $path = 'public://' . $field->getSetting('file_directory');
     }
 
+    // Ensure the path has a trailing slash.
     if (strrpos($path, '/') !== strlen($path)) {
       $path .= '/';
     }

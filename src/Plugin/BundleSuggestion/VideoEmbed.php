@@ -10,7 +10,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Class Video.
  *
  * @BundleSuggestion (
- *   id = "video_embed"
+ *   id = "video_embed",
+ *   fieldTypes = {"video_embed_field"}
  * )
  */
 class VideoEmbed extends BundleSuggestionBase {

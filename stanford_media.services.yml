@@ -15,3 +15,4 @@ services:
   plugin.manager.bundle_suggestion_manager:
     class: Drupal\stanford_media\Plugin\BundleSuggestionManager
     parent: default_plugin_manager
+    arguments: ['@entity_field.manager']

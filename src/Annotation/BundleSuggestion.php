@@ -15,4 +15,6 @@ use Drupal\Component\Annotation\Plugin;
  */
 class BundleSuggestion extends Plugin {
 
+  protected $field_types = [];
+
 }

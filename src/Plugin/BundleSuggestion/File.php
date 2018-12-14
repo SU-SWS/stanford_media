@@ -3,7 +3,6 @@
 namespace Drupal\stanford_media\Plugin\BundleSuggestion;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\File\FileSystem;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\media\Entity\MediaType;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -12,7 +11,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Class File
  *
  * @BundleSuggestion (
- *   id = "file"
+ *   id = "file",
+ *   fieldTypes = {
+ *     "file",
+ *     "image"
+ *   }
  * )
  */
 class File extends BundleSuggestionBase {
@@ -49,7 +52,7 @@ class File extends BundleSuggestionBase {
    * {@inheritdoc}
    */
   public function getBundleFromString($input) {
-    $valid_schemes = ['public', 'private'];
+    $valid_schemes = ['public', 'private', 'temporary'];
     // Only check for local files. Any url or external source is not applicable.
     if (!in_array($this->fileSystem->uriScheme($input), $valid_schemes)) {
       return NULL;

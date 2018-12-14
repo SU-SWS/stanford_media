@@ -10,7 +10,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Class Audio
  *
  * @BundleSuggestion (
- *   id = "audio_embed"
+ *   id = "audio_embed",
+ *   fieldTypes = {"audio_embed_field"}
  * )
  */
 class AudioEmbed extends BundleSuggestionBase {
