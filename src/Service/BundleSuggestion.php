@@ -6,8 +6,7 @@ use Drupal\Component\Utility\Bytes;
 use Drupal\Core\Entity\EntityTypeManager;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\media\Entity\MediaType;
-use Drupal\video_embed_field\ProviderManager as VideoProviderManager;
-use Drupal\audio_embed_field\ProviderManager as AudioProviderManager;
+use Drupal\stanford_media\Plugin\BundleSuggestionManager;
 
 /**
  * Class BundleSuggestion.
@@ -24,33 +23,22 @@ class BundleSuggestion {
   protected $entityTypeManager;
 
   /**
-   * Video manager to validate the url matches an available provider.
+   * Bundle Suggestion plugin manager service.
    *
-   * @var \Drupal\video_embed_field\ProviderManager
+   * @var \Drupal\stanford_media\Plugin\BundleSuggestionManager
    */
-  protected $videoProvider;
-
-  /**
-   * Audio provider manager service.
-   *
-   * @var \Drupal\audio_embed_field\ProviderManager
-   */
-  protected $audioProvider;
+  protected $bundleSuggesters;
 
   /**
    * MediaHelper constructor.
    *
    * @param \Drupal\Core\Entity\EntityTypeManager $entity_type_manager
    *   The entity type manager.
-   * @param \Drupal\video_embed_field\ProviderManager $video_providers
-   *   Video provider manager service.
-   * @param \Drupal\audio_embed_field\ProviderManager $audio_providers
-   *   Audio provider manager service.
+   * @param $bundle_suggest_manager
    */
-  public function __construct(EntityTypeManager $entity_type_manager, VideoProviderManager $video_providers, AudioProviderManager $audio_providers) {
+  public function __construct(EntityTypeManager $entity_type_manager, BundleSuggestionManager $bundle_suggest_manager) {
     $this->entityTypeManager = $entity_type_manager;
-    $this->videoProvider = $video_providers;
-    $this->audioProvider = $audio_providers;
+    $this->bundleSuggesters = $bundle_suggest_manager;
   }
 
   /**
@@ -71,7 +59,7 @@ class BundleSuggestion {
       $extensions[] = $this->getBundleExtensions($media_type);
     }
 
-    return implode(' ', $extensions);
+    return implode(' ', array_filter($extensions));
   }
 
   /**
@@ -106,7 +94,7 @@ class BundleSuggestion {
    * @param \Drupal\media\Entity\MediaType $media_type
    *   Media type entity object.
    *
-   * @return string
+   * @return string|null
    *   All file extensions for the given media type.
    */
   public function getBundleExtensions(MediaType $media_type) {
@@ -116,7 +104,7 @@ class BundleSuggestion {
       $field = FieldConfig::loadByName('media', $media_type->id(), $source_field);
       return $field->getSetting('file_extensions') ?: '';
     }
-    return '';
+    return NULL;
   }
 
   /**
@@ -133,12 +121,11 @@ class BundleSuggestion {
    */
   public function getMultipleBundleExtensions(array $media_types) {
     $media_types = $this->getMediaBundles($media_types);
-    $extensions = '';
+    $extensions = [];
     foreach ($media_types as $media_type) {
-      $extensions .= ' ' . $this->getBundleExtensions($media_type);
-      $extensions = trim($extensions);
+      $extensions[] = $this->getBundleExtensions($media_type);
     }
-    return $extensions;
+    return implode(' ', array_filter($extensions));
   }
 
   /**
@@ -149,18 +136,9 @@ class BundleSuggestion {
    *
    * @return \Drupal\media\Entity\MediaType|null
    *   Media type bundle if one matches.
-   *
-   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
-   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   public function getBundleFromFile($uri) {
-    $extension = pathinfo($uri, PATHINFO_EXTENSION);
-    foreach ($this->getMediaBundles() as $media_type) {
-      if (strpos($this->getBundleExtensions($media_type), $extension) !== FALSE) {
-        return $media_type;
-      }
-    }
-    return NULL;
+    return $this->bundleSuggesters->getSuggestedBundle($uri);
   }
 
   /**
@@ -240,28 +218,9 @@ class BundleSuggestion {
    *
    * @return \Drupal\media\Entity\MediaType
    *   Media type that matches the input.
-   *
-   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
-   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   public function getBundleFromInput($input) {
-    $video_provider = $this->videoProvider->loadProviderFromInput($input);
-    $audio_provider = $this->audioProvider->loadProviderFromInput($input);
-    foreach ($this->getMediaBundles() as $media_type) {
-      $source_field = $media_type->getSource()
-        ->getConfiguration()['source_field'];
-
-      $field = FieldConfig::loadByName('media', $media_type->id(), $source_field);
-
-      if ($video_provider && $field->getType() == 'video_embed_field') {
-        return $media_type;
-      }
-
-      if ($audio_provider && $field->getType() == 'audio_embed_field') {
-        return $media_type;
-      }
-    }
-    return NULL;
+    return $this->bundleSuggesters->getSuggestedBundle($input);
   }
 
   /**
