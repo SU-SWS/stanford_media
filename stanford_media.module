@@ -11,7 +11,6 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\entity_browser\EntityBrowserFormInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
-use Drupal\media\MediaForm;
 use Drupal\file\Entity\File;
 use Drupal\stanford_media\Plugin\media\Source\Image;
 use Drupal\stanford_media\Plugin\audio_embed_field\Provider\StanfordSoundCloud;

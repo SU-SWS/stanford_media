@@ -2,6 +2,7 @@
 
 namespace Drupal\stanford_media\Plugin\media\Source;
 
+use Drupal\audio_embed_field\ProviderPluginInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -21,8 +22,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @MediaSource(
  *   id = "audio_embed_field",
  *   label = @Translation("Audio embed field"),
- *   description = @Translation("Enables audio_embed_field integration with media."),
- *   allowed_field_types = {"audio_embed_field"},
+ *   description = @Translation("Enables audio_embed_field integration with
+ *   media."), allowed_field_types = {"audio_embed_field"},
  *   default_thumbnail_filename = "audio.png"
  * )
  */
@@ -102,45 +103,97 @@ class AudioEmbedField extends MediaSourceBase {
     }
     $provider = $this->providerManager->loadProviderFromInput($url);
     $definition = $this->providerManager->loadDefinitionFromInput($url);
+
+    if ($function = $this->getMetaDataFunction($name)) {
+      return call_user_func([$this, $function], $media, $provider);
+    }
+
+    $data = NULL;
     switch ($name) {
       case 'default_name':
-        if ($provider) {
-          return $provider->getName();
-        }
-        return parent::getMetadata($media, 'default_name');
+        return $provider->getName();
 
       case 'id':
-        if ($provider) {
-          return $provider->getIdFromInput($url);
-        }
-        return FALSE;
+        return $provider->getIdFromInput($url) ?: FALSE;
 
       case 'source':
       case 'source_name':
-        if (!empty($definition)) {
-          return $definition['id'];
-        }
-        return FALSE;
-
-      case 'image_local':
-      case 'image_local_uri':
-        $thumbnail_uri = $this->getMetadata($media, 'thumbnail_uri');
-        if (!empty($thumbnail_uri) && file_exists($thumbnail_uri)) {
-          return $thumbnail_uri;
-        }
-        return parent::getMetadata($media, 'thumbnail_uri');
-
-      case 'thumbnail_uri':
-        if ($provider) {
-          $provider->downloadThumbnail();
-          $thumbnail_uri = $provider->getLocalThumbnailUri();
-          if (!empty($thumbnail_uri)) {
-            return $thumbnail_uri;
-          }
-        }
-        return parent::getMetadata($media, 'thumbnail_uri');
-
+        return $definition['id'];
     }
+    return parent::getMetadata($media, $name);
+
+  }
+
+  /**
+   * Get a separate function if one exists for the given meta data name.
+   *
+   * @param string $name
+   *   Meta data name.
+   *
+   * @return string|null
+   *   Method name or null if no method exists.
+   */
+  protected function getMetaDataFunction($name) {
+    // non-alpha and non-numeric characters become spaces
+    $function = preg_replace('/[^a-z0-9]+/i', ' ', $name);
+    $function = ucwords(trim($function));
+    $function = str_replace(" ", "", $function);
+    $function = "getMetaData$function";
+    if (method_exists($this, $function)) {
+      return $function;
+    }
+  }
+
+  /**
+   * Get thumbnail uri for the media element.
+   *
+   * @param \Drupal\media\MediaInterface $media
+   *   Media object.
+   * @param \Drupal\audio_embed_field\ProviderPluginInterface $provider
+   *   Video provider.
+   *
+   * @return string|null
+   *   Uri of thumbnail image.
+   */
+  protected function getMetaDataThumbnailUri(MediaInterface $media, ProviderPluginInterface $provider) {
+    if ($provider) {
+      $provider->downloadThumbnail();
+      $thumbnail_uri = $provider->getLocalThumbnailUri();
+      if (!empty($thumbnail_uri)) {
+        return $thumbnail_uri;
+      }
+    }
+    return parent::getMetadata($media, 'thumbnail_uri');
+  }
+
+  /**
+   * Get local thumbnail image.
+   *
+   * @param \Drupal\media\MediaInterface $media
+   *   Media object.
+   *
+   * @return string|null
+   *   Path to local thumbnail image.
+   */
+  protected function getMetaDataImageLocal(MediaInterface $media) {
+    $thumbnail_uri = $this->getMetadata($media, 'thumbnail_uri');
+    if (!empty($thumbnail_uri) && file_exists($thumbnail_uri)) {
+      return $thumbnail_uri;
+    }
+    return parent::getMetadata($media, 'thumbnail_uri');
+  }
+
+  /**
+   * Get local thumbnail image.
+   *
+   * @param \Drupal\media\MediaInterface $media
+   *   Media object.
+   *
+   * @return string|null
+   *   Path to local thumbnail image.
+   */
+  protected function getMetaDataImageLocalUri(MediaInterface $media) {
+    return $this->getMetaDataImageLocal($media);
   }
 
   /**
@@ -166,13 +219,8 @@ class AudioEmbedField extends MediaSourceBase {
    *   A audio URL or FALSE on failure.
    */
   protected function getAudioUrl(MediaInterface $media) {
-    $media_type = $this->entityTypeManager
-      ->getStorage('media_type')
-      ->load($media->bundle());
-    $source_field = $this->getSourceFieldDefinition($media_type);
-    $field_name = $source_field->getName();
-    $audio_url = $media->{$field_name}->value;
-
+    $source_field = $media->getSource()->getConfiguration()['source_field'];
+    $audio_url = $media->{$source_field}->value;
     return isset($audio_url) ? $audio_url : FALSE;
   }
 
