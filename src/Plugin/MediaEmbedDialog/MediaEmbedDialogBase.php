@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\stanford_media\Plugin\MediaEmbedDialog;
+namespace Drupal\stanford_media\Plugin;
 
 use Drupal\Component\Serialization\Json;
 use Drupal\Core\Form\FormStateInterface;
