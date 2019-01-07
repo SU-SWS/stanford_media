@@ -4,15 +4,12 @@ services:
     tags:
       - { name: event_subscriber }
   stanford_media.bundle_suggestion:
-    class: '\Drupal\stanford_media\BundleSuggestion'
-    arguments:
-      - '@entity_type.manager'
-      - '@video_embed_field.provider_manager'
-  stanford_media.field_save:
-    class: '\Drupal\stanford_media\MediaFieldSave'
-    arguments:
-      - '@entity_type.manager'
-      - '@current_user'
+    class: '\Drupal\stanford_media\Service\BundleSuggestion'
+    arguments: ['@entity_type.manager', '@plugin.manager.bundle_suggestion_manager', '@module_handler']
   plugin.manager.media_embed_dialog_manager:
-    class: Drupal\stanford_media\MediaEmbedDialogManager
+    class: Drupal\stanford_media\Plugin\MediaEmbedDialogManager
     parent: default_plugin_manager
+  plugin.manager.bundle_suggestion_manager:
+    class: Drupal\stanford_media\Plugin\BundleSuggestionManager
+    parent: default_plugin_manager
+    arguments: ['@entity_field.manager']

@@ -14,7 +14,7 @@ use Drupal\inline_entity_form\ElementSubmit;
 use Drupal\media\Entity\MediaType;
 use Drupal\media\MediaInterface;
 use Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationManager;
-use Drupal\stanford_media\BundleSuggestion;
+use Drupal\stanford_media\Service\BundleSuggestion;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -28,7 +28,7 @@ abstract class MediaBrowserBase extends WidgetBase {
   /**
    * Finds which media type is appropriate.
    *
-   * @var \Drupal\stanford_media\BundleSuggestion
+   * @var \Drupal\stanford_media\Service\BundleSuggestion
    */
   protected $bundleSuggestion;
 

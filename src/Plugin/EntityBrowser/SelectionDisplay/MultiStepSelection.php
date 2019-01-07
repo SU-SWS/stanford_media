@@ -208,7 +208,6 @@ class MultiStepSelection extends MultiStepDisplay {
     if ($cardinality == 1) {
       $message = t('Only %cardinality item can be used.', ['%cardinality' => $cardinality])->render();
     }
-
     $ajax->addCommand(new ReplaceCommand('div[id="message"]', "<div id=\"message\"><div class=\"messages messages--error\">$message</div></div>"));
     return $ajax;
   }

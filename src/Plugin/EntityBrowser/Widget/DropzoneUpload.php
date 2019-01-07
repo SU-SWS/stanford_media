@@ -10,7 +10,7 @@ use Drupal\dropzonejs\DropzoneJsUploadSave;
 use Drupal\entity_browser\WidgetValidationManager;
 use Drupal\file\Entity\File;
 use Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationManager;
-use Drupal\stanford_media\BundleSuggestion;
+use Drupal\stanford_media\Service\BundleSuggestion;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -115,7 +115,7 @@ class DropzoneUpload extends MediaBrowserBase {
     foreach ($this->getFiles($form, $form_state) as $file) {
       if ($file instanceof File) {
         /** @var \Drupal\media\Entity\MediaType $media_type */
-        $media_type = $this->bundleSuggestion->getBundleFromFile($file->getFileUri());
+        $media_type = $this->bundleSuggestion->getSuggestedBundle($file->getFileUri());
         $media = $this->prepareMediaEntity($media_type, $file);
         $media->save();
         $media_entities[] = $media;
@@ -142,7 +142,7 @@ class DropzoneUpload extends MediaBrowserBase {
       '#required' => TRUE,
       '#dropzone_description' => $this->configuration['dropzone_description'],
       '#max_filesize' => $this->bundleSuggestion->getMaxFilesize(),
-      '#extensions' => $allowed_extensions,
+      '#extensions' => implode(' ', $allowed_extensions),
       '#max_files' => $validators['cardinality']['cardinality'] ?? 1,
       '#clientside_resize' => FALSE,
     ];
@@ -175,6 +175,10 @@ class DropzoneUpload extends MediaBrowserBase {
    *
    * @return \Drupal\file\FileInterface[]
    *   Array of uploaded files.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   protected function getFiles(array $form, FormStateInterface $form_state) {
     $files = $form_state->get(['dropzonejs', $this->uuid(), 'files']) ?: [];
@@ -185,18 +189,15 @@ class DropzoneUpload extends MediaBrowserBase {
       'uploaded_files',
     ], []) as $file) {
       if (!empty($file['path']) && file_exists($file['path'])) {
-        $bundle = $this->bundleSuggestion->getBundleFromFile($file['path']);
+        $bundle = $this->bundleSuggestion->getSuggestedBundle($file['path']);
         $additional_validators = [
-          'file_validate_size' => [
-            $this->bundleSuggestion->getMaxFileSizeBundle($bundle),
-            0,
-          ],
+          'file_validate_size' => [$this->bundleSuggestion->getMaxFileSizeBundle($bundle), 0],
         ];
 
         $entity = $this->dropzoneJsSave->createFile(
           $file['path'],
           $this->configuration['upload_location'],
-          $this->bundleSuggestion->getAllExtensions(),
+          implode(' ', $this->bundleSuggestion->getAllExtensions()),
           $this->currentUser,
           $additional_validators
         );

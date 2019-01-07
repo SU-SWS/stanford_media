@@ -1,12 +1,13 @@
 <?php
 
-namespace Drupal\stanford_media;
+namespace Drupal\stanford_media\Service;
 
 use Drupal\Component\Utility\Bytes;
 use Drupal\Core\Entity\EntityTypeManager;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\media\Entity\MediaType;
-use Drupal\video_embed_field\ProviderManager;
+use Drupal\stanford_media\Plugin\BundleSuggestionManager;
 
 /**
  * Class BundleSuggestion.
@@ -23,44 +24,47 @@ class BundleSuggestion {
   protected $entityTypeManager;
 
   /**
-   * Video manager to validate the url matches an available provider.
+   * Bundle Suggestion plugin manager service.
    *
-   * @var \Drupal\video_embed_field\ProviderManager
+   * @var \Drupal\stanford_media\Plugin\BundleSuggestionManager
    */
-  protected $videoProvider;
+  protected $bundleSuggesters;
+
+  /**
+   * Module handler service.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected $moduleHandler;
 
   /**
    * MediaHelper constructor.
    *
    * @param \Drupal\Core\Entity\EntityTypeManager $entity_type_manager
    *   The entity type manager.
-   * @param \Drupal\video_embed_field\ProviderManager $providers
-   *   Video provider manager service.
+   * @param \Drupal\stanford_media\Plugin\BundleSuggestionManager $suggestion_manager
+   *   Bundle Suggestion plugin manager.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   Module handler service.
    */
-  public function __construct(EntityTypeManager $entity_type_manager, ProviderManager $providers) {
+  public function __construct(EntityTypeManager $entity_type_manager, BundleSuggestionManager $suggestion_manager, ModuleHandlerInterface $module_handler) {
     $this->entityTypeManager = $entity_type_manager;
-    $this->videoProvider = $providers;
+    $this->bundleSuggesters = $suggestion_manager;
+    $this->moduleHandler = $module_handler;
   }
 
   /**
    * Get the available extension the user can upload.
    *
-   * @return string
+   * @return array
    *   All available extensions.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   public function getAllExtensions() {
-    $media_types = $this->getMediaBundles();
-
-    $extensions = [];
-    /** @var \Drupal\media\Entity\MediaType $media_type */
-    foreach ($media_types as $media_type) {
-      $extensions[] = $this->getBundleExtensions($media_type);
-    }
-
-    return implode(' ', $extensions);
+    $media_types = $this->getUploadBundles();
+    return $this->getMultipleBundleExtensions(array_keys($media_types));
   }
 
   /**
@@ -76,11 +80,11 @@ class BundleSuggestion {
     $upload_bundles = [];
     $media_types = $this->getMediaBundles();
 
-    /** @var \Drupal\media\Entity\MediaType $media_type */
     foreach ($media_types as $media_type) {
       $source_field = $media_type->getSource()
         ->getConfiguration()['source_field'];
       $field = FieldConfig::loadByName('media', $media_type->id(), $source_field);
+
       if (!empty($field->getSetting('file_extensions'))) {
         $upload_bundles[$media_type->id()] = $media_type;
       }
@@ -95,17 +99,19 @@ class BundleSuggestion {
    * @param \Drupal\media\Entity\MediaType $media_type
    *   Media type entity object.
    *
-   * @return string
+   * @return array
    *   All file extensions for the given media type.
    */
   public function getBundleExtensions(MediaType $media_type) {
     $source_field = $media_type->getSource()
       ->getConfiguration()['source_field'];
+
     if ($source_field) {
       $field = FieldConfig::loadByName('media', $media_type->id(), $source_field);
-      return $field->getSetting('file_extensions') ?: '';
+      $extensions = $field->getSetting('file_extensions') ?: '';
+      return array_filter(explode(' ', $extensions));
     }
-    return '';
+    return [];
   }
 
   /**
@@ -114,42 +120,36 @@ class BundleSuggestion {
    * @param array $media_types
    *   Array of machine names of the allowed bundles.
    *
-   * @return string
-   *   All file extensions for the give media types.
+   * @return array
+   *   Array of available file extensions.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   public function getMultipleBundleExtensions(array $media_types) {
     $media_types = $this->getMediaBundles($media_types);
-    $extensions = '';
+    $extensions = [];
     foreach ($media_types as $media_type) {
-      $extensions .= ' ' . $this->getBundleExtensions($media_type);
-      $extensions = trim($extensions);
+      $extensions = array_merge($extensions, $this->getBundleExtensions($media_type));
     }
-    return $extensions;
+    return array_unique(array_filter($extensions));
   }
 
   /**
-   * Load the media type from the file uri.
+   * Get a suggested media type bundle as decided from the plugins.
    *
-   * @param string $uri
+   * @param string $input
    *   The file uri.
    *
    * @return \Drupal\media\Entity\MediaType|null
    *   Media type bundle if one matches.
    *
-   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
-   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \Drupal\Component\Plugin\Exception\PluginException
    */
-  public function getBundleFromFile($uri) {
-    $extension = pathinfo($uri, PATHINFO_EXTENSION);
-    foreach ($this->getMediaBundles() as $media_type) {
-      if (strpos($this->getBundleExtensions($media_type), $extension) !== FALSE) {
-        return $media_type;
-      }
-    }
-    return NULL;
+  public function getSuggestedBundle($input) {
+    $bundle = $this->bundleSuggesters->getSuggestedBundle($input);
+    $this->moduleHandler->alter('stanford_media_bundle_suggestion', $bundle, $input);
+    return $bundle;
   }
 
   /**
@@ -163,7 +163,7 @@ class BundleSuggestion {
    */
   public function getMaxFilesize() {
     $max_filesize = Bytes::toInt(file_upload_max_size());
-    $media_types = $this->getMediaBundles();
+    $media_types = $this->getUploadBundles();
 
     foreach ($media_types as $media_type) {
 
@@ -210,42 +210,17 @@ class BundleSuggestion {
     $source_field = $media_type->getSource()
       ->getConfiguration()['source_field'];
     $path = 'public://';
+
     if ($source_field) {
       $field = FieldConfig::loadByName('media', $media_type->id(), $source_field);
       $path = 'public://' . $field->getSetting('file_directory');
     }
 
+    // Ensure the path has a trailing slash.
     if (strrpos($path, '/') !== strlen($path)) {
       $path .= '/';
     }
     return $path;
-  }
-
-  /**
-   * Get the media bundle that corresponds to the input string.
-   *
-   * @param string $input
-   *   A url or string to embed.
-   *
-   * @return \Drupal\media\Entity\MediaType
-   *   Media type that matcheds input.
-   *
-   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
-   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
-   */
-  public function getBundleFromInput($input) {
-    $video_provider = $this->videoProvider->loadProviderFromInput($input);
-    foreach ($this->getMediaBundles() as $media_type) {
-      $source_field = $media_type->getSource()
-        ->getConfiguration()['source_field'];
-
-      $field = FieldConfig::loadByName('media', $media_type->id(), $source_field);
-
-      if ($video_provider && $field->getType() == 'video_embed_field') {
-        return $media_type;
-      }
-    }
-    return NULL;
   }
 
   /**

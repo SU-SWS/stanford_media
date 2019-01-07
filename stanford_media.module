@@ -11,9 +11,9 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\entity_browser\EntityBrowserFormInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
-use Drupal\media\MediaForm;
 use Drupal\file\Entity\File;
 use Drupal\stanford_media\Plugin\media\Source\Image;
+use Drupal\stanford_media\Plugin\audio_embed_field\Provider\StanfordSoundCloud;
 
 /**
  * Implements hook_ENTITY_TYPE_presave().
@@ -122,29 +122,23 @@ function stanford_media_form_entity_embed_dialog_alter(&$form, FormStateInterfac
 
   /** @var \Drupal\media\MediaInterface $entity */
   $entity = $form_state->get('entity');
-  /** @var \Drupal\stanford_media\MediaEmbedDialogManager $dialog_manager */
+  /** @var \Drupal\stanford_media\Plugin\MediaEmbedDialogManager $dialog_manager */
   $dialog_manager = \Drupal::service('plugin.manager.media_embed_dialog_manager');
 
   foreach (array_keys($dialog_manager->getDefinitions()) as $plugin_id) {
-    /** @var \Drupal\stanford_media\MediaEmbedDialogInterface $plugin */
+    /** @var \Drupal\stanford_media\Plugin\MediaEmbedDialogInterface $plugin */
     $plugin = $dialog_manager->createInstance($plugin_id, ['entity' => $entity]);
 
     if ($plugin->isApplicable()) {
       // Alter the dialog form for each plugin.
-      // @see \Drupal\stanford_media\MediaEmbedDialogInterface::alterDialogForm()
+      // @see \Drupal\stanford_media\Plugin\MediaEmbedDialogInterface::alterDialogForm()
       $plugin->alterDialogForm($form, $form_state);
 
       // Adds validate method.
-      array_unshift($form['#validate'], [
-        get_class($plugin),
-        'validateDialogForm',
-      ]);
+      array_unshift($form['#validate'], [get_class($plugin), 'validateDialogForm']);
 
       // Adds submit method.
-      array_unshift($form['#submit'], [
-        get_class($plugin),
-        'submitDialogForm',
-      ]);
+      array_unshift($form['#submit'], [get_class($plugin), 'submitDialogForm']);
     }
   }
 }
@@ -255,46 +249,11 @@ function stanford_media_preprocess_media(&$variables) {
 }
 
 /**
- * Implements hook_field_widget_WIDGET_TYPE_form_alter().
- */
-function stanford_media_field_widget_video_embed_field_textfield_form_alter(&$element, FormStateInterface $form_state, $context) {
-  if (!$form_state->getBuildInfo()['callback_object'] instanceof MediaForm) {
-    $element['#element_validate'][] = 'stanford_media_save_video_media';
-  }
-}
-
-/**
- * Create a new media entity when a video is uploaded.
- *
- * @param array $element
- *   Managed file form element.
- * @param \Drupal\Core\Form\FormStateInterface $form_state
- *   Submitted form state.
- */
-function stanford_media_save_video_media(array $element, FormStateInterface $form_state) {
-  \Drupal::service('stanford_media.field_save')
-    ->saveVideo($element, $form_state);
-}
-
-/**
- * Create a new media entity when a file_managed file is uploaded.
- *
- * @param array $element
- *   Managed file form element.
- * @param \Drupal\Core\Form\FormStateInterface $form_state
- *   Submitted form state.
- */
-function stanford_media_save_file_managed_media(array $element, FormStateInterface $form_state) {
-  \Drupal::service('stanford_media.field_save')
-    ->saveFile($element, $form_state);
-}
-
-/**
  * Implements hook_ckeditor_css_alter().
  */
 function stanford_media_ckeditor_css_alter(array &$css, Editor $editor) {
   // Add special styles to wysiwyg embeded videos.
-  $css[] = drupal_get_path('module', 'stanford_media') . '/css/stanford_media.video_preview.css';
+  $css[] = drupal_get_path('module', 'stanford_media') . '/css/stanford_media.embed_preview.css';
 }
 
 /**
@@ -324,4 +283,11 @@ function stanford_media_preprocess_media__image(&$variables) {
  */
 function stanford_media_media_source_info_alter(array &$definitions) {
   $definitions['image']['class'] = Image::class;
+}
+
+/**
+ * Implements hook_audio_embed_field_provider_info_alter().
+ */
+function stanford_media_audio_embed_field_provider_info_alter(&$definitions) {
+  $definitions['soundcloud']['class'] = StanfordSoundCloud::class;
 }

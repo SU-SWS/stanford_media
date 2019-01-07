@@ -3,7 +3,7 @@
 namespace Drupal\stanford_media\Plugin\MediaEmbedDialog;
 
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\stanford_media\MediaEmbedDialogInterface;
+use Drupal\stanford_media\Plugin\MediaEmbedDialogInterface;
 
 /**
  * Changes embedded video media items with youtube provider.

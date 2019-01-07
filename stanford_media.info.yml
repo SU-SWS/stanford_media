@@ -5,23 +5,23 @@ package: media
 type: module
 version: 8.x-1.x
 dependencies:
-  - ckeditor
-  - dropzonejs
-  - dropzonejs_eb_widget
-  - editor
-  - embed
-  - entity_browser
-  - entity_browser_entity_form
-  - entity_embed
-  - entity_usage
-  - field
-  - inline_entity_form
-  - linkit
-  - media
-  - media_duplicate_validation
-  - video_embed_field
-  - video_embed_media
-  - views
-  - focal_point
-  - responsive_image
-  - breakpoint
+  - drupal:ckeditor
+  - drupal:dropzonejs
+  - drupal:dropzonejs_eb_widget
+  - drupal:editor
+  - drupal:embed
+  - drupal:entity_browser
+  - drupal:entity_browser_entity_form
+  - drupal:entity_embed
+  - drupal:entity_usage
+  - drupal:field
+  - drupal:inline_entity_form
+  - drupal:linkit
+  - drupal:media
+  - drupal:media_duplicate_validation
+  - drupal:video_embed_field
+  - drupal:video_embed_media
+  - drupal:views
+  - drupal:focal_point
+  - drupal:responsive_image
+  - drupal:breakpoint
