@@ -37,8 +37,7 @@ class StanfordSoundCloud extends SoundCloud {
    * {@inheritdoc}
    */
   public static function getIdFromInput($input) {
-    $video_data = static::getVideoData($input);
-    if (!$video_data) {
+    if (!$input || !($video_data = static::getVideoData($input))) {
       return NULL;
     }
 
@@ -84,10 +83,6 @@ class StanfordSoundCloud extends SoundCloud {
    * @throws \GuzzleHttp\Exception\GuzzleException
    */
   protected static function getVideoData($video_url) {
-    if (!$video_url) {
-      return NULL;
-    }
-
     $cache = \Drupal::cache('default');
     if ($cache_item = $cache->get('audio_embed_field:' . md5($video_url))) {
       return $cache_item->data;
