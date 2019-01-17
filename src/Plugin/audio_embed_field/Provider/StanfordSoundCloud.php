@@ -58,6 +58,21 @@ class StanfordSoundCloud extends SoundCloud {
   }
 
   /**
+   * {@inheritdoc}
+   */
+  public function renderEmbedCode($width, $height, $autoplay) {
+    $render = parent::renderEmbedCode($width, $height, $autoplay);
+    $video_data = static::getVideoData($this->input);
+
+    // Fix the url if the input is actually a playlist instead of a track.
+    if (strpos($video_data['html'], 'playlist') !== FALSE) {
+      $render['#url'] = str_replace('/tracks/', '/playlists/', $render['#url']);
+    }
+
+    return $render;
+  }
+
+  /**
    * Get data array from SoundCloud for a share url.
    *
    * @param string $video_url
@@ -69,6 +84,10 @@ class StanfordSoundCloud extends SoundCloud {
    * @throws \GuzzleHttp\Exception\GuzzleException
    */
   protected static function getVideoData($video_url) {
+    if (!$video_url) {
+      return NULL;
+    }
+
     $cache = \Drupal::cache('default');
     if ($cache_item = $cache->get('audio_embed_field:' . md5($video_url))) {
       return $cache_item->data;
