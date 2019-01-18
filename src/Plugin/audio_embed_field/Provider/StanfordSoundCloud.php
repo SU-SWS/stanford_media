@@ -37,8 +37,7 @@ class StanfordSoundCloud extends SoundCloud {
    * {@inheritdoc}
    */
   public static function getIdFromInput($input) {
-    $video_data = static::getVideoData($input);
-    if (!$video_data) {
+    if (!$input || !($video_data = static::getVideoData($input))) {
       return NULL;
     }
 
@@ -55,6 +54,21 @@ class StanfordSoundCloud extends SoundCloud {
     $tracks_parts = explode('/', $query['url']);
 
     return (int) end($tracks_parts) ? end($tracks_parts) : NULL;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function renderEmbedCode($width, $height, $autoplay) {
+    $render = parent::renderEmbedCode($width, $height, $autoplay);
+    $video_data = static::getVideoData($this->input);
+
+    // Fix the url if the input is actually a playlist instead of a track.
+    if (strpos($video_data['html'], 'playlist') !== FALSE) {
+      $render['#url'] = str_replace('/tracks/', '/playlists/', $render['#url']);
+    }
+
+    return $render;
   }
 
   /**

@@ -49,7 +49,6 @@ class File extends MediaEmbedDialogBase {
   public function preRender(array $element) {
     $source_field = static::getMediaSourceField($element['#media']);
     $element[$source_field][0]['#description'] = $element['#display_settings']['description'];
-    $element['#cache']['max-age'] = 0;
     return $element;
   }
 
