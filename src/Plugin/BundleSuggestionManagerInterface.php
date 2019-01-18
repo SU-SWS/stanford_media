@@ -5,7 +5,7 @@ namespace Drupal\stanford_media\Plugin;
 use Drupal\media\Entity\MediaType;
 
 /**
- * Interface BundleSuggestionManagerInterface
+ * Interface BundleSuggestionManagerInterface for plugin manager service.
  *
  * @package Drupal\stanford_media\Plugin
  */
