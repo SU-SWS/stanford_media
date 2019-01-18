@@ -318,8 +318,10 @@ abstract class MediaBrowserBase extends WidgetBase {
       'uid' => $this->currentUser->id(),
       'status' => TRUE,
       'type' => $media_type->getSource()->getPluginId(),
-      'name' => $this->bundleSuggestion->getSuggestedName($source_value),
     ];
+    if (is_string($source_value)) {
+      $entity_data['name'] = $this->bundleSuggestion->getSuggestedName($source_value);
+    }
 
     return $media_storage->create($entity_data);
   }
