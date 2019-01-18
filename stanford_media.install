@@ -5,9 +5,33 @@
  * stanford_media.install
  */
 
+use Drupal\views\Entity\View;
+
 /**
  * Enable new submodule.
  */
 function stanford_media_update_8001() {
   \Drupal::service('module_installer')->install(['media_duplicate_validation']);
+}
+
+/**
+ * Update the media view.
+ */
+function stanford_media_update_8002() {
+  $view = View::load('media_entity_browser');
+  $list_display = &$view->getDisplay('use_list');
+  $list_display['display_options']['fields']['source_id'] = [
+    'id' => 'source_id',
+    'field' => 'source_id',
+    'group_type' => 'count_distinct',
+  ];
+  $list_display['display_options']['fields']['source_id'] += $list_display['display_options']['fields']['count'];
+  unset($list_display['display_options']['fields']['count']);
+
+  // Move operations column to the end.
+  $operations = $list_display['display_options']['fields']['operations'];
+  unset($list_display['display_options']['fields']['operations']);
+  $list_display['display_options']['fields']['operations'] = $operations;
+
+  $view->save();
 }
