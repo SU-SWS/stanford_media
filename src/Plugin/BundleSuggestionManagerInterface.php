@@ -24,6 +24,15 @@ interface BundleSuggestionManagerInterface {
    */
   public function getSuggestedBundle($input);
 
+  /**
+   * Get the suggested name of the media entity from the input value.
+   *
+   * @param string $input
+   *   User input data such as a url.
+   *
+   * @return string|null
+   *   Suggested name or null if none suggested.
+   */
   public function getSuggestedName($input);
 
   /**
@@ -31,9 +40,6 @@ interface BundleSuggestionManagerInterface {
    *
    * @return array
    *   All available extensions.
-   *
-   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
-   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   public function getAllExtensions();
 

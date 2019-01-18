@@ -29,7 +29,7 @@ class BundleSuggestionManager extends DefaultPluginManager implements BundleSugg
   /**
    * Entity Type manager service.
    *
-   * @var \Drupal\Core\Entity\EntityTypeManager
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityTypeManager;
 
@@ -45,6 +45,8 @@ class BundleSuggestionManager extends DefaultPluginManager implements BundleSugg
    *   The module handler to invoke the alter hook with.
    * @param \Drupal\Core\Entity\EntityFieldManagerInterface $field_manager
    *   Field manager service.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   Entity type manager service.
    */
   public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler, EntityFieldManagerInterface $field_manager, EntityTypeManagerInterface $entity_type_manager) {
     parent::__construct(
