@@ -156,6 +156,8 @@ abstract class MediaBrowserBase extends WidgetBase {
    *   Form state object.
    * @param array $widget_params
    *   Additional parameters we dont need.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\PluginException
    */
   protected function getEntityForm(array &$form, FormStateInterface $form_state, array $widget_params) {
     if (isset($form['actions'])) {
@@ -273,6 +275,10 @@ abstract class MediaBrowserBase extends WidgetBase {
    *   Complete form.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Current form state.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \Drupal\Core\Entity\EntityStorageException
    */
   protected function cleanDuplicates(array &$element, array &$form, FormStateInterface $form_state) {
     $selected_items = $form_state->get(['entity_browser', 'selected_entities']);
@@ -305,6 +311,9 @@ abstract class MediaBrowserBase extends WidgetBase {
    *
    * @return \Drupal\Core\Entity\EntityInterface
    *   Created media entity.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   protected function prepareMediaEntity(MediaType $media_type, $source_value) {
     $media_storage = $this->entityTypeManager->getStorage('media');
