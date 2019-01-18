@@ -48,8 +48,8 @@ class VideoEmbed extends BundleSuggestionBase {
    * {@inheritdoc}
    */
   public function getBundleFromString($input) {
-    $video_provider_id = $this->videoProvider->loadProviderFromInput($input);
-    if (!$video_provider_id) {
+    $video_provider = $this->videoProvider->loadProviderFromInput($input);
+    if (!$video_provider) {
       return NULL;
     }
 
@@ -60,10 +60,18 @@ class VideoEmbed extends BundleSuggestionBase {
       $field = $this->entityTypeManager->getStorage('field_config')
         ->load("media.{$media_type->id()}.$source_field");
 
-      if ($video_provider_id && $field->getType() == 'video_embed_field') {
+      if ($field->getType() == 'video_embed_field') {
         return $media_type;
       }
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getName($input) {
+    $video_provider = $this->videoProvider->loadProviderFromInput($input);
+    return $video_provider->getName();
   }
 
 }

@@ -14,7 +14,7 @@ use Drupal\inline_entity_form\ElementSubmit;
 use Drupal\media\Entity\MediaType;
 use Drupal\media\MediaInterface;
 use Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationManager;
-use Drupal\stanford_media\Service\BundleSuggestion;
+use Drupal\stanford_media\Plugin\BundleSuggestionManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -28,7 +28,7 @@ abstract class MediaBrowserBase extends WidgetBase {
   /**
    * Finds which media type is appropriate.
    *
-   * @var \Drupal\stanford_media\Service\BundleSuggestion
+   * @var \Drupal\stanford_media\Plugin\BundleSuggestionManagerInterface
    */
   protected $bundleSuggestion;
 
@@ -64,7 +64,7 @@ abstract class MediaBrowserBase extends WidgetBase {
       $container->get('event_dispatcher'),
       $container->get('entity_type.manager'),
       $container->get('plugin.manager.entity_browser.widget_validation'),
-      $container->get('stanford_media.bundle_suggestion'),
+      $container->get('plugin.manager.bundle_suggestion_manager'),
       $container->get('current_user'),
       $container->get('messenger'),
       $container->get('plugin.manager.media_duplicate_validation')
@@ -74,9 +74,9 @@ abstract class MediaBrowserBase extends WidgetBase {
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, EntityTypeManagerInterface $entity_type_manager, WidgetValidationManager $validation_manager, BundleSuggestion $bundles, AccountProxyInterface $current_user, MessengerInterface $messenger, MediaDuplicateValidationManager $duplication_manager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, EntityTypeManagerInterface $entity_type_manager, WidgetValidationManager $validation_manager, BundleSuggestionManagerInterface $bundle_suggestion, AccountProxyInterface $current_user, MessengerInterface $messenger, MediaDuplicateValidationManager $duplication_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $event_dispatcher, $entity_type_manager, $validation_manager);
-    $this->bundleSuggestion = $bundles;
+    $this->bundleSuggestion = $bundle_suggestion;
     $this->currentUser = $current_user;
     $this->messenger = $messenger;
     $this->duplicationManager = $duplication_manager;
@@ -318,6 +318,7 @@ abstract class MediaBrowserBase extends WidgetBase {
       'uid' => $this->currentUser->id(),
       'status' => TRUE,
       'type' => $media_type->getSource()->getPluginId(),
+      'name' => $this->bundleSuggestion->getSuggestedName($source_value),
     ];
 
     return $media_storage->create($entity_data);
