@@ -202,10 +202,8 @@ class DropzoneUpload extends MediaBrowserBase {
     $files = $form_state->get(['dropzonejs', $this->uuid(), 'files']) ?: [];
 
     // We do some casting because $form_state->getValue() might return NULL.
-    foreach ((array) $form_state->getValue([
-      'upload',
-      'uploaded_files',
-    ], []) as $file) {
+    $uploads = (array) $form_state->getValue(['upload', 'uploaded_files'], [])
+    foreach ($uploads as $file) {
       if (!empty($file['path']) && file_exists($file['path'])) {
         $bundle = $this->bundleSuggestion->getSuggestedBundle($file['path']);
         $additional_validators = [
@@ -231,7 +229,6 @@ class DropzoneUpload extends MediaBrowserBase {
     }
 
     $form_state->set(['dropzonejs', $this->uuid(), 'files'], $files);
-
     return $files;
   }
 
