@@ -181,7 +181,7 @@ class BundleSuggestionManager extends DefaultPluginManager implements BundleSugg
   /**
    * {@inheritdoc}
    */
-  public function getMaxFilesize($bundles = []) {
+  public function getMaxFilesize(array $bundles = []) {
 
     $media_types = $this->getUploadBundles();
     if ($bundles) {

@@ -136,14 +136,12 @@ class DropzoneUpload extends MediaBrowserBase {
     $allowed_extensions = $this->bundleSuggestion->getMultipleBundleExtensions($allowed_bundles);
     $validators = $form_state->get(['entity_browser', 'validators']);
 
-    $target_bundles = $form_state->get(['entity_browser', 'widget_context', 'target_bundles']);
-
     $form['upload'] = [
       '#title' => $this->t('File upload'),
       '#type' => 'dropzonejs',
       '#required' => TRUE,
       '#dropzone_description' => $this->configuration['dropzone_description'],
-      '#max_filesize' => $this->bundleSuggestion->getMaxFileSize($target_bundles ?: []),
+      '#max_filesize' => $this->getMaxFileSize($form_state),
       '#extensions' => implode(' ', $allowed_extensions),
       '#max_files' => $validators['cardinality']['cardinality'] ?? 1,
       '#clientside_resize' => FALSE,
@@ -162,6 +160,24 @@ class DropzoneUpload extends MediaBrowserBase {
     }
 
     return $form;
+  }
+
+  /**
+   * Get the allowed maximum file size for the current form.
+   *
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Current state of the form.
+   *
+   * @return int
+   *   Maximum file size as integer.
+   */
+  protected function getMaxFileSize(FormStateInterface $form_state) {
+    $target_bundles = $form_state->get([
+      'entity_browser',
+      'widget_context',
+      'target_bundles',
+    ]);
+    return $this->bundleSuggestion->getMaxFileSize($target_bundles ?: []);
   }
 
   /**

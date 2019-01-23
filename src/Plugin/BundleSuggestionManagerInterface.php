@@ -82,7 +82,7 @@ interface BundleSuggestionManagerInterface {
    * @return int
    *   Maximum file size for all bundles.
    */
-  public function getMaxFileSize($bundles = []);
+  public function getMaxFileSize(array $bundles = []);
 
   /**
    * Get maximum file size for the media type.
