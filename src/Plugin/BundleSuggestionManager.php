@@ -181,20 +181,23 @@ class BundleSuggestionManager extends DefaultPluginManager implements BundleSugg
   /**
    * {@inheritdoc}
    */
-  public function getMaxFilesize() {
-    $max_filesize = Bytes::toInt(file_upload_max_size());
+  public function getMaxFilesize($bundles = []) {
+
     $media_types = $this->getUploadBundles();
+    if ($bundles) {
+      $media_types = $this->getMediaBundles($bundles);
+    }
 
+    $max_filesize = 0;
     foreach ($media_types as $media_type) {
-
       if ($max = $this->getMaxFileSizeBundle($media_type)) {
         if ($max > $max_filesize) {
           $max_filesize = $max;
         }
       }
     }
-
-    return $max_filesize;
+    $server_max = Bytes::toInt(file_upload_max_size());
+    return !$max_filesize || $server_max < $max_filesize ? $server_max : $max_filesize;
   }
 
   /**
@@ -234,8 +237,8 @@ class BundleSuggestionManager extends DefaultPluginManager implements BundleSugg
   /**
    * Get all or some media bundles.
    *
-   * @param array $bundles
-   *   Optionally specifiy which media bundles to load.
+   * @param string[] $bundles
+   *   Optionally specify which media bundles to load.
    *
    * @return \Drupal\media\Entity\MediaType[]
    *   Keyed array of all media types.

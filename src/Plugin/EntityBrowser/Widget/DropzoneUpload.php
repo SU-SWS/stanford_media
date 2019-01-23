@@ -136,12 +136,14 @@ class DropzoneUpload extends MediaBrowserBase {
     $allowed_extensions = $this->bundleSuggestion->getMultipleBundleExtensions($allowed_bundles);
     $validators = $form_state->get(['entity_browser', 'validators']);
 
+    $target_bundles = $form_state->get(['entity_browser', 'widget_context', 'target_bundles']);
+
     $form['upload'] = [
       '#title' => $this->t('File upload'),
       '#type' => 'dropzonejs',
       '#required' => TRUE,
       '#dropzone_description' => $this->configuration['dropzone_description'],
-      '#max_filesize' => $this->bundleSuggestion->getMaxFilesize(),
+      '#max_filesize' => $this->bundleSuggestion->getMaxFileSize($target_bundles ?: []),
       '#extensions' => implode(' ', $allowed_extensions),
       '#max_files' => $validators['cardinality']['cardinality'] ?? 1,
       '#clientside_resize' => FALSE,
@@ -191,7 +193,10 @@ class DropzoneUpload extends MediaBrowserBase {
       if (!empty($file['path']) && file_exists($file['path'])) {
         $bundle = $this->bundleSuggestion->getSuggestedBundle($file['path']);
         $additional_validators = [
-          'file_validate_size' => [$this->bundleSuggestion->getMaxFileSizeBundle($bundle), 0],
+          'file_validate_size' => [
+            $this->bundleSuggestion->getMaxFileSizeBundle($bundle),
+            0,
+          ],
         ];
 
         $entity = $this->dropzoneJsSave->createFile(

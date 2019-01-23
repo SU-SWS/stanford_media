@@ -122,7 +122,7 @@ class BulkUpload extends FormBase {
         '#type' => 'dropzonejs',
         '#required' => TRUE,
         '#dropzone_description' => $this->t('Drop files here to upload them'),
-        '#max_filesize' => $this->bundleSuggestion->getMaxFilesize(),
+        '#max_filesize' => $this->bundleSuggestion->getMaxFileSize(),
         '#extensions' => $this->bundleSuggestion->getAllExtensions(),
         '#max_files' => 0,
         '#clientside_resize' => FALSE,
