@@ -65,4 +65,11 @@ abstract class BundleSuggestionBase extends PluginBase implements BundleSuggesti
       ->loadMultiple($bundles ?: NULL);
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getName($input) {
+    return NULL;
+  }
+
 }

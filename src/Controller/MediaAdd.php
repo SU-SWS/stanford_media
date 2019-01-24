@@ -11,7 +11,7 @@ use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Routing\UrlGeneratorInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
-use Drupal\stanford_media\BundleSuggestion;
+use Drupal\stanford_media\Plugin\BundleSuggestionManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -24,7 +24,7 @@ class MediaAdd extends EntityController {
   /**
    * Finds which media type is appropriate.
    *
-   * @var \Drupal\stanford_media\BundleSuggestion
+   * @var \Drupal\stanford_media\Plugin\BundleSuggestionManagerInterface
    */
   protected $bundleSuggestion;
 
@@ -39,14 +39,14 @@ class MediaAdd extends EntityController {
       $container->get('renderer'),
       $container->get('string_translation'),
       $container->get('url_generator'),
-      $container->get('stanford_media.bundle_suggestion')
+      $container->get('plugin.manager.bundle_suggestion_manager')
     );
   }
 
   /**
    * {@inheritdoc}
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, EntityTypeBundleInfoInterface $bundle_info, EntityRepositoryInterface $entity_repository, RendererInterface $renderer, TranslationInterface $string_translation, UrlGeneratorInterface $url_generator, BundleSuggestion $bundle_suggestion) {
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, EntityTypeBundleInfoInterface $bundle_info, EntityRepositoryInterface $entity_repository, RendererInterface $renderer, TranslationInterface $string_translation, UrlGeneratorInterface $url_generator, BundleSuggestionManagerInterface $bundle_suggestion) {
     parent::__construct($entity_type_manager, $bundle_info, $entity_repository, $renderer, $string_translation, $url_generator);
     $this->bundleSuggestion = $bundle_suggestion;
   }

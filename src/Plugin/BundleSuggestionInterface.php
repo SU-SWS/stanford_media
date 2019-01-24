@@ -22,4 +22,15 @@ interface BundleSuggestionInterface extends ContainerFactoryPluginInterface {
    */
   public function getBundleFromString($input);
 
+  /**
+   * Get the name that should be used on the media entity.
+   *
+   * @param string $input
+   *   User input data.
+   *
+   * @return string|null
+   *   A name or null if none suggested.
+   */
+  public function getName($input);
+
 }

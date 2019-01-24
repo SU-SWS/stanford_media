@@ -15,7 +15,7 @@ use Drupal\dropzonejs\DropzoneJsUploadSave;
 use Drupal\file\Entity\File;
 use Drupal\inline_entity_form\ElementSubmit;
 use Drupal\media\Entity\Media;
-use Drupal\stanford_media\BundleSuggestion;
+use Drupal\stanford_media\Plugin\BundleSuggestionManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -35,7 +35,7 @@ class BulkUpload extends FormBase {
   /**
    * Our bundle suggestion for some helpful methods.
    *
-   * @var \Drupal\stanford_media\BundleSuggestion
+   * @var \Drupal\stanford_media\Plugin\BundleSuggestionManagerInterface
    */
   protected $bundleSuggestion;
 
@@ -66,7 +66,7 @@ class BulkUpload extends FormBase {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('entity_type.manager'),
-      $container->get('stanford_media.bundle_suggestion'),
+      $container->get('plugin.manager.bundle_suggestion_manager'),
       $container->get('dropzonejs.upload_save'),
       $container->get('current_user'),
       $container->get('messenger')
@@ -76,7 +76,7 @@ class BulkUpload extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function __construct(EntityTypeManager $entity_manager, BundleSuggestion $bundle_suggestion, DropzoneJsUploadSave $dropzone_save, AccountProxy $current_user, MessengerInterface $messenger) {
+  public function __construct(EntityTypeManager $entity_manager, BundleSuggestionManagerInterface $bundle_suggestion, DropzoneJsUploadSave $dropzone_save, AccountProxy $current_user, MessengerInterface $messenger) {
     $this->entityTypeManager = $entity_manager;
     $this->bundleSuggestion = $bundle_suggestion;
     $this->dropzoneSave = $dropzone_save;
@@ -122,7 +122,7 @@ class BulkUpload extends FormBase {
         '#type' => 'dropzonejs',
         '#required' => TRUE,
         '#dropzone_description' => $this->t('Drop files here to upload them'),
-        '#max_filesize' => $this->bundleSuggestion->getMaxFilesize(),
+        '#max_filesize' => $this->bundleSuggestion->getMaxFileSize(),
         '#extensions' => $this->bundleSuggestion->getAllExtensions(),
         '#max_files' => 0,
         '#clientside_resize' => FALSE,

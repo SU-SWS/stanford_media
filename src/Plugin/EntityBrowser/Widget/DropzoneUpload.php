@@ -10,7 +10,7 @@ use Drupal\dropzonejs\DropzoneJsUploadSave;
 use Drupal\entity_browser\WidgetValidationManager;
 use Drupal\file\Entity\File;
 use Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationManager;
-use Drupal\stanford_media\Service\BundleSuggestion;
+use Drupal\stanford_media\Plugin\BundleSuggestionManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -51,7 +51,7 @@ class DropzoneUpload extends MediaBrowserBase {
       $container->get('event_dispatcher'),
       $container->get('entity_type.manager'),
       $container->get('plugin.manager.entity_browser.widget_validation'),
-      $container->get('stanford_media.bundle_suggestion'),
+      $container->get('plugin.manager.bundle_suggestion_manager'),
       $container->get('current_user'),
       $container->get('messenger'),
       $container->get('plugin.manager.media_duplicate_validation'),
@@ -62,7 +62,7 @@ class DropzoneUpload extends MediaBrowserBase {
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, EntityTypeManagerInterface $entity_type_manager, WidgetValidationManager $validation_manager, BundleSuggestion $bundles, AccountProxyInterface $current_user, MessengerInterface $messenger, MediaDuplicateValidationManager $duplication_manager, DropzoneJsUploadSave $dropzone_save) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, EntityTypeManagerInterface $entity_type_manager, WidgetValidationManager $validation_manager, BundleSuggestionManagerInterface $bundles, AccountProxyInterface $current_user, MessengerInterface $messenger, MediaDuplicateValidationManager $duplication_manager, DropzoneJsUploadSave $dropzone_save) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $event_dispatcher, $entity_type_manager, $validation_manager, $bundles, $current_user, $messenger, $duplication_manager);
     $this->dropzoneJsSave = $dropzone_save;
   }
@@ -141,7 +141,7 @@ class DropzoneUpload extends MediaBrowserBase {
       '#type' => 'dropzonejs',
       '#required' => TRUE,
       '#dropzone_description' => $this->configuration['dropzone_description'],
-      '#max_filesize' => $this->bundleSuggestion->getMaxFilesize(),
+      '#max_filesize' => $this->getMaxFileSize($form_state),
       '#extensions' => implode(' ', $allowed_extensions),
       '#max_files' => $validators['cardinality']['cardinality'] ?? 1,
       '#clientside_resize' => FALSE,
@@ -160,6 +160,24 @@ class DropzoneUpload extends MediaBrowserBase {
     }
 
     return $form;
+  }
+
+  /**
+   * Get the allowed maximum file size for the current form.
+   *
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Current state of the form.
+   *
+   * @return int
+   *   Maximum file size as integer.
+   */
+  protected function getMaxFileSize(FormStateInterface $form_state) {
+    $target_bundles = $form_state->get([
+      'entity_browser',
+      'widget_context',
+      'target_bundles',
+    ]);
+    return $this->bundleSuggestion->getMaxFileSize($target_bundles ?: []);
   }
 
   /**
@@ -184,14 +202,15 @@ class DropzoneUpload extends MediaBrowserBase {
     $files = $form_state->get(['dropzonejs', $this->uuid(), 'files']) ?: [];
 
     // We do some casting because $form_state->getValue() might return NULL.
-    foreach ((array) $form_state->getValue([
-      'upload',
-      'uploaded_files',
-    ], []) as $file) {
+    $uploads = (array) $form_state->getValue(['upload', 'uploaded_files'], []);
+    foreach ($uploads as $file) {
       if (!empty($file['path']) && file_exists($file['path'])) {
         $bundle = $this->bundleSuggestion->getSuggestedBundle($file['path']);
         $additional_validators = [
-          'file_validate_size' => [$this->bundleSuggestion->getMaxFileSizeBundle($bundle), 0],
+          'file_validate_size' => [
+            $this->bundleSuggestion->getMaxFileSizeBundle($bundle),
+            0,
+          ],
         ];
 
         $entity = $this->dropzoneJsSave->createFile(
@@ -210,7 +229,6 @@ class DropzoneUpload extends MediaBrowserBase {
     }
 
     $form_state->set(['dropzonejs', $this->uuid(), 'files'], $files);
-
     return $files;
   }
 
