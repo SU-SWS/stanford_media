@@ -55,7 +55,7 @@ class Md5 extends MediaDuplicateValidationBase {
   public function mediaSave(MediaInterface $entity) {
     parent::mediaSave($entity);
     $file = File::load($entity->getSource()->getSourceFieldValue($entity));
-    if ($file) {
+    if ($file instanceof File) {
       $this->database->merge(self::DATABASE_TABLE)
         ->fields([
           'mid' => $entity->id(),
