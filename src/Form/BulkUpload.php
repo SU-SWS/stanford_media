@@ -123,7 +123,7 @@ class BulkUpload extends FormBase {
         '#required' => TRUE,
         '#dropzone_description' => $this->t('Drop files here to upload them'),
         '#max_filesize' => $this->bundleSuggestion->getMaxFileSize(),
-        '#extensions' => $this->bundleSuggestion->getAllExtensions(),
+        '#extensions' => implode(' ', $this->bundleSuggestion->getAllExtensions()),
         '#max_files' => 0,
         '#clientside_resize' => FALSE,
       ];
@@ -235,8 +235,7 @@ class BulkUpload extends FormBase {
    * @return \Drupal\file\FileInterface[]
    *   Array of uploaded files.
    *
-   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
-   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \Drupal\Component\Plugin\Exception\PluginException
    */
   protected function getFiles(array $form, FormStateInterface $form_state) {
 
@@ -256,7 +255,7 @@ class BulkUpload extends FormBase {
       if (!empty($file['path']) && file_exists($file['path'])) {
 
         // Get the media type from the file extension.
-        $media_type = $this->bundleSuggestion->getBundleFromFile($file['path']);
+        $media_type = $this->bundleSuggestion->getSuggestedBundle($file['path']);
 
         if ($media_type) {
           // Validate the media bundle allows for the size of file.
@@ -271,7 +270,7 @@ class BulkUpload extends FormBase {
           $files[] = $this->dropzoneSave->createFile(
             $file['path'],
             $this->bundleSuggestion->getUploadPath($media_type),
-            $this->bundleSuggestion->getAllExtensions(),
+            implode(' ', $this->bundleSuggestion->getAllExtensions()),
             $this->currentUser,
             $validators
           );
@@ -291,6 +290,10 @@ class BulkUpload extends FormBase {
    *   Original form from getFrom().
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Form state object.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   private function getEntityForm(array &$form, FormStateInterface $form_state) {
     if (isset($form['actions'])) {
@@ -338,6 +341,10 @@ class BulkUpload extends FormBase {
    *
    * @return array
    *   Array of media entities before saving.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   private function createMediaEntities(array $form, FormStateInterface $form_state) {
     $media_entities = [];
@@ -351,7 +358,7 @@ class BulkUpload extends FormBase {
     foreach ($files as $file) {
       if ($file instanceof File) {
         // Get the media type bundle from the file uri.
-        $media_type = $this->bundleSuggestion->getBundleFromFile($file->getFileUri());
+        $media_type = $this->bundleSuggestion->getSuggestedBundle($file->getFileUri());
 
         // Create the media entity.
         $media_entities[] = $this->entityTypeManager->getStorage('media')
