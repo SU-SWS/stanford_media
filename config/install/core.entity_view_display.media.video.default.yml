@@ -3,7 +3,6 @@ status: true
 dependencies:
   config:
     - field.field.media.video.field_media_video_embed_field
-    - image.style.thumbnail
     - media.type.video
   module:
     - video_embed_field
@@ -15,10 +14,14 @@ content:
   field_media_video_embed_field:
     label: hidden
     settings:
-      image_style: thumbnail
+      image_style: medium
       link_image_to: ''
+      autoplay: true
+      width: 200
+      height: 133
+      responsive: false
     third_party_settings: {  }
-    type: video_embed_field_thumbnail
+    type: video_embed_field_lazyload
     weight: 0
     region: content
 hidden:

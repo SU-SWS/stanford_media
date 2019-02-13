@@ -15,3 +15,11 @@
     max-height: 150px;
   }
 }
+
+table .video-embed-field-lazy {
+  width: fit-content;
+
+  img {
+    width: auto;
+  }
+}
