@@ -54,6 +54,13 @@ class Md5 extends MediaDuplicateValidationBase {
    */
   public function mediaSave(MediaInterface $entity) {
     parent::mediaSave($entity);
+
+    // When generating content with devel, we have to check if the entity has
+    // a source.
+    if (!$entity->getSource()) {
+      return;
+    }
+
     $file = File::load($entity->getSource()->getSourceFieldValue($entity));
     if ($file instanceof File) {
       $this->database->merge(self::DATABASE_TABLE)

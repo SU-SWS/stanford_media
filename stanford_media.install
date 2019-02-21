@@ -6,6 +6,7 @@
  */
 
 use Drupal\views\Entity\View;
+use Drupal\Core\Entity\Entity\EntityViewDisplay;
 
 /**
  * Enable new submodule.
@@ -34,4 +35,25 @@ function stanford_media_update_8002() {
   $list_display['display_options']['fields']['operations'] = $operations;
 
   $view->save();
+}
+
+/**
+ * Change video embed field thumbnail to a lazy loading video.
+ */
+function stanford_media_update_8003() {
+  $display = EntityViewDisplay::load('media.video.default');
+
+  $display_options = [
+    'label' => 'hidden',
+    'type' => 'video_embed_field_lazyload',
+    'settings' => [
+      'image_style' => 'medium',
+      'autoplay' => TRUE,
+      'width' => 200,
+      'height' => 133,
+      'responsive' => FALSE,
+    ],
+  ];
+  $display->setComponent('field_media_video_embed_field', $display_options);
+  $display->save();
 }

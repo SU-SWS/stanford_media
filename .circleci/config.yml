@@ -17,7 +17,7 @@ unit_tests: &unit_tests
   steps:
     - run:
         command: |
-          composer create-project drupal-composer/drupal-project:8.x-dev /var/www/html --stability dev --no-interaction --no-install
+          composer create-project drupal-composer/drupal-project:8.x-dev /var/www/html --stability dev --no-interaction
           composer require su-sws/stanford_media:dev-${CIRCLE_BRANCH}
           ln -s web docroot
           cd docroot && ../vendor/bin/drush si minimal --db-url=mysql://root@127.0.0.1/drupal8 -y
