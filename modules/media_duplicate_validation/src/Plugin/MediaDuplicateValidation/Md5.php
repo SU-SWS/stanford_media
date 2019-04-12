@@ -30,7 +30,7 @@ class Md5 extends MediaDuplicateValidationBase {
       return [];
     }
 
-    $md5 = md5(file_get_contents($file->getFileUri()));
+    $md5 = md5(@file_get_contents($file->getFileUri()));
     $query = $this->database->select(self::DATABASE_TABLE, 't')
       ->fields('t', ['mid'])
       ->condition('md5', $md5)
@@ -66,7 +66,7 @@ class Md5 extends MediaDuplicateValidationBase {
       $this->database->merge(self::DATABASE_TABLE)
         ->fields([
           'mid' => $entity->id(),
-          'md5' => md5(file_get_contents($file->getFileUri())),
+          'md5' => md5(@file_get_contents($file->getFileUri())),
         ])
         ->key('mid', $entity->id())
         ->execute();

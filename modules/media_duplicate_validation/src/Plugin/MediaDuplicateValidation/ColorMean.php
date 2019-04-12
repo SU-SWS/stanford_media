@@ -209,7 +209,7 @@ class ColorMean extends MediaDuplicateValidationBase {
    *   Mime data or false if its not a jpg or png.
    */
   protected function mimeType($path) {
-    $mime = getimagesize($path);
+    $mime = @getimagesize($path);
     if (!$mime) {
       return FALSE;
     }
