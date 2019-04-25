@@ -120,16 +120,16 @@ class Image extends MediaEmbedDialogBase {
     if (isset($form['attributes']['data-caption'])) {
       $caption_field = $form['attributes']['data-caption'];
       $caption_field['#type'] = 'text_format';
-      $caption_field['#format'] = 'minimal_html';
+
+      $default_caption = json_decode($caption_field['#default_value'], TRUE);
+      $caption_field['#default_value'] = $default_caption['value'] ?? '';
+      $caption_field['#format'] = $default_caption['format'] ?? 'minimal_html';
       $caption_field['#description'] = $this->t('Enter information about this image to credit owner or to provide additional context.');
       unset($caption_field['#element_validate']);
 
       $format_config = $this->configFactory->get('stanford_media.allowed_caption_formats');
       if ($allowed_formats = $format_config->get('allowed_formats')) {
         $caption_field['#allowed_formats'] = $allowed_formats;
-        // TODO allow multiple formats and set the current format to the user
-        // chosen value.
-        $caption_field['#format'] = reset($caption_field['#allowed_formats']);
       }
 
       $attribute_settings['caption'] = $caption_field;
@@ -179,11 +179,10 @@ class Image extends MediaEmbedDialogBase {
     if (!empty($caption['value'])) {
       // Clean up the caption and escape special characters so it can be used in
       // the json string.
-      $caption = check_markup(htmlspecialchars_decode($caption['value']), $caption['format'])->__toString();
       $form_state->setValue([
         'attributes',
         'data-caption',
-      ], htmlspecialchars($caption));
+      ], htmlspecialchars(json_encode($caption)));
     }
   }
 
