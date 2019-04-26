@@ -72,7 +72,7 @@ class VimeoVideo extends VideoEmbedBase {
   /**
    * {@inheritdoc}
    */
-  public static function validateDialogForm(array &$form, FormStateInterface $form_state) {
+  public function validateDialogForm(array &$form, FormStateInterface $form_state) {
     parent::validateDialogForm($form, $form_state);
 
     $color = $form_state->getValue([

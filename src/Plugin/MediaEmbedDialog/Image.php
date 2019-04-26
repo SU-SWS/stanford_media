@@ -121,15 +121,17 @@ class Image extends MediaEmbedDialogBase {
       $caption_field = $form['attributes']['data-caption'];
       $caption_field['#type'] = 'text_format';
 
-      $default_caption = json_decode($caption_field['#default_value'], TRUE);
+      $default_caption = $this->getCaptionDefault($form, $form_state);
+
       $caption_field['#default_value'] = $default_caption['value'] ?? '';
-      $caption_field['#format'] = $default_caption['format'] ?? 'minimal_html';
+      $caption_field['#format'] = $default_caption['format'] ?? null;
       $caption_field['#description'] = $this->t('Enter information about this image to credit owner or to provide additional context.');
       unset($caption_field['#element_validate']);
 
       $format_config = $this->configFactory->get('stanford_media.allowed_caption_formats');
       if ($allowed_formats = $format_config->get('allowed_formats')) {
         $caption_field['#allowed_formats'] = $allowed_formats;
+        $caption_field['#format'] = $caption_field['#format'] ?: reset($caption_field['#allowed_formats']);
       }
 
       $attribute_settings['caption'] = $caption_field;
@@ -158,9 +160,32 @@ class Image extends MediaEmbedDialogBase {
   }
 
   /**
+   * Get the default caption data either from the form or the users input.
+   *
+   * @param array $form
+   *   Complete form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Current form state.
+   *
+   * @return array
+   *   Keyed array of caption data from a text_format field.
+   */
+  protected function getCaptionDefault(array $form, FormStateInterface $form_state) {
+    if (!empty($form['attributes']['data-caption']['#default_value'])) {
+      return json_decode($form['attributes']['data-caption']['#default_value'], TRUE);
+    }
+
+    $user_input = $form_state->getUserInput();
+    if (!empty($user_input['attributes'][MediaEmbedDialogInterface::SETTINGS_KEY]['caption'])) {
+      return $user_input['attributes'][MediaEmbedDialogInterface::SETTINGS_KEY]['caption'];
+    }
+    return [];
+  }
+
+  /**
    * {@inheritdoc}
    */
-  public static function validateDialogForm(array &$form, FormStateInterface $form_state) {
+  public function validateDialogForm(array &$form, FormStateInterface $form_state) {
     parent::validateDialogForm($form, $form_state);
     $caption_path = [
       'attributes',
@@ -294,7 +319,7 @@ class Image extends MediaEmbedDialogBase {
   /**
    * {@inheritdoc}
    */
-  public static function submitDialogForm(array &$form, FormStateInterface $form_state) {
+  public function submitDialogForm(array &$form, FormStateInterface $form_state) {
     parent::submitDialogForm($form, $form_state);
 
     $settings = $form_state->getValue([

@@ -135,13 +135,9 @@ function stanford_media_form_entity_embed_dialog_alter(&$form, FormStateInterfac
       $plugin->alterDialogForm($form, $form_state);
 
       // Adds validate method.
-      array_unshift($form['#validate'], [
-        get_class($plugin),
-        'validateDialogForm',
-      ]);
-
+      array_unshift($form['#validate'], [$plugin, 'validateDialogForm']);
       // Adds submit method.
-      array_unshift($form['#submit'], [get_class($plugin), 'submitDialogForm']);
+      array_unshift($form['#submit'], [$plugin, 'submitDialogForm']);
     }
   }
 }

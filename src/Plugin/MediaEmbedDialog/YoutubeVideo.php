@@ -97,7 +97,7 @@ class YoutubeVideo extends VideoEmbedBase {
   /**
    * {@inheritdoc}
    */
-  public static function validateDialogForm(array &$form, FormStateInterface $form_state) {
+  public function validateDialogForm(array &$form, FormStateInterface $form_state) {
     parent::validateDialogForm($form, $form_state);
     $start = $form_state->getValue([
       'attributes',
