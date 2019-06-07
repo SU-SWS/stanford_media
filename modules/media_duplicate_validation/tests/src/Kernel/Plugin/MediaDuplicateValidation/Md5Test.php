@@ -64,7 +64,7 @@ class Md5Test extends MediaDuplicateValidationTestBase {
    * @covers ::getSimilarItems
    */
   public function testSimilarItems() {
-    $path = 'public://logo.png';
+    $path = 'public://logo2.png';
     copy(__DIR__ . '/../assets/logo2.png', $path);
     $file = File::create(['uri' => $path]);
     $file->save();
