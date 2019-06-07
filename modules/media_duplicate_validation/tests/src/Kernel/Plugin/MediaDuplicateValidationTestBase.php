@@ -74,7 +74,7 @@ abstract class MediaDuplicateValidationTestBase extends KernelTestBase {
     ])->save();
 
     $path = 'public://logo.png';
-    file_unmanaged_copy(__DIR__ . '/assets/logo.png', $path);
+    copy(__DIR__ . '/assets/logo.png', $path);
     $file = File::create(['uri' => $path]);
     $file->save();
     $this->mediaEntity = Media::create([
@@ -84,7 +84,7 @@ abstract class MediaDuplicateValidationTestBase extends KernelTestBase {
     $this->mediaEntity->save();
 
     $path = 'public://logo2.png';
-    file_unmanaged_copy(__DIR__ . '/assets/logo.png', $path);
+    copy(__DIR__ . '/assets/logo.png', $path);
     $file = File::create(['uri' => $path]);
     $file->save();
     Media::create([

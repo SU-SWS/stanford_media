@@ -5,6 +5,7 @@
  * stanford_media.module
  */
 
+use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\editor\Entity\Editor;
 use Drupal\Core\Entity\EntityInterface;
@@ -34,12 +35,13 @@ function stanford_media_embed_button_presave(EntityInterface $entity) {
     // Copy the media browser icon over and set it on the embed button.
     $module_handler = \Drupal::moduleHandler()->getModule('stanford_media');
     $icon = $module_handler->getPath() . '/img/media.png';
+    /** @var \Drupal\Core\File\FileSystemInterface $file_system */
     $file_system = \Drupal::service('file_system');
 
     $directory = 'public://media/image/';
-    file_prepare_directory($directory, FILE_CREATE_DIRECTORY);
 
-    $destination = file_unmanaged_copy($icon, $directory . $file_system->basename($icon), FILE_EXISTS_REPLACE);
+    $file_system->prepareDirectory($directory, FileSystemInterface::CREATE_DIRECTORY);
+    $destination = $file_system->copy($icon, $directory . $file_system->basename($icon), FileSystemInterface::EXISTS_REPLACE);
 
     if ($destination) {
       $file_properties = [
