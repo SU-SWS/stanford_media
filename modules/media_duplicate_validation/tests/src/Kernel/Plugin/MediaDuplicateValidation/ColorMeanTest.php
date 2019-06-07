@@ -92,7 +92,8 @@ class ColorMeanTest extends MediaDuplicateValidationTestBase {
    */
   public function testSimilarItems() {
     $path = 'public://smaller_logo.jpg';
-    file_unmanaged_copy(__DIR__ . '/../assets/smaller_logo.jpg', $path);
+    copy(__DIR__ . '/../assets/smaller_logo.jpg', $path);
+
     $file = File::create(['uri' => $path]);
     $file->save();
     $new_entity = Media::create([
@@ -119,7 +120,7 @@ class ColorMeanTest extends MediaDuplicateValidationTestBase {
    */
   public function testDifferentItems() {
     $path = 'public://different_logo.png';
-    file_unmanaged_copy(__DIR__ . '/../assets/different_logo.png', $path);
+    copy(__DIR__ . '/../assets/different_logo.png', $path);
     $file = File::create(['uri' => $path]);
     $file->save();
     $new_entity = Media::create([
@@ -133,7 +134,7 @@ class ColorMeanTest extends MediaDuplicateValidationTestBase {
 
   public function testGif() {
     $path = 'public://gif_logo.gif';
-    file_unmanaged_copy(__DIR__ . '/../assets/gif_logo.gif', $path);
+    copy(__DIR__ . '/../assets/gif_logo.gif', $path);
     $file = File::create(['uri' => $path]);
     $file->save();
     $new_entity = Media::create([
@@ -150,7 +151,7 @@ class ColorMeanTest extends MediaDuplicateValidationTestBase {
    */
   public function testNonImage() {
     $path = 'public://testfile.txt';
-    file_unmanaged_copy(__DIR__ . '/../assets/testfile.txt', $path);
+    copy(__DIR__ . '/../assets/testfile.txt', $path);
     $file = File::create(['uri' => $path]);
     $file->save();
     $new_entity = Media::create([

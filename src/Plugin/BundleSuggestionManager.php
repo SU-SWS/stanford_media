@@ -3,6 +3,7 @@
 namespace Drupal\stanford_media\Plugin;
 
 use Drupal\Component\Utility\Bytes;
+use Drupal\Component\Utility\Environment;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -196,7 +197,7 @@ class BundleSuggestionManager extends DefaultPluginManager implements BundleSugg
         }
       }
     }
-    $server_max = Bytes::toInt(file_upload_max_size());
+    $server_max = Bytes::toInt(Environment::getUploadMaxSize());
     return !$max_filesize || $server_max < $max_filesize ? $server_max : $max_filesize;
   }
 
