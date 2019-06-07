@@ -297,7 +297,7 @@ function stanford_media_audio_embed_field_provider_info_alter(&$definitions) {
  * Implements hook_preprocess_HOOK().
  */
 function stanford_media_preprocess_filter_caption(&$variables) {
-  $caption = json_decode((string) $variables['caption'], TRUE);
+  $caption = json_decode(htmlspecialchars_decode((string) $variables['caption']), TRUE);
   // If the caption is a json string containing the formatted text data, we'll
   // render out the formatted markup and put that as the caption.
   if (is_array($caption) && isset($caption['value']) && isset($caption['format'])) {
