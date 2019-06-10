@@ -37,7 +37,7 @@ class GoogleDrive extends ProviderPluginBase {
   public function getRemoteThumbnailUrl() {
     global $base_url;
     global $base_path;
-    return $base_url . $base_path . drupal_get_path('module','stanford_media') . '/img/google-drive.png';
+    return $base_url . $base_path . drupal_get_path('module', 'stanford_media') . '/img/google-drive.png';
   }
 
   /**
