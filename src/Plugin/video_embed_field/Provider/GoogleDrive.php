@@ -23,7 +23,10 @@ class GoogleDrive extends ProviderPluginBase {
       '#provider' => 'google_drive',
       '#url' => sprintf('https://drive.google.com/file/d/%s/preview', $this->getVideoId()),
       '#query' => [],
-      '#attributes' => [],
+      '#attributes' => [
+        'width' => $width,
+        'height' => $height,
+      ],
     ];
     return $embed_code;
   }
