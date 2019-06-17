@@ -5,7 +5,7 @@ namespace Drupal\stanford_media\Plugin\video_embed_field\Provider;
 use Drupal\video_embed_field\ProviderPluginBase;
 
 /**
- * A YouTube provider plugin.
+ * A Google Drive Video provider plugin.
  *
  * @VideoEmbedProvider(
  *   id = "google_drive",
