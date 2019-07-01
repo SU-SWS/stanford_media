@@ -78,7 +78,7 @@ function stanford_media_update_8004() {
     foreach ($entity_storage->loadMultiple($entity_ids) as $entity) {
       $field_values = $entity->get($field_name)->getValue();
 
-      foreach ($field_values as $delta => &$field_value) {
+      foreach ($field_values as &$field_value) {
         $field_value['value'] = _stanford_media_update_8004_fix_alt($field_value['value']);
       }
 
@@ -101,7 +101,6 @@ function _stanford_media_update_8004_get_filter_fields() {
   $filtered_fields = [];
   foreach ($field_manager->getFieldMap() as $entity_type => $fields) {
     foreach ($fields as $field_name => $field_info) {
-      $types[$field_info['type']] = $field_info['type'];
       if (!in_array($field_info['type'], $filtered_text_fields)) {
         continue;
       }

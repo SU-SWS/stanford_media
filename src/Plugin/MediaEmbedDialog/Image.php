@@ -394,11 +394,9 @@ class Image extends MediaEmbedDialogBase {
         $element[$source_field][0]['#url'] = Url::fromUserInput($link_path, $link_options);
       }
       catch (\Exception $e) {
+        $context = ['@mid' => $entity->id(), '@message' => $e->getMessage()];
         $this->loggerFactory->get('stanford_media')
-          ->error($this->t('Unable to set link on media @mid: @message'), [
-            '@mid' => $entity->id(),
-            '@message' => $e->getMessage(),
-          ]);
+          ->error($this->t('Unable to set link on media @mid: @message'), $context);
       }
     }
     $this->setElementImageStyle($element, $source_field);
