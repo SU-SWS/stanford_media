@@ -32,11 +32,13 @@ class Image extends MediaEmbedDialogBase {
   protected $configFactory;
 
   /**
-   * Logger Channel service.
+   * Logger factory service.
    *
-   * @var \Drupal\Core\Logger\LoggerChannelInterface
+   * Can't use a channel in this object due to serialization issues.
+   *
+   * @var \Drupal\Core\Logger\LoggerChannelFactoryInterface
    */
-  protected $logger;
+  protected $loggerFactory;
 
   /**
    * {@inheritdoc}
@@ -58,7 +60,7 @@ class Image extends MediaEmbedDialogBase {
   public function __construct($configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_manager, ConfigFactoryInterface $config_factory, LoggerChannelFactoryInterface $logger_factory) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_manager);
     $this->configFactory = $config_factory;
-    $this->logger = $logger_factory->get('stanford_media');
+    $this->loggerFactory = $logger_factory;
   }
 
   /**
@@ -401,10 +403,11 @@ class Image extends MediaEmbedDialogBase {
         $element[$source_field][0]['#url'] = Url::fromUserInput($link_path, $link_options);
       }
       catch (\Exception $e) {
-        $this->logger->error($this->t('Unable to set link on media @mid: @message'), [
-          '@mid' => $entity->id(),
-          '@message' => $e->getMessage(),
-        ]);
+        $this->loggerFactory->get('stanford_media')
+          ->error($this->t('Unable to set link on media @mid: @message'), [
+            '@mid' => $entity->id(),
+            '@message' => $e->getMessage(),
+          ]);
       }
     }
     $this->setElementImageStyle($element, $source_field);
