@@ -5,6 +5,8 @@ namespace Drupal\stanford_media\Plugin\MediaEmbedDialog;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Logger\LoggerChannelFactoryInterface;
+use Drupal\Core\Url;
 use Drupal\linkit\Element\Linkit;
 use Drupal\media\Entity\MediaType;
 use Drupal\media\MediaInterface;
@@ -30,6 +32,13 @@ class Image extends MediaEmbedDialogBase {
   protected $configFactory;
 
   /**
+   * Logger Channel service.
+   *
+   * @var \Drupal\Core\Logger\LoggerChannelInterface
+   */
+  protected $logger;
+
+  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
@@ -38,16 +47,18 @@ class Image extends MediaEmbedDialogBase {
       $plugin_id,
       $plugin_definition,
       $container->get('entity_type.manager'),
-      $container->get('config.factory')
+      $container->get('config.factory'),
+      $container->get('logger.factory')
     );
   }
 
   /**
    * {@inheritdoc}
    */
-  public function __construct($configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_manager, ConfigFactoryInterface $config_factory) {
+  public function __construct($configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_manager, ConfigFactoryInterface $config_factory, LoggerChannelFactoryInterface $logger_factory) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_manager);
     $this->configFactory = $config_factory;
+    $this->logger = $logger_factory->get('stanford_media');
   }
 
   /**
@@ -124,7 +135,7 @@ class Image extends MediaEmbedDialogBase {
       $default_caption = $this->getCaptionDefault($form, $form_state);
 
       $caption_field['#default_value'] = $default_caption['value'] ?? '';
-      $caption_field['#format'] = $default_caption['format'] ?? null;
+      $caption_field['#format'] = $default_caption['format'] ?? NULL;
       $caption_field['#description'] = $this->t('Enter information about this image to credit owner or to provide additional context.');
       unset($caption_field['#element_validate']);
 
@@ -380,9 +391,21 @@ class Image extends MediaEmbedDialogBase {
     }
 
     if (!empty($element['#display_settings']['linkit'])) {
-      $element[$source_field][0]['#url'] = $element['#display_settings']['linkit']['href'];
+      $link_path = $element['#display_settings']['linkit']['href'];
+      $link_options = ['attributes' => $element['#display_settings']['linkit']];
       unset($element['#display_settings']['linkit']['href']);
-      $element[$source_field][0]['#attributes'] = $element['#display_settings']['linkit'];
+
+      // Attempt to create a url object from the user's value. This should be
+      // cleaned already, but we'll check just in case.
+      try {
+        $element[$source_field][0]['#url'] = Url::fromUserInput($link_path, $link_options);
+      }
+      catch (\Exception $e) {
+        $this->logger->error($this->t('Unable to set link on media @mid: @message'), [
+          '@mid' => $entity->id(),
+          '@message' => $e->getMessage(),
+        ]);
+      }
     }
     $this->setElementImageStyle($element, $source_field);
 

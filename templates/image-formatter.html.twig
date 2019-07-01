@@ -12,10 +12,13 @@
  * @see template_preprocess_image_formatter()
  *
  * @ingroup themeable
+ *
+ * This was fixed in https://www.drupal.org/project/drupal/issues/2829990. Once that commit is released, this template
+ * can be removed.
  */
 #}
 {% if url %}
-  <a href="{{ url }}"{{ attributes }}>{{ image }}</a>
+   {{ link(image, url) }}
 {% else %}
   {{ image }}
 {% endif %}
