@@ -107,11 +107,6 @@ class Image extends MediaEmbedDialogBase {
     parent::alterDialogForm($form, $form_state);
     $input = $this->getUserInput($form_state);
 
-    $source_field = static::getMediaSourceField($this->entity);
-    /** @var \Drupal\file\Plugin\Field\FieldType\FileFieldItemList $image_field */
-    $image_field = $this->entity->get($source_field);
-    $default_alt = $image_field->getValue()[0]['alt'];
-
     $attribute_settings = &$form['attributes'][MediaEmbedDialogInterface::SETTINGS_KEY];
 
     // Image style options.
@@ -121,12 +116,6 @@ class Image extends MediaEmbedDialogBase {
       '#options' => $this->getImageStyles(),
       '#default_value' => $input['image_style'],
       '#empty_option' => $this->t('None (original image)'),
-    ];
-    $attribute_settings['alt_text'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Alternative text'),
-      '#description' => $this->t('This text will be used by screen readers, search engines, or when the image cannot be loaded.'),
-      '#default_value' => $input['alt_text'] ?: $default_alt,
     ];
 
     // Change textfield into text format for more robust captions.
@@ -340,10 +329,16 @@ class Image extends MediaEmbedDialogBase {
       'data-entity-embed-display-settings',
     ]);
     $settings = array_filter($settings);
-    // Clean up the display settings, but we still want at least an empty alt
-    // text. This also helps prevent an empty array which converts to an empty
-    // string. An empty string breaks the render portion.
-    $settings['alt_text'] = isset($settings['alt_text']) ? $settings['alt_text'] : '';
+    // Add a simple placeholder. This just prevents the settings from being an
+    // empty string. An empty string causes php notices when displaying.
+    if (!isset($settings['image_style']) && empty($settings['linkit']['href'])) {
+      $settings['p'] = 1;
+    }
+
+    // Similarly to the placeholder above, ensure the alt key is populated to
+    // prevent undefined index notices.
+    $settings['alt'] = $settings['alt'] ?? '';
+
     $form_state->setValue([
       'attributes',
       'data-entity-embed-display-settings',
@@ -383,10 +378,6 @@ class Image extends MediaEmbedDialogBase {
     /** @var \Drupal\media\MediaInterface $entity */
     $entity = $element['#media'];
     $source_field = static::getMediaSourceField($entity);
-
-    if (!empty($element['#display_settings']['alt_text'])) {
-      $element[$source_field][0]['#item_attributes']['alt'] = $element['#display_settings']['alt_text'];
-    }
 
     if (!empty($element['#display_settings']['title_text'])) {
       $element[$source_field][0]['#item_attributes']['title'] = $element['#display_settings']['title_text'];
