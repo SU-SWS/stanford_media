@@ -308,8 +308,9 @@ function stanford_media_preprocess_filter_caption(&$variables) {
 
 /**
  * Implements hook_preprocess_HOOK().
+ *
+ * Remove linkit attributes from the media entity container.
  */
 function stanford_media_preprocess_entity_embed_container(&$variables) {
-  // Remove linkit attributes from the media entity container.
   unset($variables['attributes']['data-entity-embed-display-settings']['linkit']);
 }

@@ -332,7 +332,7 @@ class Image extends MediaEmbedDialogBase {
     // Add a simple placeholder. This just prevents the settings from being an
     // empty string. An empty string causes php notices when displaying.
     if (!isset($settings['image_style']) && empty($settings['linkit']['href'])) {
-      $settings['p'] = 1;
+      $settings['place'] = 1;
     }
 
     // Similarly to the placeholder above, ensure the alt key is populated to
