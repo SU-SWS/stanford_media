@@ -194,11 +194,9 @@ function stanford_media_theme($existing, $type, $theme, $path) {
  * Implements hook_theme_registry_alter().
  */
 function stanford_media_theme_registry_alter(&$theme_registry) {
-  // Register the path to the template file and add an additional variable to
-  // image_formatter for link attributes.
+  // Register the path to the template files.
   $path = drupal_get_path('module', 'stanford_media') . '/templates';
   $theme_registry['responsive_image_formatter']['path'] = $path;
-  $theme_registry['image_formatter']['path'] = $path;
   $theme_registry['entity_embed_container']['path'] = $path;
   $theme_registry['media']['path'] = $path;
   $theme_registry['dropzonejs']['path'] = $path;

@@ -387,17 +387,7 @@ class Image extends MediaEmbedDialogBase {
       $link_path = $element['#display_settings']['linkit']['href'];
       $link_options = ['attributes' => $element['#display_settings']['linkit']];
       unset($element['#display_settings']['linkit']['href']);
-
-      // Attempt to create a url object from the user's value. This should be
-      // cleaned already, but we'll check just in case.
-      try {
-        $element[$source_field][0]['#url'] = Url::fromUserInput($link_path, $link_options);
-      }
-      catch (\Exception $e) {
-        $context = ['@mid' => $entity->id(), '@message' => $e->getMessage()];
-        $this->loggerFactory->get('stanford_media')
-          ->error($this->t('Unable to set link on media @mid: @message'), $context);
-      }
+      $element[$source_field][0]['#url'] = $this->getLinkObject($link_path, $link_options);
     }
     $this->setElementImageStyle($element, $source_field);
 
@@ -408,6 +398,28 @@ class Image extends MediaEmbedDialogBase {
       unset($element[$field_map['caption']]);
     }
     return $element;
+  }
+
+  /**
+   * Get a Url link object from the given path.
+   *
+   * @param string $link_path
+   *   Url path.
+   * @param array $link_options
+   *   Url options, see Url::fromUri().
+   *
+   * @return \Drupal\Core\Url
+   *   Constructed url object.
+   */
+  protected function getLinkObject($link_path, $link_options = []) {
+    try {
+      // Local paths.
+      return Url::fromUserInput($link_path, $link_options);
+    }
+    catch (\Exception $e) {
+      // External paths.
+      return Url::fromUri($link_path, $link_options);
+    }
   }
 
   /**
