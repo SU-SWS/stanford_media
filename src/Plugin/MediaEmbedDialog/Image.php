@@ -411,7 +411,7 @@ class Image extends MediaEmbedDialogBase {
    * @return \Drupal\Core\Url
    *   Constructed url object.
    */
-  protected function getLinkObject($link_path, $link_options = []) {
+  protected function getLinkObject($link_path, array $link_options = []) {
     try {
       // Local paths.
       return Url::fromUserInput($link_path, $link_options);
