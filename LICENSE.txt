@@ -103,8 +103,8 @@ ordinary way, to print or display an announcement including an appropriate
 copyright notice and a notice that there is no warranty (or else, saying that
 you provide a warranty) and that users may redistribute the program under
 these conditions, and telling the user how to view a copy of this License.
-(Exception: if the Program itself is interactive but does not normally print such
-an announcement, your work based on the Program is not required to print
+(Exception: if the Program itself is interactive but does not normally print
+such an announcement, your work based on the Program is not required to print
 an announcement.)
 
 These requirements apply to the modified work as a whole. If identifiable
@@ -117,10 +117,10 @@ whole must be on the terms of this License, whose permissions for other
 licensees extend to the entire whole, and thus to each and every part
 regardless of who wrote it.
 
-Thus, it is not the intent of this section to claim rights or contest your rights to
-work written entirely by you; rather, the intent is to exercise the right to
-control the distribution of derivative or collective works based on the
-Program.
+Thus, it is not the intent of this section to claim rights or contest your
+rights to work written entirely by you; rather, the intent is to exercise the
+right to control the distribution of derivative or collective works based on
+the Program.
 
 In addition, mere aggregation of another work not based on the Program
 with the Program (or with a work based on the Program) on a volume of a
@@ -224,8 +224,8 @@ License.
 
 9. The Free Software Foundation may publish revised and/or new versions
 of the General Public License from time to time. Such new versions will be
-similar in spirit to the present version, but may differ in detail to address new
-problems or concerns.
+similar in spirit to the present version, but may differ in detail to address
+new problems or concerns.
 
 Each version is given a distinguishing version number. If the Program specifies
 a version number of this License which applies to it and "any later version",

@@ -17,6 +17,8 @@ use Drupal\Tests\media_duplicate_validation\Kernel\Plugin\MediaDuplicateValidati
 class ColorMeanTest extends MediaDuplicateValidationTestBase {
 
   /**
+   * Plugin instance.
+   *
    * @var \Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidation\ColorMean
    */
   protected $plugin;
@@ -106,7 +108,7 @@ class ColorMeanTest extends MediaDuplicateValidationTestBase {
   }
 
   /**
-   *  Test that we get no similar items from two images.
+   * Test that we get no similar items from two images.
    *
    * @covers ::getSimilarItems
    * @covers ::getLikeness
@@ -132,6 +134,11 @@ class ColorMeanTest extends MediaDuplicateValidationTestBase {
     $this->assertEmpty($this->plugin->getSimilarItems($new_entity));
   }
 
+  /**
+   * Test a gif uploaded.
+   *
+   * @throws \Drupal\Core\Entity\EntityStorageException
+   */
   public function testGif() {
     $path = 'public://gif_logo.gif';
     copy(__DIR__ . '/../assets/gif_logo.gif', $path);
@@ -147,6 +154,8 @@ class ColorMeanTest extends MediaDuplicateValidationTestBase {
   }
 
   /**
+   * Test similar documents that aren't images.
+   *
    * @covers ::getSimilarItems
    */
   public function testNonImage() {
