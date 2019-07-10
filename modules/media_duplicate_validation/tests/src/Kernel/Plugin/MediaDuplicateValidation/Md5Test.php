@@ -17,6 +17,8 @@ use Drupal\Tests\media_duplicate_validation\Kernel\Plugin\MediaDuplicateValidati
 class Md5Test extends MediaDuplicateValidationTestBase {
 
   /**
+   * Plugin instance.
+   *
    * @var \Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidation\ColorMean
    */
   protected $plugin;

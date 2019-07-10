@@ -5,6 +5,8 @@ namespace Drupal\stanford_media\Plugin\MediaEmbedDialog;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Logger\LoggerChannelFactoryInterface;
+use Drupal\Core\Url;
 use Drupal\linkit\Element\Linkit;
 use Drupal\media\Entity\MediaType;
 use Drupal\media\MediaInterface;
@@ -30,6 +32,15 @@ class Image extends MediaEmbedDialogBase {
   protected $configFactory;
 
   /**
+   * Logger factory service.
+   *
+   * Can't use a channel in this object due to serialization issues.
+   *
+   * @var \Drupal\Core\Logger\LoggerChannelFactoryInterface
+   */
+  protected $loggerFactory;
+
+  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
@@ -38,16 +49,18 @@ class Image extends MediaEmbedDialogBase {
       $plugin_id,
       $plugin_definition,
       $container->get('entity_type.manager'),
-      $container->get('config.factory')
+      $container->get('config.factory'),
+      $container->get('logger.factory')
     );
   }
 
   /**
    * {@inheritdoc}
    */
-  public function __construct($configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_manager, ConfigFactoryInterface $config_factory) {
+  public function __construct($configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_manager, ConfigFactoryInterface $config_factory, LoggerChannelFactoryInterface $logger_factory) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_manager);
     $this->configFactory = $config_factory;
+    $this->loggerFactory = $logger_factory;
   }
 
   /**
@@ -94,11 +107,6 @@ class Image extends MediaEmbedDialogBase {
     parent::alterDialogForm($form, $form_state);
     $input = $this->getUserInput($form_state);
 
-    $source_field = static::getMediaSourceField($this->entity);
-    /** @var \Drupal\file\Plugin\Field\FieldType\FileFieldItemList $image_field */
-    $image_field = $this->entity->get($source_field);
-    $default_alt = $image_field->getValue()[0]['alt'];
-
     $attribute_settings = &$form['attributes'][MediaEmbedDialogInterface::SETTINGS_KEY];
 
     // Image style options.
@@ -109,12 +117,6 @@ class Image extends MediaEmbedDialogBase {
       '#default_value' => $input['image_style'],
       '#empty_option' => $this->t('None (original image)'),
     ];
-    $attribute_settings['alt_text'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Alternative text'),
-      '#description' => $this->t('This text will be used by screen readers, search engines, or when the image cannot be loaded.'),
-      '#default_value' => $input['alt_text'] ?: $default_alt,
-    ];
 
     // Change textfield into text format for more robust captions.
     if (isset($form['attributes']['data-caption'])) {
@@ -124,7 +126,7 @@ class Image extends MediaEmbedDialogBase {
       $default_caption = $this->getCaptionDefault($form, $form_state);
 
       $caption_field['#default_value'] = $default_caption['value'] ?? '';
-      $caption_field['#format'] = $default_caption['format'] ?? null;
+      $caption_field['#format'] = $default_caption['format'] ?? NULL;
       $caption_field['#description'] = $this->t('Enter information about this image to credit owner or to provide additional context.');
       unset($caption_field['#element_validate']);
 
@@ -327,10 +329,16 @@ class Image extends MediaEmbedDialogBase {
       'data-entity-embed-display-settings',
     ]);
     $settings = array_filter($settings);
-    // Clean up the display settings, but we still want at least an empty alt
-    // text. This also helps prevent an empty array which converts to an empty
-    // string. An empty string breaks the render portion.
-    $settings['alt_text'] = isset($settings['alt_text']) ? $settings['alt_text'] : '';
+    // Add a simple placeholder. This just prevents the settings from being an
+    // empty string. An empty string causes php notices when displaying.
+    if (!isset($settings['image_style']) && empty($settings['linkit']['href'])) {
+      $settings['place'] = 1;
+    }
+
+    // Similarly to the placeholder above, ensure the alt key is populated to
+    // prevent undefined index notices.
+    $settings['alt'] = $settings['alt'] ?? '';
+
     $form_state->setValue([
       'attributes',
       'data-entity-embed-display-settings',
@@ -371,18 +379,15 @@ class Image extends MediaEmbedDialogBase {
     $entity = $element['#media'];
     $source_field = static::getMediaSourceField($entity);
 
-    if (!empty($element['#display_settings']['alt_text'])) {
-      $element[$source_field][0]['#item_attributes']['alt'] = $element['#display_settings']['alt_text'];
-    }
-
     if (!empty($element['#display_settings']['title_text'])) {
       $element[$source_field][0]['#item_attributes']['title'] = $element['#display_settings']['title_text'];
     }
 
     if (!empty($element['#display_settings']['linkit'])) {
-      $element[$source_field][0]['#url'] = $element['#display_settings']['linkit']['href'];
+      $link_path = $element['#display_settings']['linkit']['href'];
+      $link_options = ['attributes' => $element['#display_settings']['linkit']];
       unset($element['#display_settings']['linkit']['href']);
-      $element[$source_field][0]['#attributes'] = $element['#display_settings']['linkit'];
+      $element[$source_field][0]['#url'] = $this->getLinkObject($link_path, $link_options);
     }
     $this->setElementImageStyle($element, $source_field);
 
@@ -393,6 +398,28 @@ class Image extends MediaEmbedDialogBase {
       unset($element[$field_map['caption']]);
     }
     return $element;
+  }
+
+  /**
+   * Get a Url link object from the given path.
+   *
+   * @param string $link_path
+   *   Url path.
+   * @param array $link_options
+   *   Url options, see Url::fromUri().
+   *
+   * @return \Drupal\Core\Url
+   *   Constructed url object.
+   */
+  protected function getLinkObject($link_path, array $link_options = []) {
+    try {
+      // Local paths.
+      return Url::fromUserInput($link_path, $link_options);
+    }
+    catch (\Exception $e) {
+      // External paths.
+      return Url::fromUri($link_path, $link_options);
+    }
   }
 
   /**

@@ -4,4 +4,4 @@ description: 'Media Validation plugins to help prevent duplication of media item
 core: 8.x
 package: 'Custom'
 dependencies:
-  - media
+  - drupal:media

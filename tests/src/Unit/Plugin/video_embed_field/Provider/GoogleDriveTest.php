@@ -7,7 +7,7 @@ use Drupal\Tests\UnitTestCase;
 use GuzzleHttp\ClientInterface;
 
 /**
- * Class GoogleDriveTest
+ * Class GoogleDriveTest.
  *
  * @group stanford_media
  * @coversDefaultClass \Drupal\stanford_media\Plugin\video_embed_field\Provider\GoogleDrive
@@ -17,7 +17,7 @@ class GoogleDriveTest extends UnitTestCase {
   /**
    * Google drive plugin.
    *
-   * @var GoogleDrive
+   * @var \Drupal\stanford_media\Plugin\video_embed_field\Provider\GoogleDrive
    */
   protected $plugin;
 
@@ -66,4 +66,3 @@ class GoogleDriveTest extends UnitTestCase {
   }
 
 }
-

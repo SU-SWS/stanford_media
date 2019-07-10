@@ -57,3 +57,149 @@ function stanford_media_update_8003() {
   $display->setComponent('field_media_video_embed_field', $display_options);
   $display->save();
 }
+
+/**
+ * Add `alt` and `title` attributes to the embed filter formats.
+ */
+function stanford_media_update_8004() {
+  $entity_type_manager = \Drupal::entityTypeManager();
+  $formats = $entity_type_manager->getStorage('filter_format')
+    ->loadMultiple();
+  /** @var \Drupal\filter\Entity\FilterFormat $filter_format */
+  foreach ($formats as $filter_format) {
+
+    $filters = $filter_format->get('filters');
+
+    // Only need to change it if the format filters html and allows embeded
+    // entities.
+    if (isset($filters['filter_html']) && isset($filters['entity_embed'])) {
+      preg_match("/<drupal-entity.*?>/", $filters['filter_html']['settings']['allowed_html'], $drupal_entity_tag);
+
+      // Only need to check for alt since the UI has validation for both. If the
+      // filter was modified in the UI, it will have both alt & title.
+      if ($drupal_entity_tag && strpos($drupal_entity_tag[0], ' alt') === FALSE) {
+        $filters['filter_html']['settings']['allowed_html'] = str_replace('<drupal-entity', '<drupal-entity alt title', $filters['filter_html']['settings']['allowed_html']);
+        $filter_format->set('filters', $filters);
+        $filter_format->save();
+      }
+    }
+  }
+}
+
+/**
+ * Move inline image alt text into a contrib supported attribute.
+ *
+ * This doesn't edit any revisions.
+ */
+function stanford_media_update_8005(&$sandbox) {
+  if (!isset($sandbox['count'])) {
+    $sandbox['entities'] = _stanford_media_update_8005_entity_list();
+    $sandbox['count'] = count($sandbox['entities']);
+  }
+
+  $entity_type_manager = \Drupal::entityTypeManager();
+  $entity_ids = array_splice($sandbox['entities'], 0, 25);
+  foreach ($entity_ids as $item) {
+    list($entity_type, $field_name, $entity_id) = explode(':', $item);
+    $entity_storage = $entity_type_manager->getStorage($entity_type);
+    $entity = $entity_storage->load($entity_id);
+
+    $field_values = $entity->get($field_name)->getValue();
+
+    foreach ($field_values as &$field_value) {
+      $field_value['value'] = _stanford_media_update_8005_fix_alt($field_value['value']);
+    }
+
+    $entity->set($field_name, $field_values);
+    $entity->save();
+  }
+  $sandbox['#finished'] = empty($sandbox['entities']) ? 1 : ($sandbox['count'] - count($sandbox['entities'])) / $sandbox['count'];
+}
+
+/**
+ * Get the list of entities needing updates.
+ *
+ * @return array
+ *   List of values with entity type, field and id.
+ */
+function _stanford_media_update_8005_entity_list() {
+  $list = [];
+  foreach (_stanford_media_update_8005_get_filter_fields() as $field) {
+    list($entity_type, $field_name) = explode(':', $field);
+
+    try {
+      $entity_ids = \Drupal::entityQuery($entity_type)
+        ->condition($field_name, '%alt_text&quot%', 'LIKE')
+        ->execute();
+    }
+    catch (Exception $e) {
+      continue;
+    }
+
+    foreach ($entity_ids as $entity_id) {
+      $list[] = "$entity_type:$field_name:$entity_id";
+    }
+  }
+  asort($list);
+  return array_unique($list);
+}
+
+/**
+ * Get a list of all fields that are filtered.
+ *
+ * @return array
+ *   Array of values with entity type and field name.
+ */
+function _stanford_media_update_8005_get_filter_fields() {
+  $field_manager = \Drupal::service('entity_field.manager');
+  $filtered_text_fields = ['text', 'text_long', 'text_with_summary'];
+
+  $filtered_fields = [];
+  foreach ($field_manager->getFieldMap() as $entity_type => $fields) {
+    foreach ($fields as $field_name => $field_info) {
+      if (!in_array($field_info['type'], $filtered_text_fields)) {
+        continue;
+      }
+
+      $filtered_fields[] = "$entity_type:$field_name";
+    }
+  }
+  asort($filtered_fields);
+  return array_unique($filtered_fields);
+}
+
+/**
+ * Move the alt_text value in the json data into an `alt` attribute.
+ *
+ * @param string $html
+ *   Original Html with the embed entity tag.
+ *
+ * @return string
+ *   Fixed html.
+ */
+function _stanford_media_update_8005_fix_alt($html) {
+  preg_match_all("/<drupal-entity.*?\/drupal-entity>/s", $html, $tokens);
+  foreach ($tokens[0] as $token) {
+    // Existing tokens already use the contrib attribute or dont use an alt at
+    // all.
+    if (strpos($token, ' alt="') !== FALSE || strpos($token, 'alt_text&quot') === FALSE) {
+      continue;
+    }
+
+    $new_token = $token;
+
+    preg_match("/data-entity-embed-display-settings=\".*?\"/", $new_token, $settings);
+    $display_settings = str_replace('data-entity-embed-display-settings="', '', $settings[0]);
+    $display_settings = substr($display_settings, 0, -1);
+    $display_settings = json_decode(htmlspecialchars_decode($display_settings), TRUE);
+
+    $alt_text = $display_settings['alt_text'];
+    unset($display_settings['alt_text']);
+    $new_token = str_replace($settings[0], 'data-entity-embed-display-settings="' . htmlspecialchars(json_encode($display_settings)) . '"', $new_token);
+
+    $new_token = str_replace('<drupal-entity ', "<drupal-entity alt=\"$alt_text\" ", $new_token);
+
+    $html = str_replace($token, $new_token, $html);
+  }
+  return $html;
+}

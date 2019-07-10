@@ -10,20 +10,27 @@ use Drupal\media\Entity\Media;
 use Drupal\media\Entity\MediaType;
 
 /**
- * Base test class.a
+ * Base test class.
  */
 abstract class MediaDuplicateValidationTestBase extends KernelTestBase {
 
   /**
+   * Duplication manager service.
+   *
    * @var \Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationManager
    */
   protected $duplicationManager;
 
   /**
+   * Created media entity.
+   *
    * @var \Drupal\media\MediaInterface
    */
   protected $mediaEntity;
 
+  /**
+   * {@inheritdoc}
+   */
   protected static $modules = [
     'system',
     'media_duplicate_validation',
