@@ -2,7 +2,6 @@
 
 namespace Drupal\stanford_media\Plugin\MediaEmbedDialog;
 
-use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -81,7 +80,7 @@ class Image extends MediaEmbedDialogBase {
    *
    * @see Linkit::processLinkitAutocomplete()
    */
-  public static function processLinkitAutocomplete(&$element, FormStateInterface $form_state, &$complete_form) {
+  public function processLinkitAutocomplete(&$element, FormStateInterface $form_state, &$complete_form) {
     Linkit::processLinkitAutocomplete($element, $form_state, $complete_form);
     // Replace linkit autocomplete library with our own to fix some nasty bugs.
     $element['#attached']['library'] = ['stanford_media/autocomplete'];
@@ -151,7 +150,7 @@ class Image extends MediaEmbedDialogBase {
     $attribute_settings['title_text'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Link Title Text'),
-      '#description' => $this->t('Please describe wht the link above leads to. (ie. Stanford University Home Page'),
+      '#description' => $this->t('Please describe what the link above leads to. (ie. Stanford University Home Page'),
       '#default_value' => $input['title_text'] ?: '',
       '#weight' => 199,
       '#states' => [
@@ -190,21 +189,6 @@ class Image extends MediaEmbedDialogBase {
    */
   public function validateDialogForm(array &$form, FormStateInterface $form_state) {
     parent::validateDialogForm($form, $form_state);
-    $linkit_link = $form_state->getValue([
-      'attributes',
-      MediaEmbedDialogInterface::SETTINGS_KEY,
-      'linkit',
-      'href',
-    ]);
-
-    try {
-      // If getting the link object fails, tell the user the path they provided
-      // is invalid.
-      $this->getLinkObject($linkit_link);
-    }
-    catch (\Exception $e) {
-      $form_state->setError($form['attributes'][MediaEmbedDialogInterface::SETTINGS_KEY]['linkit']['href'], 'Invalid link');
-    }
 
     $caption_path = [
       'attributes',
@@ -304,9 +288,8 @@ class Image extends MediaEmbedDialogBase {
           '[name="attributes[data-entity-embed-display-settings][image_link]"]' => ['value' => 'url'],
         ],
       ],
-      '#process' => [
-        [self::class, 'processLinkitAutocomplete'],
-      ],
+      '#process' => [[$this, 'processLinkitAutocomplete']],
+      '#element_validate' => [[$this, 'validateLinkitHref']],
     ];
 
     $form['attributes'][MediaEmbedDialogInterface::SETTINGS_KEY]['linkit'] = [
@@ -332,6 +315,29 @@ class Image extends MediaEmbedDialogBase {
         '#type' => 'hidden',
         '#default_value' => isset($linkit_input[$field]) ? $linkit_input[$field] : '',
       ];
+    }
+  }
+
+  /**
+   * Validate the provided link string is valid.
+   *
+   * @param array $element
+   *   Form element.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Current form state.
+   * @param array $form
+   *   Complete form.
+   */
+  public function validateLinkitHref(array &$element, FormStateInterface $form_state, array &$form) {
+    if (!empty($element['#value'])) {
+      try {
+        // If getting the link object fails, tell the user the path they provided
+        // is invalid.
+        self::getLinkObject($element['#value']);
+      }
+      catch (\Exception $e) {
+        $form_state->setError($element, 'Invalid link');
+      }
     }
   }
 
@@ -408,7 +414,7 @@ class Image extends MediaEmbedDialogBase {
       // Protect issues when a user might have modified the markup without going
       // through the dialog to encounter the form validation.
       try {
-        $element[$source_field][0]['#url'] = $this->getLinkObject($link_path, $link_options);
+        $element[$source_field][0]['#url'] = self::getLinkObject($link_path, $link_options);
       }
       catch (\Exception $e) {
         $this->loggerFactory->get('stanford_media')->error($e->getMessage());
@@ -437,7 +443,7 @@ class Image extends MediaEmbedDialogBase {
    * @return \Drupal\Core\Url
    *   Constructed url object.
    */
-  protected function getLinkObject($link_path, array $link_options = []) {
+  protected static function getLinkObject($link_path, array $link_options = []) {
     try {
       // Local paths.
       return Url::fromUserInput($link_path, $link_options);
