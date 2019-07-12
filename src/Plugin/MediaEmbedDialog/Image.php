@@ -2,6 +2,7 @@
 
 namespace Drupal\stanford_media\Plugin\MediaEmbedDialog;
 
+use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -189,6 +190,22 @@ class Image extends MediaEmbedDialogBase {
    */
   public function validateDialogForm(array &$form, FormStateInterface $form_state) {
     parent::validateDialogForm($form, $form_state);
+    $linkit_link = $form_state->getValue([
+      'attributes',
+      MediaEmbedDialogInterface::SETTINGS_KEY,
+      'linkit',
+      'href',
+    ]);
+
+    try {
+      // If getting the link object fails, tell the user the path they provided
+      // is invalid.
+      $this->getLinkObject($linkit_link);
+    }
+    catch (\Exception $e) {
+      $form_state->setError($form['attributes'][MediaEmbedDialogInterface::SETTINGS_KEY]['linkit']['href'], 'Invalid link');
+    }
+
     $caption_path = [
       'attributes',
       MediaEmbedDialogInterface::SETTINGS_KEY,
@@ -387,7 +404,16 @@ class Image extends MediaEmbedDialogBase {
       $link_path = $element['#display_settings']['linkit']['href'];
       $link_options = ['attributes' => $element['#display_settings']['linkit']];
       unset($element['#display_settings']['linkit']['href']);
-      $element[$source_field][0]['#url'] = $this->getLinkObject($link_path, $link_options);
+
+      // Protect issues when a user might have modified the markup without going
+      // through the dialog to encounter the form validation.
+      try {
+        $element[$source_field][0]['#url'] = $this->getLinkObject($link_path, $link_options);
+      }
+      catch (\Exception $e) {
+        $this->loggerFactory->get('stanford_media')->error($e->getMessage());
+      }
+
     }
     $this->setElementImageStyle($element, $source_field);
 
