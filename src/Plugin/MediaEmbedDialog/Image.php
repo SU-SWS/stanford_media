@@ -331,8 +331,8 @@ class Image extends MediaEmbedDialogBase {
   public function validateLinkitHref(array &$element, FormStateInterface $form_state, array &$form) {
     if (!empty($element['#value'])) {
       try {
-        // If getting the link object fails, tell the user the path they provided
-        // is invalid.
+        // If getting the link object fails, tell the user the path they
+        // provided is invalid.
         self::getLinkObject($element['#value']);
       }
       catch (\Exception $e) {
