@@ -18,7 +18,6 @@ dependencies:
   - drupal:inline_entity_form
   - drupal:linkit
   - drupal:media
-  - drupal:media_duplicate_validation
   - drupal:video_embed_field
   - drupal:video_embed_media
   - drupal:views

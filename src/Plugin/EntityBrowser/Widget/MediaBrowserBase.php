@@ -47,13 +47,6 @@ abstract class MediaBrowserBase extends WidgetBase {
   protected $messenger;
 
   /**
-   * Media duplicate validation manager service.
-   *
-   * @var \Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationManager
-   */
-  protected $duplicationManager;
-
-  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
@@ -66,20 +59,18 @@ abstract class MediaBrowserBase extends WidgetBase {
       $container->get('plugin.manager.entity_browser.widget_validation'),
       $container->get('plugin.manager.bundle_suggestion_manager'),
       $container->get('current_user'),
-      $container->get('messenger'),
-      $container->get('plugin.manager.media_duplicate_validation')
+      $container->get('messenger')
     );
   }
 
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, EntityTypeManagerInterface $entity_type_manager, WidgetValidationManager $validation_manager, BundleSuggestionManagerInterface $bundle_suggestion, AccountProxyInterface $current_user, MessengerInterface $messenger, MediaDuplicateValidationManager $duplication_manager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, EntityTypeManagerInterface $entity_type_manager, WidgetValidationManager $validation_manager, BundleSuggestionManagerInterface $bundle_suggestion, AccountProxyInterface $current_user, MessengerInterface $messenger) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $event_dispatcher, $entity_type_manager, $validation_manager);
     $this->bundleSuggestion = $bundle_suggestion;
     $this->currentUser = $current_user;
     $this->messenger = $messenger;
-    $this->duplicationManager = $duplication_manager;
   }
 
   /**
@@ -219,7 +210,9 @@ abstract class MediaBrowserBase extends WidgetBase {
   protected function getSimilarForm(MediaInterface $entity) {
     $form = [];
 
-    if (empty($similar_media = $this->duplicationManager->getSimilarEntities($entity, 3))) {
+    $duplication_manager = self::getDuplicationManager();
+    $similar_media = $duplication_manager ? $duplication_manager->getSimilarEntities($entity, 3) : [];
+    if (empty($similar_media)) {
       return [];
     }
 
@@ -241,6 +234,18 @@ abstract class MediaBrowserBase extends WidgetBase {
     ];
 
     return $form;
+  }
+
+  /**
+   * Get the media duplication manager service if its available.
+   *
+   * @return \Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationManager|null
+   *   Duplication manager service.
+   */
+  protected static function getDuplicationManager() {
+    if (\Drupal::hasService('plugin.manager.media_duplicate_validation')) {
+      return \Drupal::service('plugin.manager.media_duplicate_validation');
+    }
   }
 
   /**

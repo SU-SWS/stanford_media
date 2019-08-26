@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\Tests\stanford_media\Plugin\video_embed_field\Provider;
+namespace Drupal\Tests\stanford_media\Unit\Plugin\video_embed_field\Provider;
 
 use Drupal\stanford_media\Plugin\video_embed_field\Provider\GoogleDrive;
 use Drupal\Tests\UnitTestCase;
