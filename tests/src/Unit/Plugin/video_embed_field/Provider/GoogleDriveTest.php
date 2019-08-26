@@ -41,7 +41,7 @@ class GoogleDriveTest extends UnitTestCase {
     $this->videoId = $id;
     $plugin_definition = [];
     $http_client = $this->createMock(ClientInterface::class);
-    $this->plugin = new GoogleDrive($configuration, 'google_drive', $plugin_definition, $http_client);
+    $this->plugin = new GoogleDrivePluginTest($configuration, 'google_drive', $plugin_definition, $http_client);
   }
 
   /**
@@ -63,6 +63,21 @@ class GoogleDriveTest extends UnitTestCase {
   public function testRenderMethod() {
     $render_array = $this->plugin->renderEmbedCode(500, 500, FALSE);
     $this->assertEquals("https://drive.google.com/file/d/{$this->videoId}/preview", $render_array['#url']);
+  }
+
+  public function testThumbnail() {
+    $this->assertEquals('foo/bar/img/google-drive.png', $this->plugin->getRemoteThumbnailUrl());
+  }
+
+}
+
+class GoogleDrivePluginTest extends GoogleDrive {
+
+  /**
+   * {@inheritDoc}
+   */
+  protected function getModulePath() {
+    return 'foo/bar';
   }
 
 }

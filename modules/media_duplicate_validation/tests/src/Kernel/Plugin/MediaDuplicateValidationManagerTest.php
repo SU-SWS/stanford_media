@@ -2,6 +2,8 @@
 
 namespace Drupal\Tests\media_duplicate_validation\Kernel\Plugin;
 
+use Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidation\Md5;
+
 /**
  * Class MediaDuplicateValidationManagerTest.
  *
@@ -14,8 +16,23 @@ class MediaDuplicateValidationManagerTest extends MediaDuplicateValidationTestBa
    *
    * @covers ::getSimilarEntities
    */
-  public function testSimlarEntities() {
+  public function testSimilarEntities() {
     $this->assertNotEmpty($this->duplicationManager->getSimilarEntities($this->mediaEntity));
+  }
+
+  /**
+   * Validate the table is removed.
+   */
+  public function testRemovingSchema() {
+    $this->assertTrue(\Drupal::database()
+      ->schema()
+      ->tableExists(Md5::DATABASE_TABLE));
+
+    $this->duplicationManager->removeSchemas('md5');
+
+    $this->assertFalse(\Drupal::database()
+      ->schema()
+      ->tableExists(Md5::DATABASE_TABLE));
   }
 
 }
