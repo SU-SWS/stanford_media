@@ -65,12 +65,18 @@ class GoogleDriveTest extends UnitTestCase {
     $this->assertEquals("https://drive.google.com/file/d/{$this->videoId}/preview", $render_array['#url']);
   }
 
+  /**
+   * Verify correct return from remote thumbnail method.
+   */
   public function testThumbnail() {
     $this->assertEquals('foo/bar/img/google-drive.png', $this->plugin->getRemoteThumbnailUrl());
   }
 
 }
 
+/**
+ * Class GoogleDrivePluginTest.
+ */
 class GoogleDrivePluginTest extends GoogleDrive {
 
   /**

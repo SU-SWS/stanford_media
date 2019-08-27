@@ -4,7 +4,7 @@ namespace Drupal\stanford_media\Plugin\BundleSuggestion;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\File\FileSystemInterface;
-use Drupal\media\Entity\MediaType;
+use Drupal\media\MediaTypeInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -72,7 +72,7 @@ class File extends BundleSuggestionBase {
   /**
    * Get all allowed file extensions that can be uploaded for a media type.
    *
-   * @param \Drupal\media\Entity\MediaType $media_type
+   * @param \Drupal\media\MediaTypeInterface $media_type
    *   Media type entity object.
    *
    * @return array|null
@@ -81,7 +81,7 @@ class File extends BundleSuggestionBase {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  protected function getBundleExtensions(MediaType $media_type) {
+  protected function getBundleExtensions(MediaTypeInterface $media_type) {
     $source_field = $media_type->getSource()
       ->getConfiguration()['source_field'];
 
@@ -93,7 +93,6 @@ class File extends BundleSuggestionBase {
       // Explode the list of file extensions into a more friendly array.
       return explode(' ', $field->getSetting('file_extensions') ?: '');
     }
-    return NULL;
   }
 
 }
