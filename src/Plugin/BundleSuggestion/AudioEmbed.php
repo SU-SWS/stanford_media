@@ -63,7 +63,7 @@ class AudioEmbed extends BundleSuggestionBase {
       if (
         $audio_provider_def &&
         $field->getType() == 'audio_embed_field' &&
-        (empty($allowed_providers) || in_array($audio_provider_def['id'], $allowed_providers))
+        (empty($allowed_providers) || array_key_exists($audio_provider_def['id'], $allowed_providers))
       ) {
         return $media_type;
       }

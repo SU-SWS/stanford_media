@@ -2,7 +2,8 @@ langcode: en
 status: true
 dependencies:
   module:
-    - audio_embed_media
+    - stanford_media
+third_party_settings: {  }
 id: audio
 label: Audio
 description: 'Use audio urls from SoundCloud or files for reusable media.'

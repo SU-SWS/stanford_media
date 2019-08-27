@@ -80,7 +80,7 @@ abstract class BundleSuggestionTestBase extends UnitTestCase {
     if ($setting == 'file_extensions') {
       return 'foo';
     }
-    return ['foo'];
+    return ['foo' => 'foo'];
   }
 
   /**
