@@ -4,6 +4,7 @@ namespace Drupal\Tests\stanford_media\Unit\Plugin\MediaEmbedDialog;
 
 use Drupal\Core\Form\FormState;
 use Drupal\stanford_media\Plugin\MediaEmbedDialog\File;
+use Drupal\stanford_media\Plugin\MediaEmbedDialogInterface;
 
 /**
  * Class File.
@@ -51,11 +52,11 @@ class FileTest extends MediaEmbedDialogTestBase {
     $form = ['attributes' => ['data-caption' => ['#type' => 'textfield']]];
     $form_state = new FormState();
     $display_settings = ['description' => 'foo bar'];
-    $form_state->setUserInput(['editor_object' => ['data-entity-embed-display-settings' => json_encode($display_settings)]]);
+    $form_state->setUserInput(['editor_object' => [MediaEmbedDialogInterface::SETTINGS_KEY => json_encode($display_settings)]]);
 
     $plugin->alterDialogForm($form, $form_state);
-    $this->assertArrayHasKey('description', $form['attributes']['data-entity-embed-display-settings']);
-    $this->assertEquals('foo bar', $form['attributes']['data-entity-embed-display-settings']['description']['#default_value']);
+    $this->assertArrayHasKey('description', $form['attributes'][MediaEmbedDialogInterface::SETTINGS_KEY]);
+    $this->assertEquals('foo bar', $form['attributes'][MediaEmbedDialogInterface::SETTINGS_KEY]['description']['#default_value']);
     $this->assertEquals('hidden', $form['attributes']['data-caption']['#type']);
   }
 

@@ -10,4 +10,12 @@ namespace Drupal\Tests\stanford_media\Unit\Plugin\MediaEmbedDialog;
  */
 class ImageTest extends MediaEmbedDialogTestBase {
 
+  /**
+   * {@inheritDoc}
+   */
+  protected function setUp() {
+    parent::setUp();
+    $this->mediaBundle = 'image';
+  }
+
 }
