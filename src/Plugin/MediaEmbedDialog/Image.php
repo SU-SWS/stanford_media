@@ -130,8 +130,8 @@ class Image extends MediaEmbedDialogBase {
       $caption_field['#description'] = $this->t('Enter information about this image to credit owner or to provide additional context.');
       unset($caption_field['#element_validate']);
 
-      $format_config = $this->configFactory->get('stanford_media.allowed_caption_formats');
-      if ($allowed_formats = $format_config->get('allowed_formats')) {
+      $format_config = $this->configFactory->get('stanford_media.settings');
+      if ($allowed_formats = $format_config->get('allowed_caption_formats')) {
         $caption_field['#allowed_formats'] = $allowed_formats;
         $caption_field['#format'] = $caption_field['#format'] ?: reset($caption_field['#allowed_formats']);
       }
@@ -200,18 +200,16 @@ class Image extends MediaEmbedDialogBase {
     // value later so that core can handle the caption stuff.
     $form_state->unsetValue($caption_path);
 
-    if (!$caption) {
+    if (empty($caption['value'])) {
       return;
     }
 
-    if (!empty($caption['value'])) {
-      // Clean up the caption and escape special characters so it can be used in
-      // the json string.
-      $form_state->setValue([
-        'attributes',
-        'data-caption',
-      ], htmlspecialchars(json_encode($caption)));
-    }
+    // Clean up the caption and escape special characters so it can be used in
+    // the json string.
+    $form_state->setValue([
+      'attributes',
+      'data-caption',
+    ], htmlspecialchars(json_encode($caption)));
   }
 
   /**
@@ -231,8 +229,8 @@ class Image extends MediaEmbedDialogBase {
 
     // If we have a config file that limits the image styles, lets use only
     // those. Otherwise we'll use all styles.
-    $config = $this->configFactory->get('stanford_media.embeddable_image_styles');
-    $allowed_styles = $config->get('allowed_styles') ?: array_keys($styles);
+    $config = $this->configFactory->get('stanford_media.settings');
+    $allowed_styles = $config->get('embeddable_image_styles') ?: array_keys($styles);
 
     $style_options = [];
     /** @var \Drupal\image\Entity\ImageStyle $style */
@@ -272,7 +270,6 @@ class Image extends MediaEmbedDialogBase {
     }
 
     $linkit_input = $this->getUserInput($form_state)['linkit'];
-    $linkit_profile_id = $editor->getSettings()['plugins']['drupallink']['linkit_profile'];
 
     $link_form = [
       '#title' => $this->t('Add Link to image'),
@@ -280,7 +277,7 @@ class Image extends MediaEmbedDialogBase {
       '#description' => $this->t('If you would like to make this image a link, enter the url here. Or start typing to find content.'),
       '#autocomplete_route_name' => 'linkit.autocomplete',
       '#autocomplete_route_parameters' => [
-        'linkit_profile_id' => $linkit_profile_id,
+        'linkit_profile_id' => $plugin_settings['linkit_profile'],
       ],
       '#default_value' => isset($linkit_input['href']) ? $linkit_input['href'] : '',
       '#states' => [
@@ -325,10 +322,8 @@ class Image extends MediaEmbedDialogBase {
    *   Form element.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Current form state.
-   * @param array $form
-   *   Complete form.
    */
-  public function validateLinkitHref(array &$element, FormStateInterface $form_state, array &$form) {
+  public function validateLinkitHref(array &$element, FormStateInterface $form_state) {
     if (!empty($element['#value'])) {
       try {
         // If getting the link object fails, tell the user the path they
@@ -349,7 +344,7 @@ class Image extends MediaEmbedDialogBase {
 
     $settings = $form_state->getValue([
       'attributes',
-      'data-entity-embed-display-settings',
+      MediaEmbedDialogInterface::SETTINGS_KEY,
     ]);
     $settings = array_filter($settings);
     // Add a simple placeholder. This just prevents the settings from being an
@@ -364,22 +359,23 @@ class Image extends MediaEmbedDialogBase {
 
     $form_state->setValue([
       'attributes',
-      'data-entity-embed-display-settings',
+      MediaEmbedDialogInterface::SETTINGS_KEY,
     ], $settings);
 
     $linkit_key = [
       'attributes',
-      'data-entity-embed-display-settings',
+      MediaEmbedDialogInterface::SETTINGS_KEY,
       'linkit',
     ];
     $linkit_settings = $form_state->getValue($linkit_key);
-    $href = $linkit_settings['href'];
+
     // No link: unset values to clean up the embed code.
-    if (!$href) {
+    if (empty($linkit_settings['href'])) {
       $form_state->unsetValue($linkit_key);
       return;
     }
 
+    $href = $linkit_settings['href'];
     $href_dirty_check = $linkit_settings['href_dirty_check'];
 
     // Unset the attributes since this is an external url.
@@ -423,7 +419,7 @@ class Image extends MediaEmbedDialogBase {
     }
     $this->setElementImageStyle($element, $source_field);
 
-    $media_type = MediaType::load($entity->bundle());
+    $media_type = $this->entityTypeManager->getStorage('media_type')->load($entity->bundle());
     // Caption is provided in another caption entry from the wysiwyg.
     $field_map = $media_type->getFieldMap();
     if (isset($field_map['caption'])) {
