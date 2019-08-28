@@ -61,6 +61,9 @@ class MultiStepSelectionTest extends UnitTestCase {
     $this->plugin = MultiStepSelection::create($this->container, [], '', []);
   }
 
+  /**
+   * Empty form is generated.
+   */
   public function testForm() {
     $this->assertInstanceOf(MultiStepSelection::class, $this->plugin);
     $original_form = [];
@@ -84,6 +87,9 @@ class MultiStepSelectionTest extends UnitTestCase {
     ], $form['selected']['message']);
   }
 
+  /**
+   * Test the form displays the selected entities.
+   */
   public function testFormSelectedEntities() {
     $original_form = [];
     $original_form['widget']['view'] = [];
@@ -152,25 +158,47 @@ class MultiStepSelectionTest extends UnitTestCase {
       'entity_browser',
       'selected_entities',
     ], [$this->createMediaEntity(), $this->createMediaEntity()]);
-    $form = $this->plugin->getForm($original_form, $form_state);
-    $this->assertTrue(TRUE);
+    $this->plugin->getForm($original_form, $form_state);
+    $this->assertCount(1, $form_state->get([
+      'entity_browser',
+      'selected_entities',
+    ]));
   }
 
   public function testAddJsCommand() {
     $original_form = [];
     $form_state = new FormState();
+
     $form_state->setTriggeringElement([
       '#name' => 'ajax_commands_handler',
       '#value' => json_encode([
         'add' => [
           ['entity_id' => 'media:' . rand(0, 100)],
           ['entity_id' => 'media:' . rand(0, 100)],
+          ['entity_id' => 'media:' . rand(0, 100)],
         ],
       ]),
     ]);
     $form_state->set(['entity_browser', 'selected_entities'], []);
+    $this->plugin->getForm($original_form, $form_state);
+    $this->assertTrue($form_state->get('process_ajax'));
+    $this->assertCount(3, $form_state->get([
+      'entity_browser',
+      'selected_entities',
+    ]));
+
+    $form_state->set([
+      'entity_browser',
+      'validators',
+      'cardinality',
+      'cardinality',
+    ], 2);
     $form = $this->plugin->getForm($original_form, $form_state);
-    $this->assertTrue(TRUE);
+    $this->assertFalse($form_state->get('process_ajax'));
+    $this->assertCount(2, $form_state->get([
+      'entity_browser',
+      'selected_entities',
+    ]));
   }
 
   protected function createMediaEntity($id = NULL) {
