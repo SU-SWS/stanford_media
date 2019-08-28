@@ -20,6 +20,11 @@ use Drupal\stanford_media\Plugin\MediaEmbedDialogInterface;
  */
 class ImageTest extends MediaEmbedDialogTestBase {
 
+  /**
+   * Should the entity storage throw an error when loading.
+   *
+   * @var bool
+   */
   protected $loadMultipleThrowError = FALSE;
 
   /**
@@ -29,6 +34,11 @@ class ImageTest extends MediaEmbedDialogTestBase {
    */
   protected $plugin;
 
+  /**
+   * If linkit is enabled in the mock editor.
+   *
+   * @var bool
+   */
   protected $linkitEnabled = FALSE;
 
   /**
@@ -40,6 +50,9 @@ class ImageTest extends MediaEmbedDialogTestBase {
     $this->plugin = TestImage::create($this->container, ['entity' => $this->mediaEntity], '', []);
   }
 
+  /**
+   * Make sure the plugin knows when its applicable.
+   */
   public function testApplicable() {
     $plugin = Image::create($this->container, ['entity' => new \stdClass()], '', []);
     $this->assertFalse($plugin->isApplicable());
@@ -59,11 +72,21 @@ class ImageTest extends MediaEmbedDialogTestBase {
     ], $plugin->getDefaultInput());
   }
 
+  /**
+   * Try variety of tests for user input urls.
+   */
   public function testUrlLink() {
     $this->assertInstanceOf(Url::class, $this->plugin::getLinkObject('/foo/bar'));
     $this->assertInstanceOf(Url::class, $this->plugin::getLinkObject('internal:/foo/bar'));
+    $this->assertInstanceOf(Url::class, $this->plugin::getLinkObject('http://google.com'));
+
+    $this->expectException(\Exception::class);
+    $this->plugin::getLinkObject($this->randomMachineName() . ' ' . $this->randomMachineName());
   }
 
+  /**
+   * Caption comes from different areas during the form, verify each attempt.
+   */
   public function testCaptionDefault() {
     $form = ['attributes' => ['data-caption' => []]];
     $form_state = new FormState();
@@ -76,6 +99,9 @@ class ImageTest extends MediaEmbedDialogTestBase {
     $this->assertArrayEquals(['bar' => 'foo'], $this->plugin->getCaptionDefault($form, $form_state));
   }
 
+  /**
+   * Check the form is altered appropriately.
+   */
   public function testAlterDialog() {
     $form = ['attributes' => ['data-caption' => ['#default_value' => '']]];
     $form_state = new FormState();
@@ -90,6 +116,9 @@ class ImageTest extends MediaEmbedDialogTestBase {
     $this->assertArrayNotHasKey('linkit', $form['attributes'][MediaEmbedDialogInterface::SETTINGS_KEY]);
   }
 
+  /**
+   * When linkit is enabled, the fields should be available.
+   */
   public function testLinkitField() {
     $form = ['attributes' => ['data-caption' => ['#default_value' => '']]];
     $form_state = new FormState();
@@ -106,6 +135,9 @@ class ImageTest extends MediaEmbedDialogTestBase {
     $this->assertArrayHasKey('linkit', $form['attributes'][MediaEmbedDialogInterface::SETTINGS_KEY]);
   }
 
+  /**
+   * Validation method changes the values, check for those changes.
+   */
   public function testFormValidation() {
     $form = [];
     $form_state = new FormState();
@@ -130,6 +162,9 @@ class ImageTest extends MediaEmbedDialogTestBase {
     ]));
   }
 
+  /**
+   * Make sure linkit validation throws an error.
+   */
   public function testValidateLinkit() {
     $element = [
       '#value' => $this->randomMachineName(),
@@ -140,6 +175,9 @@ class ImageTest extends MediaEmbedDialogTestBase {
     $this->assertTrue($form_state::hasAnyErrors());
   }
 
+  /**
+   * Form submit sets & changes values, check for those.
+   */
   public function testFormSubmit() {
     $form = [];
     $form_state = new FormState();
@@ -178,6 +216,9 @@ class ImageTest extends MediaEmbedDialogTestBase {
     $this->assertArrayHasKey('href', $values['attributes'][MediaEmbedDialogInterface::SETTINGS_KEY]['linkit']);
   }
 
+  /**
+   * Ensure the image style and linkit are configured appropriately.
+   */
   public function testPreRender() {
     $element = [
       '#media' => $this->mediaEntity,
@@ -200,6 +241,9 @@ class ImageTest extends MediaEmbedDialogTestBase {
     $this->assertEquals('foo', $element['field_foo'][0]['#image_style']);
   }
 
+  /**
+   * Linkit library is added to the form element.
+   */
   public function testProcessLinkitAutocomplete() {
     $element = [];
     $form_state = new FormState();
@@ -208,6 +252,9 @@ class ImageTest extends MediaEmbedDialogTestBase {
     $this->assertArrayEquals(['stanford_media/autocomplete'], $element['#attached']['library']);
   }
 
+  /**
+   * Mock entity storage load multiple callback.
+   */
   public function loadMultipleCallback() {
     if ($this->loadMultipleThrowError) {
       throw new \Exception('It broke');
@@ -221,6 +268,14 @@ class ImageTest extends MediaEmbedDialogTestBase {
     ];
   }
 
+  /**
+   * Mock entity storage load single callback.
+   *
+   * @param string $entity_id
+   *   Entity id.
+   *
+   * @return \PHPUnit_Framework_MockObject_MockObject
+   */
   public function loadCallback($entity_id) {
     if ($entity_id == 'image') {
       $media_type = $this->createMock(MediaTypeInterface::class);
