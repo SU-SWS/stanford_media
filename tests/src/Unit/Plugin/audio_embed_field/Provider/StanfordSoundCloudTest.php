@@ -100,7 +100,7 @@ class StanfordSoundCloudTest extends UnitTestCase {
     $render_array = $plugin->renderEmbedCode(100, 100, FALSE);
 
     $this->assertEquals('audio_embed_iframe', $render_array['#type']);
-    $this->assertEquals('https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/740178957', $render_array['#url']);
+    $this->assertEquals('https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/123456789', $render_array['#url']);
     $this->assertArraySubset([
       'width' => 100,
       'height' => 100,
@@ -144,7 +144,7 @@ class StanfordSoundCloudTest extends UnitTestCase {
    */
   protected function getVideoData() {
     return [
-      'html' => '<iframe src="https://w.soundcloud.com/player/?visual=true&url=https%3A%2F%2Fapi.soundcloud.com%2Fplaylists%2F740178957&show_artwork=true"></iframe>',
+      'html' => '<iframe src="https://w.soundcloud.com/player/?visual=true&url=https%3A%2F%2Fapi.soundcloud.com%2Fplaylists%2F123456789&show_artwork=true"></iframe>',
       'thumbnail_url' => 'http://foo.bar/image.jpg',
       'title' => 'Foo Bar',
     ];
