@@ -16,7 +16,7 @@ use Drupal\Core\Render\Element;
  *   }
  * )
  */
-class MediaResponsiveImageFormatter extends MediaFormatter {
+class MediaResponsiveImageFormatter extends MediaFormatterBase {
 
   /**
    * Get available responsive image styles.
@@ -38,9 +38,12 @@ class MediaResponsiveImageFormatter extends MediaFormatter {
    * {@inheritdoc}
    */
   public function preRender($element) {
-    $element['field_media_image']['#formatter'] = 'responsive_image';
-    foreach (Element::children($element['field_media_image']) as $delta) {
-      $item = &$element['field_media_image'][$delta];
+    $source_field = $element['#media']->getSource()
+      ->getConfiguration()['source_field'];
+
+    $element[$source_field]['#formatter'] = 'responsive_image';
+    foreach (Element::children($element[$source_field]) as $delta) {
+      $item = &$element[$source_field][$delta];
       $item['#theme'] = 'responsive_image_formatter';
       $item['#responsive_image_style_id'] = $element['#stanford_media_image_style'];
 

@@ -12,7 +12,7 @@ use Drupal\Core\Form\FormStateInterface;
  *
  * @package Drupal\stanford_media\Plugin\Field\FieldFormatter
  */
-abstract class MediaFormatter extends EntityReferenceEntityFormatter {
+abstract class MediaFormatterBase extends EntityReferenceEntityFormatter {
 
   /**
    * Get an array of image style options in order to choose and apply in render.
@@ -35,6 +35,11 @@ abstract class MediaFormatter extends EntityReferenceEntityFormatter {
 
   /**
    * {@inheritdoc}
+   *
+   * Can't test this with unit tests since the parent method has a global t()
+   * function usage.
+   *
+   * @codeCoverageIgnore
    */
   public function settingsForm(array $form, FormStateInterface $form_state) {
     $elements = parent::settingsForm($form, $form_state);
@@ -42,7 +47,7 @@ abstract class MediaFormatter extends EntityReferenceEntityFormatter {
     $elements['image_style'] = [
       '#type' => 'select',
       '#options' => $this->getStyleOptions(),
-      '#title' => t('Image Style'),
+      '#title' => $this->t('Image Style'),
       '#default_value' => $this->getSetting('image_style') ?: '',
       '#empty_option' => $this->t('Use Entity Display'),
     ];
@@ -66,6 +71,11 @@ abstract class MediaFormatter extends EntityReferenceEntityFormatter {
 
   /**
    * {@inheritdoc}
+   *
+   * Can't test this with unit tests since the parent method has a global t()
+   * function usage.
+   *
+   * @codeCoverageIgnore
    */
   public function settingsSummary() {
     $image_styles = $this->getStyleOptions();
@@ -74,10 +84,10 @@ abstract class MediaFormatter extends EntityReferenceEntityFormatter {
     unset($image_styles['']);
     $image_style_setting = $this->getSetting('image_style');
     if (isset($image_styles[$image_style_setting])) {
-      $summary[] = t('Style: @style', ['@style' => $image_styles[$image_style_setting]]);
+      $summary[] = $this->t('Style: @style', ['@style' => $image_styles[$image_style_setting]]);
     }
     else {
-      $summary[] = t('Use Entity Display');
+      $summary[] = $this->t('Use Entity Display');
     }
 
     return $summary;
@@ -95,14 +105,15 @@ abstract class MediaFormatter extends EntityReferenceEntityFormatter {
     if (empty($style) || !isset($image_styles[$style])) {
       return $elements;
     }
-    /** @var \Drupal\Core\Entity\EntityInterface $parent */
-    $parent = $items->getParent()->getValue();
 
     foreach ($elements as &$element) {
       $element['#stanford_media_image_style'] = $style;
       $element['#pre_render'][] = [$this, 'preRender'];
 
       if ($this->getSetting('link')) {
+        /** @var \Drupal\Core\Entity\EntityInterface $parent */
+        $parent = $items->getParent()->getValue();
+
         $element['#stanford_media_url'] = $parent->toUrl();
         $element['#stanford_media_url_title'] = $parent->label();
       }
@@ -119,9 +130,6 @@ abstract class MediaFormatter extends EntityReferenceEntityFormatter {
    * @return array
    *   Altered render array.
    */
-  public function preRender($element) {
-    // Do some changes here.
-    return $element;
-  }
+  abstract public function preRender($element);
 
 }
