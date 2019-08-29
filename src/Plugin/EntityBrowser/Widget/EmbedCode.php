@@ -10,7 +10,7 @@ use Drupal\Core\Form\FormStateInterface;
  * @EntityBrowserWidget(
  *   id = "embed_code",
  *   label = @Translation("Embed Code"),
- *   description = @Translation("Create media entities from embed codes."),
+ *   description = @Translation("Create media entities from embed codes.")
  * )
  */
 class EmbedCode extends MediaBrowserBase {

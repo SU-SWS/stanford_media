@@ -11,9 +11,8 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\entity_browser\WidgetBase;
 use Drupal\entity_browser\WidgetValidationManager;
 use Drupal\inline_entity_form\ElementSubmit;
-use Drupal\media\Entity\MediaType;
 use Drupal\media\MediaInterface;
-use Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationManager;
+use Drupal\media\MediaTypeInterface;
 use Drupal\stanford_media\Plugin\BundleSuggestionManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -189,11 +188,6 @@ abstract class MediaBrowserBase extends WidgetBase {
     if (!empty($labels)) {
       $this->messenger->addMessage($this->t('%name has been added to the media library', ['%name' => implode(', ', $labels)]));
     }
-
-    // Without this, IEF won't know where to hook into the widget. Don't pass
-    // $original_form as the second argument to addCallback(), because it's not
-    // just the entity browser part of the form, not the actual complete form.
-    ElementSubmit::addCallback($form['actions']['submit'], $form_state->getCompleteForm());
   }
 
   /**
@@ -266,9 +260,24 @@ abstract class MediaBrowserBase extends WidgetBase {
       $options[$media->id()] .= $this->t('Use %name', ['%name' => $media->label()])
         ->render();
       $options[$media->id()] .= '</div>';
-      $options[$media->id()] .= render($media_display);
+      $options[$media->id()] .= $this->getRenderDisplay($media_display);
     }
     return $options;
+  }
+
+  /**
+   * Get the rendered result of a render array.
+   *
+   * @param array $render_array
+   *   Entity render array.
+   *
+   * @return string
+   *   Rendered contents.
+   *
+   * @codeCoverageIgnore
+   */
+  protected function getRenderDisplay(array &$render_array){
+    return render($render_array);
   }
 
   /**
@@ -309,7 +318,7 @@ abstract class MediaBrowserBase extends WidgetBase {
   /**
    * Build a media entity using the given media type and source data.
    *
-   * @param \Drupal\media\Entity\MediaType $media_type
+   * @param \Drupal\media\MediaTypeInterface $media_type
    *   Media type to create entity in.
    * @param mixed $source_value
    *   Files, string or other to put into the source field.
@@ -320,7 +329,7 @@ abstract class MediaBrowserBase extends WidgetBase {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  protected function prepareMediaEntity(MediaType $media_type, $source_value) {
+  protected function prepareMediaEntity(MediaTypeInterface $media_type, $source_value) {
     $media_storage = $this->entityTypeManager->getStorage('media');
 
     $source_field = $media_type->getSource()
