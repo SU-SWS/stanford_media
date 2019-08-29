@@ -3,6 +3,7 @@
 namespace Drupal\Tests\stanford_media\Kernel\Form;
 
 use Drupal\Core\Form\FormState;
+use Drupal\Core\Render\Element;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\media\Entity\MediaType;
 
@@ -66,6 +67,7 @@ class BulkUploadFormTest extends KernelTestBase {
     $form_state = new FormState();
     $form = \Drupal::formBuilder()->buildForm($this->formArg, $form_state);
     $this->assertArrayHasKey('upload', $form);
+    $this->assertEmpty(Element::children($form['entities']));
 
     file_unmanaged_copy(__DIR__ . '/testfile.txt', 'temporary://testfile.txt');
     $files = [
@@ -75,6 +77,8 @@ class BulkUploadFormTest extends KernelTestBase {
     $form_state->getFormObject()->validateForm($form, $form_state);
 
     $this->assertNotEmpty($media_storage->loadMultiple());
+    $form = \Drupal::formBuilder()->buildForm($this->formArg, $form_state);
+    $this->assertNotEmpty(Element::children($form['entities']));
   }
 
 }
