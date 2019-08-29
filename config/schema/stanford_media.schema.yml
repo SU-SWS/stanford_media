@@ -7,9 +7,9 @@ stanford_media.settings:
       sequence:
         type: string
         id: "Image style Machine name"
-      allowed_caption_formats:
-        type: sequence
-        label: 'Allowed Image Caption Formats'
-        sequence:
-          type: string
-          id: "Image style Machine name"
+    allowed_caption_formats:
+      type: sequence
+      label: 'Allowed Image Caption Formats'
+      sequence:
+        type: string
+        id: "Image style Machine name"
