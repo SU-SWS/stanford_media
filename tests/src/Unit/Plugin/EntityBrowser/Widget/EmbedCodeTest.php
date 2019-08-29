@@ -21,13 +21,6 @@ class EmbedCodeTest extends EntityBrowserWidgetTestBase {
   protected $returnSimilarItems = FALSE;
 
   /**
-   * Widget plugin object.
-   *
-   * @var \Drupal\Tests\stanford_media\Unit\Plugin\EntityBrowser\Widget\TestEmbedCode
-   */
-  protected $plugin;
-
-  /**
    * Flag to know if the method was called.
    *
    * @var bool

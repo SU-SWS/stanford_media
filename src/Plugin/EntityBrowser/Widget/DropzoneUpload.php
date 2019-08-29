@@ -6,10 +6,9 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Session\AccountProxyInterface;
-use Drupal\dropzonejs\DropzoneJsUploadSave;
+use Drupal\dropzonejs\DropzoneJsUploadSaveInterface;
 use Drupal\entity_browser\WidgetValidationManager;
-use Drupal\file\Entity\File;
-use Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationManager;
+use Drupal\file\FileInterface;
 use Drupal\stanford_media\Plugin\BundleSuggestionManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -34,13 +33,6 @@ class DropzoneUpload extends MediaBrowserBase {
   protected $dropzoneJsSave;
 
   /**
-   * Media duplicate validation manager service.
-   *
-   * @var \Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationManager
-   */
-  protected $duplicationManager;
-
-  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
@@ -54,7 +46,6 @@ class DropzoneUpload extends MediaBrowserBase {
       $container->get('plugin.manager.bundle_suggestion_manager'),
       $container->get('current_user'),
       $container->get('messenger'),
-      $container->get('plugin.manager.media_duplicate_validation'),
       $container->get('dropzonejs.upload_save')
     );
   }
@@ -62,8 +53,8 @@ class DropzoneUpload extends MediaBrowserBase {
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, EntityTypeManagerInterface $entity_type_manager, WidgetValidationManager $validation_manager, BundleSuggestionManagerInterface $bundles, AccountProxyInterface $current_user, MessengerInterface $messenger, MediaDuplicateValidationManager $duplication_manager, DropzoneJsUploadSave $dropzone_save) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $event_dispatcher, $entity_type_manager, $validation_manager, $bundles, $current_user, $messenger, $duplication_manager);
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, EntityTypeManagerInterface $entity_type_manager, WidgetValidationManager $validation_manager, BundleSuggestionManagerInterface $bundles, AccountProxyInterface $current_user, MessengerInterface $messenger, DropzoneJsUploadSaveInterface $dropzone_save) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $event_dispatcher, $entity_type_manager, $validation_manager, $bundles, $current_user, $messenger);
     $this->dropzoneJsSave = $dropzone_save;
   }
 
@@ -113,7 +104,7 @@ class DropzoneUpload extends MediaBrowserBase {
 
     // Get the files and make media entities.
     foreach ($this->getFiles($form, $form_state) as $file) {
-      if ($file instanceof File) {
+      if ($file instanceof FileInterface) {
         /** @var \Drupal\media\Entity\MediaType $media_type */
         $media_type = $this->bundleSuggestion->getSuggestedBundle($file->getFileUri());
         $media = $this->prepareMediaEntity($media_type, $file);
@@ -194,9 +185,7 @@ class DropzoneUpload extends MediaBrowserBase {
    * @return \Drupal\file\FileInterface[]
    *   Array of uploaded files.
    *
-   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginException
-   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   protected function getFiles(array $form, FormStateInterface $form_state) {
     $files = $form_state->get(['dropzonejs', $this->uuid(), 'files']) ?: [];

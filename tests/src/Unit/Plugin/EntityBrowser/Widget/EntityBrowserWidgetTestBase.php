@@ -25,6 +25,13 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 abstract class EntityBrowserWidgetTestBase extends UnitTestCase {
 
   /**
+   * Widget plugin object.
+   *
+   * @var mixed
+   */
+  protected $plugin;
+
+  /**
    * Drupal dependency container.
    *
    * @var \Drupal\Core\DependencyInjection\ContainerBuilder
@@ -71,6 +78,10 @@ abstract class EntityBrowserWidgetTestBase extends UnitTestCase {
     $bundle_suggestion = $this->createMock(BundleSuggestionManagerInterface::class);
     $bundle_suggestion->method('getSuggestedBundle')
       ->will($this->returnCallback([$this, 'getSuggestedBundleCallback']));
+    $bundle_suggestion->method('getAllExtensions')->willReturn(['php', 'jpg']);
+    $bundle_suggestion->method('getMultipleBundleExtensions')
+      ->willReturn(['php', 'jpg']);
+    $bundle_suggestion->method('getMaxFileSize')->willReturn(rand(100, 10000));
 
     $current_user = $this->createMock(AccountProxyInterface::class);
 
