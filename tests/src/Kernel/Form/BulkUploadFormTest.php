@@ -58,6 +58,9 @@ class BulkUploadFormTest extends KernelTestBase {
     $source_field->save();
     $media_type->set('source_configuration', ['source_field' => $source_field->getName()])
       ->save();
+
+    \Drupal::service('file_system')
+      ->copy(__DIR__ . '/testfile.txt', 'temporary://testfile.txt');
   }
 
   public function testForm() {
@@ -69,7 +72,6 @@ class BulkUploadFormTest extends KernelTestBase {
     $this->assertArrayHasKey('upload', $form);
     $this->assertEmpty(Element::children($form['entities']));
 
-    file_unmanaged_copy(__DIR__ . '/testfile.txt', 'temporary://testfile.txt');
     $files = [
       ['path' => 'temporary://testfile.txt'],
     ];
