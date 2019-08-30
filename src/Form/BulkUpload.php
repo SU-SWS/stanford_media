@@ -113,8 +113,6 @@ class BulkUpload extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $save_step = TRUE;
-
     // If files have already been uploaded, we don't want to allow upload again.
     if (empty($form_state->get(['dropzonejs', 'media']))) {
       $form['upload'] = [
@@ -127,7 +125,6 @@ class BulkUpload extends FormBase {
         '#max_files' => 0,
         '#clientside_resize' => FALSE,
       ];
-      $save_step = FALSE;
     }
 
     $form['actions'] = [
@@ -135,8 +132,8 @@ class BulkUpload extends FormBase {
       '#weight' => 99,
       'submit' => [
         '#type' => 'submit',
-        '#value' => $save_step ? $this->t('Save') : $this->t('Upload'),
-        '#eb_widget_main_submit' => !$save_step,
+        '#value' => isset($form['upload']) ? $this->t('Upload') : $this->t('Save'),
+        '#eb_widget_main_submit' => isset($form['upload']),
         '#attributes' => ['class' => ['is-entity-browser-submit']],
         '#button_type' => 'primary',
       ],
@@ -323,10 +320,15 @@ class BulkUpload extends FormBase {
       ];
     }
 
-    // Without this, IEF won't know where to hook into the widget. Don't pass
-    // $form as the second argument to addCallback(), because it's not
-    // the actual complete form.
-    ElementSubmit::addCallback($form['actions']['submit'], $form_state->getCompleteForm());
+    // Make sure to add a s
+    $form['#submit'] = isset($form['#submit']) ? $form['#submit'] : [
+      [
+        $this,
+        'submitForm',
+      ],
+    ];
+    // Without this, IEF won't know where to hook into the widget.
+    ElementSubmit::addCallback($form['actions']['submit'], $form);
 
     $form['#attached']['library'][] = 'stanford_media/dropzone';
   }
