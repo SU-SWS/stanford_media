@@ -122,6 +122,15 @@ abstract class MediaFormatterBase extends EntityReferenceEntityFormatter {
     return $elements;
   }
 
+  /**
+   * Get the source field from the media type configuration.
+   *
+   * @param \Drupal\media\MediaInterface $entity
+   *   Media entity.
+   *
+   * @return string
+   *   Source field on the entity.
+   */
   protected static function getSourceField(MediaInterface $entity) {
     return $entity->getSource()->getConfiguration()['source_field'];
   }
