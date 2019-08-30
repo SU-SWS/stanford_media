@@ -320,12 +320,9 @@ class BulkUpload extends FormBase {
       ];
     }
 
-    // Make sure to add a s
+    // Make sure to add it's own submit handler before adding an IEF submit.
     $form['#submit'] = isset($form['#submit']) ? $form['#submit'] : [
-      [
-        $this,
-        'submitForm',
-      ],
+      [$this, 'submitForm'],
     ];
     // Without this, IEF won't know where to hook into the widget.
     ElementSubmit::addCallback($form['actions']['submit'], $form);
