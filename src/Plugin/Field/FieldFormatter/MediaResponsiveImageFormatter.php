@@ -23,6 +23,9 @@ class MediaResponsiveImageFormatter extends MediaFormatterBase {
    *
    * @return array
    *   Keyed array of image styles.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   protected function getStyleOptions() {
     $styles = $this->entityTypeManager->getStorage('responsive_image_style')
@@ -38,8 +41,7 @@ class MediaResponsiveImageFormatter extends MediaFormatterBase {
    * {@inheritdoc}
    */
   public function preRender($element) {
-    $source_field = $element['#media']->getSource()
-      ->getConfiguration()['source_field'];
+    $source_field = self::getSourceField($element['#media']);
 
     $element[$source_field]['#formatter'] = 'responsive_image';
     foreach (Element::children($element[$source_field]) as $delta) {

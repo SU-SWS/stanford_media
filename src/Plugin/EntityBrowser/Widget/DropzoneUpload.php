@@ -28,7 +28,7 @@ class DropzoneUpload extends MediaBrowserBase {
   /**
    * Dropzone upload save service.
    *
-   * @var \Drupal\dropzonejs\DropzoneJsUploadSave
+   * @var \Drupal\dropzonejs\DropzoneJsUploadSaveInterface
    */
   protected $dropzoneJsSave;
 

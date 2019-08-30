@@ -31,8 +31,7 @@ class MediaImageFormatter extends MediaFormatterBase {
    * {@inheritdoc}
    */
   public function preRender($element) {
-    $source_field = $element['#media']->getSource()
-      ->getConfiguration()['source_field'];
+    $source_field = self::getSourceField($element['#media']);
 
     $element[$source_field]['#formatter'] = 'image';
     foreach (Element::children($element[$source_field]) as $delta) {

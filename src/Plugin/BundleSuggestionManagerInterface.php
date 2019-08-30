@@ -10,7 +10,7 @@ use Drupal\media\MediaTypeInterface;
  *
  * @package Drupal\stanford_media\Plugin
  */
-interface BundleSuggestionManagerInterface extends PluginManagerInterface{
+interface BundleSuggestionManagerInterface extends PluginManagerInterface {
 
   /**
    * With a provided input string from the user, find an media bundle to match.
@@ -55,7 +55,7 @@ interface BundleSuggestionManagerInterface extends PluginManagerInterface{
   /**
    * Get all allowed file extensions that can be uploaded for a media type.
    *
-   * @param MediaTypeInterface $media_type
+   * @param \Drupal\media\MediaTypeInterface $media_type
    *   Media type entity object.
    *
    * @return array

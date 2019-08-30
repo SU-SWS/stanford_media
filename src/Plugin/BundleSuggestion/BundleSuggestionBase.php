@@ -5,7 +5,6 @@ namespace Drupal\stanford_media\Plugin\BundleSuggestion;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\PluginBase;
 use Drupal\stanford_media\Plugin\BundleSuggestionInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Class BundleSuggestionBase.
@@ -35,7 +34,7 @@ abstract class BundleSuggestionBase extends PluginBase implements BundleSuggesti
    * @param array $bundles
    *   Optionally specify which media bundles to load.
    *
-   * @return \Drupal\media\Entity\MediaType[]
+   * @return \Drupal\media\MediaTypeInterface[]
    *   Keyed array of all media types.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException

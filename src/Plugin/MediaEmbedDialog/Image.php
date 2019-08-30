@@ -8,7 +8,6 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Url;
 use Drupal\linkit\Element\Linkit;
-use Drupal\media\Entity\MediaType;
 use Drupal\media\MediaInterface;
 use Drupal\stanford_media\Plugin\MediaEmbedDialogBase;
 use Drupal\stanford_media\Plugin\MediaEmbedDialogInterface;
@@ -419,7 +418,8 @@ class Image extends MediaEmbedDialogBase {
     }
     $this->setElementImageStyle($element, $source_field);
 
-    $media_type = $this->entityTypeManager->getStorage('media_type')->load($entity->bundle());
+    $media_type = $this->entityTypeManager->getStorage('media_type')
+      ->load($entity->bundle());
     // Caption is provided in another caption entry from the wysiwyg.
     $field_map = $media_type->getFieldMap();
     if (isset($field_map['caption'])) {

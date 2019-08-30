@@ -244,7 +244,7 @@ class BundleSuggestionManager extends DefaultPluginManager implements BundleSugg
    * @param string[] $bundles
    *   Optionally specify which media bundles to load.
    *
-   * @return \Drupal\media\Entity\MediaType[]
+   * @return \Drupal\media\MediaTypeInterface[]
    *   Keyed array of all media types.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException

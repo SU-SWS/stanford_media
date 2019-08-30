@@ -261,12 +261,6 @@ class ColorMean extends MediaDuplicateValidationBase {
    *   Resized source resource.
    */
   protected function resizeImage($source, array $mime_data) {
-    /** @var \Drupal\Core\ImageToolkit\ImageToolkitManager $image_tool_manager */
-    $image_tool_manager = \Drupal::service('image.toolkit.manager');
-    $image_tool_manager->getDefinitions();
-    /** @var \Drupal\imagemagick\Plugin\ImageToolkit\ImagemagickToolkit $toolkit */
-    $toolkit = $image_tool_manager->getDefaultToolkit();
-//    $toolkit->
     $resized = imagecreatetruecolor(self::RESIZE_DIMENSION, self::RESIZE_DIMENSION);
     imagecopyresized($resized, $source, 0, 0, 0, 0, self::RESIZE_DIMENSION, self::RESIZE_DIMENSION, $mime_data[0], $mime_data[1]);
     return $resized;

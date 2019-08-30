@@ -10,7 +10,6 @@ use Drupal\Core\Render\Element;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\entity_browser\WidgetBase;
 use Drupal\entity_browser\WidgetValidationManager;
-use Drupal\inline_entity_form\ElementSubmit;
 use Drupal\media\MediaInterface;
 use Drupal\media\MediaTypeInterface;
 use Drupal\stanford_media\Plugin\BundleSuggestionManagerInterface;
@@ -276,7 +275,7 @@ abstract class MediaBrowserBase extends WidgetBase {
    *
    * @codeCoverageIgnore
    */
-  protected function getRenderDisplay(array &$render_array){
+  protected function getRenderDisplay(array &$render_array) {
     return render($render_array);
   }
 

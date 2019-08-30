@@ -6,6 +6,7 @@ use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\Plugin\Field\FieldFormatter\EntityReferenceEntityFormatter;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\media\MediaInterface;
 
 /**
  * Class MediaFormatter.
@@ -119,6 +120,10 @@ abstract class MediaFormatterBase extends EntityReferenceEntityFormatter {
       }
     }
     return $elements;
+  }
+
+  protected static function getSourceField(MediaInterface $entity) {
+    return $entity->getSource()->getConfiguration()['source_field'];
   }
 
   /**
