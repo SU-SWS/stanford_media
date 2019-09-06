@@ -47,6 +47,8 @@ class GoogleDrive extends ProviderPluginBase {
    *   Drupal relative path to module.
    *
    * @codeCoverageIgnore
+   *   Ignore code coverage since the global function is not declared during
+   *   unit tests.
    */
   protected function getModulePath() {
     return drupal_get_path('module', 'stanford_media');
