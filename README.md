@@ -1,5 +1,6 @@
 # [Stanford Media](https://github.com/SU-SWS/stanford_media)
 ##### Version: 8.x-1.x
+[![CircleCI](https://circleci.com/gh/SU-SWS/stanford_media.svg?style=svg)](https://circleci.com/gh/SU-SWS/stanford_media)
 
 Maintainers: [pookmish](https://github.com/pookmish)
 

@@ -25,7 +25,7 @@ class SoundCloud extends MediaEmbedDialogBase {
     if ($this->entity instanceof MediaInterface && $this->entity->bundle() == 'audio') {
       $source_field = static::getMediaSourceField($this->entity);
       $field_value = $this->entity->get($source_field)->getString();
-      if (!UrlHelper::isValid($field_value)) {
+      if (!UrlHelper::isValid($field_value, TRUE)) {
         return FALSE;
       }
 

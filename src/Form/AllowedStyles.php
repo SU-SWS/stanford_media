@@ -51,21 +51,22 @@ class AllowedStyles extends ConfigFormBase {
    * {@inheritdoc}
    */
   protected function getEditableConfigNames() {
-    return ['stanford_media.embeddable_image_styles'];
+    return ['stanford_media.settings'];
   }
 
   /**
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $config = $this->configFactory->get('stanford_media.embeddable_image_styles');
+    $config = $this->config('stanford_media.settings');
+    $form = parent::buildForm($form, $form_state);
     $form['allowed_styles'] = [
       '#type' => 'checkboxes',
       '#title' => $this->t('Allowed Image Styles'),
       '#options' => $this->getImageStyles(),
-      '#default_value' => $config->get('allowed_styles') ?: array_keys($this->getImageStyles()),
+      '#default_value' => $config->get('embeddable_image_styles') ?: array_keys($this->getImageStyles()),
     ];
-    return parent::buildForm($form, $form_state);
+    return $form;
   }
 
   /**
@@ -73,10 +74,10 @@ class AllowedStyles extends ConfigFormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     parent::submitForm($form, $form_state);
-    $config = $this->configFactory->getEditable('stanford_media.embeddable_image_styles');
+    $config = $this->config('stanford_media.settings');
     $allowed_styles = $form_state->getValue('allowed_styles');
     $allowed_styles = array_values($allowed_styles);
-    $config->set('allowed_styles', array_filter($allowed_styles));
+    $config->set('embeddable_image_styles', array_filter($allowed_styles));
     $config->save();
   }
 

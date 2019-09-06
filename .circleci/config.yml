@@ -1,46 +1,85 @@
+version: 2
 # CircleCI integration with Drupal 8.
 
 ## Defines images and working directory.
 defaults: &defaults
   docker:
     - image: pookmish/drupal8ci:latest
-    - image: selenium/standalone-chrome:latest
+    - image: selenium/standalone-chrome:3.141.59-neon
     - image: mariadb:10.3
       environment:
         MYSQL_ALLOW_EMPTY_PASSWORD: 1
   working_directory: /var/www/html
 
+
 #Jobs
-## Job to run Unit and Kernel tests.
-unit_tests: &unit_tests
+code_coverage: &code_coverage
   <<: *defaults
   steps:
-    - run:
-        command: |
-          composer create-project drupal-composer/drupal-project:8.x-dev /var/www/html --stability dev --no-interaction
-          composer require su-sws/stanford_media:dev-${CIRCLE_BRANCH}
-          ln -s web docroot
-          cd docroot && ../vendor/bin/drush si minimal --db-url=mysql://root@127.0.0.1/drupal8 -y
+    - restore_cache:
+        keys:
+          - dependencies-
     - checkout:
-        path: docroot/modules/custom/stanford_media
+        path: /var/www/test
     - run:
+        name: Run PHP Unit Coverage Tests
         command: |
-          cp docroot/modules/custom/stanford_media/.circleci/config/phpunit.xml docroot/core/
-          cd docroot && ../vendor/bin/phpunit -c core modules/custom
+          composer global require SU-SWS/stanford-caravan:dev-8.x-1.x
+          ~/.composer/vendor/bin/sws-caravan phpunit /var/www/html --extension-dir=/var/www/test --with-coverage
+    - save_cache:
+        key: dependencies-{{ epoch }}
+        paths:
+          - .
     - store_test_results:
         path: /var/www/html/artifacts/phpunit
+    - store_artifacts:
+        path: /var/www/html/artifacts/phpunit/coverage
+
+behat: &behat
+  <<: *defaults
+  steps:
+    - restore_cache:
+        keys:
+          - dependencies-
+    - checkout:
+        path: /var/www/test
+    - run:
+        name: Run Behat Tests
+        command: |
+          composer global require SU-SWS/stanford-caravan:dev-8.x-1.x
+          ~/.composer/vendor/bin/sws-caravan behat /var/www/html --extension-dir=/var/www/test
+    - save_cache:
+        key: dependencies-{{ epoch }}
+        paths:
+          - .
+    - store_test_results:
+        path: /var/www/html/artifacts/behat
     - store_artifacts:
         path: /var/www/html/artifacts
 
 # Declare all of the jobs we should run.
-version: 2
 jobs:
-  unit-tests:
-    <<: *unit_tests
+  run-coverage:
+    <<: *code_coverage
+  run-behat:
+    <<: *behat
 
 # Declare a workflow that runs all of our jobs in parallel.
 workflows:
   version: 2
-  test_and_lint:
+  weekly:
     jobs:
-      - unit-tests
+      - run-coverage
+      - run-behat
+    triggers:
+      - schedule:
+          cron: "0 0 * * 0"
+          filters:
+            branches:
+              only:
+                - 8.x-1.x
+  tests:
+    jobs:
+      - run-coverage
+      - run-behat
+

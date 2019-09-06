@@ -17,7 +17,7 @@ interface BundleSuggestionInterface extends ContainerFactoryPluginInterface {
    * @param string $input
    *   File uri, url, or other data that might be entered.
    *
-   * @return \Drupal\media\Entity\MediaType|null
+   * @return \Drupal\media\MediaTypeInterface|null
    *   Media type object if matched.
    */
   public function getBundleFromString($input);

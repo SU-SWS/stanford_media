@@ -2,14 +2,15 @@
 
 namespace Drupal\stanford_media\Plugin;
 
-use Drupal\media\Entity\MediaType;
+use Drupal\Component\Plugin\PluginManagerInterface;
+use Drupal\media\MediaTypeInterface;
 
 /**
  * Interface BundleSuggestionManagerInterface for plugin manager service.
  *
  * @package Drupal\stanford_media\Plugin
  */
-interface BundleSuggestionManagerInterface {
+interface BundleSuggestionManagerInterface extends PluginManagerInterface {
 
   /**
    * With a provided input string from the user, find an media bundle to match.
@@ -17,7 +18,7 @@ interface BundleSuggestionManagerInterface {
    * @param string $input
    *   User entered data, such as a url or file path.
    *
-   * @return \Drupal\media\Entity\MediaType|null
+   * @return \Drupal\media\MediaTypeInterface|null
    *   Suggested bundle to match the input.
    *
    * @throws \Drupal\Component\Plugin\Exception\PluginException
@@ -46,7 +47,7 @@ interface BundleSuggestionManagerInterface {
   /**
    * Get all media type bundles that are configured to have an upload field.
    *
-   * @return \Drupal\media\Entity\MediaType[]
+   * @return \Drupal\media\MediaTypeInterface[]
    *   Keyed array of media bundles with upload fields.
    */
   public function getUploadBundles();
@@ -54,13 +55,13 @@ interface BundleSuggestionManagerInterface {
   /**
    * Get all allowed file extensions that can be uploaded for a media type.
    *
-   * @param \Drupal\media\Entity\MediaType $media_type
+   * @param \Drupal\media\MediaTypeInterface $media_type
    *   Media type entity object.
    *
    * @return array
    *   All file extensions for the given media type.
    */
-  public function getBundleExtensions(MediaType $media_type);
+  public function getBundleExtensions(MediaTypeInterface $media_type);
 
   /**
    * Get allowed extensions from the allowed media types.
@@ -87,23 +88,23 @@ interface BundleSuggestionManagerInterface {
   /**
    * Get maximum file size for the media type.
    *
-   * @param \Drupal\media\Entity\MediaType $media_type
+   * @param \Drupal\media\MediaTypeInterface $media_type
    *   The media type bundle to get file size for.
    *
    * @return int
    *   The maximum file size.
    */
-  public function getMaxFileSizeBundle(MediaType $media_type);
+  public function getMaxFileSizeBundle(MediaTypeInterface $media_type);
 
   /**
    * Get the upload path for a specific media type.
    *
-   * @param \Drupal\media\Entity\MediaType $media_type
+   * @param \Drupal\media\MediaTypeInterface $media_type
    *   Media type to get path.
    *
    * @return string
    *   Upload path location.
    */
-  public function getUploadPath(MediaType $media_type);
+  public function getUploadPath(MediaTypeInterface $media_type);
 
 }

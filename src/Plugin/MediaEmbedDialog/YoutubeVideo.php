@@ -101,7 +101,7 @@ class YoutubeVideo extends VideoEmbedBase {
     parent::validateDialogForm($form, $form_state);
     $start = $form_state->getValue([
       'attributes',
-      'data-entity-embed-display-settings',
+      MediaEmbedDialogInterface::SETTINGS_KEY,
       'start',
     ]);
 
@@ -111,7 +111,7 @@ class YoutubeVideo extends VideoEmbedBase {
 
     // Check if start at is in the correct time format.
     if (!(preg_match('/^\d{1}:\d{2}$/', $start) || preg_match('/^\d{2}:\d{2}$/', $start))) {
-      $form_state->setError($form['attributes']['data-entity-embed-display-settings']['start'], t('Invalid Time Entry'));
+      $form_state->setError($form['attributes'][MediaEmbedDialogInterface::SETTINGS_KEY]['start'], $this->t('Invalid Time Entry'));
       return;
     }
 
@@ -121,7 +121,7 @@ class YoutubeVideo extends VideoEmbedBase {
 
     $form_state->setValue([
       'attributes',
-      'data-entity-embed-display-settings',
+      MediaEmbedDialogInterface::SETTINGS_KEY,
       'start',
     ], $start);
   }

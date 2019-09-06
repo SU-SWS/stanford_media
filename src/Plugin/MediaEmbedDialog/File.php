@@ -38,7 +38,7 @@ class File extends MediaEmbedDialogBase {
       '#type' => 'textfield',
       '#title' => $this->t('Description'),
       '#description' => $this->t('Optionally enter text to use as the link text.'),
-      '#default_value' => $input['description'] ?: $this->entity->label(),
+      '#default_value' => $input['description'] ?? $this->entity->label(),
       '#required' => TRUE,
     ];
   }

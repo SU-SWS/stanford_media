@@ -3,7 +3,6 @@
 namespace Drupal\stanford_media\Plugin\audio_embed_field\Provider;
 
 use Drupal\audio_embed_field\Plugin\audio_embed_field\Provider\SoundCloud;
-use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 
 /**
@@ -79,8 +78,6 @@ class StanfordSoundCloud extends SoundCloud {
    *
    * @return array|null
    *   Keyed array of video data, null if invalid.
-   *
-   * @throws \GuzzleHttp\Exception\GuzzleException
    */
   protected static function getVideoData($video_url) {
     $cache = \Drupal::cache('default');
@@ -89,7 +86,7 @@ class StanfordSoundCloud extends SoundCloud {
     }
 
     try {
-      $client = new Client();
+      $client = \Drupal::service('http_client');
       $res = $client->request('GET', 'http://soundcloud.com/oembed', [
         'query' => [
           'format' => 'json',

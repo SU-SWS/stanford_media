@@ -77,12 +77,12 @@ class VimeoVideo extends VideoEmbedBase {
 
     $color = $form_state->getValue([
       'attributes',
-      'data-entity-embed-display-settings',
+      MediaEmbedDialogInterface::SETTINGS_KEY,
       'color',
     ]);
 
     if ($color && !ctype_xdigit($color)) {
-      $form_state->setError($form['attributes']['data-entity-embed-display-settings']['color'], t('Invalid Color String'));
+      $form_state->setError($form['attributes'][MediaEmbedDialogInterface::SETTINGS_KEY]['color'], $this->t('Invalid Color String'));
       return;
     }
   }

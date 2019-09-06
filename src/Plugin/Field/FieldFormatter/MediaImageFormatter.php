@@ -16,10 +16,12 @@ use Drupal\Core\Render\Element;
  *   }
  * )
  */
-class MediaImageFormatter extends MediaFormatter {
+class MediaImageFormatter extends MediaFormatterBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @codeCoverageIgnore
    */
   protected function getStyleOptions() {
     return image_style_options(FALSE);
@@ -29,9 +31,11 @@ class MediaImageFormatter extends MediaFormatter {
    * {@inheritdoc}
    */
   public function preRender($element) {
-    $element['field_media_image']['#formatter'] = 'image';
-    foreach (Element::children($element['field_media_image']) as $delta) {
-      $item = &$element['field_media_image'][$delta];
+    $source_field = self::getSourceField($element['#media']);
+
+    $element[$source_field]['#formatter'] = 'image';
+    foreach (Element::children($element[$source_field]) as $delta) {
+      $item = &$element[$source_field][$delta];
       $item['#theme'] = 'image_formatter';
       $item['#image_style'] = $element['#stanford_media_image_style'];
 

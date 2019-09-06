@@ -9,8 +9,7 @@ use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
-use Drupal\field\Entity\FieldConfig;
-use Drupal\media\Entity\MediaType;
+use Drupal\media\MediaTypeInterface;
 use Drupal\stanford_media\Annotation\BundleSuggestion;
 
 /**
@@ -142,7 +141,8 @@ class BundleSuggestionManager extends DefaultPluginManager implements BundleSugg
     foreach ($media_types as $media_type) {
       $source_field = $media_type->getSource()
         ->getConfiguration()['source_field'];
-      $field = FieldConfig::loadByName('media', $media_type->id(), $source_field);
+      $field = $this->entityTypeManager->getStorage('field_config')
+        ->load("media.{$media_type->id()}.$source_field");
 
       if (!empty($field->getSetting('file_extensions'))) {
         $upload_bundles[$media_type->id()] = $media_type;
@@ -155,12 +155,13 @@ class BundleSuggestionManager extends DefaultPluginManager implements BundleSugg
   /**
    * {@inheritdoc}
    */
-  public function getBundleExtensions(MediaType $media_type) {
+  public function getBundleExtensions(MediaTypeInterface $media_type) {
     $source_field = $media_type->getSource()
       ->getConfiguration()['source_field'];
 
     if ($source_field) {
-      $field = FieldConfig::loadByName('media', $media_type->id(), $source_field);
+      $field = $this->entityTypeManager->getStorage('field_config')
+        ->load("media.{$media_type->id()}.$source_field");
       $extensions = $field->getSetting('file_extensions') ?: '';
       return array_filter(explode(' ', $extensions));
     }
@@ -204,12 +205,13 @@ class BundleSuggestionManager extends DefaultPluginManager implements BundleSugg
   /**
    * {@inheritdoc}
    */
-  public function getMaxFileSizeBundle(MediaType $media_type) {
+  public function getMaxFileSizeBundle(MediaTypeInterface $media_type) {
     $source_field = $media_type->getSource()
       ->getConfiguration()['source_field'];
 
     if ($source_field) {
-      $field = FieldConfig::loadByName('media', $media_type->id(), $source_field);
+      $field = $this->entityTypeManager->getStorage('field_config')
+        ->load("media.{$media_type->id()}.$source_field");
       return Bytes::toInt($field->getSetting('max_filesize'));
     }
     return 0;
@@ -218,13 +220,14 @@ class BundleSuggestionManager extends DefaultPluginManager implements BundleSugg
   /**
    * {@inheritdoc}
    */
-  public function getUploadPath(MediaType $media_type) {
+  public function getUploadPath(MediaTypeInterface $media_type) {
     $source_field = $media_type->getSource()
       ->getConfiguration()['source_field'];
     $path = 'public://';
 
     if ($source_field) {
-      $field = FieldConfig::loadByName('media', $media_type->id(), $source_field);
+      $field = $this->entityTypeManager->getStorage('field_config')
+        ->load("media.{$media_type->id()}.$source_field");
       $path = 'public://' . $field->getSetting('file_directory');
     }
 
@@ -241,7 +244,7 @@ class BundleSuggestionManager extends DefaultPluginManager implements BundleSugg
    * @param string[] $bundles
    *   Optionally specify which media bundles to load.
    *
-   * @return \Drupal\media\Entity\MediaType[]
+   * @return \Drupal\media\MediaTypeInterface[]
    *   Keyed array of all media types.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException

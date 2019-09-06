@@ -10,10 +10,8 @@ use Drupal\Core\Render\Element;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\entity_browser\WidgetBase;
 use Drupal\entity_browser\WidgetValidationManager;
-use Drupal\inline_entity_form\ElementSubmit;
-use Drupal\media\Entity\MediaType;
 use Drupal\media\MediaInterface;
-use Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationManager;
+use Drupal\media\MediaTypeInterface;
 use Drupal\stanford_media\Plugin\BundleSuggestionManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -47,13 +45,6 @@ abstract class MediaBrowserBase extends WidgetBase {
   protected $messenger;
 
   /**
-   * Media duplicate validation manager service.
-   *
-   * @var \Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationManager
-   */
-  protected $duplicationManager;
-
-  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
@@ -66,20 +57,18 @@ abstract class MediaBrowserBase extends WidgetBase {
       $container->get('plugin.manager.entity_browser.widget_validation'),
       $container->get('plugin.manager.bundle_suggestion_manager'),
       $container->get('current_user'),
-      $container->get('messenger'),
-      $container->get('plugin.manager.media_duplicate_validation')
+      $container->get('messenger')
     );
   }
 
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, EntityTypeManagerInterface $entity_type_manager, WidgetValidationManager $validation_manager, BundleSuggestionManagerInterface $bundle_suggestion, AccountProxyInterface $current_user, MessengerInterface $messenger, MediaDuplicateValidationManager $duplication_manager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, EntityTypeManagerInterface $entity_type_manager, WidgetValidationManager $validation_manager, BundleSuggestionManagerInterface $bundle_suggestion, AccountProxyInterface $current_user, MessengerInterface $messenger) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $event_dispatcher, $entity_type_manager, $validation_manager);
     $this->bundleSuggestion = $bundle_suggestion;
     $this->currentUser = $current_user;
     $this->messenger = $messenger;
-    $this->duplicationManager = $duplication_manager;
   }
 
   /**
@@ -198,11 +187,6 @@ abstract class MediaBrowserBase extends WidgetBase {
     if (!empty($labels)) {
       $this->messenger->addMessage($this->t('%name has been added to the media library', ['%name' => implode(', ', $labels)]));
     }
-
-    // Without this, IEF won't know where to hook into the widget. Don't pass
-    // $original_form as the second argument to addCallback(), because it's not
-    // just the entity browser part of the form, not the actual complete form.
-    ElementSubmit::addCallback($form['actions']['submit'], $form_state->getCompleteForm());
   }
 
   /**
@@ -219,7 +203,9 @@ abstract class MediaBrowserBase extends WidgetBase {
   protected function getSimilarForm(MediaInterface $entity) {
     $form = [];
 
-    if (empty($similar_media = $this->duplicationManager->getSimilarEntities($entity, 3))) {
+    $duplication_manager = self::getDuplicationManager();
+    $similar_media = $duplication_manager ? $duplication_manager->getSimilarEntities($entity, 3) : [];
+    if (empty($similar_media)) {
       return [];
     }
 
@@ -244,6 +230,18 @@ abstract class MediaBrowserBase extends WidgetBase {
   }
 
   /**
+   * Get the media duplication manager service if its available.
+   *
+   * @return \Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationManager|null
+   *   Duplication manager service.
+   */
+  protected static function getDuplicationManager() {
+    if (\Drupal::hasService('plugin.manager.media_duplicate_validation')) {
+      return \Drupal::service('plugin.manager.media_duplicate_validation');
+    }
+  }
+
+  /**
    * Get an keyed array that can be used in form api as a radio button options.
    *
    * @param \Drupal\media\MediaInterface[] $entities
@@ -261,9 +259,24 @@ abstract class MediaBrowserBase extends WidgetBase {
       $options[$media->id()] .= $this->t('Use %name', ['%name' => $media->label()])
         ->render();
       $options[$media->id()] .= '</div>';
-      $options[$media->id()] .= render($media_display);
+      $options[$media->id()] .= $this->getRenderDisplay($media_display);
     }
     return $options;
+  }
+
+  /**
+   * Get the rendered result of a render array.
+   *
+   * @param array $render_array
+   *   Entity render array.
+   *
+   * @return string
+   *   Rendered contents.
+   *
+   * @codeCoverageIgnore
+   */
+  protected function getRenderDisplay(array &$render_array) {
+    return render($render_array);
   }
 
   /**
@@ -304,7 +317,7 @@ abstract class MediaBrowserBase extends WidgetBase {
   /**
    * Build a media entity using the given media type and source data.
    *
-   * @param \Drupal\media\Entity\MediaType $media_type
+   * @param \Drupal\media\MediaTypeInterface $media_type
    *   Media type to create entity in.
    * @param mixed $source_value
    *   Files, string or other to put into the source field.
@@ -315,7 +328,7 @@ abstract class MediaBrowserBase extends WidgetBase {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  protected function prepareMediaEntity(MediaType $media_type, $source_value) {
+  protected function prepareMediaEntity(MediaTypeInterface $media_type, $source_value) {
     $media_storage = $this->entityTypeManager->getStorage('media');
 
     $source_field = $media_type->getSource()

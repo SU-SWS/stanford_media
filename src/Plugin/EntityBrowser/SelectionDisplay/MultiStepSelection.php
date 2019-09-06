@@ -42,6 +42,7 @@ class MultiStepSelection extends MultiStepDisplay {
     $original_form['#attributes']['class'][] = Html::cleanCssIdentifier($this->getPluginId());
     if (isset($original_form['widget']['view'])) {
       $original_form['#attributes']['class'][] = 'view';
+      $original_form['#attributes']['class'] = array_values(array_unique(array_filter($original_form['#attributes']['class'])));
     }
     $form = parent::getForm($original_form, $form_state);
 
@@ -204,9 +205,13 @@ class MultiStepSelection extends MultiStepDisplay {
     $cardinality = self::getCardinality($form_state);
     $ajax = new AjaxResponse();
 
-    $message = t('Only %cardinality items can be used.', ['%cardinality' => $cardinality])->render();
+    $message = \Drupal::translation()
+      ->translate('Only %cardinality items can be used.', ['%cardinality' => $cardinality])
+      ->render();
     if ($cardinality == 1) {
-      $message = t('Only %cardinality item can be used.', ['%cardinality' => $cardinality])->render();
+      $message = \Drupal::translation()
+        ->translate('Only %cardinality item can be used.', ['%cardinality' => $cardinality])
+        ->render();
     }
     $ajax->addCommand(new ReplaceCommand('div[id="message"]', "<div id=\"message\"><div class=\"messages messages--error\">$message</div></div>"));
     return $ajax;

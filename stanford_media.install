@@ -203,3 +203,21 @@ function _stanford_media_update_8005_fix_alt($html) {
   }
   return $html;
 }
+
+/**
+ * Merge two setting configs into one.
+ */
+function stanford_media_update_8006() {
+  $config_factory = \Drupal::configFactory();
+
+  $old_image_styles = $config_factory->get('stanford_media.embeddable_image_styles');
+  $old_captions = $config_factory->get('stanford_media.allowed_caption_formats');
+
+  $new_settings = $config_factory->getEditable('stanford_media.settings');
+  $new_settings->set('embeddable_image_styles', $old_image_styles->get('allowed_styles'));
+  $new_settings->set('allowed_caption_formats', $old_captions->get('allowed_formats'));
+  $new_settings->save();
+
+  $old_image_styles->delete();
+  $old_captions->delete();
+}

@@ -111,7 +111,7 @@ class AudioEmbedField extends MediaSourceBase {
 
     switch ($name) {
       case 'id':
-        return $provider->getIdFromInput($url) ?: FALSE;
+        return $provider::getIdFromInput($url) ?: FALSE;
 
       case 'source':
       case 'source_name':
@@ -165,14 +165,11 @@ class AudioEmbedField extends MediaSourceBase {
    *   Uri of thumbnail image.
    */
   protected function getMetaDataThumbnailUri(MediaInterface $media, ProviderPluginInterface $provider) {
-    if ($provider) {
-      $provider->downloadThumbnail();
-      $thumbnail_uri = $provider->getLocalThumbnailUri();
-      if (!empty($thumbnail_uri)) {
-        return $thumbnail_uri;
-      }
+    $provider->downloadThumbnail();
+    $thumbnail_uri = $provider->getLocalThumbnailUri();
+    if (!empty($thumbnail_uri)) {
+      return $thumbnail_uri;
     }
-    return parent::getMetadata($media, 'thumbnail_uri');
   }
 
   /**
@@ -229,15 +226,17 @@ class AudioEmbedField extends MediaSourceBase {
    */
   protected function getAudioUrl(MediaInterface $media) {
     $source_field = $media->getSource()->getConfiguration()['source_field'];
-    $audio_url = $media->{$source_field}->value;
-    return isset($audio_url) ? $audio_url : FALSE;
+    $audio_url = $media->get($source_field)->getString();
+    return $audio_url ?: FALSE;
   }
 
   /**
    * {@inheritdoc}
    */
   public function createSourceField(MediaTypeInterface $type) {
-    return parent::createSourceField($type)->set('label', 'Audio Url');
+    $field = parent::createSourceField($type);
+    $field->set('label', 'Audio Url');
+    return $field;
   }
 
   /**
@@ -248,9 +247,11 @@ class AudioEmbedField extends MediaSourceBase {
     if ($field) {
       // Be sure that the suggested source field actually exists.
       $fields = $this->entityFieldManager->getFieldDefinitions('media', $type->id());
-      return isset($fields[$field]) ? $fields[$field] : NULL;
+
+      if (isset($fields[$field])) {
+        return $fields[$field];
+      }
     }
-    return NULL;
   }
 
 }

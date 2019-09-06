@@ -2,6 +2,7 @@
 
 namespace Drupal\stanford_media\Plugin;
 
+use Drupal\Component\Plugin\PluginInspectionInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\media\MediaInterface;
 
@@ -15,7 +16,7 @@ use Drupal\media\MediaInterface;
  * - Displaying the entity browser in an iframe.
  * - Displaying the entity browser in a modal dialog box.
  */
-interface MediaEmbedDialogInterface {
+interface MediaEmbedDialogInterface extends PluginInspectionInterface {
 
   const SETTINGS_KEY = 'data-entity-embed-display-settings';
 
