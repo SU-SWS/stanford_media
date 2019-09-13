@@ -30,25 +30,6 @@ class AudioEmbed extends BundleSuggestionBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static(
-      $configuration,
-      $plugin_id,
-      $plugin_definition,
-      $container->get('entity_type.manager')
-    );
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function getBundleFromString($input) {
     $audio_provider = self::getAudioProviderManager();
     if (!$audio_provider) {
