@@ -39,6 +39,7 @@ class AudioEmbedField extends MediaSourceBase {
    * Get the audio provider manager service if it exists.
    *
    * @return \Drupal\audio_embed_field\ProviderManager|null
+   *   Audio provider manager service if it exists.
    */
   protected static function getAudioProviderManager() {
     if (\Drupal::hasService('audio_embed_field.provider_manager')) {

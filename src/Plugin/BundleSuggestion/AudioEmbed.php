@@ -19,6 +19,7 @@ class AudioEmbed extends BundleSuggestionBase {
    * Get the audio provider manager service if it exists.
    *
    * @return \Drupal\audio_embed_field\ProviderManager|null
+   *   Audio provider manager service if it exists.
    */
   protected static function getAudioProviderManager() {
     if (\Drupal::hasService('audio_embed_field.provider_manager')) {
@@ -50,7 +51,7 @@ class AudioEmbed extends BundleSuggestionBase {
    */
   public function getBundleFromString($input) {
     $audio_provider = self::getAudioProviderManager();
-    if(!$audio_provider){
+    if (!$audio_provider) {
       return;
     }
 
