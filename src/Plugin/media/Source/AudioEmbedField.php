@@ -10,7 +10,6 @@ use Drupal\Core\Field\FieldTypePluginManagerInterface;
 use Drupal\media\MediaInterface;
 use Drupal\media\MediaSourceBase;
 use Drupal\media\MediaTypeInterface;
-use Drupal\audio_embed_field\ProviderManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -30,18 +29,22 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class AudioEmbedField extends MediaSourceBase {
 
   /**
-   * The audio provider manager.
-   *
-   * @var \Drupal\audio_embed_field\ProviderManagerInterface
-   */
-  protected $providerManager;
-
-  /**
    * The media settings.
    *
    * @var \Drupal\Core\Config\Config
    */
   protected $mediaSettings;
+
+  /**
+   * Get the audio provider manager service if it exists.
+   *
+   * @return \Drupal\audio_embed_field\ProviderManager|null
+   */
+  protected static function getAudioProviderManager() {
+    if (\Drupal::hasService('audio_embed_field.provider_manager')) {
+      return \Drupal::service('audio_embed_field.provider_manager');
+    }
+  }
 
   /**
    * Constructs a new class instance.
@@ -60,12 +63,9 @@ class AudioEmbedField extends MediaSourceBase {
    *   Config field type manager service.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   Config factory service.
-   * @param \Drupal\audio_embed_field\ProviderManagerInterface $provider_manager
-   *   The audio provider manager.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, EntityFieldManagerInterface $entity_field_manager, FieldTypePluginManagerInterface $field_type_manager, ConfigFactoryInterface $config_factory, ProviderManagerInterface $provider_manager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, EntityFieldManagerInterface $entity_field_manager, FieldTypePluginManagerInterface $field_type_manager, ConfigFactoryInterface $config_factory) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager, $entity_field_manager, $field_type_manager, $config_factory);
-    $this->providerManager = $provider_manager;
     $this->mediaSettings = $config_factory->get('media.settings');
   }
 
@@ -80,8 +80,7 @@ class AudioEmbedField extends MediaSourceBase {
       $container->get('entity_type.manager'),
       $container->get('entity_field.manager'),
       $container->get('plugin.manager.field.field_type'),
-      $container->get('config.factory'),
-      $container->get('audio_embed_field.provider_manager')
+      $container->get('config.factory')
     );
   }
 
@@ -99,11 +98,13 @@ class AudioEmbedField extends MediaSourceBase {
    */
   public function getMetadata(MediaInterface $media, $name) {
     $url = $this->getAudioUrl($media);
-    if (!$url) {
+    $audio_provider = self::getAudioProviderManager();
+    if (!$url || !$audio_provider) {
       return parent::getMetadata($media, $name);
     }
-    $provider = $this->providerManager->loadProviderFromInput($url);
-    $definition = $this->providerManager->loadDefinitionFromInput($url);
+
+    $provider = $audio_provider->loadProviderFromInput($url);
+    $definition = $audio_provider->loadDefinitionFromInput($url);
 
     if ($function = $this->getMetaDataMethod($name)) {
       return call_user_func([$this, $function], $media, $provider);

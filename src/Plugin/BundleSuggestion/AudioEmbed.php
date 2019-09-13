@@ -2,7 +2,6 @@
 
 namespace Drupal\stanford_media\Plugin\BundleSuggestion;
 
-use Drupal\audio_embed_field\ProviderManager;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -17,11 +16,15 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class AudioEmbed extends BundleSuggestionBase {
 
   /**
-   * Audio provider manager service.
+   * Get the audio provider manager service if it exists.
    *
-   * @var \Drupal\audio_embed_field\ProviderManager
+   * @return \Drupal\audio_embed_field\ProviderManager|null
    */
-  protected $audioProvider;
+  protected static function getAudioProviderManager() {
+    if (\Drupal::hasService('audio_embed_field.provider_manager')) {
+      return \Drupal::service('audio_embed_field.provider_manager');
+    }
+  }
 
   /**
    * {@inheritdoc}
@@ -31,24 +34,27 @@ class AudioEmbed extends BundleSuggestionBase {
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('entity_type.manager'),
-      $container->get('audio_embed_field.provider_manager')
+      $container->get('entity_type.manager')
     );
   }
 
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, ProviderManager $audio_provider) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager);
-    $this->audioProvider = $audio_provider;
   }
 
   /**
    * {@inheritdoc}
    */
   public function getBundleFromString($input) {
-    $audio_provider_def = $this->audioProvider->loadDefinitionFromInput($input);
+    $audio_provider = self::getAudioProviderManager();
+    if(!$audio_provider){
+      return;
+    }
+
+    $audio_provider_def = $audio_provider->loadDefinitionFromInput($input);
 
     /** @var \Drupal\media\MediaTypeInterface $media_type */
     foreach ($this->getMediaBundles() as $media_type) {
