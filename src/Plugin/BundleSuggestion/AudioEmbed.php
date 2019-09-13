@@ -2,7 +2,6 @@
 
 namespace Drupal\stanford_media\Plugin\BundleSuggestion;
 
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -25,6 +24,18 @@ class AudioEmbed extends BundleSuggestionBase {
     if (\Drupal::hasService('audio_embed_field.provider_manager')) {
       return \Drupal::service('audio_embed_field.provider_manager');
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('entity_type.manager')
+    );
   }
 
   /**

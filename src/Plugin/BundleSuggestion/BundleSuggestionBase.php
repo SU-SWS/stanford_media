@@ -5,7 +5,6 @@ namespace Drupal\stanford_media\Plugin\BundleSuggestion;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\PluginBase;
 use Drupal\stanford_media\Plugin\BundleSuggestionInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Class BundleSuggestionBase.
@@ -20,18 +19,6 @@ abstract class BundleSuggestionBase extends PluginBase implements BundleSuggesti
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityTypeManager;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static(
-      $configuration,
-      $plugin_id,
-      $plugin_definition,
-      $container->get('entity_type.manager')
-    );
-  }
 
   /**
    * {@inheritdoc}
