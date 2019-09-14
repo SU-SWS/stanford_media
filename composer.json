@@ -16,6 +16,7 @@
         "davidbarratt/custom-installer": "~1.0",
         "drupal/audio_embed_field": "1.x-dev",
         "drupal/core": "^8.8.0",
+        "drupal/dropzonejs": "~2.0@alpha",
         "drupal/focal_point": "^1.0@beta",
         "drupal/linkit": "~5.0-beta6",
         "enyo/dropzone": "^5.1"

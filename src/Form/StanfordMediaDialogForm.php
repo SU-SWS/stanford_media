@@ -13,8 +13,16 @@ use Drupal\media\MediaInterface;
 use Drupal\stanford_media\Plugin\MediaEmbedDialogManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Overrides Media modal dialog form to allow plugins to change it.
+ *
+ * @package Drupal\stanford_media\Form
+ */
 class StanfordMediaDialogForm extends EditorMediaDialog {
 
+  /**
+   * @var \Drupal\stanford_media\Plugin\MediaEmbedDialogManager
+   */
   protected $dialogPluginManager;
 
   /**
@@ -51,9 +59,9 @@ class StanfordMediaDialogForm extends EditorMediaDialog {
    * {@inheritDoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $orig_response = parent::submitForm($form, $form_state);
-    $new_response = new AjaxResponse();
-    $commands = $orig_response->getCommands();
+    $response = parent::submitForm($form, $form_state);
+    $commands = $response->getCommands();
+
     if ($commands[0]['command'] == 'editorDialogSave') {
       $values = $commands[0]['values'];
 
@@ -63,16 +71,22 @@ class StanfordMediaDialogForm extends EditorMediaDialog {
         $plugin->alterDialogValues($values, $form, $form_state);
       }
 
-      $new_response->addCommand(new EditorDialogSave($values));
-      $new_response->addCommand(new CloseModalDialogCommand());
+      $response = new AjaxResponse();
+      $response->addCommand(new EditorDialogSave($values));
+      $response->addCommand(new CloseModalDialogCommand());
     }
-    return $new_response;
+    return $response;
   }
 
   /**
+   * Get the entity UUID and load the media entity associated to it.
+   *
    * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Current form state.
    *
    * @return \Drupal\media\MediaInterface|null
+   *   Media entity in the form.
+   *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
   protected function getFormMediaEntity(FormStateInterface $form_state) {
@@ -81,9 +95,13 @@ class StanfordMediaDialogForm extends EditorMediaDialog {
   }
 
   /**
+   * Get an array of all plugins that are supposed to alter the dialog.
+   *
    * @param \Drupal\media\MediaInterface $media
+   *   Media entity.
    *
    * @return \Drupal\stanford_media\Plugin\MediaEmbedDialogInterface[]
+   *   Array of plugins.
    *
    * @throws \Drupal\Component\Plugin\Exception\PluginException
    */
@@ -94,7 +112,7 @@ class StanfordMediaDialogForm extends EditorMediaDialog {
       $plugin = $this->dialogPluginManager->createInstance($plugin_id, ['entity' => $media]);
 
       if ($plugin->isApplicable()) {
-        $plugins[] = $plugin;
+        $plugins[$plugin_id] = $plugin;
       }
     }
     return $plugins;
