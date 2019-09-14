@@ -15,18 +15,10 @@
     "require": {
         "davidbarratt/custom-installer": "~1.0",
         "drupal/audio_embed_field": "1.x-dev",
-        "drupal/core": "^8.6.0",
-        "drupal/dropzonejs": "~2.0@alpha",
-        "drupal/embed": "~1.0",
-        "drupal/entity_browser": "2.x-dev",
-        "drupal/entity_embed": "~1.0@beta",
-        "drupal/entity_usage": "~2.0-alpha",
+        "drupal/core": "^8.8.0",
         "drupal/focal_point": "^1.0@beta",
-        "drupal/inline_entity_form": "~1.0@beta",
         "drupal/linkit": "~5.0-beta6",
-        "drupal/video_embed_field": "~2.0-alpha1",
-        "enyo/dropzone": "^5.1",
-        "ext-gd": "^7.1"
+        "enyo/dropzone": "^5.1"
     },
     "extra": {
         "custom-installer": {

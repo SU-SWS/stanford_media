@@ -47,24 +47,11 @@ interface MediaEmbedDialogInterface extends PluginInspectionInterface {
   public function alterDialogForm(array &$form, FormStateInterface $form_state);
 
   /**
-   * Validate the dialog form within the plugin.
-   *
+   * @param array $values
    * @param array $form
-   *   Original Form.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   Current Form State.
    */
-  public function validateDialogForm(array &$form, FormStateInterface $form_state);
-
-  /**
-   * Operate on the dialog form submit before the reset of it takes place.
-   *
-   * @param array $form
-   *   Original Form.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   Current Form State.
-   */
-  public function submitDialogForm(array &$form, FormStateInterface $form_state);
+  public function alterDialogValues(array &$values, array $form, FormStateInterface $form_state);
 
   /**
    * Alter the embed media item before rendering, including adding a preRender.
@@ -73,22 +60,9 @@ interface MediaEmbedDialogInterface extends PluginInspectionInterface {
    *   The media entity build array.
    * @param \Drupal\media\MediaInterface $entity
    *   Selected media entity.
-   * @param array $context
-   *   Context containing the display settings from the embed.
    *
    * @see stanford_media_entity_embed_alter()
    */
-  public function embedAlter(array &$build, MediaInterface $entity, array &$context);
-
-  /**
-   * Alter the media element.
-   *
-   * @param array $element
-   *   Original media render array.
-   *
-   * @return array
-   *   Altered render array.
-   */
-  public function preRender(array $element);
+  public function embedAlter(array &$build, MediaInterface $entity);
 
 }

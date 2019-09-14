@@ -7,7 +7,6 @@ use Drupal\media\MediaInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\stanford_media\Plugin\MediaEmbedDialogBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\video_embed_field\ProviderManager;
 
 /**
  * Base plugin class for video plugins.
@@ -31,17 +30,15 @@ abstract class VideoEmbedBase extends MediaEmbedDialogBase {
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('entity_type.manager'),
-      $container->get('video_embed_field.provider_manager')
+      $container->get('entity_type.manager')
     );
   }
 
   /**
    * {@inheritdoc}
    */
-  public function __construct($configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_manager, ProviderManager $video_manager) {
+  public function __construct($configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_manager);
-    $this->videoManager = $video_manager;
   }
 
   /**

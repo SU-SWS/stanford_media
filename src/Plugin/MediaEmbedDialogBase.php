@@ -84,19 +84,14 @@ abstract class MediaEmbedDialogBase extends PluginBase implements MediaEmbedDial
   /**
    * {@inheritdoc}
    */
-  public function validateDialogForm(array &$form, FormStateInterface $form_state) {
+  public function alterDialogValues(array &$values, array $form, FormStateInterface $form_state) {
+
   }
 
   /**
    * {@inheritdoc}
    */
-  public function submitDialogForm(array &$form, FormStateInterface $form_state) {
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function embedAlter(array &$build, MediaInterface $entity, array &$context) {
+  public function embedAlter(array &$build, MediaInterface $entity) {
   }
 
   /**

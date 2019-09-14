@@ -2,18 +2,16 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.media.image.field_extra_text
-    - field.field.media.image.field_media_image
-    - image.style.thumbnail
-    - media.type.image
+    - field.field.media.remote_video.field_media_oembed_video
+    - media.type.remote_video
   module:
-    - image
+    - media
     - path
 _core:
-  default_config_hash: gq3bovy8uSTqVRHoDwFOwJfaaAzyEE8Hzjk-CkPG4uU
-id: media.image.default
+  default_config_hash: uWhRDlQVs_4mPe2Ndg4OPnEbSc_MDRwz-QBCGlnm-zs
+id: media.remote_video.default
 targetEntityType: media
-bundle: image
+bundle: remote_video
 mode: default
 content:
   created:
@@ -22,21 +20,13 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
-  field_extra_text:
-    weight: 101
+  field_media_oembed_video:
+    type: oembed_textfield
+    weight: 0
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: string_textfield
-    region: content
-  field_media_image:
-    settings:
-      progress_indicator: throbber
-      preview_image_style: thumbnail
-    third_party_settings: {  }
-    type: image_image
-    weight: 0
     region: content
   path:
     type: path

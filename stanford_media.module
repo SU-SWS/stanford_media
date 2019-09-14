@@ -5,78 +5,54 @@
  * stanford_media.module
  */
 
-use Drupal\Core\File\FileSystemInterface;
-use Drupal\Core\Form\FormStateInterface;
-use Drupal\editor\Entity\Editor;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\entity_browser\EntityBrowserFormInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
-use Drupal\file\Entity\File;
-use Drupal\stanford_media\Plugin\media\Source\Image;
 use Drupal\stanford_media\Plugin\audio_embed_field\Provider\StanfordSoundCloud;
 
 /**
- * Implements hook_ENTITY_TYPE_presave().
+ * Implements hook_theme_registry_alter().
+ */
+function stanford_media_theme_registry_alter(&$theme_registry) {
+  // Register the path to the template files.
+  $path = drupal_get_path('module', 'stanford_media') . '/templates';
+  $theme_registry['responsive_image_formatter']['path'] = $path;
+  $theme_registry['dropzonejs']['path'] = $path;
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_view_alter().
+ */
+function stanford_media_media_view_alter(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display) {
+  if (empty($build['#embed']) || !$build['#embed']) {
+    return;
+  }
+
+  foreach (_stanford_media_get_dialog_plugins($entity) as $plugin) {
+    $plugin->embedAlter($build, $entity);
+  }
+}
+
+/**
+ * @param $entity
  *
- * The uuid of the icon file changes so we want to set it when the embed button
- * is saved.
+ * @return \Drupal\stanford_media\Plugin\MediaEmbedDialogInterface[]
+ * @throws \Drupal\Component\Plugin\Exception\PluginException
  */
-function stanford_media_embed_button_presave(EntityInterface $entity) {
-  if ($entity->id() == 'media_browser') {
-    /** @var \Drupal\Core\Entity\EntityRepositoryInterface $repository */
-    $repository = \Drupal::service('entity.repository');
+function _stanford_media_get_dialog_plugins($entity) {
+  $plugins = [];
+  /** @var \Drupal\stanford_media\Plugin\MediaEmbedDialogManager $dialog_manager */
+  $dialog_manager = \Drupal::service('plugin.manager.media_embed_dialog_manager');
+  foreach (array_keys($dialog_manager->getDefinitions()) as $plugin_id) {
+    /** @var \Drupal\stanford_media\Plugin\MediaEmbedDialogInterface $plugin */
+    $plugin = $dialog_manager->createInstance($plugin_id, ['entity' => $entity]);
 
-    // File does exist already, so lets bail.
-    if ($entity->icon_uuid && $repository->loadEntityByUuid('file', $entity->icon_uuid)) {
-      return;
-    }
-
-    // Copy the media browser icon over and set it on the embed button.
-    $module_handler = \Drupal::moduleHandler()->getModule('stanford_media');
-    $icon = $module_handler->getPath() . '/img/media.png';
-    /** @var \Drupal\Core\File\FileSystemInterface $file_system */
-    $file_system = \Drupal::service('file_system');
-
-    $directory = 'public://media/image/';
-
-    $file_system->prepareDirectory($directory, FileSystemInterface::CREATE_DIRECTORY);
-    $destination = $file_system->copy($icon, $directory . $file_system->basename($icon), FileSystemInterface::EXISTS_REPLACE);
-
-    if ($destination) {
-      $file_properties = [
-        'uri' => $destination,
-        'uuid' => '3ed72229-7529-4cf5-b679-1d7a86b1030a',
-      ];
-
-      $file = File::create($file_properties);
-      $file->save();
-      $entity->set('icon_uuid', $file->uuid());
+    if ($plugin->isApplicable()) {
+      $plugins[] = $plugin;
     }
   }
-}
-
-/**
- * Implements hook_ENTITY_TYPE_presave().
- */
-function stanford_media_view_presave(EntityInterface $entity) {
-  // Disable the core view since we use our own.
-  if ($entity->id() == 'media') {
-    $entity->disable();
-  }
-}
-
-/**
- * Implements hook_form_alter().
- */
-function stanford_media_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  if ($form_id == 'media_image_edit_form' && !empty($form_state->getUserInput())) {
-    $form['#attached']['library'][] = 'stanford_media/admin';
-  }
-  if (strpos($form_id, 'entity_browser_') !== FALSE) {
-    $form['selection_display']['#prefix'] = '<div class="selection-action-wrapper">';
-    $form['selection_display']['#suffix'] = '</div>';
-  }
+  return $plugins;
 }
 
 /**
@@ -107,44 +83,6 @@ function stanford_media_inline_entity_form_entity_form_alter(&$entity_form, Form
 }
 
 /**
- * Implements hook_form_FORM_ID_alter().
- *
- * Adds Linkit support for the link field in the entity embed dialog.
- */
-function stanford_media_form_entity_embed_dialog_alter(&$form, FormStateInterface $form_state, $form_id) {
-  if (!isset($form['attributes']['data-entity-embed-display-settings'])) {
-    return;
-  }
-
-  $editor = $form_state->getBuildInfo()['args'][0];
-  // Alter the media embed dialog form only.
-  if (!($editor instanceof Editor)) {
-    return;
-  }
-
-  /** @var \Drupal\media\MediaInterface $entity */
-  $entity = $form_state->get('entity');
-  /** @var \Drupal\stanford_media\Plugin\MediaEmbedDialogManager $dialog_manager */
-  $dialog_manager = \Drupal::service('plugin.manager.media_embed_dialog_manager');
-
-  foreach (array_keys($dialog_manager->getDefinitions()) as $plugin_id) {
-    /** @var \Drupal\stanford_media\Plugin\MediaEmbedDialogInterface $plugin */
-    $plugin = $dialog_manager->createInstance($plugin_id, ['entity' => $entity]);
-
-    if ($plugin->isApplicable()) {
-      // Alter the dialog form for each plugin.
-      // @see \Drupal\stanford_media\Plugin\MediaEmbedDialogInterface::alterDialogForm()
-      $plugin->alterDialogForm($form, $form_state);
-
-      // Adds validate method.
-      array_unshift($form['#validate'], [$plugin, 'validateDialogForm']);
-      // Adds submit method.
-      array_unshift($form['#submit'], [$plugin, 'submitDialogForm']);
-    }
-  }
-}
-
-/**
  * Implements hook_preprocess_image_widget().
  */
 function stanford_media_preprocess_image_widget(&$variables) {
@@ -159,96 +97,6 @@ function stanford_media_preprocess_image_widget(&$variables) {
 }
 
 /**
- * Implements hook_field_widget_WIDGET_TYPE_form_alter().
- */
-function stanford_media_field_widget_entity_browser_entity_reference_form_alter(&$element, FormStateInterface $form_state, $context) {
-  /** @var \Drupal\field\Entity\FieldConfig $field_definition */
-  $field_definition = $context['items']->getFieldDefinition();
-  $handler = $field_definition->getSetting('handler_settings');
-  if (!empty($handler['target_bundles'])) {
-    $element['entity_browser']['#widget_context']['target_bundles'] = $handler['target_bundles'];
-  }
-}
-
-/**
- * Implements hook_theme().
- */
-function stanford_media_theme($existing, $type, $theme, $path) {
-  return [
-    'media__image' => [
-      'template' => 'media--image',
-      'base hook' => 'media',
-    ],
-    'media__image__caption' => [
-      'template' => 'media--image--caption',
-      'base hook' => 'media',
-    ],
-    'media__file' => [
-      'template' => 'media--file',
-      'base hook' => 'media',
-    ],
-  ];
-}
-
-/**
- * Implements hook_theme_registry_alter().
- */
-function stanford_media_theme_registry_alter(&$theme_registry) {
-  // Register the path to the template files.
-  $path = drupal_get_path('module', 'stanford_media') . '/templates';
-  $theme_registry['responsive_image_formatter']['path'] = $path;
-  $theme_registry['entity_embed_container']['path'] = $path;
-  $theme_registry['media']['path'] = $path;
-  $theme_registry['dropzonejs']['path'] = $path;
-}
-
-/**
- * Implements hook_entity_embed_alter().
- */
-function stanford_media_media_embed_alter(array &$build, EntityInterface $entity, array &$context) {
-  /** @var \Drupal\stanford_media\Plugin\MediaEmbedDialog\ $dialog_manager */
-  $dialog_manager = \Drupal::service('plugin.manager.media_embed_dialog_manager');
-  foreach (array_keys($dialog_manager->getDefinitions()) as $plugin_id) {
-    /** @var \Drupal\stanford_media\Plugin\MediaEmbedDialogInterface $plugin */
-    $plugin = $dialog_manager->createInstance($plugin_id, ['entity' => $entity]);
-
-    if ($plugin->isApplicable()) {
-      $build['entity']['#display_settings'] = $context['data-entity-embed-display-settings'];
-      $build['entity']['#pre_render'][] = [$plugin, 'preRender'];
-      $plugin->embedAlter($build, $entity, $context);
-    }
-  }
-}
-
-/**
- * Implements hook_ENTITY_TYPE_build_defaults_alter().
- */
-function stanford_media_media_build_defaults_alter(array &$build, EntityInterface $entity, $view_mode) {
-  // Each media rendering could be different. The same media entity could have
-  // different text or a different image style or any variety of changes. so for
-  // each build, set a cache key with microtime so that every combination will
-  // have its own render cache.
-  $build['#cache']['keys'][] = microtime();
-}
-
-/**
- * Implements hook_preprocess_HOOK().
- */
-function stanford_media_preprocess_media(&$variables) {
-  /** @var \Drupal\media\Entity\MediaType $media_type */
-  $media_type = \Drupal::entityTypeManager()->getStorage('media_type')
-    ->load($variables['media']->bundle());
-  $source_field = $media_type->getSource()
-    ->getConfiguration()['source_field'];
-
-  // If the file media doesn't have a description, set the media name as the
-  // description. This should mostly be needed for the entity view page.
-  if ($variables['media']->bundle() == 'file' && empty($variables['content'][$source_field]['0']['#description'])) {
-    $variables['content'][$source_field]['0']['#description'] = $variables['name'];
-  }
-}
-
-/**
  * Implements hook_ckeditor_css_alter().
  */
 function stanford_media_ckeditor_css_alter(array &$css, Editor $editor) {
@@ -257,58 +105,8 @@ function stanford_media_ckeditor_css_alter(array &$css, Editor $editor) {
 }
 
 /**
- * Implements hook_preprocess_HOOK().
- */
-function stanford_media_preprocess_media__image(&$variables) {
-  /** @var \Drupal\media\MediaTypeInterface $media_type */
-  $media_type = \Drupal::entityTypeManager()->getStorage('media_type')
-    ->load('image');
-  $field_map = $media_type->getFieldMap();
-
-  /** @var \Drupal\media\MediaInterface $media */
-  $media = $variables['elements']['#media'];
-  if (
-    !empty($field_map['caption']) &&
-    $media->hasField($field_map['caption']) &&
-    $media->get($field_map['caption'])->getString()
-  ) {
-
-    $variables['content']['caption'] = $variables['content'][$field_map['caption']] ?? '';
-    unset($variables['content'][$field_map['caption']]);
-  }
-}
-
-/**
- * Implements hook_media_source_info_alter().
- */
-function stanford_media_media_source_info_alter(array &$definitions) {
-  $definitions['image']['class'] = Image::class;
-}
-
-/**
  * Implements hook_audio_embed_field_provider_info_alter().
  */
 function stanford_media_audio_embed_field_provider_info_alter(&$definitions) {
   $definitions['soundcloud']['class'] = StanfordSoundCloud::class;
-}
-
-/**
- * Implements hook_preprocess_HOOK().
- */
-function stanford_media_preprocess_filter_caption(&$variables) {
-  $caption = json_decode(htmlspecialchars_decode((string) $variables['caption']), TRUE);
-  // If the caption is a json string containing the formatted text data, we'll
-  // render out the formatted markup and put that as the caption.
-  if (is_array($caption) && isset($caption['value']) && isset($caption['format'])) {
-    $variables['caption'] = check_markup(htmlspecialchars_decode($caption['value']), $caption['format']);
-  }
-}
-
-/**
- * Implements hook_preprocess_HOOK().
- *
- * Remove linkit attributes from the media entity container.
- */
-function stanford_media_preprocess_entity_embed_container(&$variables) {
-  unset($variables['attributes']['data-entity-embed-display-settings']['linkit']);
 }
