@@ -81,14 +81,19 @@ class Image extends MediaEmbedDialogBase {
    */
   public function alterDialogForm(array &$form, FormStateInterface $form_state) {
     parent::alterDialogForm($form, $form_state);
-    $input = $this->getUserInput($form_state);
 
-    // Image style options.
+    $default_value = NULL;
+    $user_input = $form_state->getUserInput();
+
+    if (!empty($user_input['editor_object']['attributes']['data-image-style'])) {
+      $default_value = $user_input['editor_object']['attributes']['data-image-style'];
+    }
+
     $form['image_style'] = [
       '#type' => 'select',
       '#title' => $this->t('Image Style'),
       '#options' => $this->getImageStyles(),
-      '#default_value' => $input['image_style'],
+      '#default_value' => $default_value,
       '#empty_option' => $this->t('None (original image)'),
       '#weight' => -10,
     ];

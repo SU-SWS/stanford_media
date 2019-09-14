@@ -9,6 +9,7 @@ use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
+use Drupal\editor\EditorInterface;
 use Drupal\stanford_media\Plugin\audio_embed_field\Provider\StanfordSoundCloud;
 
 /**
@@ -99,7 +100,7 @@ function stanford_media_preprocess_image_widget(&$variables) {
 /**
  * Implements hook_ckeditor_css_alter().
  */
-function stanford_media_ckeditor_css_alter(array &$css, Editor $editor) {
+function stanford_media_ckeditor_css_alter(array &$css, EditorInterface $editor) {
   // Add special styles to wysiwyg embeded videos.
   $css[] = drupal_get_path('module', 'stanford_media') . '/css/stanford_media.embed_preview.css';
 }

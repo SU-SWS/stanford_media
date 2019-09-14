@@ -2,7 +2,6 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.media.image.field_extra_text
     - field.field.media.image.field_media_image
     - media.type.image
   module:
@@ -14,14 +13,6 @@ targetEntityType: media
 bundle: image
 mode: default
 content:
-  field_extra_text:
-    weight: 2
-    label: above
-    settings:
-      link_to_entity: false
-    third_party_settings: {  }
-    type: string
-    region: content
   field_media_image:
     label: visually_hidden
     settings:

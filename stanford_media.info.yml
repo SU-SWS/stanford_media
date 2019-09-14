@@ -10,6 +10,7 @@ dependencies:
   - drupal:editor
   - drupal:field
   - drupal:media
+  - drupal:media_library
   - drupal:responsive_image
   - drupal:views
   - focal_point:focal_point

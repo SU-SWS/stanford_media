@@ -20,7 +20,7 @@ class File extends MediaEmbedDialogBase {
    */
   public function isApplicable() {
     if ($this->entity instanceof MediaInterface) {
-      return $this->entity->bundle() == 'file' || $this->entity->bundle() == 'document';
+      return $this->entity->bundle() == 'file';
     }
     return FALSE;
   }
@@ -30,14 +30,18 @@ class File extends MediaEmbedDialogBase {
    */
   public function alterDialogForm(array &$form, FormStateInterface $form_state) {
     parent::alterDialogForm($form, $form_state);
-    $input = $this->getUserInput($form_state);
+    $default_value = NULL;
+    $user_input = $form_state->getUserInput();
+
+    if (!empty($user_input['editor_object']['attributes']['data-image-style'])) {
+      $default_value = $user_input['editor_object']['attributes']['data-image-style'];
+    }
 
     $form['description'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Description'),
       '#description' => $this->t('Optionally enter text to use as the link text.'),
-      '#default_value' => $input['description'] ?? $this->entity->label(),
-      '#required' => TRUE,
+      '#default_value' => $default_value ?: $this->entity->label(),
     ];
   }
 

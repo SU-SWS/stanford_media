@@ -2,8 +2,8 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.storage.media.field_media_document
-    - media.type.document
+    - field.storage.media.field_media_file
+    - media.type.file
   enforced:
     module:
       - media
@@ -11,11 +11,11 @@ dependencies:
     - file
 _core:
   default_config_hash: 52m0CtJVAoE3Qvh2AiciSkV8odAgQeRo4yNDGgUA7dc
-id: media.document.field_media_document
-field_name: field_media_document
+id: media.file.field_media_file
+field_name: field_media_file
 entity_type: media
-bundle: document
-label: Document
+bundle: file
+label: file
 description: ''
 required: true
 translatable: true

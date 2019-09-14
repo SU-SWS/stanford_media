@@ -3,8 +3,8 @@ status: true
 dependencies: {  }
 _core:
   default_config_hash: d_nPD2eMknkYAnSTV4FkaqijceyFJPwT5i_Ih0lEEtc
-id: remote_video
-label: 'Remote video'
+id: video
+label: 'Video'
 description: 'A remotely hosted video from YouTube or Vimeo.'
 source: 'oembed:video'
 queue_thumbnail_downloads: false

@@ -2,7 +2,6 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.media.image.field_extra_text
     - field.field.media.image.field_media_image
     - image.style.thumbnail
     - media.type.image
@@ -22,14 +21,6 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
-  field_extra_text:
-    weight: 101
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    type: string_textfield
-    region: content
   field_media_image:
     settings:
       progress_indicator: throbber

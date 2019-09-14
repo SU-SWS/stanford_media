@@ -3,6 +3,7 @@ status: true
 dependencies:
   module:
     - stanford_media
+    - audio_embed_field
 third_party_settings: {  }
 id: audio
 label: Audio

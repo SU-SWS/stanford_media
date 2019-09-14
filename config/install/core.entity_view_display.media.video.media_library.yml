@@ -3,16 +3,16 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.media.media_library
-    - field.field.media.remote_video.field_media_oembed_video
+    - field.field.media.video.field_media_oembed_video
     - image.style.medium
-    - media.type.remote_video
+    - media.type.video
   module:
     - image
 _core:
   default_config_hash: sLyo3lc_eX4-C1Jv0ivqjuORGfdclLsX09tZf7K3EVM
-id: media.remote_video.media_library
+id: media.video.media_library
 targetEntityType: media
-bundle: remote_video
+bundle: video
 mode: media_library
 content:
   thumbnail:
