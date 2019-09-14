@@ -10,8 +10,6 @@ use Drupal\stanford_media\Plugin\MediaEmbedDialogInterface;
  *
  * @MediaEmbedDialog(
  *   id = "vimeo_video",
- *   media_type = "video",
- *   video_provider = "vimeo"
  * )
  */
 class VimeoVideo extends VideoEmbedBase {
@@ -35,32 +33,34 @@ class VimeoVideo extends VideoEmbedBase {
   public function alterDialogForm(array &$form, FormStateInterface $form_state) {
     parent::alterDialogForm($form, $form_state);
     $input = $this->getUserInput($form_state);
-    unset($form['attributes']['data-align']);
-
-    $form['attributes'][MediaEmbedDialogInterface::SETTINGS_KEY]['intro'] = [
+    $form['video_options'] = [
+      '#type' => 'container',
+      '#tree' => TRUE,
+    ];
+    $form['video_options']['intro'] = [
       '#markup' => $this->t('Some videos do not support all options below.'),
     ];
-    $form['attributes'][MediaEmbedDialogInterface::SETTINGS_KEY]['autoplay'] = [
+    $form['video_options']['autoplay'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Autoplay'),
       '#default_value' => $input['autoplay'],
     ];
-    $form['attributes'][MediaEmbedDialogInterface::SETTINGS_KEY]['loop'] = [
+    $form['video_options']['loop'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Loop video when the video ends'),
       '#default_value' => $input['loop'],
     ];
-    $form['attributes'][MediaEmbedDialogInterface::SETTINGS_KEY]['title'] = [
+    $form['video_options']['title'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Show Title'),
       '#default_value' => $input['title'],
     ];
-    $form['attributes'][MediaEmbedDialogInterface::SETTINGS_KEY]['byline'] = [
+    $form['video_options']['byline'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Show Byline'),
       '#default_value' => $input['byline'],
     ];
-    $form['attributes'][MediaEmbedDialogInterface::SETTINGS_KEY]['color'] = [
+    $form['video_options']['color'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Control Color'),
       '#default_value' => $input['color'],
@@ -82,7 +82,7 @@ class VimeoVideo extends VideoEmbedBase {
     ]);
 
     if ($color && !ctype_xdigit($color)) {
-      $form_state->setError($form['attributes'][MediaEmbedDialogInterface::SETTINGS_KEY]['color'], $this->t('Invalid Color String'));
+      $form_state->setError($form['video_options']['color'], $this->t('Invalid Color String'));
       return;
     }
   }

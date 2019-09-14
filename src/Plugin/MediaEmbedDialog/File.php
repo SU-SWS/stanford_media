@@ -49,9 +49,7 @@ class File extends MediaEmbedDialogBase {
    * {@inheritdoc}
    */
   public function alterDialogValues(array &$values, array $form, FormStateInterface $form_state) {
-    if ($description = $form_state->getValue('description')) {
-      $values['attributes']['data-display-description'] = $description;
-    }
+    $values['attributes']['data-display-description'] = $form_state->getValue('description');
   }
 
   /**

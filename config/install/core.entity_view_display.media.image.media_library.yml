@@ -21,7 +21,7 @@ content:
     region: content
     label: hidden
     settings:
-      image_style: medium
+      image_style: thumbnail
       image_link: ''
     third_party_settings: {  }
 hidden:

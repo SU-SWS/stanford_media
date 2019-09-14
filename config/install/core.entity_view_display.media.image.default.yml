@@ -4,10 +4,11 @@ dependencies:
   config:
     - field.field.media.image.field_media_image
     - media.type.image
+    - responsive_image.styles.full_responsive
   module:
-    - image
+    - responsive_image
 _core:
-  default_config_hash: jOwnt_yq6AKAfqU6f0xKnxEkFQ2eTPJWxrk3WMLbL68
+  default_config_hash: oMYNu7-uPWFgoq7xRrGfl-Tzkm6SnOzrTcKC8u46ewU
 id: media.image.default
 targetEntityType: media
 bundle: image
@@ -16,10 +17,10 @@ content:
   field_media_image:
     label: visually_hidden
     settings:
-      image_style: ''
+      responsive_image_style: full_responsive
       image_link: ''
     third_party_settings: {  }
-    type: image
+    type: responsive_image
     weight: 1
     region: content
 hidden:

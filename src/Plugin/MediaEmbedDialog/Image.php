@@ -135,9 +135,7 @@ class Image extends MediaEmbedDialogBase {
    * {@inheritdoc}
    */
   public function alterDialogValues(array &$values, array $form, FormStateInterface $form_state) {
-    if ($image_style = $form_state->getValue('image_style')) {
-      $values['attributes']['data-image-style'] = $image_style;
-    }
+    $values['attributes']['data-image-style'] = $form_state->getValue('image_style');
   }
 
   /**

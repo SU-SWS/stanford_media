@@ -35,9 +35,12 @@ class YoutubeVideo extends VideoEmbedBase {
   public function alterDialogForm(array &$form, FormStateInterface $form_state) {
     parent::alterDialogForm($form, $form_state);
     $input = $this->getUserInput($form_state);
-    unset($form['attributes']['data-align']);
 
-    $form['attributes'][MediaEmbedDialogInterface::SETTINGS_KEY]['start'] = [
+    $form['video_options'] = [
+      '#type' => 'container',
+      '#tree' => TRUE,
+    ];
+    $form['video_options']['start'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Start at'),
       '#description' => $this->t('Enter a time in the format mm:ss'),
@@ -45,31 +48,31 @@ class YoutubeVideo extends VideoEmbedBase {
       '#default_value' => $this->getReadableTime($input['start']),
     ];
 
-    $form['attributes'][MediaEmbedDialogInterface::SETTINGS_KEY]['autoplay'] = [
+    $form['video_options']['autoplay'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Autoplay'),
       '#default_value' => $input['autoplay'],
     ];
 
-    $form['attributes'][MediaEmbedDialogInterface::SETTINGS_KEY]['rel'] = [
+    $form['video_options']['rel'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Show suggested videos when the video finishes'),
       '#default_value' => $input['rel'],
     ];
 
-    $form['attributes'][MediaEmbedDialogInterface::SETTINGS_KEY]['showinfo'] = [
+    $form['video_options']['showinfo'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Show video title and player actions'),
       '#default_value' => $input['showinfo'],
     ];
 
-    $form['attributes'][MediaEmbedDialogInterface::SETTINGS_KEY]['loop'] = [
+    $form['video_options']['loop'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Loop video when the video ends'),
       '#default_value' => $input['loop'],
     ];
 
-    $form['attributes'][MediaEmbedDialogInterface::SETTINGS_KEY]['class'] = [
+    $form['video_options']['class'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Video Class'),
       '#description' => $this->t('Optionally provide classes that will be added to the video container.'),
