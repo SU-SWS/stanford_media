@@ -4,11 +4,3 @@ admin:
   css:
     component:
       css/stanford_media.admin.css: {}
-
-dropzonejs:
-  version: VERSION
-  css:
-    component:
-      css/stanford_media.dropzonejs.css: {}
-  js:
-    js/stanford_media.dropzonejs.js: {}

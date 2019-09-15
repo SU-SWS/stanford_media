@@ -20,13 +20,4 @@ class MediaEmbedDialog extends Plugin {
    */
   public $id;
 
-  /**
-   * The machine name of the media type to alter.
-   *
-   * @var \Drupal\Core\Annotation\Translation
-   *
-   * @ingroup plugin_translatable
-   */
-  public $media_type;
-
 }

@@ -1,10 +1,13 @@
-#
-# Used to generate responsive images and other items.
-# https://www.advomatic.com/blog/adding-responsive-images-to-your-drupal-8-site
-#
 stanford_media.xs:
   label: XS
   mediaQuery: '(min-width: 0em)'
+  weight: 0
+  multipliers:
+    - 1x
+    - 2x
+stanford_media.sm:
+  label: MD
+  mediaQuery: 'screen and (min-width: 576)'
   weight: 0
   multipliers:
     - 1x
@@ -18,12 +21,19 @@ stanford_media.md:
     - 2x
 stanford_media.lg:
   label: LG
-  mediaQuery: 'screen and (min-width: 1024px)'
+  mediaQuery: 'screen and (min-width: 992px)'
   weight: 0
   multipliers:
     - 1x
     - 2x
 stanford_media.xl:
+  label: XL
+  mediaQuery: 'screen and (min-width: 1200px)'
+  weight: 0
+  multipliers:
+    - 1x
+    - 2x
+stanford_media.2xl:
   label: XL
   mediaQuery: 'screen and (min-width: 1500px)'
   weight: 0

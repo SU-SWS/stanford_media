@@ -2,7 +2,6 @@
 
 namespace Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidation;
 
-use Drupal\media\Entity\Media;
 use Drupal\media\MediaInterface;
 use Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationBase;
 
@@ -173,7 +172,7 @@ class ColorMean extends MediaDuplicateValidationBase {
       $mids[] = $mid;
     }
 
-    return Media::loadMultiple($mids);
+    return $this->entityTypeManager->getStorage('media')->loadMultiple($mids);
   }
 
   /**

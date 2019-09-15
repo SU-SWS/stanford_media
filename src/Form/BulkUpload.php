@@ -326,8 +326,6 @@ class BulkUpload extends FormBase {
     ];
     // Without this, IEF won't know where to hook into the widget.
     ElementSubmit::addCallback($form['actions']['submit'], $form);
-
-    $form['#attached']['library'][] = 'stanford_media/dropzone';
   }
 
   /**

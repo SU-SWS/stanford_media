@@ -2,9 +2,9 @@
 
 namespace Drupal\media_duplicate_validation\Plugin\QueueWorker;
 
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Queue\QueueWorkerBase;
-use Drupal\media\Entity\Media;
 use Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -18,6 +18,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * )
  */
 class CronMediaValidationPopulate extends QueueWorkerBase implements ContainerFactoryPluginInterface {
+
+  /**
+   * Entity type manager service.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
 
   /**
    * Media Duplicate validation manger service.
@@ -34,6 +41,7 @@ class CronMediaValidationPopulate extends QueueWorkerBase implements ContainerFa
       $configuration,
       $plugin_id,
       $plugin_definition,
+      $container->get('entity_type.manager'),
       $container->get('plugin.manager.media_duplicate_validation')
     );
   }
@@ -41,8 +49,9 @@ class CronMediaValidationPopulate extends QueueWorkerBase implements ContainerFa
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, MediaDuplicateValidationManager $duplication_manager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, MediaDuplicateValidationManager $duplication_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
+    $this->entityTypeManager = $entity_type_manager;
     $this->duplicationManager = $duplication_manager;
   }
 
@@ -52,7 +61,9 @@ class CronMediaValidationPopulate extends QueueWorkerBase implements ContainerFa
   public function processItem($data) {
     /** @var \Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationInterface $plugin */
     $plugin = $this->duplicationManager->createInstance($data->plugin);
-    if ($media = Media::load($data->mid)) {
+    $media = $this->entityTypeManager->getStorage('media')->load($data->mid);
+
+    if ($media) {
       // Perform the media save method which should store any necessary data.
       $plugin->mediaSave($media);
     }

@@ -7,11 +7,8 @@
 
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
-use Drupal\editor\EditorInterface;
-use Drupal\entity_browser\EntityBrowserFormInterface;
 use Drupal\stanford_media\Form\MediaLibraryFileUploadForm;
 use Drupal\stanford_media\Plugin\audio_embed_field\Provider\StanfordSoundCloud;
 
@@ -53,7 +50,7 @@ function _stanford_media_get_dialog_plugins($entity) {
     $plugin = $dialog_manager->createInstance($plugin_id, ['entity' => $entity]);
 
     if ($plugin->isApplicable()) {
-      $plugins[] = $plugin;
+      $plugins[$plugin_id] = $plugin;
     }
   }
   return $plugins;
@@ -83,28 +80,6 @@ function stanford_media_preprocess_dropzonejs(&$variables) {
   if ($variables['element']['#max_files']) {
     $variables['help_text'] = t('To bulk upload to the media library %link', ['%link' => render($link)]);
   }
-}
-
-/**
- * Implements hook_preprocess_image_widget().
- */
-function stanford_media_preprocess_image_widget(&$variables) {
-  if (isset($variables['data']['focal_point']) && !empty($variables['data']['preview'])) {
-    // Adds some focal point help text.
-    $variables['data']['preview']['help'] = [
-      '#prefix' => '<div class="focal-point-help-text description">',
-      '#suffix' => '</div>',
-      '#markup' => t('To set the focal point (the central focus area) of the image, click and drag the “+” on the image. If no focal point is set, the focal point will default to the center of the image.'),
-    ];
-  }
-}
-
-/**
- * Implements hook_ckeditor_css_alter().
- */
-function stanford_media_ckeditor_css_alter(array &$css, EditorInterface $editor) {
-  // Add special styles to wysiwyg embeded videos.
-  $css[] = drupal_get_path('module', 'stanford_media') . '/css/stanford_media.embed_preview.css';
 }
 
 /**
