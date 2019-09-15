@@ -106,29 +106,14 @@ class Image extends MediaEmbedDialogBase {
    *   Keyed array of image styles and their labels.
    */
   protected function getImageStyles() {
-    try {
-      $styles = $this->entityTypeManager->getStorage('image_style')
-        ->loadMultiple();
-    }
-    catch (\Exception $e) {
-      return [];
-    }
+    $styles = image_style_options(FALSE);
 
-    // If we have a config file that limits the image styles, lets use only
-    // those. Otherwise we'll use all styles.
-    $config = $this->configFactory->get('stanford_media.settings');
-    $allowed_styles = $config->get('embeddable_image_styles') ?: array_keys($styles);
+    $allowed_styles = $this->configFactory->get('stanford_media.settings')
+      ->get('embeddable_image_styles');
 
-    $style_options = [];
-    /** @var \Drupal\image\Entity\ImageStyle $style */
-    foreach ($styles as $style) {
-      if (in_array($style->id(), $allowed_styles)) {
-        $style_options[$style->id()] = $style->label();
-      }
-    }
-    asort($style_options);
-
-    return $style_options;
+    return array_filter($styles, function ($style_id) use ($allowed_styles) {
+      return empty($allowed_styles) || in_array($style_id, $allowed_styles);
+    }, ARRAY_FILTER_USE_KEY);
   }
 
   /**
@@ -145,9 +130,12 @@ class Image extends MediaEmbedDialogBase {
     parent::embedAlter($build, $entity);
     $source_field = static::getMediaSourceField($entity);
     if (!empty($build['#attributes']['data-image-style'])) {
-      $build[$source_field][0]['#theme'] = 'image_formatter';;
-      $build[$source_field][0]['#image_style'] = $build['#attributes']['data-image-style'];
-      $build['#cache']['keys'][] = $build['#attributes']['data-image-style'];
+      // Ensure a user can't put just anything in the html.
+      if (array_key_exists($build['#attributes']['data-image-style'], $this->getImageStyles())) {
+        $build[$source_field][0]['#theme'] = 'image_formatter';;
+        $build[$source_field][0]['#image_style'] = $build['#attributes']['data-image-style'];
+        $build['#cache']['keys'][] = $build['#attributes']['data-image-style'];
+      }
       unset($build['#attributes']['data-image-style']);
     }
   }
