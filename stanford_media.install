@@ -5,6 +5,11 @@
  * stanford_media.install
  */
 
+use Drupal\Component\Utility\Html;
+use Drupal\Core\Entity\Entity\EntityFormDisplay;
+use Drupal\Core\Template\Attribute;
+use Drupal\editor\Entity\Editor;
+use Drupal\filter\Entity\FilterFormat;
 use Drupal\views\Entity\View;
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
 
@@ -220,4 +225,179 @@ function stanford_media_update_8006() {
 
   $old_image_styles->delete();
   $old_captions->delete();
+}
+
+/**
+ * Convert media browser field widgets to media library widgets.
+ */
+function stanford_media_update_8200() {
+  \Drupal::service('module_installer')->install(['media_library']);
+  $media_library_widget = ['type' => 'media_library_widget'];
+
+  /** @var EntityFormDisplay $form_display */
+  foreach (EntityFormDisplay::loadMultiple() as $form_display) {
+    $form_modified = FALSE;
+    foreach ($form_display->getComponents() as $component_name => $settings) {
+      if (isset($settings['type']) && $settings['type'] == 'entity_browser_entity_reference') {
+        $media_library_widget['weight'] = $settings['weight'];
+        $form_display->setComponent($component_name, $media_library_widget);
+        $form_modified = TRUE;
+      }
+    }
+
+    if ($form_modified) {
+      $form_display->save();
+    }
+  }
+
+}
+
+/**
+ * Update text formats by switching the media buttons.
+ */
+function stanford_media_update_8201() {
+
+  /** @var \Drupal\editor\EditorInterface $editor */
+  foreach (Editor::loadMultiple() as $editor) {
+
+    $settings = $editor->getSettings();
+    foreach ($settings['toolbar']['rows'] as &$row_items) {
+      foreach ($row_items as &$row_group) {
+        if ($media_browser_position = array_search('media_browser', $row_group['items'])) {
+          $row_group['items'][$media_browser_position] = 'DrupalMediaLibrary';
+          $editor->setSettings($settings);
+          $editor->save();
+        }
+      }
+    }
+
+  }
+
+  /** @var \Drupal\filter\FilterFormatInterface $filter */
+  foreach (FilterFormat::loadMultiple() as $filter) {
+    $filters = $filter->get('filters');
+    if (isset($filters['entity_embed'])) {
+      $filters['media_embed'] = [
+        'id' => 'media_embed',
+        'provider',
+        'media',
+        'status' => TRUE,
+        'weight' => $filters['entity_embed']['weight'],
+        'settings' => ['default_view_mode' => 'full'],
+      ];
+      // Make sure if the filter strips html tags, we need to keep the
+      // drupal-media tag and its attributes.
+      if (isset($filters['filter_html'])) {
+        $filters['filter_html']['settings']['allowed_html'] .= ' <drupal-media data-entity-type data-entity-uuid data-align data-caption data-* alt>';
+      }
+      $filter->set('filters', $filters);
+      $filter->save();
+    }
+  }
+}
+
+/**
+ * Convert drupal-entity tags in wysiwyg's to drupal-media tags.
+ */
+function stanford_media_update_8202(&$sandbox) {
+  if (!isset($sandbox['count'])) {
+    $sandbox['entities'] = _stanford_media_update_8202_entity_list();
+    $sandbox['count'] = count($sandbox['entities']);
+  }
+
+  $entity_type_manager = \Drupal::entityTypeManager();
+  $entity_ids = array_splice($sandbox['entities'], 0, 25);
+  foreach ($entity_ids as $item) {
+    list($entity_type, $field_name, $entity_id) = explode(':', $item);
+
+    $entity = $entity_type_manager->getStorage($entity_type)->load($entity_id);
+    $field_values = $entity->get($field_name)->getValue();
+
+    foreach ($field_values as &$field_value) {
+      $field_value['value'] = _stanford_media_update_8202_change_tag($field_value['value']);
+    }
+
+    $entity->set($field_name, $field_values);
+    $entity->save();
+  }
+
+  $sandbox['#finished'] = empty($sandbox['entities']) ? 1 : ($sandbox['count'] - count($sandbox['entities'])) / $sandbox['count'];
+}
+
+/**
+ * Parse the drupal-entity tag, and change it into drupal-media tag.
+ *
+ * TODO: video options.
+ *
+ * @param string $html
+ *   Original html markup
+ *
+ * @return string
+ *   New html markup with corrected tokens.
+ */
+function _stanford_media_update_8202_change_tag($html) {
+  preg_match_all("/<drupal-entity.*?\/drupal-entity>/s", $html, $tokens);
+  foreach ($tokens[0] as $token) {
+    $token_dom = Html::load($token);
+    $token_element = $token_dom->getElementsByTagName('drupal-entity')->item(0);
+
+    $new_token_attributes = new Attribute();
+    $new_token_attributes->setAttribute('data-entity-type', 'media');
+    $new_token_attributes->setAttribute('data-entity-uuid', $token_element->getAttribute('data-entity-uuid'));
+
+    if ($alt = $token_element->getAttribute('alt')) {
+      $new_token_attributes->setAttribute('alt', $alt);
+    }
+
+    $display_settings = json_decode($token_element->getAttribute('data-entity-embed-display-settings'), TRUE);
+    if (isset($display_settings['image_style'])) {
+      $new_token_attributes->setAttribute('data-image-style', $display_settings['image_style']);
+    }
+    if (isset($display_settings['description'])) {
+      $new_token_attributes->setAttribute('data-display-description', $display_settings['description']);
+    }
+
+    if ($caption_data = json_decode(htmlspecialchars_decode($token_element->getAttribute('data-caption')), TRUE)) {
+      $caption_text = strip_tags(check_markup($caption_data['value'], $caption_data['format']), '<a>');
+      $new_token_attributes->setAttribute('data-caption', $caption_text ?: $caption_data['value']);
+    }
+
+    $new_token = "<drupal-media$new_token_attributes></drupal-media>";
+
+    if (!empty($display_settings['linkit']['href'])) {
+      $link_attributes = new Attribute($display_settings['linkit']);
+      $new_token = "<a$link_attributes>$new_token</a>";
+    }
+    $html = str_replace($token, $new_token, $html);
+  }
+
+  return $html;
+}
+
+/**
+ * Get the list of entities with drupal-entity tokens.
+ *
+ * @return array
+ *   List of entities needing fixed.
+ */
+function _stanford_media_update_8202_entity_list() {
+  $list = [];
+  foreach (_stanford_media_update_8005_get_filter_fields() as $field) {
+    list($entity_type, $field_name) = explode(':', $field);
+
+    try {
+      $entity_ids = \Drupal::entityQuery($entity_type)
+        ->condition($field_name, '<drupal-entity', 'CONTAINS')
+        ->execute();
+    }
+    catch (Exception $e) {
+      continue;
+    }
+
+    foreach ($entity_ids as $entity_id) {
+      $list[] = "$entity_type:$field_name:$entity_id";
+    }
+  }
+  asort($list);
+  return array_unique($list);
 }
