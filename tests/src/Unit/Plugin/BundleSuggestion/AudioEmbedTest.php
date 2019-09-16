@@ -22,6 +22,7 @@ class AudioEmbedTest extends BundleSuggestionTestBase {
       ->willReturn(['id' => 'foo']);
 
     $this->container->set('audio_embed_field.provider_manager', $audio_provider_manager);
+    \Drupal::setContainer($this->container);
 
     $plugin = AudioEmbed::create($this->container, [], '', []);
     $this->assertNotEmpty($plugin->getBundleFromString($this->randomMachineName()));
@@ -37,7 +38,7 @@ class AudioEmbedTest extends BundleSuggestionTestBase {
       ->willReturn(NULL);
 
     $this->container->set('audio_embed_field.provider_manager', $audio_provider_manager);
-
+    \Drupal::setContainer($this->container);
     $plugin = AudioEmbed::create($this->container, [], '', []);
     $this->assertNull($plugin->getBundleFromString($this->randomMachineName()));
   }
