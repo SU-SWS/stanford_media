@@ -9,9 +9,7 @@ use Drupal\stanford_media\Plugin\MediaEmbedDialogBase;
 /**
  * Changes embedded file media items.
  *
- * @MediaEmbedDialog(
- *   id = "file",
- * )
+ * @MediaEmbedDialog
  */
 class File extends MediaEmbedDialogBase {
 

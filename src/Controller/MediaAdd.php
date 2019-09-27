@@ -15,7 +15,7 @@ use Drupal\stanford_media\Plugin\BundleSuggestionManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class MediaAdd.
+ * Class MediaAdd to provide links to upload media.
  *
  * @package Drupal\stanford_media\Controller
  */

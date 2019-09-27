@@ -9,9 +9,9 @@ use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
-use Drupal\media\OEmbed\Provider;
 use Drupal\stanford_media\Form\MediaLibraryFileUploadForm;
 use Drupal\stanford_media\Plugin\audio_embed_field\Provider\StanfordSoundCloud;
+use Drupal\stanford_media\Plugin\media\Source\StanfordOEmbedDeriver;
 
 /**
  * Implements hook_theme_registry_alter().
@@ -37,12 +37,17 @@ function stanford_media_media_view_alter(array &$build, EntityInterface $entity,
 }
 
 /**
- * @param $entity
+ * Get a list of all plugins applicable for the entity.
+ *
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ *   The media entity to check for plugins.
  *
  * @return \Drupal\stanford_media\Plugin\MediaEmbedDialogInterface[]
+ *   Array of applicable plugins.
+ *
  * @throws \Drupal\Component\Plugin\Exception\PluginException
  */
-function _stanford_media_get_dialog_plugins($entity) {
+function _stanford_media_get_dialog_plugins(EntityInterface $entity) {
   $plugins = [];
   /** @var \Drupal\stanford_media\Plugin\MediaEmbedDialogManager $dialog_manager */
   $dialog_manager = \Drupal::service('plugin.manager.media_embed_dialog_manager');

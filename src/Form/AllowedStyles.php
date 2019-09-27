@@ -88,6 +88,7 @@ class AllowedStyles extends ConfigFormBase {
    *   Keyed array of image styles and their label.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   protected function getImageStyles() {
     $styles = $this->entityTypeManager->getStorage('image_style')

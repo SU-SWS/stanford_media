@@ -2,7 +2,6 @@
 
 namespace Drupal\stanford_media\Plugin;
 
-use Drupal\Component\Serialization\Json;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\PluginBase;
@@ -79,6 +78,13 @@ abstract class MediaEmbedDialogBase extends PluginBase implements MediaEmbedDial
     if (!empty($form['attributes']['data-caption'])) {
       $form['attributes']['data-caption']['#type'] = 'hidden';
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function validateDialogForm(array $form, FormStateInterface $form_state) {
+
   }
 
   /**
