@@ -3,6 +3,7 @@
 namespace Drupal\stanford_media\Plugin\MediaEmbedDialog;
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\media\MediaInterface;
 use Drupal\stanford_media\Plugin\MediaEmbedDialogInterface;
 
 /**
@@ -10,8 +11,6 @@ use Drupal\stanford_media\Plugin\MediaEmbedDialogInterface;
  *
  * @MediaEmbedDialog(
  *   id = "youtube_video",
- *   media_type = "video",
- *   video_provider = "youtube"
  * )
  */
 class YoutubeVideo extends VideoEmbedBase {
@@ -19,12 +18,23 @@ class YoutubeVideo extends VideoEmbedBase {
   /**
    * {@inheritdoc}
    */
+  public function isApplicable() {
+    $source_field = static::getMediaSourceField($this->entity);
+    if (parent::isApplicable()) {
+      $url = $this->entity->get($source_field)->getString();
+      preg_match('/^https?:\/\/(www\.)?vimeo.com\/(channels\/[a-zA-Z0-9]*\/)?(?<id>[0-9]*)(\/[a-zA-Z0-9]+)?(\#t=(\d+)s)?$/', $url, $matches);
+      return isset($matches['id']);
+    }
+    return FALSE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getDefaultInput() {
     $config = parent::getDefaultInput();
     $config += [
-      'start' => 0,
-      'rel' => 0,
-      'showinfo' => 1,
+      'data-video-start' => 0,
     ];
     return $config;
   }
@@ -45,38 +55,26 @@ class YoutubeVideo extends VideoEmbedBase {
       '#title' => $this->t('Start at'),
       '#description' => $this->t('Enter a time in the format mm:ss'),
       '#size' => 5,
-      '#default_value' => $this->getReadableTime($input['start']),
+      '#default_value' => $this->getReadableTime($input['data-video-start']),
     ];
 
     $form['video_options']['autoplay'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Autoplay'),
-      '#default_value' => $input['autoplay'],
-    ];
-
-    $form['video_options']['rel'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Show suggested videos when the video finishes'),
-      '#default_value' => $input['rel'],
-    ];
-
-    $form['video_options']['showinfo'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Show video title and player actions'),
-      '#default_value' => $input['showinfo'],
+      '#default_value' => $input['data-video-autoplay'],
     ];
 
     $form['video_options']['loop'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Loop video when the video ends'),
-      '#default_value' => $input['loop'],
+      '#default_value' => $input['data-video-loop'],
     ];
 
     $form['video_options']['class'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Video Class'),
       '#description' => $this->t('Optionally provide classes that will be added to the video container.'),
-      '#default_value' => $input['class'],
+      '#default_value' => $input['data-video-class'],
       '#size' => 25,
       '#maxlength' => 128,
     ];
@@ -101,12 +99,7 @@ class YoutubeVideo extends VideoEmbedBase {
    * {@inheritdoc}
    */
   public function validateDialogForm(array &$form, FormStateInterface $form_state) {
-    parent::validateDialogForm($form, $form_state);
-    $start = $form_state->getValue([
-      'attributes',
-      MediaEmbedDialogInterface::SETTINGS_KEY,
-      'start',
-    ]);
+    $start = $form_state->getValue(['video_options', 'start']);
 
     if (is_numeric($start)) {
       return;
@@ -122,27 +115,22 @@ class YoutubeVideo extends VideoEmbedBase {
     sscanf($start, "%d:%d", $minutes, $seconds);
     $start = $minutes * 60 + $seconds;
 
-    $form_state->setValue([
-      'attributes',
-      MediaEmbedDialogInterface::SETTINGS_KEY,
-      'start',
-    ], $start);
+    $form_state->setValue(['video_options', 'start'], $start);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function preRender(array $element) {
-    if (!empty($element['#display_settings'])) {
-      $field = static::getMediaSourceField($element['#media']);
-      foreach ($element['#display_settings'] as $key => $value) {
-        if ($key == 'class' || empty($value)) {
-          continue;
-        }
-        $element[$field][0]['children']['#query'][$key] = $value;
+  public function embedAlter(array &$build, MediaInterface $entity) {
+    parent::embedAlter($build, $entity);
+
+    $field = static::getMediaSourceField($entity);
+    foreach ($build['#attributes'] as $key => $value) {
+      if ($key == 'class' || empty($value) || strpos($key, 'data-video-') === FALSE) {
+        continue;
       }
+      $build[$field][0]['children']['#query'][str_replace('data-video-', '', $key)] = $value;
     }
-    return parent::preRender($element);
   }
 
 }

@@ -28,20 +28,23 @@ class File extends MediaEmbedDialogBase {
   /**
    * {@inheritdoc}
    */
+  public function getDefaultInput() {
+    $input = ['data-display-description' => NULL];
+    return $input + parent::getDefaultInput();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function alterDialogForm(array &$form, FormStateInterface $form_state) {
     parent::alterDialogForm($form, $form_state);
-    $default_value = NULL;
-    $user_input = $form_state->getUserInput();
-
-    if (!empty($user_input['editor_object']['attributes']['data-image-style'])) {
-      $default_value = $user_input['editor_object']['attributes']['data-image-style'];
-    }
+    $user_input = $this->getUserInput($form_state);
 
     $form['description'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Description'),
       '#description' => $this->t('Optionally enter text to use as the link text.'),
-      '#default_value' => $default_value ?: $this->entity->label(),
+      '#default_value' => $user_input['data-display-description'] ?: $this->entity->label(),
     ];
   }
 

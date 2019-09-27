@@ -120,10 +120,7 @@ abstract class MediaEmbedDialogBase extends PluginBase implements MediaEmbedDial
     $input = [];
     if (isset($form_state->getUserInput()['editor_object'])) {
       $editor_object = $form_state->getUserInput()['editor_object'];
-      if (isset($editor_object[MediaEmbedDialogInterface::SETTINGS_KEY])) {
-        $display_settings = Json::decode($editor_object[MediaEmbedDialogInterface::SETTINGS_KEY]);
-        $input = $display_settings ?: [];
-      }
+      $input = $editor_object['attributes'] ?? [];
     }
 
     return $input + $this->getDefaultInput();

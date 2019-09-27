@@ -72,7 +72,7 @@ class Image extends MediaEmbedDialogBase {
    * {@inheritdoc}
    */
   public function getDefaultInput() {
-    $input = ['image_style' => NULL];
+    $input = ['data-image-style' => NULL];
     return $input + parent::getDefaultInput();
   }
 
@@ -81,19 +81,13 @@ class Image extends MediaEmbedDialogBase {
    */
   public function alterDialogForm(array &$form, FormStateInterface $form_state) {
     parent::alterDialogForm($form, $form_state);
-
-    $default_value = NULL;
-    $user_input = $form_state->getUserInput();
-
-    if (!empty($user_input['editor_object']['attributes']['data-image-style'])) {
-      $default_value = $user_input['editor_object']['attributes']['data-image-style'];
-    }
+    $user_input = $this->getUserInput($form_state);
 
     $form['image_style'] = [
       '#type' => 'select',
       '#title' => $this->t('Image Style'),
       '#options' => $this->getImageStyles(),
-      '#default_value' => $default_value,
+      '#default_value' => $user_input['data-image-style'],
       '#empty_option' => $this->t('None (original image)'),
       '#weight' => -10,
     ];

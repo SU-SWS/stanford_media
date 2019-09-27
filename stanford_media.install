@@ -9,7 +9,12 @@ use Drupal\Component\Utility\Html;
 use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\Core\Template\Attribute;
 use Drupal\editor\Entity\Editor;
+use Drupal\embed\Entity\EmbedButton;
+use Drupal\entity_browser\Entity\EntityBrowser;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\filter\Entity\FilterFormat;
+use Drupal\media\Entity\MediaType;
 use Drupal\views\Entity\View;
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
 
@@ -283,7 +288,10 @@ function stanford_media_update_8201() {
         'media',
         'status' => TRUE,
         'weight' => $filters['entity_embed']['weight'],
-        'settings' => ['default_view_mode' => 'full'],
+        'settings' => [
+          'default_view_mode' => 'full',
+          'allowed_view_modes' => [],
+        ],
       ];
       // Make sure if the filter strips html tags, we need to keep the
       // drupal-media tag and its attributes.
@@ -341,12 +349,18 @@ function _stanford_media_update_8202_change_tag($html) {
     $token_dom = Html::load($token);
     $token_element = $token_dom->getElementsByTagName('drupal-entity')->item(0);
 
+    $attributes = [
+      'data-entity-uuid',
+      'alt',
+      'data-align',
+    ];
     $new_token_attributes = new Attribute();
     $new_token_attributes->setAttribute('data-entity-type', 'media');
-    $new_token_attributes->setAttribute('data-entity-uuid', $token_element->getAttribute('data-entity-uuid'));
 
-    if ($alt = $token_element->getAttribute('alt')) {
-      $new_token_attributes->setAttribute('alt', $alt);
+    foreach ($attributes as $attribute) {
+      if ($value = $token_element->getAttribute($attribute)) {
+        $new_token_attributes->setAttribute($attribute, $value);
+      }
     }
 
     $display_settings = json_decode($token_element->getAttribute('data-entity-embed-display-settings'), TRUE);
@@ -400,4 +414,78 @@ function _stanford_media_update_8202_entity_list() {
   }
   asort($list);
   return array_unique($list);
+}
+
+/**
+ * Migrate video data to core supported fields.
+ */
+function stanford_media_update_8203() {
+  if (!FieldStorageConfig::load('media.field_media_oembed_video')) {
+    FieldStorageConfig::create([
+      'field_name' => 'field_media_oembed_video',
+      'entity_type' => 'media',
+      'type' => 'string',
+    ])->save();
+  }
+  if (!FieldConfig::load('media.video.field_media_oembed_video')) {
+    FieldConfig::create([
+      'field_name' => 'field_media_oembed_video',
+      'label' => 'Video URL',
+      'entity_type' => 'media',
+      'bundle' => 'video',
+      'required' => TRUE,
+    ])->save();
+  }
+  /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface $display */
+  foreach (EntityFormDisplay::loadMultiple() as $display) {
+    if ($display->getTargetEntityTypeId() == 'media' && $display->getTargetBundle() == 'video') {
+      $display->removeComponent('field_media_video_embed_field');
+      $display->setComponent('field_media_oembed_video');
+    }
+  }
+
+  drupal_flush_all_caches();
+
+  $video_medias = \Drupal::entityTypeManager()
+    ->getStorage('media')
+    ->loadByProperties(['bundle' => 'video']);
+  /** @var \Drupal\media\MediaInterface $media */
+  foreach ($video_medias as $media) {
+    if (empty($media->get('field_media_oembed_video')->getString())) {
+      $video_url = $media->get('field_media_video_embed_field')->getString();
+      $media->set('field_media_oembed_video', $video_url);
+      $media->save();
+    }
+  }
+
+  $source_config = [
+    'source_field' => 'field_media_oembed_video',
+    'providers' => ['YouTube', 'Vimeo'],
+    'thumbnails_directory' => 'public://oembed_thumbnails',
+  ];
+  /** @var \Drupal\media\MediaTypeInterface $media_type */
+  $media_type = MediaType::load('video');
+  $media_type->set('source_configuration', $source_config);
+  $media_type->set('source', 'oembed:video');
+  $media_type->save();
+}
+
+/**
+ * Delete unused configs now.
+ */
+function stanford_media_update_8204() {
+  $browsers = EntityBrowser::loadMultiple([
+    'file_browser',
+    'image_browser',
+    'media_browser',
+    'video_browser',
+  ]);
+  foreach ($browsers as $browser) {
+    $browser->delete();
+  }
+
+  EmbedButton::load('media_browser')->delete();
+  View::load('media_entity_browser')->delete();
+  \Drupal::messenger()
+    ->addMessage(t('Review these modules to see if they still require being enabled: entity_browser, embed, & entity_embed'));
 }

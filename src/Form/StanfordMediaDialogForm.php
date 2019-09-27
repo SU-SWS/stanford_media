@@ -4,6 +4,7 @@ namespace Drupal\stanford_media\Form;
 
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\CloseModalDialogCommand;
+use Drupal\Core\Entity\EntityDisplayRepositoryInterface;
 use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\editor\Ajax\EditorDialogSave;
@@ -31,6 +32,7 @@ class StanfordMediaDialogForm extends EditorMediaDialog {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('entity.repository'),
+      $container->get('entity_display.repository'),
       $container->get('plugin.manager.media_embed_dialog_manager')
     );
   }
@@ -38,8 +40,8 @@ class StanfordMediaDialogForm extends EditorMediaDialog {
   /**
    * {@inheritDoc}
    */
-  public function __construct(EntityRepositoryInterface $entity_repository, MediaEmbedDialogManager $dialog_plugin_manager) {
-    parent::__construct($entity_repository);
+  public function __construct(EntityRepositoryInterface $entity_repository, EntityDisplayRepositoryInterface $entity_display_repository, MediaEmbedDialogManager $dialog_plugin_manager) {
+    parent::__construct($entity_repository, $entity_display_repository);
     $this->dialogPluginManager = $dialog_plugin_manager;
   }
 
@@ -53,6 +55,17 @@ class StanfordMediaDialogForm extends EditorMediaDialog {
       $plugin->alterDialogForm($form, $form_state, $editor);
     }
     return $form;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function validateForm(array &$form, FormStateInterface $form_state) {
+    parent::validateForm($form, $form_state);
+    $media = $this->getFormMediaEntity($form_state);
+    foreach ($this->getDialogAlterPlugins($media) as $plugin) {
+      $plugin->validateDialogForm($form, $form_state);
+    }
   }
 
   /**

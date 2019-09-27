@@ -16,4 +16,4 @@ dependencies:
   - drupal:views
   - entity_usage:entity_usage
   - focal_point:focal_point
-  - linkit:linkit
+

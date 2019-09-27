@@ -17,12 +17,25 @@ class VimeoVideo extends VideoEmbedBase {
   /**
    * {@inheritdoc}
    */
+  public function isApplicable() {
+    $source_field = static::getMediaSourceField($this->entity);
+    if (parent::isApplicable()) {
+      $url = $this->entity->get($source_field)->getString();
+      preg_match('/^https?:\/\/(www\.)?((?!.*list=)youtube\.com\/watch\?.*v=|youtu\.be\/)(?<id>[0-9A-Za-z_-]*)/', $url, $matches);
+      return isset($matches['id']);
+    }
+    return FALSE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getDefaultInput() {
     $config = parent::getDefaultInput();
     $config += [
-      'title' => 1,
-      'byline' => 1,
-      'color' => '',
+      'data-video-title' => 1,
+      'data-video-byline' => 1,
+      'data-video-color' => '',
     ];
     return $config;
   }
@@ -43,27 +56,27 @@ class VimeoVideo extends VideoEmbedBase {
     $form['video_options']['autoplay'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Autoplay'),
-      '#default_value' => $input['autoplay'],
+      '#default_value' => $input['data-video-autoplay'],
     ];
     $form['video_options']['loop'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Loop video when the video ends'),
-      '#default_value' => $input['loop'],
+      '#default_value' => $input['data-video-loop'],
     ];
     $form['video_options']['title'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Show Title'),
-      '#default_value' => $input['title'],
+      '#default_value' => $input['data-video-title'],
     ];
     $form['video_options']['byline'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Show Byline'),
-      '#default_value' => $input['byline'],
+      '#default_value' => $input['data-video-byline'],
     ];
     $form['video_options']['color'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Control Color'),
-      '#default_value' => $input['color'],
+      '#default_value' => $input['data-video-color'],
       '#size' => 6,
       '#max_length' => 6,
     ];
@@ -75,32 +88,10 @@ class VimeoVideo extends VideoEmbedBase {
   public function validateDialogForm(array &$form, FormStateInterface $form_state) {
     parent::validateDialogForm($form, $form_state);
 
-    $color = $form_state->getValue([
-      'attributes',
-      MediaEmbedDialogInterface::SETTINGS_KEY,
-      'color',
-    ]);
-
+    $color = $form_state->getValue(['video_options', 'color']);
     if ($color && !ctype_xdigit($color)) {
       $form_state->setError($form['video_options']['color'], $this->t('Invalid Color String'));
-      return;
     }
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function preRender(array $element) {
-    if (!empty($element['#display_settings'])) {
-      $field = static::getMediaSourceField($element['#media']);
-      foreach ($element['#display_settings'] as $key => $value) {
-        if ($key == 'color' || $key == 'class' || empty($value)) {
-          continue;
-        }
-        $element[$field][0]['children']['#query'][$key] = $value;
-      }
-    }
-    return parent::preRender($element);
   }
 
 }
