@@ -21,7 +21,7 @@ class VimeoVideo extends VideoEmbedBase {
     $source_field = static::getMediaSourceField($this->entity);
     if (parent::isApplicable()) {
       $url = $this->entity->get($source_field)->getString();
-      preg_match('/^https?:\/\/(www\.)?((?!.*list=)youtube\.com\/watch\?.*v=|youtu\.be\/)(?<id>[0-9A-Za-z_-]*)/', $url, $matches);
+      preg_match('/^https?:\/\/(www\.)?vimeo.com\/(channels\/[a-zA-Z0-9]*\/)?(?<id>[0-9]*)(\/[a-zA-Z0-9]+)?(\#t=(\d+)s)?$/', $url, $matches);
       return isset($matches['id']);
     }
     return FALSE;

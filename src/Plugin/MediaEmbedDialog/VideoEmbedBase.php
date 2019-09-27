@@ -5,6 +5,7 @@ namespace Drupal\stanford_media\Plugin\MediaEmbedDialog;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\media\MediaInterface;
+use Drupal\media\Plugin\media\Source\OEmbed;
 use Drupal\stanford_media\Plugin\MediaEmbedDialogBase;
 
 /**
@@ -29,14 +30,13 @@ abstract class VideoEmbedBase extends MediaEmbedDialogBase {
    * {@inheritdoc}
    */
   public function isApplicable() {
-    $source_field = $this->entity->getFieldDefinition(self::getMediaSourceField($this->entity));
-    if ($this->entity instanceof MediaInterface && $source_field->getType() == 'video_embed_field') {
+    if ($this->entity instanceof MediaInterface && $this->entity->getSource() instanceof OEmbed) {
       return TRUE;
     }
     return FALSE;
   }
 
-    /**
+  /**
    * {@inheritdoc}
    */
   public function alterDialogValues(array &$values, array $form, FormStateInterface $form_state) {
@@ -50,6 +50,7 @@ abstract class VideoEmbedBase extends MediaEmbedDialogBase {
    */
   public function embedAlter(array &$build, MediaInterface $entity) {
     parent::embedAlter($build, $entity);
+    return;
     $source_field = static::getMediaSourceField($entity);
 
     foreach ($build['#attributes'] as $key => $value) {

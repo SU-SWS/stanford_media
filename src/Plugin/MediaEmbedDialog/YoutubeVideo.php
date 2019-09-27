@@ -22,7 +22,7 @@ class YoutubeVideo extends VideoEmbedBase {
     $source_field = static::getMediaSourceField($this->entity);
     if (parent::isApplicable()) {
       $url = $this->entity->get($source_field)->getString();
-      preg_match('/^https?:\/\/(www\.)?vimeo.com\/(channels\/[a-zA-Z0-9]*\/)?(?<id>[0-9]*)(\/[a-zA-Z0-9]+)?(\#t=(\d+)s)?$/', $url, $matches);
+      preg_match('/^https?:\/\/(www\.)?((?!.*list=)youtube\.com\/watch\?.*v=|youtu\.be\/)(?<id>[0-9A-Za-z_-]*)/', $url, $matches);
       return isset($matches['id']);
     }
     return FALSE;
@@ -116,21 +116,6 @@ class YoutubeVideo extends VideoEmbedBase {
     $start = $minutes * 60 + $seconds;
 
     $form_state->setValue(['video_options', 'start'], $start);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function embedAlter(array &$build, MediaInterface $entity) {
-    parent::embedAlter($build, $entity);
-
-    $field = static::getMediaSourceField($entity);
-    foreach ($build['#attributes'] as $key => $value) {
-      if ($key == 'class' || empty($value) || strpos($key, 'data-video-') === FALSE) {
-        continue;
-      }
-      $build[$field][0]['children']['#query'][str_replace('data-video-', '', $key)] = $value;
-    }
   }
 
 }
