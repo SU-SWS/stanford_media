@@ -13,4 +13,11 @@ use Drupal\Component\Annotation\Plugin;
  */
 class MediaEmbedDialog extends Plugin {
 
+  /**
+   * The plugin ID.
+   *
+   * @var string
+   */
+  public $id;
+
 }

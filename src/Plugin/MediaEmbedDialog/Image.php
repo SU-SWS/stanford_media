@@ -13,7 +13,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Changes embedded image media items.
  *
- * @MediaEmbedDialog
+ * @MediaEmbedDialog(
+ *   id = "image"
+ * )
  */
 class Image extends MediaEmbedDialogBase {
 
