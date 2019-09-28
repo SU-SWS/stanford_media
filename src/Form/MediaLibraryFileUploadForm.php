@@ -8,6 +8,7 @@ use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\ElementInfoManagerInterface;
 use Drupal\Core\Render\RendererInterface;
+use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Url;
 use Drupal\dropzonejs\DropzoneJsUploadSaveInterface;
 use Drupal\media\MediaInterface;
@@ -31,6 +32,13 @@ class MediaLibraryFileUploadForm extends FileUploadForm {
   protected $dropzoneSave;
 
   /**
+   * Current active session.
+   *
+   * @var \Drupal\Core\Session\AccountProxyInterface
+   */
+  protected $currentUser;
+
+  /**
    * {@inheritDoc}}
    */
   public static function create(ContainerInterface $container) {
@@ -41,6 +49,7 @@ class MediaLibraryFileUploadForm extends FileUploadForm {
       $container->get('renderer'),
       $container->get('file_system'),
       $container->get('dropzonejs.upload_save'),
+      $container->get('current_user'),
       $container->get('media_library.opener_resolver')
     );
   }
@@ -48,9 +57,10 @@ class MediaLibraryFileUploadForm extends FileUploadForm {
   /**
    * {@inheritDoc}}
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, MediaLibraryUiBuilder $library_ui_builder, ElementInfoManagerInterface $element_info, RendererInterface $renderer, FileSystemInterface $file_system, DropzoneJsUploadSaveInterface $dropzone_upload, OpenerResolverInterface $opener_resolver = NULL) {
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, MediaLibraryUiBuilder $library_ui_builder, ElementInfoManagerInterface $element_info, RendererInterface $renderer, FileSystemInterface $file_system, DropzoneJsUploadSaveInterface $dropzone_upload, AccountProxyInterface $current_user, OpenerResolverInterface $opener_resolver = NULL) {
     parent::__construct($entity_type_manager, $library_ui_builder, $element_info, $renderer, $file_system, $opener_resolver);
     $this->dropzoneSave = $dropzone_upload;
+    $this->currentUser = $current_user;
   }
 
   /**
@@ -100,14 +110,15 @@ class MediaLibraryFileUploadForm extends FileUploadForm {
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    */
   public function uploadDropzoneSubmit(array $form, FormStateInterface $form_state) {
+    $media_type = $this->getMediaType($form_state);
+    $field_config = $media_type->getSource()
+      ->getSourceFieldDefinition($media_type);
+    $field_storage = $field_config->getFieldStorageDefinition();
+    $upload_destination = $field_storage->getSetting('uri_scheme') . '://' . $field_config->getSetting('file_directory');
+
     $files = [];
     foreach ($form_state->getValue(['dropzone', 'uploaded_files']) as $file) {
-      $files[] = $this->dropzoneSave->createFile(
-        $file['path'],
-        'public://',
-        $form['container']['dropzone']['#extensions'],
-        \Drupal::currentUser()
-      );
+      $files[] = $this->dropzoneSave->createFile($file['path'], $upload_destination, $form['container']['dropzone']['#extensions'], $this->currentUser);
     }
     $this->processInputValues($files, $form, $form_state);
   }

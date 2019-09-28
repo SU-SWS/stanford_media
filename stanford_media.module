@@ -68,3 +68,11 @@ function stanford_media_media_source_info_alter(array &$sources) {
   $sources['image']['forms']['media_library_add'] = MediaLibraryFileUploadForm::class;
   $sources['video_file']['forms']['media_library_add'] = MediaLibraryFileUploadForm::class;
 }
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function stanford_media_preprocess_dropzonejs(&$variables) {
+  // Adds additional things to the template for the dropzone js widget.
+  $variables['allowed_files'] = str_replace(' ', ', ', $variables['element']['#extensions']);
+}
