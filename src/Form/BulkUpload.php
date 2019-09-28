@@ -140,10 +140,6 @@ class BulkUpload extends FormBase {
     ];
 
     $form['#attached']['library'][] = 'dropzonejs/widget';
-    // Disable the submit button until the upload sucesfully completed.
-    $form['#attached']['library'][] = 'dropzonejs_eb_widget/common';
-    $form['#attributes']['class'][] = 'dropzonejs-disable-submit';
-
     $this->getEntityForm($form, $form_state);
     return $form;
   }

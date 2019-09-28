@@ -22,6 +22,11 @@ class RouteSubscriber extends RouteSubscriberBase {
     if ($route = $collection->get('editor.media_dialog')) {
       $route->setDefault('_form', StanfordMediaDialogForm::class);
     }
+    if ($route = $collection->get('dropzonejs.upload')) {
+      $requirements = $route->getRequirements();
+      unset($requirements['_csrf_token']);
+      $route->setRequirements($requirements);
+    }
   }
 
 }
