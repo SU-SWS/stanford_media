@@ -187,28 +187,20 @@ class MediaLibraryFileUploadForm extends FileUploadForm {
    * {@inheritDoc}}
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
+    $similar_choices = $form_state->getValue('similar_media', []);
+    // Unset the similar media choices because it causes conflicts later.
+    $form_state->unsetValue('similar_media');
     parent::validateForm($form, $form_state);
+
     // When the user chooses to use an existing item, set that media item into
     // the form state.
-    foreach ($form_state->getValue('similar_media', []) as $delta => $similar_choice) {
+    foreach ($similar_choices as $delta => $similar_choice) {
       if ($similar_choice) {
         $selected_media = $this->entityTypeManager->getStorage('media')
           ->load($similar_choice);
         $form_state->set(['media', $delta], $selected_media);
       }
     }
-  }
-
-  /**
-   * {@inheritDoc}}
-   */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
-    // The user chose to use an existing item instead of adding a new one. So
-    // we can skip saving the media entity.
-    if ($form_state->getValue('similar_media')) {
-      return;
-    }
-    parent::submitForm($form, $form_state);
   }
 
   /**
