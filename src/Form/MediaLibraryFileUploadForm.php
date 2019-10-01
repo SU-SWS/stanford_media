@@ -2,6 +2,8 @@
 
 namespace Drupal\stanford_media\Form;
 
+use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Form\FormBuilderInterface;
@@ -106,8 +108,24 @@ class MediaLibraryFileUploadForm extends FileUploadForm {
   }
 
   /**
+   * {@inheritDoc}}
+   */
+  public function updateFormCallback(array &$form, FormStateInterface $form_state) {
+    if (empty($form_state->getValue(['dropzone', 'uploaded_files']))) {
+      $response = new AjaxResponse();
+      $response->addCommand(new ReplaceCommand('#media-library-add-form-wrapper', $form));
+      return $response;
+    }
+    return parent::updateFormCallback($form, $form_state);
+  }
+
+  /**
+   * Submit handler for the upload button, below the dropzone area..
+   *
    * @param array $form
+   *   The form render array.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state.
    */
   public function uploadDropzoneSubmit(array $form, FormStateInterface $form_state) {
     $media_type = $this->getMediaType($form_state);
