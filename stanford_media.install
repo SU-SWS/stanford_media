@@ -7,6 +7,8 @@
 
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Entity\Entity\EntityFormDisplay;
+use Drupal\Core\Entity\Entity\EntityViewDisplay;
+use Drupal\Core\Entity\Entity\EntityViewMode;
 use Drupal\Core\Template\Attribute;
 use Drupal\editor\Entity\Editor;
 use Drupal\embed\Entity\EmbedButton;
@@ -16,7 +18,7 @@ use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\filter\Entity\FilterFormat;
 use Drupal\media\Entity\MediaType;
 use Drupal\views\Entity\View;
-use Drupal\Core\Entity\Entity\EntityViewDisplay;
+use Drupal\image\Entity\ImageStyle;
 
 /**
  * Enable new submodule.
@@ -326,8 +328,15 @@ function stanford_media_update_8201() {
         }
       }
     }
-
   }
+
+  $display_modes = [];
+  $media_settings = \Drupal::configFactory()
+    ->getEditable('stanford_media.settings');
+  foreach ($media_settings->get('embeddable_image_styles') as $image_style) {
+    $display_modes[] = _stanford_media_update_8202_image_display_mode($image_style);
+  }
+  $media_settings->delete();
 
   /** @var \Drupal\filter\FilterFormatInterface $filter */
   foreach (FilterFormat::loadMultiple() as $filter) {
@@ -341,7 +350,7 @@ function stanford_media_update_8201() {
         'weight' => $filters['entity_embed']['weight'],
         'settings' => [
           'default_view_mode' => 'full',
-          'allowed_view_modes' => [],
+          'allowed_view_modes' => array_combine($display_modes, $display_modes),
         ],
       ];
       // Make sure if the filter strips html tags, we need to keep the
@@ -416,7 +425,7 @@ function _stanford_media_update_8202_change_tag($html) {
 
     $display_settings = json_decode($token_element->getAttribute('data-entity-embed-display-settings'), TRUE);
     if (isset($display_settings['image_style'])) {
-      $new_token_attributes->setAttribute('data-image-style', $display_settings['image_style']);
+      $new_token_attributes->setAttribute('data-view-mode', _stanford_media_update_8202_image_display_mode($display_settings['image_style']));
     }
     if (isset($display_settings['description'])) {
       $new_token_attributes->setAttribute('data-display-description', $display_settings['description']);
@@ -437,6 +446,51 @@ function _stanford_media_update_8202_change_tag($html) {
   }
 
   return $html;
+}
+
+function _stanford_media_update_8202_image_display_mode($image_style) {
+  $view_modes = &drupal_static(__FUNCTION__, []);
+  if (empty($view_modes)) {
+    /** @var \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display */
+    foreach (EntityViewDisplay::loadMultiple() as $display) {
+      if ($display->getTargetEntityTypeId() != 'media' || $display->getTargetBundle() != 'image') {
+        continue;
+      }
+      $field_display = $display->getComponent('field_media_image');
+      if ($field_display && isset($field_display['settings']['image_style'])) {
+        $view_modes[$field_display['settings']['image_style']] = $display->getMode();
+      }
+    }
+  }
+
+  if (!isset($view_modes[$image_style])) {
+    $image_style_entity = ImageStyle::load($image_style);
+    EntityViewMode::create([
+      'id' => 'media.stanford_image_' . $image_style,
+      'targetEntityType' => 'media',
+      'label' => $image_style_entity ? $image_style_entity->label() : $image_style,
+    ])->save();
+    /** @var \Drupal\Core\Entity\Display\EntityViewDisplayInterface $new_display */
+    $new_display = EntityViewDisplay::create([
+      'targetEntityType' => 'media',
+      'bundle' => 'image',
+      'mode' => 'stanford_image_' . $image_style,
+      'status' => TRUE,
+    ]);
+    $settings = [
+      'label' => 'hidden',
+      'type' => 'image',
+      'settings' => ['image_style' => $image_style, 'image_link' => ''],
+    ];
+    $new_display->setComponent('field_media_image', $settings);
+    $new_display->removeComponent('created');
+    $new_display->removeComponent('thumbnail');
+    $new_display->removeComponent('uid');
+    $new_display->save();
+    $view_modes[$image_style] = $new_display->getMode();
+  }
+
+  return $view_modes[$image_style];
 }
 
 /**
@@ -479,7 +533,7 @@ function stanford_media_update_8203(&$sandbox) {
     $sandbox['count'] = count($sandbox['entities']);
   }
 
-  $video_medias =  array_splice($sandbox['entities'], 0, 25);
+  $video_medias = array_splice($sandbox['entities'], 0, 25);
 
   /** @var \Drupal\media\MediaInterface $media */
   foreach ($video_medias as $media) {

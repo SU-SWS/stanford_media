@@ -1,8 +1,0 @@
-embeddable_image_styles:
-  - large
-  - medium
-  - thumbnail
-allowed_caption_formats:
-  - minimal_html
-_core:
-  default_config_hash: I-TcDqhxyv2iSGMHtUI8OH-60dnblO8pm970dvhjtW0
