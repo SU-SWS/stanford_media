@@ -306,6 +306,7 @@ function stanford_media_update_8200() {
   $media_type = MediaType::load('video');
   $media_type->set('source_configuration', $source_config);
   $media_type->set('source', 'oembed:video');
+  $media_type->calculateDependencies();
   $media_type->save();
 
 }
@@ -330,12 +331,13 @@ function stanford_media_update_8201() {
     }
   }
 
-  $display_modes = [];
+  $display_modes = ['full'];
   $media_settings = \Drupal::configFactory()
     ->getEditable('stanford_media.settings');
   foreach ($media_settings->get('embeddable_image_styles') as $image_style) {
     $display_modes[] = _stanford_media_update_8202_image_display_mode($image_style);
   }
+  $display_modes = array_unique($display_modes);
   $media_settings->delete();
 
   /** @var \Drupal\filter\FilterFormatInterface $filter */
@@ -394,8 +396,6 @@ function stanford_media_update_8202(&$sandbox) {
 
 /**
  * Parse the drupal-entity tag, and change it into drupal-media tag.
- *
- * TODO: video options.
  *
  * @param string $html
  *   Original html markup
