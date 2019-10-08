@@ -81,7 +81,7 @@ class EntityUsageLink extends FieldPluginBase {
    * @return \Drupal\Core\Entity\EntityInterface
    *   Parent entity of the child.
    */
-  private function getParent(EntityInterface $child) {
+  protected function getParent(EntityInterface $child) {
     if (method_exists($child, 'getParentEntity')) {
       $sub_parent = $child->getParentEntity();
       return $this->getParent($sub_parent);

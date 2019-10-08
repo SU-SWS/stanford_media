@@ -23,6 +23,9 @@ use Drupal\user\Entity\Role;
  */
 class MediaImageFormatterTest extends KernelTestBase {
 
+  /**
+   * {@inheritDoc}
+   */
   protected static $modules = [
     'image',
     'stanford_media',
@@ -35,6 +38,11 @@ class MediaImageFormatterTest extends KernelTestBase {
     'entity_reference',
   ];
 
+  /**
+   * Created media entity.
+   *
+   * @var \Drupal\Core\Entity\EntityInterface
+   */
   protected $mediaEntity;
 
   /**
