@@ -7,13 +7,3 @@ stanford_media.bulk_upload:
     _custom_access: '\Drupal\stanford_media\Form\BulkUpload::access'
   options:
     _admin_route: TRUE
-
-stanford_media.allowed_styles:
-  path: '/admin/config/media/image-styles/embeddable'
-  defaults:
-    _form: '\Drupal\stanford_media\Form\AllowedStyles'
-    _title: 'Allowed Embedded Image Styles'
-  requirements:
-    _permission: 'administer media types'
-  options:
-    _admin_route: TRUE
