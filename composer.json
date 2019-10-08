@@ -17,6 +17,7 @@
         "drupal/core": "^8.8.0",
         "drupal/dropzonejs": "~2.0@alpha",
         "drupal/entity_usage": "^2.0@beta",
+        "drupal/inline_entity_form": "^1.0@beta",
         "drupal/focal_point": "^1.1",
         "drupal/linkit": "~5.0-beta6",
         "enyo/dropzone": "^5.1"
