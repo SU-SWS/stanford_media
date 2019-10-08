@@ -188,7 +188,7 @@ class MediaLibraryFileUploadForm extends FileUploadForm {
    */
   protected function getSimilarMediaOptions(MediaInterface $media) {
     $options = [];
-    $duplication_service = self::getMediaDuplicationService();
+    $duplication_service = static::getMediaDuplicationService();
 
     // Service doesn't exist.
     if (!$duplication_service) {
@@ -206,7 +206,7 @@ class MediaLibraryFileUploadForm extends FileUploadForm {
       $options[$similar_media->id()] .= $this->t('Use %name', ['%name' => $similar_media->label()])
         ->render();
       $options[$similar_media->id()] .= '</div>';
-      $options[$similar_media->id()] .= self::getRenderDisplay($media_display);
+      $options[$similar_media->id()] .= static::getRenderDisplay($media_display);
     }
 
     return $options;

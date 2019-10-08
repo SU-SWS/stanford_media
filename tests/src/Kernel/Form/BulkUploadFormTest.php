@@ -5,8 +5,6 @@ namespace Drupal\Tests\stanford_media\Kernel\Form;
 use Drupal\Core\Form\FormState;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\KernelTests\KernelTestBase;
-use Drupal\media\Entity\MediaType;
 use Drupal\stanford_media\Form\BulkUpload;
 
 /**
@@ -15,21 +13,7 @@ use Drupal\stanford_media\Form\BulkUpload;
  * @group stanford_media
  * @coversDefaultClass \Drupal\stanford_media\Form\BulkUpload
  */
-class BulkUploadFormTest extends KernelTestBase {
-
-  /**
-   * {@inheritDoc}
-   */
-  protected static $modules = [
-    'system',
-    'stanford_media',
-    'field',
-    'file',
-    'image',
-    'dropzonejs',
-    'user',
-    'media',
-  ];
+class BulkUploadFormTest extends StanfordMediaFormTestBase {
 
   /**
    * Testing form namespace argument.
@@ -37,33 +21,6 @@ class BulkUploadFormTest extends KernelTestBase {
    * @var string
    */
   protected $formArg = '\Drupal\stanford_media\Form\BulkUpload';
-
-  /**
-   * {@inheritDoc}
-   */
-  protected function setUp() {
-    parent::setUp();
-    $this->installEntitySchema('file');
-    $this->installEntitySchema('user');
-    $this->installEntitySchema('media');
-    $this->installSchema('file', ['file_usage']);
-
-    $media_type = MediaType::create([
-      'name' => 'file',
-      'id' => 'file',
-      'source' => 'file',
-    ]);
-    $media_type->save();
-    // Create the source field.
-    $source_field = $media_type->getSource()->createSourceField($media_type);
-    $source_field->getFieldStorageDefinition()->save();
-    $source_field->save();
-    $media_type->set('source_configuration', ['source_field' => $source_field->getName()])
-      ->save();
-
-    \Drupal::service('file_system')
-      ->copy(__DIR__ . '/testfile.txt', 'temporary://testfile.txt', TRUE);
-  }
 
   /**
    * Test form creation and validation.
