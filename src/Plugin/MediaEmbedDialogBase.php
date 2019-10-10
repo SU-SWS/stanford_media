@@ -31,13 +31,6 @@ abstract class MediaEmbedDialogBase extends PluginBase implements MediaEmbedDial
   protected $entity;
 
   /**
-   * Constant key in the embed dialog.
-   *
-   * @var string
-   */
-  protected $settingsKey = 'data-entity-embed-display-settings';
-
-  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
@@ -69,29 +62,18 @@ abstract class MediaEmbedDialogBase extends PluginBase implements MediaEmbedDial
    * {@inheritdoc}
    */
   public function alterDialogForm(array &$form, FormStateInterface $form_state) {
-    // Unsets the back action buttons since it doesn't do anything from inside
-    // the dialog form. This will prevent users from accidentally going back to
-    // the media browser listing modal.
-    unset($form['actions']['back']);
-
-    // Hide captions from all forms unless the plugin changes it.
-    if (!empty($form['attributes']['data-caption'])) {
-      $form['attributes']['data-caption']['#type'] = 'hidden';
-    }
   }
 
   /**
    * {@inheritdoc}
    */
   public function validateDialogForm(array $form, FormStateInterface $form_state) {
-
   }
 
   /**
    * {@inheritdoc}
    */
   public function alterDialogValues(array &$values, array $form, FormStateInterface $form_state) {
-
   }
 
   /**
