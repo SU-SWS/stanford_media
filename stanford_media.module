@@ -7,7 +7,15 @@
 
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\editor\Entity\Editor;
 use Drupal\stanford_media\Form\MediaLibraryFileUploadForm;
+
+/**
+ * Implements hook_ckeditor_css_alter().
+ */
+function stanford_media_ckeditor_css_alter(array &$css, Editor $editor) {
+  $css[] = drupal_get_path('module', 'stanford_media') . '/css/stanford_media.css';
+}
 
 /**
  * Implements hook_theme_registry_alter().
@@ -17,6 +25,7 @@ function stanford_media_theme_registry_alter(&$theme_registry) {
   $path = drupal_get_path('module', 'stanford_media') . '/templates';
   $theme_registry['responsive_image_formatter']['path'] = $path;
   $theme_registry['dropzonejs']['path'] = $path;
+  $theme_registry['filter_caption']['path'] = $path;
 }
 
 /**
