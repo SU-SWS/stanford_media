@@ -9,7 +9,7 @@ use Drupal\stanford_media\Plugin\MediaEmbedDialogBase;
  * Modifies all embed dialogs for all media types.
  *
  * @MediaEmbedDialog(
- *   id = "file"
+ *   id = "all_media"
  * )
  */
 class Media extends MediaEmbedDialogBase {
