@@ -1,4 +1,3 @@
-uuid: 29e87d43-96fd-407e-8b79-67634023311e
 langcode: en
 status: true
 dependencies: {  }
@@ -13,4 +12,3 @@ effects:
       width: 2400
       height: null
       upscale: true
-

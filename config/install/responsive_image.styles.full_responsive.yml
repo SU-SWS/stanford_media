@@ -1,4 +1,3 @@
-uuid: 77b69a0c-cd0a-4916-8844-d0acc355dded
 langcode: en
 status: true
 dependencies:
@@ -47,4 +46,3 @@ image_style_mappings:
     image_mapping: responsive_small
 breakpoint_group: stanford_media
 fallback_image_style: responsive_large
-
