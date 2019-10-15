@@ -66,6 +66,25 @@ class MediaLibraryFileUploadForm extends FileUploadForm {
   }
 
   /**
+   * Change the dropzone upload path to one with a correct token.
+   *
+   * @param array $element
+   *   Dropzone form render array.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Current form state.
+   *
+   * @return array
+   *   Modified form render array.
+   */
+  public static function afterBuildDropzone(array $element, FormStateInterface $form_state) {
+    $token_generator = \Drupal::service('csrf_token');
+    $url = Url::fromRoute('dropzonejs.upload');
+    $url = Url::fromRoute('dropzonejs.upload', [], ['query' => ['token' => $token_generator->get($url->getInternalPath())]]);
+    $element['uploaded_files']['#attributes']['data-upload-path'] = $url->toString();
+    return $element;
+  }
+
+  /**
    * {@inheritDoc}}
    */
   protected function buildInputElement(array $form, FormStateInterface $form_state) {
@@ -80,6 +99,7 @@ class MediaLibraryFileUploadForm extends FileUploadForm {
       '#extensions' => $element['container']['upload']['#upload_validators']['file_validate_extensions'][0],
       '#max_files' => $element['container']['upload']['#remaining_slots'],
       '#clientside_resize' => FALSE,
+      '#after_build' => [[get_class($this), 'afterBuildDropzone']],
     ];
     $element['container']['continue'] = [
       '#type' => 'submit',
