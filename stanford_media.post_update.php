@@ -308,6 +308,11 @@ function _stanford_media_post_update_8202_entity_list() {
         ->execute();
     }
     catch (Exception $e) {
+      \Drupal::logger('stanford_media')
+        ->warning(t('Unable to query for %type entities with the field %field'), [
+          '%type' => $entity_type,
+          '%field' => $field_name,
+        ]);
       continue;
     }
 
