@@ -188,9 +188,11 @@ function stanford_media_post_update_8202(&$sandbox) {
  *
  * @return string
  *   New html markup with corrected tokens.
+ *
+ * @throws \Drupal\Core\Entity\EntityStorageException
  */
 function _stanford_media_post_update_8202_change_tag($html) {
-  preg_match_all("/<drupal-entity.*?\/drupal-entity>/s", $html, $tokens);
+  preg_match_all("/<drupal-entity.*?data-entity-type=\"media\".*?\/drupal-entity>/s", $html, $tokens);
   foreach ($tokens[0] as $token) {
     $token_dom = Html::load($token);
     $token_element = $token_dom->getElementsByTagName('drupal-entity')->item(0);
