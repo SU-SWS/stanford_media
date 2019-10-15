@@ -234,6 +234,17 @@ function _stanford_media_post_update_8202_change_tag($html) {
   return $html;
 }
 
+/**
+ * Create a display mode for each image style.
+ *
+ * @param string $image_style
+ *   Image style id.
+ *
+ * @return \Drupal\Core\Entity\Display\EntityViewDisplayInterface
+ *   The existing or new entity view display object.
+ *
+ * @throws \Drupal\Core\Entity\EntityStorageException
+ */
 function _stanford_media_post_update_8202_image_display_mode($image_style) {
   $view_modes = &drupal_static(__FUNCTION__, []);
   if (empty($view_modes)) {
