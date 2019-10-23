@@ -47,13 +47,19 @@ function stanford_media_post_update_8200() {
   }
 
   if (!FieldConfig::load('media.video.field_media_oembed_video')) {
-    FieldConfig::create([
+    $field_config = [
       'field_name' => 'field_media_oembed_video',
       'label' => 'Video URL',
       'entity_type' => 'media',
       'bundle' => 'video',
       'required' => TRUE,
-    ])->save();
+    ];
+    if ($config_storage->exists('field.field.media.video.field_media_oembed_video')) {
+      $staged_config = $config_storage->read('field.field.media.video.field_media_oembed_video');
+      $field_config['uuid'] = $staged_config['uuid'];
+    }
+
+    FieldConfig::create($field_config)->save();
   }
 
   $media_library_widget = ['type' => 'media_library_widget'];
@@ -383,4 +389,12 @@ function stanford_media_post_update_8204() {
   View::load('media_entity_browser')->delete();
   \Drupal::messenger()
     ->addMessage(t('Review these modules to see if they still require being enabled: entity_browser, embed, & entity_embed'));
+
+  // Delete the old video fields & then reset the media type dependencies.
+  FieldConfig::load('media.video.field_media_video_embed_field')->delete();
+  FieldStorageConfig::load('media.field_media_video_embed_field')->delete();
+  /** @var \Drupal\media\MediaTypeInterface $media_type */
+  $media_type = MediaType::load('video');
+  $media_type->calculateDependencies();
+  $media_type->save();
 }
