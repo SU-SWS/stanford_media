@@ -26,13 +26,26 @@ use Drupal\image\Entity\ImageStyle;
 function stanford_media_post_update_8200() {
   \Drupal::service('module_installer')->install(['media_library']);
 
+  /** @var \Drupal\config_readonly\Config\ConfigReadonlyStorage $config_storage */
+  $config_storage = \Drupal::service('config.storage.staging');
+
   if (!FieldStorageConfig::load('media.field_media_oembed_video')) {
-    FieldStorageConfig::create([
+    $field_storage = [
       'field_name' => 'field_media_oembed_video',
       'entity_type' => 'media',
       'type' => 'string',
-    ])->save();
+    ];
+
+    // If config sync directory has a configuration for the field, make sure to
+    // use the UUID from that. If we don't, the field storage table will be
+    // deleted during config sync and all data will be lost.
+    if ($config_storage->exists('field.storage.media.field_media_oembed_video')) {
+      $staged_config = $config_storage->read('field.storage.media.field_media_oembed_video');
+      $field_storage['uuid'] = $staged_config['uuid'];
+    }
+    FieldStorageConfig::create($field_storage)->save();
   }
+
   if (!FieldConfig::load('media.video.field_media_oembed_video')) {
     FieldConfig::create([
       'field_name' => 'field_media_oembed_video',
