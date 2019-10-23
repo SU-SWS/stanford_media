@@ -392,7 +392,9 @@ function stanford_media_post_update_8204() {
 
   // Delete the old video fields & then reset the media type dependencies.
   FieldConfig::load('media.video.field_media_video_embed_field')->delete();
-  FieldStorageConfig::load('media.field_media_video_embed_field')->delete();
+  if ($storage = FieldStorageConfig::load('media.field_media_video_embed_field')) {
+    $storage->delete();
+  }
   /** @var \Drupal\media\MediaTypeInterface $media_type */
   $media_type = MediaType::load('video');
   $media_type->calculateDependencies();
