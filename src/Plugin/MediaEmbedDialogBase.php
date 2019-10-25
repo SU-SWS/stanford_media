@@ -2,7 +2,6 @@
 
 namespace Drupal\stanford_media\Plugin;
 
-use Drupal\Component\Serialization\Json;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\PluginBase;
@@ -30,13 +29,6 @@ abstract class MediaEmbedDialogBase extends PluginBase implements MediaEmbedDial
    * @var \Drupal\media\MediaInterface
    */
   protected $entity;
-
-  /**
-   * Constant key in the embed dialog.
-   *
-   * @var string
-   */
-  protected $settingsKey = 'data-entity-embed-display-settings';
 
   /**
    * {@inheritdoc}
@@ -70,33 +62,24 @@ abstract class MediaEmbedDialogBase extends PluginBase implements MediaEmbedDial
    * {@inheritdoc}
    */
   public function alterDialogForm(array &$form, FormStateInterface $form_state) {
-    // Unsets the back action buttons since it doesn't do anything from inside
-    // the dialog form. This will prevent users from accidentally going back to
-    // the media browser listing modal.
-    unset($form['actions']['back']);
-
-    // Hide captions from all forms unless the plugin changes it.
-    if (!empty($form['attributes']['data-caption'])) {
-      $form['attributes']['data-caption']['#type'] = 'hidden';
-    }
   }
 
   /**
    * {@inheritdoc}
    */
-  public function validateDialogForm(array &$form, FormStateInterface $form_state) {
+  public function validateDialogForm(array $form, FormStateInterface $form_state) {
   }
 
   /**
    * {@inheritdoc}
    */
-  public function submitDialogForm(array &$form, FormStateInterface $form_state) {
+  public function alterDialogValues(array &$values, array $form, FormStateInterface $form_state) {
   }
 
   /**
    * {@inheritdoc}
    */
-  public function embedAlter(array &$build, MediaInterface $entity, array &$context) {
+  public function embedAlter(array &$build, MediaInterface $entity) {
   }
 
   /**
@@ -125,10 +108,7 @@ abstract class MediaEmbedDialogBase extends PluginBase implements MediaEmbedDial
     $input = [];
     if (isset($form_state->getUserInput()['editor_object'])) {
       $editor_object = $form_state->getUserInput()['editor_object'];
-      if (isset($editor_object[MediaEmbedDialogInterface::SETTINGS_KEY])) {
-        $display_settings = Json::decode($editor_object[MediaEmbedDialogInterface::SETTINGS_KEY]);
-        $input = $display_settings ?: [];
-      }
+      $input = $editor_object['attributes'] ?? [];
     }
 
     return $input + $this->getDefaultInput();

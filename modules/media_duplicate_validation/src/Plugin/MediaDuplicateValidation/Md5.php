@@ -2,8 +2,6 @@
 
 namespace Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidation;
 
-use Drupal\file\Entity\File;
-use Drupal\media\Entity\Media;
 use Drupal\media\MediaInterface;
 use Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationBase;
 
@@ -33,17 +31,21 @@ class Md5 extends MediaDuplicateValidationBase {
     $md5 = md5(@file_get_contents($file->getFileUri()));
     $query = $this->database->select(self::DATABASE_TABLE, 't')
       ->fields('t', ['mid'])
-      ->condition('md5', $md5)
-      ->condition('mid', $entity->id(), '<>')
-      ->execute();
+      ->condition('md5', $md5);
+    // If the media entity hasn't been saved yet, it wont have an ID.
+    if ($entity->id()) {
+      $query->condition('mid', $entity->id(), '<>');
+    }
+    $query_result = $query->execute();
 
     $similar_media = [];
     $key = 100;
-    while ($media_id = $query->fetchField()) {
+    $media_storage = $this->entityTypeManager->getStorage('media');
+    while ($media_id = $query_result->fetchField()) {
       // If the md5 are the same, the file is 100% identical. There might be
       // multiple duplicates, so each key will decrease a tiny bit to allow it
       // to still be in the list of similar items.
-      $similar_media["$key"] = Media::load($media_id);
+      $similar_media["$key"] = $media_storage->load($media_id);
       $key -= '.01';
     }
     return array_filter($similar_media);
@@ -61,8 +63,10 @@ class Md5 extends MediaDuplicateValidationBase {
       return;
     }
 
-    $file = File::load($entity->getSource()->getSourceFieldValue($entity));
-    if ($file instanceof File) {
+    $file = $this->entityTypeManager->getStorage('file')
+      ->load($entity->getSource()->getSourceFieldValue($entity));
+
+    if ($file) {
       $this->database->merge(self::DATABASE_TABLE)
         ->fields([
           'mid' => $entity->id(),

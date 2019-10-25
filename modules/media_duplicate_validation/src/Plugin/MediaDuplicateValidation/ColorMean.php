@@ -2,7 +2,6 @@
 
 namespace Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidation;
 
-use Drupal\media\Entity\Media;
 use Drupal\media\MediaInterface;
 use Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationBase;
 
@@ -147,8 +146,12 @@ class ColorMean extends MediaDuplicateValidationBase {
     $query = $this->database->select(self::DATABASE_TABLE, 't')
       ->fields('t', ['mid']);
 
-    // Excludes the entity we are checking against.
-    $query->condition('mid', $entity->id(), '<>');
+    // If the media entity hasn't been saved yet, it wont have an ID. But we
+    // want to exclude the entity we are checking against.
+    if ($entity->id()) {
+      $query->condition('mid', $entity->id(), '<>');
+    }
+
     for ($i = 1; $i <= self::RESIZE_DIMENSION; $i++) {
 
       // Calculate the number of color values that are considered "similar"
@@ -169,7 +172,7 @@ class ColorMean extends MediaDuplicateValidationBase {
       $mids[] = $mid;
     }
 
-    return Media::loadMultiple($mids);
+    return $this->entityTypeManager->getStorage('media')->loadMultiple($mids);
   }
 
   /**

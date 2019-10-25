@@ -5,8 +5,8 @@
  * stanford_media.install
  */
 
-use Drupal\views\Entity\View;
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
+use Drupal\views\Entity\View;
 
 /**
  * Enable new submodule.
@@ -220,4 +220,11 @@ function stanford_media_update_8006() {
 
   $old_image_styles->delete();
   $old_captions->delete();
+}
+
+/**
+ * Set database schema to 8200 for 2.x version.
+ */
+function stanford_media_update_8200(){
+  // Intentionally left empty.
 }

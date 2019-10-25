@@ -3,11 +3,11 @@
 namespace Drupal\media_duplicate_validation\Plugin;
 
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\PluginBase;
 use Drupal\Core\Queue\QueueFactory;
-use Drupal\file\Entity\File;
 use Drupal\media\MediaInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -15,6 +15,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Base class for duplicate validation plugins.
  */
 abstract class MediaDuplicateValidationBase extends PluginBase implements MediaDuplicateValidationInterface, ContainerFactoryPluginInterface {
+
+  /**
+   * Entity type manager service.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
 
   /**
    * Database connection service.
@@ -45,6 +52,7 @@ abstract class MediaDuplicateValidationBase extends PluginBase implements MediaD
       $configuration,
       $plugin_id,
       $plugin_definition,
+      $container->get('entity_type.manager'),
       $container->get('database'),
       $container->get('queue'),
       $container->get('logger.factory')
@@ -54,8 +62,9 @@ abstract class MediaDuplicateValidationBase extends PluginBase implements MediaD
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, Connection $database, QueueFactory $queue, LoggerChannelFactoryInterface $logger_factory) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, Connection $database, QueueFactory $queue, LoggerChannelFactoryInterface $logger_factory) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
+    $this->entityTypeManager = $entity_type_manager;
     $this->database = $database;
     $this->queue = $queue;
     $this->logger = $logger_factory->get($this->getPluginId());
@@ -108,6 +117,9 @@ abstract class MediaDuplicateValidationBase extends PluginBase implements MediaD
    *
    * @return \Drupal\file\Entity\File|null
    *   File entity or null if not applicable.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   protected function getFile(MediaInterface $entity, array $applicable_types = []) {
     $media_source = $entity->getSource();
@@ -118,7 +130,7 @@ abstract class MediaDuplicateValidationBase extends PluginBase implements MediaD
     // Only check for sources that attach to local files.
     if (array_intersect($definition['allowed_field_types'], $applicable_types)) {
       $fid = $entity->getSource()->getSourceFieldValue($entity);
-      return File::load($fid);
+      return $this->entityTypeManager->getStorage('file')->load($fid);
     }
   }
 

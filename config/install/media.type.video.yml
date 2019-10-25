@@ -1,14 +1,19 @@
 langcode: en
 status: true
-dependencies:
-  module:
-    - video_embed_media
+dependencies: {  }
+_core:
+  default_config_hash: d_nPD2eMknkYAnSTV4FkaqijceyFJPwT5i_Ih0lEEtc
 id: video
-label: Video
-description: 'Use Video urls from YouTube for reusable media.'
-source: video_embed_field
+label: 'Video'
+description: 'A remotely hosted video from YouTube or Vimeo.'
+source: 'oembed:video'
 queue_thumbnail_downloads: false
 new_revision: false
 source_configuration:
-  source_field: field_media_video_embed_field
-field_map: {  }
+  thumbnails_directory: 'public://oembed_thumbnails'
+  providers:
+    - YouTube
+    - Vimeo
+  source_field: field_media_oembed_video
+field_map:
+  title: name

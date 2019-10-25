@@ -1,15 +1,27 @@
-stanford_media.settings:
-  type: config_object
+field.formatter.settings.media_image_formatter:
+  type: mapping
+  label: 'Media Image style formatter settings.'
   mapping:
-    embeddable_image_styles:
-      type: sequence
-      label: 'Available Styles'
-      sequence:
-        type: string
-        id: "Image style Machine name"
-    allowed_caption_formats:
-      type: sequence
-      label: 'Allowed Image Caption Formats'
-      sequence:
-        type: string
-        id: "Image style Machine name"
+    view_mode:
+      type: string
+      label: 'Entity View Mode'
+    link:
+      type: boolean
+      label: 'Link image to parent'
+    image_style:
+      type: string
+      label: 'Image style'
+
+field.formatter.settings.media_responsive_image_formatter:
+  type: mapping
+  label: 'Media responsive image style formatter settings.'
+  mapping:
+    view_mode:
+      type: string
+      label: 'Entity View Mode'
+    link:
+      type: boolean
+      label: 'Link image to parent'
+    image_style:
+      type: string
+      label: 'Image style'

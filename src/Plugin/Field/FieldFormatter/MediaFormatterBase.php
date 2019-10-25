@@ -41,6 +41,7 @@ abstract class MediaFormatterBase extends EntityReferenceEntityFormatter {
    * function usage.
    *
    * @codeCoverageIgnore
+   *   Ignore this because the parent method uses a global t() function.
    */
   public function settingsForm(array $form, FormStateInterface $form_state) {
     $elements = parent::settingsForm($form, $form_state);
@@ -67,6 +68,7 @@ abstract class MediaFormatterBase extends EntityReferenceEntityFormatter {
     $is_applicable = parent::isApplicable($field_definition);
     $target_type = $field_definition->getFieldStorageDefinition()
       ->getSetting('target_type');
+
     return $is_applicable && $target_type == 'media';
   }
 

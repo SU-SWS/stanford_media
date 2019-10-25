@@ -4,7 +4,6 @@ namespace Drupal\Tests\stanford_media\Unit\Plugin\MediaEmbedDialog;
 
 use Drupal\Core\Form\FormState;
 use Drupal\stanford_media\Plugin\MediaEmbedDialog\File;
-use Drupal\stanford_media\Plugin\MediaEmbedDialogInterface;
 
 /**
  * Class File.
@@ -40,8 +39,6 @@ class FileTest extends MediaEmbedDialogTestBase {
     $form_state->clearErrors();
     $this->assertNull($plugin->validateDialogForm($form, $form_state));
     $this->assertFalse($form_state::hasAnyErrors());
-    $this->assertNull($plugin->submitDialogForm($form, $form_state));
-    $this->assertNull($plugin->embedAlter($form, $this->mediaEntity, $form));
   }
 
   /**
@@ -52,13 +49,11 @@ class FileTest extends MediaEmbedDialogTestBase {
 
     $form = ['attributes' => ['data-caption' => ['#type' => 'textfield']]];
     $form_state = new FormState();
-    $display_settings = ['description' => 'foo bar'];
-    $form_state->setUserInput(['editor_object' => [MediaEmbedDialogInterface::SETTINGS_KEY => json_encode($display_settings)]]);
-
+    $user_input = ['editor_object' => ['attributes' => ['data-display-description' => 'foo bar']]];
+    $form_state->setUserInput($user_input);
     $plugin->alterDialogForm($form, $form_state);
-    $this->assertArrayHasKey('description', $form['attributes'][MediaEmbedDialogInterface::SETTINGS_KEY]);
-    $this->assertEquals('foo bar', $form['attributes'][MediaEmbedDialogInterface::SETTINGS_KEY]['description']['#default_value']);
-    $this->assertEquals('hidden', $form['attributes']['data-caption']['#type']);
+    $this->assertArrayHasKey('description', $form);
+    $this->assertEquals('foo bar', $form['description']['#default_value']);
   }
 
   /**
@@ -66,13 +61,13 @@ class FileTest extends MediaEmbedDialogTestBase {
    */
   public function testPreRender() {
     $plugin = File::create($this->container, ['entity' => $this->mediaEntity], '', []);
-    $element = [
+    $build = [
       '#media' => $this->mediaEntity,
-      '#display_settings' => ['description' => 'foo bar'],
+      '#attributes' => ['data-display-description' => 'foo bar'],
     ];
-    $element = $plugin->preRender($element);
-    $this->assertArrayHasKey('field_foo', $element);
-    $this->assertEquals('foo bar', $element['field_foo'][0]['#description']);
+    $plugin->embedAlter($build, $this->mediaEntity);
+    $this->assertArrayHasKey('field_foo', $build);
+    $this->assertEquals('foo bar', $build['field_foo'][0]['#description']);
   }
 
 }

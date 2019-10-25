@@ -7,18 +7,9 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\media\MediaInterface;
 
 /**
- * Defines the interface for entity browser displays.
- *
- * Display plugins determine how a complete entity browser is delivered to the
- * user. They wrap around and encapsulate the entity browser. Examples include:
- *
- * - Displaying the entity browser on its own standalone page.
- * - Displaying the entity browser in an iframe.
- * - Displaying the entity browser in a modal dialog box.
+ * Defines the interface for media dialog form plugins.
  */
 interface MediaEmbedDialogInterface extends PluginInspectionInterface {
-
-  const SETTINGS_KEY = 'data-entity-embed-display-settings';
 
   /**
    * Check if the given plugin is applicable for this media item.
@@ -47,24 +38,26 @@ interface MediaEmbedDialogInterface extends PluginInspectionInterface {
   public function alterDialogForm(array &$form, FormStateInterface $form_state);
 
   /**
-   * Validate the dialog form within the plugin.
+   * Alter the dialog values that will be inserted into the <drupal-media>.
    *
+   * @param array $values
+   *   Keyed array of values.
    * @param array $form
-   *   Original Form.
+   *   Submitted form.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   Current Form State.
+   *   Submitted form state.
    */
-  public function validateDialogForm(array &$form, FormStateInterface $form_state);
+  public function alterDialogValues(array &$values, array $form, FormStateInterface $form_state);
 
   /**
-   * Operate on the dialog form submit before the reset of it takes place.
+   * Validate the dialog form.
    *
    * @param array $form
-   *   Original Form.
+   *   Submitted form.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   Current Form State.
+   *   Submitted form state.
    */
-  public function submitDialogForm(array &$form, FormStateInterface $form_state);
+  public function validateDialogForm(array $form, FormStateInterface $form_state);
 
   /**
    * Alter the embed media item before rendering, including adding a preRender.
@@ -73,22 +66,9 @@ interface MediaEmbedDialogInterface extends PluginInspectionInterface {
    *   The media entity build array.
    * @param \Drupal\media\MediaInterface $entity
    *   Selected media entity.
-   * @param array $context
-   *   Context containing the display settings from the embed.
    *
    * @see stanford_media_entity_embed_alter()
    */
-  public function embedAlter(array &$build, MediaInterface $entity, array &$context);
-
-  /**
-   * Alter the media element.
-   *
-   * @param array $element
-   *   Original media render array.
-   *
-   * @return array
-   *   Altered render array.
-   */
-  public function preRender(array $element);
+  public function embedAlter(array &$build, MediaInterface $entity);
 
 }
