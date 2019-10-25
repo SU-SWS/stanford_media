@@ -4,3 +4,10 @@
     text-align: right;
   }
 }
+
+.cke_editable {
+  img,
+  picture {
+    max-width: 100%;
+  }
+}
