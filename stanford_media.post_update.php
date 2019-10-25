@@ -238,9 +238,16 @@ function _stanford_media_post_update_8202_change_tag($html) {
       $new_token_attributes->setAttribute('data-display-description', $display_settings['description']);
     }
 
-    if ($caption_data = json_decode(htmlspecialchars_decode($token_element->getAttribute('data-caption')), TRUE)) {
-      $caption_text = strip_tags(check_markup($caption_data['value'], $caption_data['format']), '<a>');
-      $new_token_attributes->setAttribute('data-caption', $caption_text ?: $caption_data['value']);
+    if ($caption_data = htmlspecialchars_decode($token_element->getAttribute('data-caption'))) {
+      $json_caption = json_decode($caption_data, TRUE);
+      if (is_array($json_caption)) {
+        $caption_text = strip_tags(check_markup($json_caption['value'], $json_caption['format']), '<a>');
+        $new_token_attributes->setAttribute('data-caption', $caption_text ?: $json_caption['value']);
+      }
+      else {
+        $new_token_attributes->setAttribute('data-caption', $caption_data);
+      }
+
     }
 
     $new_token = "<drupal-media$new_token_attributes></drupal-media>";
