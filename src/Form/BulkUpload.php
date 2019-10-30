@@ -238,11 +238,9 @@ class BulkUpload extends FormBase {
       $files = [];
     }
 
+    $form_files = $form_state->getValue(['upload', 'uploaded_files']);
     // We do some casting because $form_state->getValue() might return NULL.
-    foreach ((array) $form_state->getValue([
-      'upload',
-      'uploaded_files',
-    ], []) as $file) {
+    foreach ((array) $form_files as $file) {
 
       // Check if file exists before we create an entity for it.
       if (!empty($file['path']) && file_exists($file['path'])) {
@@ -252,12 +250,7 @@ class BulkUpload extends FormBase {
 
         if ($media_type) {
           // Validate the media bundle allows for the size of file.
-          $validators = [
-            'file_validate_size' => [
-              $this->bundleSuggestion->getMaxFileSizeBundle($media_type),
-              0,
-            ],
-          ];
+          $max_size = $this->bundleSuggestion->getMaxFileSizeBundle($media_type);
 
           // Create the file entity.
           $files[] = $this->dropzoneSave->createFile(
@@ -265,7 +258,7 @@ class BulkUpload extends FormBase {
             $this->bundleSuggestion->getUploadPath($media_type),
             implode(' ', $this->bundleSuggestion->getAllExtensions()),
             $this->currentUser,
-            $validators
+            ['file_validate_size' => [$max_size, 0]]
           );
         }
       }

@@ -127,8 +127,8 @@ function stanford_media_post_update_8201() {
     $settings = $editor->getSettings();
     foreach ($settings['toolbar']['rows'] as &$row_items) {
       foreach ($row_items as &$row_group) {
-        if ($media_browser_position = array_search('media_browser', $row_group['items'])) {
-          $row_group['items'][$media_browser_position] = 'DrupalMediaLibrary';
+        if ($browser_position = array_search('media_browser', $row_group['items'])) {
+          $row_group['items'][$browser_position] = 'DrupalMediaLibrary';
           $editor->setSettings($settings);
           $editor->save();
         }

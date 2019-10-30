@@ -3,7 +3,13 @@
     "description": "Stanford Media module for Drupal 8 Media management",
     "type": "drupal-custom-module",
     "homepage": "https://github.com/SU-SWS/stanford_media",
-    "authors": [],
+    "authors": [
+        {
+            "name": "Mike Decker",
+            "email": "pookmish@stanford.edu",
+            "role": "Developer"
+        }
+    ],
     "license": "GPL-2.0+",
     "minimum-stability": "dev",
     "repositories": [
@@ -15,11 +21,11 @@
     "require": {
         "davidbarratt/custom-installer": "~1.0",
         "drupal/core": "^8.8.0",
-        "drupal/dropzonejs": "~2.0@alpha",
+        "drupal/dropzonejs": "^2.0@alpha",
         "drupal/entity_usage": "^2.0@beta",
         "drupal/inline_entity_form": "^1.0@beta",
         "drupal/focal_point": "^1.1",
-        "drupal/linkit": "~5.0-beta6",
+        "drupal/linkit": "^5.0-beta6",
         "enyo/dropzone": "^5.1"
     },
     "extra": {

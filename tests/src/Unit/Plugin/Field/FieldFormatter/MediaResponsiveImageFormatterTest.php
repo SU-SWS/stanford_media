@@ -78,7 +78,7 @@ class MediaResponsiveImageFormatterTest extends FieldFormatterTestBase {
 class TestMediaResponsiveImageFormatter extends MediaResponsiveImageFormatter {
 
   /**
-   * {@inheritDoc}}
+   * {@inheritDoc}
    */
   public function getStyleOptions() {
     return parent::getStyleOptions();

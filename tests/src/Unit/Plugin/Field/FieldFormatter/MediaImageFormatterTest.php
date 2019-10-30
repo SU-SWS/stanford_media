@@ -85,7 +85,7 @@ class MediaImageFormatterTest extends FieldFormatterTestBase {
 class TestMediaImageFormatter extends MediaImageFormatter {
 
   /**
-   * {@inheritDoc}}
+   * {@inheritDoc}
    */
   protected function getStyleOptions() {
     return [
