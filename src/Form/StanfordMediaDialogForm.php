@@ -40,9 +40,9 @@ class StanfordMediaDialogForm extends EditorMediaDialog {
   /**
    * {@inheritDoc}
    */
-  public function __construct(EntityRepositoryInterface $entity_repository, EntityDisplayRepositoryInterface $entity_display_repository, MediaEmbedDialogManager $dialog_plugin_manager) {
-    parent::__construct($entity_repository, $entity_display_repository);
-    $this->dialogPluginManager = $dialog_plugin_manager;
+  public function __construct(EntityRepositoryInterface $entity_repository, EntityDisplayRepositoryInterface $display_repository, MediaEmbedDialogManager $dialog_manager) {
+    parent::__construct($entity_repository, $display_repository);
+    $this->dialogPluginManager = $dialog_manager;
   }
 
   /**

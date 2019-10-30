@@ -41,7 +41,7 @@ class MediaLibraryFileUploadForm extends FileUploadForm {
   protected $currentUser;
 
   /**
-   * {@inheritDoc}}
+   * {@inheritDoc}
    */
   public static function create(ContainerInterface $container) {
     return new static(
@@ -57,7 +57,7 @@ class MediaLibraryFileUploadForm extends FileUploadForm {
   }
 
   /**
-   * {@inheritDoc}}
+   * {@inheritDoc}
    */
   public function __construct(EntityTypeManagerInterface $entity_type_manager, MediaLibraryUiBuilder $library_ui_builder, ElementInfoManagerInterface $element_info, RendererInterface $renderer, FileSystemInterface $file_system, DropzoneJsUploadSaveInterface $dropzone_upload, AccountProxyInterface $current_user, OpenerResolverInterface $opener_resolver = NULL) {
     parent::__construct($entity_type_manager, $library_ui_builder, $element_info, $renderer, $file_system, $opener_resolver);
@@ -85,7 +85,7 @@ class MediaLibraryFileUploadForm extends FileUploadForm {
   }
 
   /**
-   * {@inheritDoc}}
+   * {@inheritDoc}
    */
   protected function buildInputElement(array $form, FormStateInterface $form_state) {
     $element = parent::buildInputElement($form, $form_state);
@@ -128,7 +128,7 @@ class MediaLibraryFileUploadForm extends FileUploadForm {
   }
 
   /**
-   * {@inheritDoc}}
+   * {@inheritDoc}
    */
   public function updateFormCallback(array &$form, FormStateInterface $form_state) {
     if (empty($form_state->getValue(['dropzone', 'uploaded_files']))) {
@@ -162,7 +162,7 @@ class MediaLibraryFileUploadForm extends FileUploadForm {
   }
 
   /**
-   * {@inheritDoc}}
+   * {@inheritDoc}
    */
   public function validateUploadElement(array $element, FormStateInterface $form_state) {
     $form_state->setValue('upload', ['fids' => []]);
@@ -170,7 +170,7 @@ class MediaLibraryFileUploadForm extends FileUploadForm {
   }
 
   /**
-   * {@inheritDoc}}
+   * {@inheritDoc}
    */
   protected function buildEntityFormElement(MediaInterface $media, array $form, FormStateInterface $form_state, $delta) {
     $element = parent::buildEntityFormElement($media, $form, $form_state, $delta);
@@ -233,7 +233,7 @@ class MediaLibraryFileUploadForm extends FileUploadForm {
   }
 
   /**
-   * {@inheritDoc}}
+   * {@inheritDoc}
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
     $similar_choices = $form_state->getValue('similar_media', []);
