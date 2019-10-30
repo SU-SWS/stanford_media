@@ -1,5 +1,5 @@
 # [Stanford Media](https://github.com/SU-SWS/stanford_media)
-##### Version: 8.x-1.x
+##### Version: 8.x-2.x
 [![CircleCI](https://circleci.com/gh/SU-SWS/stanford_media.svg?style=svg)](https://circleci.com/gh/SU-SWS/stanford_media)
 
 Maintainers: [pookmish](https://github.com/pookmish)
@@ -12,39 +12,18 @@ Description
 The Stanford Media module is used to enhance the Drupal 8 core media management. The enhancements are listed below.
 This has been confirmed to work with ckeditor.
 
-### Entity Browsers
-
-This module provides several different entity browsers:
- - Media Browser: All media types
- - File Browser: Only file media types
- - Image Browser: Only image media types
- - video browser: Only video media types.
- 
-### Media Field Formatter
-A field formatter for any entity reference fields that target media entities. This allows the above entity browsers
-to be used on content types. If the target entity is an image, it will allow the rendering to use an image style or a
-responsive image style. This helps simplify the display settings of a content type and also eliminates the need for
-various joins and relationships in views.
+### Field Formatters
+In Drupal Core there is no way to select an image style on a media field. The provided field formatters pass in
+an image style or responsive image style into the display mode so that a desired image style is easier to display.
 
 ### Embed Alter Plugins
 When an media entity is being embedded into a wysiwyg, the core media implementation does not provide the user with
-certain customizations. The plugins (found in `src/Plugin/MediaEmbedDialog`) target specific media types and uses and
+certain customizations. The plugins (found in `src/Plugin/MediaEmbedDialog`) target specific media types and
 adds necessary customizations and pre-rendering in order to obtain the desired outcome.
-
-### Entity Browser Plugins
-1. Embed Code: Currently this provides the user the ability to input a video url and it will create a video media entity
-    if the video provider is available.
-2. Dropzone Upload: Allows for a drag and drop upload capability. The upload is limited to a single item in WYSIWYG uses
-    but if using on a field, the upload is limitied to the configured number of items as defined by the field.
 
 ### Bulk Upload Page
 This uses the above Dropzone Upload plugin. It allows a user to drag and drop as many allowed files as they would like.
 It will then provide a form for each item to allow the user to customize image alt texts, item titles, etc.
-
-### Automatic Media Creation
-If a content type is using a traditional image field or uses the video embed field without implementing the media
-browsers above, upon submission of the form, a media entity will be generated automatically. This allows for reusable
-media entities in other areas of the site, such as in the WYSIWYG.
 
 ### Media Duplicate Validation
 To try to reduce the amount of duplicate images, the media duplicate validation will compare newly uploaded images and 
@@ -84,12 +63,12 @@ placed in the `config/optional` directory, it would cause dependency issues duri
 Configuration
 ---
 
-1. Add the Entity Embed button to the WYSIWYG as needed and check the box "Display embedded entities".
-2. It is also suggested to check the box "Linkit URL converter" and place the Linkit converter to process after
-displaying the embedded entities.
-3. If the WYSIWYG is configured to limit allowed HTML Tags, ensure the the below is added to the list of allowed tags:
-`<drupal-entity data-entity-type data-entity-uuid data-entity-embed-display data-entity-embed-display-settings 
-data-align data-caption data-embed-button class>`
+1. Add the Media Library button to the WYSIWYG as needed and check the box "Embed media".
+1. If the WYSIWYG is configured to limit allowed HTML Tags, ensure the the below is added to the list of allowed tags:
+`<drupal-media data-entity-type data-entity-uuid data-caption data-align data-* class>`
+   * Although `data-*` would allow all data attributes and you wouldn't need to add any others, the UI form validation will throw an error without the above attributes.
+   * `data-caption` is only required if captions are allowed. This has to be added and `data-*` cant be relied on due to hard coded checking of the embed form.
+   * `data-align` is only required if the media can be aligned. Similar issue as `data-align` above.
 
 
 Troubleshooting
