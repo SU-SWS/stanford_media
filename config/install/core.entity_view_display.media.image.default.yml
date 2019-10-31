@@ -7,8 +7,6 @@ dependencies:
     - responsive_image.styles.full_responsive
   module:
     - responsive_image
-_core:
-  default_config_hash: oMYNu7-uPWFgoq7xRrGfl-Tzkm6SnOzrTcKC8u46ewU
 id: media.image.default
 targetEntityType: media
 bundle: image

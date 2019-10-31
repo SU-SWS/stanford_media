@@ -9,8 +9,6 @@ dependencies:
     - image.style.responsive_small
   module:
     - stanford_media
-_core:
-  default_config_hash: 87YDNYUvaTv6bZRJVF4DsV7apqKNcQIY5xTHMC97ZjM
 id: full_responsive
 label: 'Full Responsive'
 image_style_mappings:

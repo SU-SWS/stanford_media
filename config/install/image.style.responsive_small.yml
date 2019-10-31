@@ -1,8 +1,6 @@
 langcode: en
 status: true
 dependencies: {  }
-_core:
-  default_config_hash: i2NJduyHpM2G89vg1QOhlHrpF_ICGg01ThAMmp5bXBU
 name: responsive_small
 label: 'Responsive Small (1152)'
 effects:

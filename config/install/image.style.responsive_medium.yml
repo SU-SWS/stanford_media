@@ -1,8 +1,6 @@
 langcode: en
 status: true
 dependencies: {  }
-_core:
-  default_config_hash: '-dpwbV5o-WYRJJZIAKVpWMn8ZyuVH1rajnskyg9LwTk'
 name: responsive_medium
 label: 'Responsive Medium (1536)'
 effects:
