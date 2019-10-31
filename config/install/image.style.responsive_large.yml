@@ -2,13 +2,13 @@ langcode: en
 status: true
 dependencies: {  }
 name: responsive_large
-label: 'Responsive Large (2000)'
+label: 'Responsive Large (1984)'
 effects:
   bf8fce22-5065-4030-8b53-0ac3be71685e:
     uuid: bf8fce22-5065-4030-8b53-0ac3be71685e
     id: image_scale
     weight: 1
     data:
-      width: 2000
+      width: 1984
       height: null
-      upscale: false
+      upscale: true

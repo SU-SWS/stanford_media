@@ -2,13 +2,13 @@ langcode: en
 status: true
 dependencies: {  }
 name: responsive_medium
-label: 'Responsive Medium (1300)'
+label: 'Responsive Medium (1536)'
 effects:
   44682c9a-bfa4-48d1-a4e1-085338e50043:
     uuid: 44682c9a-bfa4-48d1-a4e1-085338e50043
     id: image_scale
     weight: 1
     data:
-      width: 1300
+      width: 1536
       height: null
-      upscale: false
+      upscale: true

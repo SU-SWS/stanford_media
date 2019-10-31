@@ -1,0 +1,14 @@
+langcode: en
+status: true
+dependencies: {  }
+name: responsive_extra_large
+label: 'Responsive Extra Large (2400)'
+effects:
+  80768f63-f811-4643-acd6-da6dff9bc151:
+    uuid: 80768f63-f811-4643-acd6-da6dff9bc151
+    id: image_scale
+    weight: 1
+    data:
+      width: 2400
+      height: null
+      upscale: true

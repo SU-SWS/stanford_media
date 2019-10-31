@@ -1,0 +1,14 @@
+langcode: en
+status: true
+dependencies: {  }
+name: responsive_2x_large
+label: 'Responsive 2X Large (3000)'
+effects:
+  c1a93617-a3d6-44a9-8246-cfee3c901cdf:
+    uuid: c1a93617-a3d6-44a9-8246-cfee3c901cdf
+    id: image_scale
+    weight: 1
+    data:
+      width: 3000
+      height: null
+      upscale: true
