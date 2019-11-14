@@ -9,11 +9,24 @@ use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\editor\Entity\Editor;
 use Drupal\stanford_media\Form\MediaLibraryFileUploadForm;
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Implements hook_field_widget_form_alter().
+ */
+function stanford_media_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
+  if ($context['widget']->getPluginId() == 'text_textarea') {
+    // Adds the library outside of ckeditor iframe.
+    $element['#attached']['library'][] = 'stanford_media/admin';
+  }
+}
 
 /**
  * Implements hook_ckeditor_css_alter().
  */
 function stanford_media_ckeditor_css_alter(array &$css, Editor $editor) {
+  // Adds styles inside the ckeditor iframe.
+  $css[] = drupal_get_path('module', 'stanford_media') . '/css/stanford_media.admin.css';
   $css[] = drupal_get_path('module', 'stanford_media') . '/css/stanford_media.css';
 }
 
