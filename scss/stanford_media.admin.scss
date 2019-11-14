@@ -20,6 +20,7 @@
 }
 
 .media-library-item__edit {
+  display: none;
   position: absolute;
   top: calc(50% - 20px);
   left: calc(50% - 65px);
@@ -45,5 +46,9 @@
     font-size: 2rem;
     height: auto;
     width: auto;
+  }
+
+  article:hover & {
+    display: block;
   }
 }
