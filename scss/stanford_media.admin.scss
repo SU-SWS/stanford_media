@@ -6,3 +6,49 @@
     max-width: 100px;
   }
 }
+
+.cke_editable {
+  img,
+  picture {
+    max-width: 100%;
+  }
+}
+
+.cke_button__drupalmedialibrary_icon {
+  // We need important because the original image is set by javascript.
+  background-image: url('../img/drupalimage.png') !important;
+}
+
+.media-library-item__edit {
+  display: none;
+  position: absolute;
+  top: calc(50% - 20px);
+  left: calc(50% - 65px);
+  background: #004f80;
+  border: 2px solid #60c2ff;
+
+  // Styles when decanter is not in use.
+  padding: 1rem 2rem 1.15rem;
+  color: #fff;
+  font-size: 2rem;
+  height: auto;
+  width: auto;
+
+  &:hover {
+    background: #60c2ff;
+    border-bottom: 2px solid #60c2ff;
+    color: #2e2d29;
+    top: calc(50% - 20px);
+    left: calc(50% - 65px);
+
+    // Styles when decanter is not in use.
+    padding: 1rem 2rem 1.15rem;
+    font-size: 2rem;
+    height: auto;
+    width: auto;
+  }
+
+  article:hover & {
+    display: block;
+  }
+}
