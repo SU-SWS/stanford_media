@@ -190,6 +190,7 @@ class MediaLibraryFileUploadForm extends FileUploadForm {
         '#attached' => ['library' => ['stanford_media/admin']],
         '#prefix' => '<div class="similar-media-options">',
         '#suffix' => '</div>',
+        'fields' => ['#source_field_name' => ''],
       ];
     }
     return $element;
