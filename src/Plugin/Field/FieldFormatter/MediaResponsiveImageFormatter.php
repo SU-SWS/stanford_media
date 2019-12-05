@@ -42,6 +42,9 @@ class MediaResponsiveImageFormatter extends MediaFormatterBase {
    */
   public function preRender($element) {
     $source_field = self::getSourceField($element['#media']);
+    if ($element[$source_field]['#field_type'] != 'image') {
+      return $element;
+    }
 
     $element[$source_field]['#formatter'] = 'responsive_image';
     foreach (Element::children($element[$source_field]) as $delta) {
