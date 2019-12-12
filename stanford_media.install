@@ -6,7 +6,9 @@
  */
 
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
+use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\views\Entity\View;
+use Drupal\media\Entity\MediaType;
 
 /**
  * Enable new submodule.
@@ -225,6 +227,33 @@ function stanford_media_update_8006() {
 /**
  * Set database schema to 8200 for 2.x version.
  */
-function stanford_media_update_8200(){
+function stanford_media_update_8200() {
   // Intentionally left empty.
+}
+
+/**
+ * Change media library form widget for Images.
+ */
+function stanford_media_update_8201(&$sandbox) {
+  /** @var \Drupal\media\MediaTypeInterface $media_type */
+  $media_type = MediaType::load('image');
+
+  /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface $form */
+  $form = EntityFormDisplay::load('media.image.media_library');
+  if (!$media_type || !$form) {
+    return;
+  }
+  $field_name = $media_type->getSource()->getConfiguration()['source_field'];
+  $form->removeComponent($field_name);
+  $options = [
+    'type' => 'image_focal_point',
+    'settings' => [
+      'progress_indicator' => 'throbber',
+      'preview_image_style' => 'thumbnail',
+      'preview_link' => FALSE,
+      'offsets' => '50,50',
+    ],
+  ];
+  $form->setComponent($field_name, $options);
+  $form->save();
 }
