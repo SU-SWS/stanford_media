@@ -33,6 +33,12 @@
             "docroot/libraries/{$name}/": [
                 "enyo/dropzone"
             ]
+        },
+        "patches": {
+            "drupal/focal_point": {
+                "https://www.drupal.org/project/focal_point/issues/3094478": "https://www.drupal.org/files/issues/2019-12-11/focal_point-compatibility-with-media-libary-3094478-2.patch",
+                "https://www.drupal.org/project/focal_point/issues/3098235": "https://www.drupal.org/files/issues/2019-12-11/focal_point-3098235-6.patch"
+            }
         }
     },
     "autoload": {
