@@ -5,56 +5,14 @@
  * stanford_media.module
  */
 
-use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\editor\Entity\Editor;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\entity_browser\EntityBrowserFormInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
-use Drupal\file\Entity\File;
 use Drupal\stanford_media\Plugin\media\Source\Image;
 use Drupal\stanford_media\Plugin\audio_embed_field\Provider\StanfordSoundCloud;
-
-/**
- * Implements hook_ENTITY_TYPE_presave().
- *
- * The uuid of the icon file changes so we want to set it when the embed button
- * is saved.
- */
-function stanford_media_embed_button_presave(EntityInterface $entity) {
-  if ($entity->id() == 'media_browser') {
-    /** @var \Drupal\Core\Entity\EntityRepositoryInterface $repository */
-    $repository = \Drupal::service('entity.repository');
-
-    // File does exist already, so lets bail.
-    if ($entity->icon_uuid && $repository->loadEntityByUuid('file', $entity->icon_uuid)) {
-      return;
-    }
-
-    // Copy the media browser icon over and set it on the embed button.
-    $module_handler = \Drupal::moduleHandler()->getModule('stanford_media');
-    $icon = $module_handler->getPath() . '/img/media.png';
-    /** @var \Drupal\Core\File\FileSystemInterface $file_system */
-    $file_system = \Drupal::service('file_system');
-
-    $directory = 'public://media/image/';
-
-    $file_system->prepareDirectory($directory, FileSystemInterface::CREATE_DIRECTORY);
-    $destination = $file_system->copy($icon, $directory . $file_system->basename($icon), FileSystemInterface::EXISTS_REPLACE);
-
-    if ($destination) {
-      $file_properties = [
-        'uri' => $destination,
-        'uuid' => '3ed72229-7529-4cf5-b679-1d7a86b1030a',
-      ];
-
-      $file = File::create($file_properties);
-      $file->save();
-      $entity->set('icon_uuid', $file->uuid());
-    }
-  }
-}
 
 /**
  * Implements hook_ENTITY_TYPE_presave().
