@@ -5,7 +5,7 @@ namespace Drupal\stanford_media\Plugin\Field\FieldFormatter;
 use Drupal\Core\Render\Element;
 
 /**
- * Plugin implementation of the 'yearonly_academic' formatter.
+ * Plugin implementation of the 'media_responsive_image_formatter' formatter.
  *
  * @FieldFormatter (
  *   id = "media_responsive_image_formatter",
@@ -16,7 +16,7 @@ use Drupal\Core\Render\Element;
  *   }
  * )
  */
-class MediaResponsiveImageFormatter extends MediaFormatterBase {
+class MediaResponsiveImageFormatter extends MediaImageFormatterBase {
 
   /**
    * Get available responsive image styles.

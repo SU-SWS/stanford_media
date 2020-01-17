@@ -1,0 +1,40 @@
+field.formatter.settings.multimedia:
+  type: mapping
+  label: 'Multiple Media Field Formatter'
+  mapping:
+    image:
+      type: mapping
+      label: 'Image formatter settings'
+      image_formatter:
+        type: string
+        label: 'Image Formatter'
+      image_formatter_image_style:
+        type: string
+        label: 'Image Formatter Option'
+      image_formatter_responsive_image_style:
+        type: string
+        label: 'Responsive Image Formatter Option'
+      image_formatter_link:
+        type: string
+        label: 'Image Formatter Link'
+      image_formatter_view_mode:
+        type: string
+        label: 'Image formatter view mode'
+    video:
+      type: mapping
+      label: 'Video formatter settings'
+      video_formatter:
+        type: string
+        label: 'Video formatter option'
+      video_formatter_view_mode:
+        type: string
+        label: 'Video Formatter view mode'
+    audio:
+      type: mapping
+      label: 'Audio formatter settings'
+      audio_formatter:
+        type: string
+        label: 'Audio formatter option'
+      audio_formatter_view_mode:
+        type: string
+        label: 'Audio Formatter view mode'

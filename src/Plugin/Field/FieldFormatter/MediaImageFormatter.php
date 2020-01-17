@@ -5,7 +5,7 @@ namespace Drupal\stanford_media\Plugin\Field\FieldFormatter;
 use Drupal\Core\Render\Element;
 
 /**
- * Plugin implementation of the 'yearonly_academic' formatter.
+ * Plugin implementation of the 'media_image_formatter' formatter.
  *
  * @FieldFormatter (
  *   id = "media_image_formatter",
@@ -16,7 +16,7 @@ use Drupal\Core\Render\Element;
  *   }
  * )
  */
-class MediaImageFormatter extends MediaFormatterBase {
+class MediaImageFormatter extends MediaImageFormatterBase {
 
   /**
    * {@inheritdoc}
