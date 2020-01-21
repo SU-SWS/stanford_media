@@ -2,10 +2,8 @@
 
 namespace Drupal\stanford_media\Plugin\Field\FieldFormatter;
 
-use Drupal\Core\Field\FieldDefinitionInterface;
-use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\Plugin\Field\FieldFormatter\EntityReferenceEntityFormatter;
-use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\media\MediaInterface;
 
 /**
@@ -47,6 +45,10 @@ abstract class MediaFormatterBase extends EntityReferenceEntityFormatter {
    *
    * @return array
    *   An array of view mode labels, keyed by the display mode ID.
+   *
+   * @codeCoverageIgnore
+   *   This method is only used in the form building function and as that is not
+   *   testable, this is not testable.
    */
   protected function getEntityDisplayModes($type = "media") {
     return $this->entityDisplayRepository->getViewModeOptions($type);

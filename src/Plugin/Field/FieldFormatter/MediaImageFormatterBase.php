@@ -2,17 +2,16 @@
 
 namespace Drupal\stanford_media\Plugin\Field\FieldFormatter;
 
-use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\media\MediaInterface;
+use Drupal\Core\Security\TrustedCallbackInterface;
 
 /**
  * Class MediaFormatter.
  *
  * @package Drupal\stanford_media\Plugin\Field\FieldFormatter
  */
-abstract class MediaImageFormatterBase extends MediaFormatterBase {
+abstract class MediaImageFormatterBase extends MediaFormatterBase implements TrustedCallbackInterface {
 
   /**
    * Get an array of image style options in order to choose and apply in render.
@@ -21,6 +20,13 @@ abstract class MediaImageFormatterBase extends MediaFormatterBase {
    *   Keyed array of style options.
    */
   abstract protected function getStyleOptions();
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function trustedCallbacks() {
+    return ['preRender'];
+  }
 
   /**
    * {@inheritdoc}
