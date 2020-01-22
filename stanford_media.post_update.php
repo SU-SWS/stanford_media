@@ -183,7 +183,7 @@ function stanford_media_post_update_8202(&$sandbox) {
   $entity_type_manager = \Drupal::entityTypeManager();
   $entity_ids = array_splice($sandbox['entities'], 0, 25);
   foreach ($entity_ids as $item) {
-    list($entity_type, $field_name, $entity_id) = explode(':', $item);
+    [$entity_type, $field_name, $entity_id] = explode(':', $item);
 
     $entity = $entity_type_manager->getStorage($entity_type)->load($entity_id);
     $field_values = $entity->get($field_name)->getValue();
@@ -328,7 +328,7 @@ function _stanford_media_post_update_8202_entity_list() {
   $list = [];
   module_load_install('stanford_media');
   foreach (_stanford_media_update_8005_get_filter_fields() as $field) {
-    list($entity_type, $field_name) = explode(':', $field);
+    [$entity_type, $field_name] = explode(':', $field);
 
     try {
       $entity_ids = \Drupal::entityQuery($entity_type)
@@ -392,8 +392,12 @@ function stanford_media_post_update_8204() {
     $browser->delete();
   }
 
-  EmbedButton::load('media_browser')->delete();
-  View::load('media_entity_browser')->delete();
+  if ($button = EmbedButton::load('media_browser')) {
+    $button->delete();
+  }
+  if ($view = View::load('media_entity_browser')) {
+    $view->delete();
+  }
   \Drupal::messenger()
     ->addMessage(t('Review these modules to see if they still require being enabled: entity_browser, embed, & entity_embed'));
 
