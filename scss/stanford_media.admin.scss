@@ -34,6 +34,10 @@
   height: auto;
   width: auto;
 
+  drupal-media:hover & {
+    display: block;
+  }
+
   &:hover {
     background: #60c2ff;
     border-bottom: 2px solid #60c2ff;
