@@ -20,6 +20,7 @@
 }
 
 .media-library-item__edit {
+  display: none;
   position: absolute;
   top: calc(50% - 20px);
   left: calc(50% - 65px);
@@ -32,6 +33,10 @@
   font-size: 2rem;
   height: auto;
   width: auto;
+
+  drupal-media:hover & {
+    display: block;
+  }
 
   &:hover {
     background: #60c2ff;
