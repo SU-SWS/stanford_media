@@ -3,7 +3,7 @@ description: Provides media module configuration and plugins.
 core_version_requirement: ^8.8 || ^9
 package: media
 type: module
-version: 8.x-2.0-alpha3
+version: 8.x-2.0-dev
 dependencies:
   - dropzonejs:dropzonejs
   - drupal:breakpoint
