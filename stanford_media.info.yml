@@ -14,6 +14,6 @@ dependencies:
   - drupal:media_library
   - drupal:responsive_image
   - drupal:views
+  - drupal:path
   - entity_usage:entity_usage
   - focal_point:focal_point
-

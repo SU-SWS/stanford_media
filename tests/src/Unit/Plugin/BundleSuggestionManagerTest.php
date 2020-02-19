@@ -139,7 +139,7 @@ class BundleSuggestionManagerTest extends UnitTestCase {
   /**
    * Get a mocked cache object.
    *
-   * @return \PHPUnit_Framework_MockObject_MockObject
+   * @return \PHPUnit\Framework\MockObject\MockObject
    */
   protected function getCacheStub() {
     $cache = $this->createMock(CacheBackendInterface::class);
