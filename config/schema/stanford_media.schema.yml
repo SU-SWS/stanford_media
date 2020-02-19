@@ -25,3 +25,50 @@ field.formatter.settings.media_responsive_image_formatter:
     image_style:
       type: string
       label: 'Image style'
+
+field.formatter.settings.media_multimedia_formatter:
+  type: mapping
+  label: 'Multiple Media Field Formatter'
+  mapping:
+    view_mode:
+      type: string
+      label: 'Entity View Mode'
+    link:
+      type: boolean
+      label: 'Link image to parent'
+    image_style:
+      type: string
+      label: 'Image style'
+    image:
+      label: 'Image formatter settings'
+      type: mapping
+      mapping:
+        image_formatter:
+          type: string
+          label: 'Image Formatter'
+        image_formatter_image_style:
+          type: string
+          label: 'Image Formatter Option'
+        image_formatter_responsive_image_style:
+          type: string
+          label: 'Responsive Image Formatter Option'
+        image_formatter_view_mode:
+          type: string
+          label: 'Image formatter view mode'
+    video:
+      label: 'Video formatter settings'
+      type: mapping
+      mapping:
+        video_formatter:
+          type: string
+          label: 'Video formatter option'
+        video_formatter_view_mode:
+          type: string
+          label: 'Video Formatter view mode'
+    other:
+      label: 'Other entity types.'
+      type: mapping
+      mapping:
+        view_mode:
+          type: string
+          label: 'The view mode to fallback to the type.'
