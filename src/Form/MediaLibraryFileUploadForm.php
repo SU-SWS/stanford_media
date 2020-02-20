@@ -5,6 +5,7 @@ namespace Drupal\stanford_media\Form;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -90,6 +91,12 @@ class MediaLibraryFileUploadForm extends FileUploadForm {
   protected function buildInputElement(array $form, FormStateInterface $form_state) {
     $element = parent::buildInputElement($form, $form_state);
 
+    // Dropzone uses 0 to denote unlimited files.
+    $remaining_files = $element['container']['upload']['#remaining_slots'];
+    if ((int) $remaining_files == FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED) {
+      $remaining_files = 0;
+    }
+
     $element['container']['dropzone'] = [
       '#title' => $element['container']['upload']['#title'],
       '#type' => 'dropzonejs',
@@ -97,7 +104,7 @@ class MediaLibraryFileUploadForm extends FileUploadForm {
       '#dropzone_description' => $this->t('Drop files here to upload them'),
       '#max_filesize' => $element['container']['upload']['#upload_validators']['file_validate_size'][0],
       '#extensions' => $element['container']['upload']['#upload_validators']['file_validate_extensions'][0],
-      '#max_files' => $element['container']['upload']['#remaining_slots'],
+      '#max_files' => $remaining_files,
       '#clientside_resize' => FALSE,
       '#after_build' => [[get_class($this), 'afterBuildDropzone']],
     ];
