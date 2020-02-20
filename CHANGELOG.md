@@ -1,5 +1,14 @@
 # Stanford Media
 
+8.x-2.0
+--------------------------------------------------------------------------------
+_Release Date: 2020-02-19_
+
+- D8CORE-106: Multiple Media Formatter (#28)
+- Changed image for circle ci to the PCOV one
+- Added .nvmrc and set to 11.14.0
+- Updated lots of package.json components
+
 8.x-2.0-alpha3
 --------------------------------------------------------------------------------
 _Release Date: 2020-02-14_
