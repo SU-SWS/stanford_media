@@ -70,7 +70,7 @@ class MediaLibraryFileUploadFormTest extends StanfordMediaFormTestBase {
       'media_library_opener_id' => $this->randomMachineName(),
       'media_library_allowed_types' => ['file'],
       'media_library_selected_type' => 'file',
-      'media_library_remaining' => 1,
+      'media_library_remaining' => -1,
     ]);
 
     $form_state->set('media_library_state', $media_library_state);
