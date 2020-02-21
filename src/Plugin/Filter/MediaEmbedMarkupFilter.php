@@ -1,11 +1,11 @@
 <?php
 
-/**
- * Text Editor Filters.
- *
- * This filter is to remedy issues with libxml2 and core issues.
- * https://www.drupal.org/project/drupal/issues/1333730.
- */
+//
+// Text Editor Filters.
+//
+// This filter is to remedy issues with libxml2 and core issues.
+// https://www.drupal.org/project/drupal/issues/1333730.
+//
 
 namespace Drupal\stanford_media\Plugin\Filter;
 
