@@ -1,9 +1,10 @@
 <?php
+
 /**
- * @file
+ * Text Editor Filters.
  *
  * This filter is to remedy issues with libxml2 and core issues.
- * https://www.drupal.org/project/drupal/issues/1333730
+ * https://www.drupal.org/project/drupal/issues/1333730.
  */
 
 namespace Drupal\stanford_media\Plugin\Filter;
@@ -22,7 +23,7 @@ use Drupal\filter\FilterProcessResult;
 class MediaEmbedMarkupFilter extends FilterBase {
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
   public function process($text, $langcode) {
     $new_text = preg_replace('/><\/source>/m', "/>", $text);
