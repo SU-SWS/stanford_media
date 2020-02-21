@@ -1,5 +1,14 @@
 # Stanford Media
 
+8.x-2.1
+--------------------------------------------------------------------------------
+_Release Date: 2020-02-21_
+
+- HSD8-758 Fixed number of items available when the field is unlimited
+- D8CORE-1343 Use Media name if no description is provided
+- D8CORE-1392 Added padding to aligned images
+- D8CORE-1409: Remove duplicate source tag from embedded media.
+
 8.x-2.0
 --------------------------------------------------------------------------------
 _Release Date: 2020-02-19_
