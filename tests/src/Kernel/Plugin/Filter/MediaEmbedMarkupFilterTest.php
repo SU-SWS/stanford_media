@@ -59,18 +59,18 @@ class MediaEmbedMarkupFilterTest extends MediaEmbedFilterTestBase {
       ])
       ->addImageStyleMapping('responsive_image_test_module.mobile', '1x', [
         'image_mapping_type' => 'image_style',
-        'image_mapping' => 'small',
+        'image_mapping' => '',
       ])
       ->addImageStyleMapping('responsive_image_test_module.narrow', '1x', [
         'image_mapping_type' => 'sizes',
         'image_mapping' => [
           'sizes' => '(min-width: 700px) 700px, 100vw',
-          'sizes_image_styles' => ['medium'],
+          'sizes_image_styles' => [],
         ],
       ])
       ->addImageStyleMapping('responsive_image_test_module.wide', '1x', [
         'image_mapping_type' => 'image_style',
-        'image_mapping' => 'large',
+        'image_mapping' => '',
       ])
       ->save();
 
