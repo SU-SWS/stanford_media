@@ -56,3 +56,9 @@
     display: block;
   }
 }
+
+drupal-media {
+  &[data-align="right"] {
+    float: right;
+  }
+}

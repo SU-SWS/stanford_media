@@ -12,13 +12,11 @@ use Drupal\stanford_media\Form\MediaLibraryFileUploadForm;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Implements hook_field_widget_form_alter().
+ * Implements hook_field_widget_WIDGET_TYPE_form_alter().
  */
-function stanford_media_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
-  if ($context['widget']->getPluginId() == 'text_textarea') {
-    // Adds the library outside of ckeditor iframe.
-    $element['#attached']['library'][] = 'stanford_media/admin';
-  }
+function stanford_media_field_widget_text_textarea_form_alter(&$element, FormStateInterface $form_state, $context) {
+  // Adds the library outside of ckeditor iframe.
+  $element['#attached']['library'][] = 'stanford_media/admin';
 }
 
 /**
