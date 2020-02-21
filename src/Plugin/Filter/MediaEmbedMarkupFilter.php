@@ -6,6 +6,8 @@ use Drupal\filter\Plugin\FilterBase;
 use Drupal\filter\FilterProcessResult;
 
 /**
+ * MediaEmbedMarkupFilter for fixing core issues.
+ *
  * @Filter(
  *   id = "stanford_media_embed_markup",
  *   title = @Translation("Stanford Media Embed Filter"),

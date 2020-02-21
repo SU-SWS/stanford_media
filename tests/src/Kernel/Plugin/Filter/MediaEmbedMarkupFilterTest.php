@@ -11,6 +11,8 @@ use Drupal\Core\Entity\Entity\EntityViewDisplay;
 use Drupal\Core\Entity\Entity\EntityViewMode;
 
 /**
+ * MediaEmbedMarkupFilter Tests.
+ *
  * @coversDefaultClass \Drupal\stanford_media\Plugin\Filter\MediaEmbedMarkupFilter
  * @group stanford_media
  */
@@ -37,12 +39,6 @@ class MediaEmbedMarkupFilterTest extends MediaEmbedFilterTestBase {
   ];
 
   /**
-   * @var \Drupal\responsive_image\Entity\ResponsiveImageStyle
-   */
-  protected $RImgStyle;
-
-
-  /**
    * Test the filter.
    *
    * @throws \Drupal\Core\Entity\EntityStorageException
@@ -63,18 +59,18 @@ class MediaEmbedMarkupFilterTest extends MediaEmbedFilterTestBase {
       ])
       ->addImageStyleMapping('responsive_image_test_module.mobile', '1x', [
         'image_mapping_type' => 'image_style',
-        'image_mapping' => '',
+        'image_mapping' => 'small',
       ])
       ->addImageStyleMapping('responsive_image_test_module.narrow', '1x', [
         'image_mapping_type' => 'sizes',
         'image_mapping' => [
           'sizes' => '(min-width: 700px) 700px, 100vw',
-          'sizes_image_styles' => [],
+          'sizes_image_styles' => ['medium'],
         ],
       ])
       ->addImageStyleMapping('responsive_image_test_module.wide', '1x', [
         'image_mapping_type' => 'image_style',
-        'image_mapping' => '',
+        'image_mapping' => 'large',
       ])
       ->save();
 
