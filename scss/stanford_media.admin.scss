@@ -62,3 +62,7 @@ drupal-media {
     float: right;
   }
 }
+
+.dropzone.dropzone-enable .dz-preview .dz-error-message {
+    opacity: 1;
+}

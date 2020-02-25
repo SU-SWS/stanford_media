@@ -140,6 +140,7 @@ class BulkUpload extends FormBase {
     ];
 
     $form['#attached']['library'][] = 'dropzonejs/widget';
+    $form['#attached']['library'][] = 'stanford_media/admin';
     $this->getEntityForm($form, $form_state);
     return $form;
   }
