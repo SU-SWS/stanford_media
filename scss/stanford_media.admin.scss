@@ -63,6 +63,12 @@ drupal-media {
   }
 }
 
-.dropzone.dropzone-enable .dz-preview .dz-error-message {
-  opacity: 1;
+.dropzone {
+  &.dropzone-enable {
+    .dz-preview {
+      .dz-error-message {
+        opacity: 1;
+      }
+    }
+  }
 }
