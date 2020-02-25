@@ -5,12 +5,14 @@
   }
 }
 
-.media.image {
-  .align-left & {
-    padding: .4em 1.5em 1em 0;
-  }
+.media {
+  &.image {
+    .align-left & {
+      padding: 0.4em 1.5em 1em 0;
+    }
 
-  .align-right & {
-    padding: .4em 0 1em 1.5em;
+    .align-right & {
+      padding: 0.4em 0 1em 1.5em;
+    }
   }
 }
