@@ -59,6 +59,7 @@ class MediaImageFormatterTest extends FieldFormatterTestBase {
       '#media' => $this->getMockMediaEntity(),
       '#stanford_media_image_style' => 'style_foo',
       'field_foo' => [
+        '#field_type' => 'image',
         0 => [],
       ],
     ];
@@ -75,6 +76,22 @@ class MediaImageFormatterTest extends FieldFormatterTestBase {
     $this->assertArrayHasKey('#url', $element['field_foo'][0]);
     $this->assertEquals('http://foo.bar', $element['field_foo'][0]['#url']);
     $this->assertEquals('Foo Bar', $element['field_foo'][0]['#attributes']['title']);
+  }
+
+  /**
+   * When the source field is not an image, the preRender should do nothing.
+   */
+  public function testPreRenderNonImage() {
+    $before = [
+      '#media' => $this->getMockMediaEntity(),
+      '#stanford_media_image_style' => 'style_foo',
+      'field_foo' => [
+        '#field_type' => 'video',
+        0 => [],
+      ],
+    ];
+    $after = $this->plugin->preRender($before);
+    $this->assertArrayEquals($before, $after);
   }
 
 }

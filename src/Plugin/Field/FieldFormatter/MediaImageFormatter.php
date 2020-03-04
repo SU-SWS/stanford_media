@@ -33,6 +33,7 @@ class MediaImageFormatter extends MediaImageFormatterBase {
   public function preRender($element) {
     $source_field = self::getSourceField($element['#media']);
 
+    // If the field isn't an image, don't do anything.
     if (empty($element[$source_field]['#field_type']) || $element[$source_field]['#field_type'] != 'image') {
       return $element;
     }
