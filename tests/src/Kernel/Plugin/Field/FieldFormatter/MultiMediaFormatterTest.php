@@ -38,7 +38,7 @@ class MultiMediaFormatterTest extends KernelTestBase {
     'media',
     'entity_reference',
     'breakpoint',
-    'responsive_image'
+    'responsive_image',
   ];
 
   /**
@@ -285,7 +285,7 @@ class MultiMediaFormatterTest extends KernelTestBase {
         ],
         'other' => [
           'view_mode' => 'default',
-        ]
+        ],
       ],
     ];
   }
@@ -330,6 +330,14 @@ class MultiMediaFormatterTest extends KernelTestBase {
 
     $node = $this->getANode();
     $rendered_node = $this->getRenderedNode($node);
+    preg_match_all('/<img.*src=".*\/logo.png.*\/>/s', $rendered_node, $preg_match);
+    $this->assertNotEmpty($preg_match[0]);
+
+    // Now delete the media and make sure it doesn't break.
+    $this->mediaEntities['image']->delete();
+    $node = Node::load($node->id());
+    $rendered_node = $this->getRenderedNode($node);
+
     preg_match_all('/<img.*src=".*\/logo.png.*\/>/s', $rendered_node, $preg_match);
     $this->assertNotEmpty($preg_match[0]);
   }
