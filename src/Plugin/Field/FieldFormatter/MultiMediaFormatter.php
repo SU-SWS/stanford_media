@@ -222,7 +222,7 @@ class MultiMediaFormatter extends MediaFormatterBase {
    * @return array
    *   A render array.
    */
-  private function viewImageElement(FieldItemListInterface $items, EntityReferenceItem $item, MediaInterface $media, $langcode, $view_mode = "default") {
+  protected function viewImageElement(FieldItemListInterface $items, EntityReferenceItem $item, MediaInterface $media, $langcode, $view_mode = "default") {
     $op = $this->getSetting('image')['image_formatter'] ?: '';
     $settings = ['link' => FALSE];
     $settings['image_style'] = ($op == "image_style") ? $this->settings['image']['image_formatter_image_style'] : $this->settings['image']['image_formatter_responsive_image_style'];
@@ -270,7 +270,7 @@ class MultiMediaFormatter extends MediaFormatterBase {
    *   and including guzzle. A functional test has already been written for
    *   oembed and can be extended. The functional test covers this function.
    */
-  private function viewVideoElement(FieldItemListInterface $items, EntityReferenceItem $item, MediaInterface $media, $langcode, $view_mode = "default") {
+  protected function viewVideoElement(FieldItemListInterface $items, EntityReferenceItem $item, MediaInterface $media, $langcode, $view_mode = "default") {
     return [$this->entityTypeManager->getViewBuilder('media')->view($media, $view_mode)];
   }
 
@@ -291,7 +291,7 @@ class MultiMediaFormatter extends MediaFormatterBase {
    * @return array
    *   A render array for a view mode.
    */
-  private function viewDefaultElement(FieldItemListInterface $items, EntityReferenceItem $item, MediaInterface $media, $langcode, $view_mode = "default") {
+  protected function viewDefaultElement(FieldItemListInterface $items, EntityReferenceItem $item, MediaInterface $media, $langcode, $view_mode = "default") {
     return [$this->entityTypeManager->getViewBuilder('media')->view($media, $view_mode)];
   }
 
