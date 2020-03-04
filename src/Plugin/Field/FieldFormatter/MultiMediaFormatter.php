@@ -2,10 +2,10 @@
 
 namespace Drupal\stanford_media\Plugin\Field\FieldFormatter;
 
-use Drupal\media\Entity\Media;
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\media\MediaInterface;
 
 /**
  * Plugin implementation of the 'multi media' formatter.
@@ -181,7 +181,14 @@ class MultiMediaFormatter extends MediaFormatterBase {
     // Loop through each media type and try to find a render method.
     foreach ($items as $item) {
       $media_id = $item->getValue()['target_id'];
-      $media_item = Media::load($media_id);
+
+      /** @var \Drupal\media\MediaInterface $media_item */
+      $media_item = $this->entityTypeManager->getStorage('media')->load($media_id);
+      // The media item was probably deleted, continue on to the others.
+      if (!$media_item) {
+        continue;
+      }
+
       $bundle = $media_item->bundle();
       $method_name = 'view' . ucfirst(strtolower($bundle)) . "Element";
 
@@ -205,7 +212,7 @@ class MultiMediaFormatter extends MediaFormatterBase {
    *   A list of EntityReferenceItems.
    * @param \Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem $item
    *   A single item from the FieldItemList object.
-   * @param \Drupal\media\Entity\Media $media
+   * @param \Drupal\media\MediaInterface $media
    *   An instantiated Media Object.
    * @param string $langcode
    *   A langcode string key. eg: en.
@@ -215,7 +222,7 @@ class MultiMediaFormatter extends MediaFormatterBase {
    * @return array
    *   A render array.
    */
-  private function viewImageElement(FieldItemListInterface $items, EntityReferenceItem $item, Media $media, $langcode, $view_mode = "default") {
+  private function viewImageElement(FieldItemListInterface $items, EntityReferenceItem $item, MediaInterface $media, $langcode, $view_mode = "default") {
     $op = $this->getSetting('image')['image_formatter'] ?: '';
     $settings = ['link' => FALSE];
     $settings['image_style'] = ($op == "image_style") ? $this->settings['image']['image_formatter_image_style'] : $this->settings['image']['image_formatter_responsive_image_style'];
@@ -248,7 +255,7 @@ class MultiMediaFormatter extends MediaFormatterBase {
    *   A list of EntityReferenceItems.
    * @param \Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem $item
    *   A single item from the FieldItemList object.
-   * @param \Drupal\media\Entity\Media $media
+   * @param \Drupal\media\MediaInterface $media
    *   An instantiated Media Object.
    * @param string $langcode
    *   A langcode string key. eg: en.
@@ -263,7 +270,7 @@ class MultiMediaFormatter extends MediaFormatterBase {
    *   and including guzzle. A functional test has already been written for
    *   oembed and can be extended. The functional test covers this function.
    */
-  private function viewVideoElement(FieldItemListInterface $items, EntityReferenceItem $item, Media $media, $langcode, $view_mode = "default") {
+  private function viewVideoElement(FieldItemListInterface $items, EntityReferenceItem $item, MediaInterface $media, $langcode, $view_mode = "default") {
     return [$this->entityTypeManager->getViewBuilder('media')->view($media, $view_mode)];
   }
 
@@ -274,7 +281,7 @@ class MultiMediaFormatter extends MediaFormatterBase {
    *   A list of EntityReferenceItems.
    * @param \Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem $item
    *   A single item from the FieldItemList object.
-   * @param \Drupal\media\Entity\Media $media
+   * @param \Drupal\media\MediaInterface $media
    *   An instantiated Media Object.
    * @param string $langcode
    *   A langcode string key. eg: en.
@@ -284,7 +291,7 @@ class MultiMediaFormatter extends MediaFormatterBase {
    * @return array
    *   A render array for a view mode.
    */
-  private function viewDefaultElement(FieldItemListInterface $items, EntityReferenceItem $item, Media $media, $langcode, $view_mode = "default") {
+  private function viewDefaultElement(FieldItemListInterface $items, EntityReferenceItem $item, MediaInterface $media, $langcode, $view_mode = "default") {
     return [$this->entityTypeManager->getViewBuilder('media')->view($media, $view_mode)];
   }
 
