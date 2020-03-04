@@ -339,7 +339,7 @@ class MultiMediaFormatterTest extends KernelTestBase {
     $rendered_node = $this->getRenderedNode($node);
 
     preg_match_all('/<img.*src=".*\/logo.png.*\/>/s', $rendered_node, $preg_match);
-    $this->assertNotEmpty($preg_match[0]);
+    $this->assertEmpty($preg_match[0]);
   }
 
   /**
