@@ -174,13 +174,14 @@ class MultiMediaFormatter extends MediaFormatterBase {
 
     // Loop through each media type and try to find a render method.
     foreach ($elements as &$element) {
+      /** @var \Drupal\media\MediaInterface $media_item */
       $media_item = $element['#media'];
 
-      $bundle = $media_item->bundle();
-      $method_name = 'view' . ucfirst(strtolower($bundle)) . "Element";
+      $source_id  = $media_item->getSource()->getPluginId();
+      $method_name = 'view' . ucfirst(strtolower($source_id)) . "Element";
 
-      $vm_setting = $bundle . "_formatter_view_mode";
-      $view_mode = (!empty($this->getSetting($bundle)[$vm_setting])) ? $this->getSetting($bundle)[$vm_setting] : 'default';
+      $vm_setting = $source_id . "_formatter_view_mode";
+      $view_mode = (!empty($this->getSetting($source_id)[$vm_setting])) ? $this->getSetting($source_id)[$vm_setting] : 'default';
       $element['#view_mode'] = $view_mode;
 
       if (method_exists($this, $method_name)) {
