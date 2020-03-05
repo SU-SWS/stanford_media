@@ -40,7 +40,7 @@ class MediaResponsiveImageFormatter extends MediaImageFormatterBase {
   /**
    * {@inheritdoc}
    */
-  public function preRender($element) {
+  public static function preRender($element) {
     $source_field = self::getSourceField($element['#media']);
     // If the source field is not an image field, don't modify anything.
     if (empty($element[$source_field]['#field_type']) || $element[$source_field]['#field_type'] != 'image') {
