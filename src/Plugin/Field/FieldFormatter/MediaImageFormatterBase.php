@@ -127,6 +127,6 @@ abstract class MediaImageFormatterBase extends MediaFormatterBase implements Tru
    * @return array
    *   Altered render array.
    */
-  abstract public function preRender($element);
+  abstract public static function preRender($element);
 
 }
