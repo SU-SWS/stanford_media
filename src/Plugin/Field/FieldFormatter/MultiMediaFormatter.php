@@ -3,9 +3,7 @@
 namespace Drupal\stanford_media\Plugin\Field\FieldFormatter;
 
 use Drupal\Core\Field\FieldItemListInterface;
-use Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\media\MediaInterface;
 
 /**
  * Plugin implementation of the 'multi media' formatter.
