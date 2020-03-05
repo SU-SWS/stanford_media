@@ -177,7 +177,7 @@ class MultiMediaFormatter extends MediaFormatterBase {
       /** @var \Drupal\media\MediaInterface $media_item */
       $media_item = $element['#media'];
 
-      $source_id  = $media_item->getSource()->getPluginId();
+      $source_id = $media_item->getSource()->getPluginId();
       $method_name = 'view' . ucfirst(strtolower($source_id)) . "Element";
 
       $vm_setting = $source_id . "_formatter_view_mode";
