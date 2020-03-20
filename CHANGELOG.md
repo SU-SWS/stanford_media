@@ -1,5 +1,13 @@
 # Stanford Media
 
+8.x-2.3
+--------------------------------------------------------------------------------
+_Release Date: 2020-03-20_
+
+- D8CORE-1026 D8CORE-1516 Fix error in field formatters (#40)
+- D8CORE-1026 Don't modify non-images in field formatter
+- Add test to validate no PHP errors when media item being referenced is deleted.
+
 8.x-2.2
 --------------------------------------------------------------------------------
 _Release Date: 2020-02-27_
