@@ -137,18 +137,6 @@ class MediaLibraryFileUploadForm extends FileUploadForm {
   }
 
   /**
-   * {@inheritDoc}
-   */
-  public function updateFormCallback(array &$form, FormStateInterface $form_state) {
-    if (empty($form_state->getValue(['dropzone', 'uploaded_files']))) {
-      $response = new AjaxResponse();
-      $response->addCommand(new ReplaceCommand('#media-library-add-form-wrapper', $form));
-      return $response;
-    }
-    return parent::updateFormCallback($form, $form_state);
-  }
-
-  /**
    * Submit handler for the upload button, below the dropzone area..
    *
    * @param array $form
