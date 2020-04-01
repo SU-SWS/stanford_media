@@ -80,11 +80,6 @@ class MediaLibraryFileUploadFormTest extends StanfordMediaFormTestBase {
 
     /** @var \Drupal\stanford_media\Form\MediaLibraryFileUploadForm $form_object */
     $form_object = $form_state->getFormObject();
-    $response_commands = $form_object->updateFormCallback($form, $form_state)
-      ->getCommands();
-    $this->assertCount(1, $response_commands);
-    $this->assertEquals('insert', $response_commands[0]['command']);
-    $this->assertEquals('#media-library-add-form-wrapper', $response_commands[0]['selector']);
 
     $form_state->setValue([
       'dropzone',
@@ -94,11 +89,6 @@ class MediaLibraryFileUploadFormTest extends StanfordMediaFormTestBase {
       '#parents' => [],
       '#ajax' => ['wrapper' => 'foo'],
     ]);
-    $response_commands = $form_object->updateFormCallback($form, $form_state)
-      ->getCommands();
-    $this->assertCount(2, $response_commands);
-    $this->assertEquals('#foo', $response_commands[0]['selector']);
-    $this->assertEquals('invoke', $response_commands[1]['command']);
 
     $this->assertCount(0, File::loadMultiple());
     $form_object->uploadDropzoneSubmit($form, $form_state);
