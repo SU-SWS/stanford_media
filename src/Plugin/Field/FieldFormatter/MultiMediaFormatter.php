@@ -2,10 +2,8 @@
 
 namespace Drupal\stanford_media\Plugin\Field\FieldFormatter;
 
-use Drupal\media\Entity\Media;
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Field\FieldItemListInterface;
-use Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Plugin implementation of the 'multi media' formatter.
@@ -133,7 +131,7 @@ class MultiMediaFormatter extends MediaFormatterBase {
       '#default_value' => $this->getSetting('image')['image_formatter_responsive_image_style'],
       '#states' => [
         'visible' => [
-          ':input[id="image_formatter"]' => ['value' => 'responsive_image'],
+          ':input[id="image_formatter"]' => ['value' => 'responsive_image_style'],
         ],
       ],
     ];
@@ -142,12 +140,8 @@ class MultiMediaFormatter extends MediaFormatterBase {
       '#type' => 'select',
       '#options' => $this->getEntityDisplayModes(),
       '#title' => $this->t('Image View Mode'),
+      '#description' => $this->t('Choose the view mode that the image styles will apply onto (if applicable).'),
       '#default_value' => $this->getSetting('image')['image_formatter_view_mode'] ?: '',
-      '#states' => [
-        'visible' => [
-          ':input[id="image_formatter"]' => ['value' => 'entity'],
-        ],
-      ],
     ];
 
     $elements['video']['video_formatter'] = [
@@ -176,22 +170,22 @@ class MultiMediaFormatter extends MediaFormatterBase {
    * {@inheritdoc}
    */
   public function viewElements(FieldItemListInterface $items, $langcode) {
-    $elements = [];
+    $elements = parent::viewElements($items, $langcode);
 
     // Loop through each media type and try to find a render method.
-    foreach ($items as $item) {
-      $media_id = $item->getValue()['target_id'];
-      $media_item = Media::load($media_id);
-      $bundle = $media_item->bundle();
-      $method_name = 'view' . ucfirst(strtolower($bundle)) . "Element";
+    foreach ($elements as &$element) {
+      /** @var \Drupal\media\MediaInterface $media_item */
+      $media_item = $element['#media'];
+
+      $source_id = $media_item->getSource()->getPluginId();
+      $method_name = 'view' . ucfirst(strtolower($source_id)) . "Element";
+
+      $vm_setting = $source_id . "_formatter_view_mode";
+      $view_mode = (!empty($this->getSetting($source_id)[$vm_setting])) ? $this->getSetting($source_id)[$vm_setting] : 'default';
+      $element['#view_mode'] = $view_mode;
 
       if (method_exists($this, $method_name)) {
-        $vm_setting = $bundle . "_formatter_view_mode";
-        $view_mode = (!empty($this->getSetting($bundle)[$vm_setting])) ? $this->getSetting($bundle)[$vm_setting] : 'default';
-        $elements += $this->{$method_name}($items, $item, $media_item, $langcode, $view_mode);
-      }
-      else {
-        $elements += $this->viewDefaultElement($items, $item, $media_item, $langcode, $this->getSetting('view_mode'));
+        $this->{$method_name}($items, $element);
       }
     }
 
@@ -203,89 +197,23 @@ class MultiMediaFormatter extends MediaFormatterBase {
    *
    * @param \Drupal\Core\Field\FieldItemListInterface $items
    *   A list of EntityReferenceItems.
-   * @param \Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem $item
-   *   A single item from the FieldItemList object.
-   * @param \Drupal\media\Entity\Media $media
-   *   An instantiated Media Object.
-   * @param string $langcode
-   *   A langcode string key. eg: en.
-   * @param string $view_mode
-   *   The view mode machine name.
-   *
-   * @return array
-   *   A render array.
+   * @param array $element
+   *   A single render element.
    */
-  private function viewImageElement(FieldItemListInterface $items, EntityReferenceItem $item, Media $media, $langcode, $view_mode = "default") {
+  protected function viewImageElement(FieldItemListInterface $items, array &$element) {
     $op = $this->getSetting('image')['image_formatter'] ?: '';
-    $settings = ['link' => FALSE];
-    $settings['image_style'] = ($op == "image_style") ? $this->settings['image']['image_formatter_image_style'] : $this->settings['image']['image_formatter_responsive_image_style'];
-    $formatter = NULL;
-
-    // Static Image Style Render.
-    if ($op == "image_style") {
-      $formatter = new MediaImageFormatter($this->pluginId, $this->pluginDefinition, $this->fieldDefinition, $settings, $this->label, $view_mode, $this->thirdPartySettings, $this->loggerFactory, $this->entityTypeManager, $this->entityDisplayRepository);
+    if (!in_array($op, ['image_style', 'responsive_image_style'])) {
+      return;
     }
 
-    // Responsive Image Style Render.
-    if ($op == "responsive_image_style") {
-      $formatter = new MediaResponsiveImageFormatter($this->pluginId, $this->pluginDefinition, $this->fieldDefinition, $settings, $this->label, $view_mode, $this->thirdPartySettings, $this->loggerFactory, $this->entityTypeManager, $this->entityDisplayRepository);
+    $element['#stanford_media_image_style'] = ($op == "image_style") ? $this->settings['image']['image_formatter_image_style'] : $this->settings['image']['image_formatter_responsive_image_style'];
+
+    if ($op == 'image_style') {
+      $element['#pre_render'][] = [MediaImageFormatter::class, 'preRender'];
+      return;
     }
 
-    // Found one.
-    if ($formatter) {
-      return $formatter->viewElements($items, $langcode);
-    }
-
-    // Entity Render View Mode.
-    $view_mode = $this->settings['image']['image_formatter_view_mode'] ?: $view_mode;
-    return [$this->entityTypeManager->getViewBuilder('media')->view($media, $view_mode)];
-  }
-
-  /**
-   * Use view modes to generate a render array.
-   *
-   * @param \Drupal\Core\Field\FieldItemListInterface $items
-   *   A list of EntityReferenceItems.
-   * @param \Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem $item
-   *   A single item from the FieldItemList object.
-   * @param \Drupal\media\Entity\Media $media
-   *   An instantiated Media Object.
-   * @param string $langcode
-   *   A langcode string key. eg: en.
-   * @param string $view_mode
-   *   The view mode machine name.
-   *
-   * @return array
-   *   A render array for a view mode.
-   *
-   * @codeCoverageIgnore
-   *   Ignore this because in order to test it you have to mock everything up to
-   *   and including guzzle. A functional test has already been written for
-   *   oembed and can be extended. The functional test covers this function.
-   */
-  private function viewVideoElement(FieldItemListInterface $items, EntityReferenceItem $item, Media $media, $langcode, $view_mode = "default") {
-    return [$this->entityTypeManager->getViewBuilder('media')->view($media, $view_mode)];
-  }
-
-  /**
-   * Use view modes to generate a render array.
-   *
-   * @param \Drupal\Core\Field\FieldItemListInterface $items
-   *   A list of EntityReferenceItems.
-   * @param \Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem $item
-   *   A single item from the FieldItemList object.
-   * @param \Drupal\media\Entity\Media $media
-   *   An instantiated Media Object.
-   * @param string $langcode
-   *   A langcode string key. eg: en.
-   * @param string $view_mode
-   *   The view mode machine name.
-   *
-   * @return array
-   *   A render array for a view mode.
-   */
-  private function viewDefaultElement(FieldItemListInterface $items, EntityReferenceItem $item, Media $media, $langcode, $view_mode = "default") {
-    return [$this->entityTypeManager->getViewBuilder('media')->view($media, $view_mode)];
+    $element['#pre_render'][] = [MediaResponsiveImageFormatter::class, 'preRender'];
   }
 
   /**

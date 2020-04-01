@@ -34,7 +34,6 @@ function stanford_media_ckeditor_css_alter(array &$css, Editor $editor) {
 function stanford_media_theme_registry_alter(&$theme_registry) {
   // Register the path to the template files.
   $path = drupal_get_path('module', 'stanford_media') . '/templates';
-  $theme_registry['responsive_image_formatter']['path'] = $path;
   $theme_registry['dropzonejs']['path'] = $path;
   $theme_registry['filter_caption']['path'] = $path;
 }

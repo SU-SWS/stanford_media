@@ -30,8 +30,13 @@ class MediaImageFormatter extends MediaImageFormatterBase {
   /**
    * {@inheritdoc}
    */
-  public function preRender($element) {
+  public static function preRender($element) {
     $source_field = self::getSourceField($element['#media']);
+
+    // If the field isn't an image, don't do anything.
+    if (empty($element[$source_field]['#field_type']) || $element[$source_field]['#field_type'] != 'image') {
+      return $element;
+    }
 
     $element[$source_field]['#formatter'] = 'image';
     foreach (Element::children($element[$source_field]) as $delta) {

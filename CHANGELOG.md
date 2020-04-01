@@ -1,5 +1,25 @@
 # Stanford Media
 
+8.x-2.4
+--------------------------------------------------------------------------------
+_Release Date: 2020-03-23_
+
+- Updated focal point patch with latest version of focal point.
+
+8.x-2.3
+--------------------------------------------------------------------------------
+_Release Date: 2020-03-20_
+
+- D8CORE-1026 D8CORE-1516 Fix error in field formatters (#40)
+- D8CORE-1026 Don't modify non-images in field formatter
+- Add test to validate no PHP errors when media item being referenced is deleted.
+
+8.x-2.2
+--------------------------------------------------------------------------------
+_Release Date: 2020-02-27_
+
+- D8CORE-1325 Make dropzone error more visible (#37)
+
 8.x-2.1
 --------------------------------------------------------------------------------
 _Release Date: 2020-02-21_
