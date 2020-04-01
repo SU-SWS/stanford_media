@@ -27,13 +27,18 @@ class GoogleFormsConstraintValidator extends ConstraintValidator {
     }
     $url = $source->getSourceFieldValue($media);
 
-    preg_match('/http.*?"/', $url, $url_match);
-    if (empty($url_match) || empty(parse_url($url_match[0]))) {
+    preg_match('/http.*?("|$)/', $url, $url_match);
+
+    // The given string doesn't have a URL.
+    if (empty($url_match) || empty(parse_url(trim($url_match[0], '" ')))) {
       $this->context->addViolation($constraint->invalidString);
+      return;
     }
+
     $url = trim($url_match[0], '" ');
 
-    preg_match('/forms\/([^ ]*)\/viewform/', $url, $form_id);
+    preg_match('/google.*forms\/([^ ]*)\/viewform/', $url, $form_id);
+    // The url doesn't contain a google form.
     if (!isset($form_id[1])) {
       $this->context->addViolation($constraint->invalidUrl);
     }

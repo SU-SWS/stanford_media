@@ -9,7 +9,7 @@ use Drupal\media\Entity\MediaType;
 use Drupal\stanford_media\Plugin\media\Source\GoogleForm;
 
 /**
- *
+ *<iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfzyXaUm79KFDak5Az3raD26xyaE2nuZfMloEwAgWsV3P6arg/viewform?embedded=true" width="640" height="382" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
  *
  * @FieldFormatter (
  *   id = "google_form_formatter",
@@ -22,6 +22,9 @@ use Drupal\stanford_media\Plugin\media\Source\GoogleForm;
  */
 class GoogleFormFormatter extends FormatterBase {
 
+  /**
+   * {@inheritDoc}
+   */
   public static function isApplicable(FieldDefinitionInterface $field_definition) {
     if ($field_definition->getTargetEntityTypeId() !== 'media') {
       return FALSE;
@@ -38,7 +41,24 @@ class GoogleFormFormatter extends FormatterBase {
     return FALSE;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   public function viewElements(FieldItemListInterface $items, $langcode) {
-    return [];
+    $elements = [];
+    /** @var \Drupal\Core\Field\Plugin\Field\FieldType\StringItem $item */
+    foreach ($items as $item) {
+      $url = $item->getValue()['value'];
+      $elements[] = [
+        '#type' => 'html_tag',
+        '#tag' => 'iframe',
+        '#value' => $this->t('Loading'),
+        '#attributes' => ['src' => $url, 'class' => ['google-form']],
+      ];
+    }
+    $elements['#attached']['library'][] = 'stanford_media/google_forms';
+
+    return $elements;
   }
+
 }
