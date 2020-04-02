@@ -30,15 +30,8 @@ class GoogleFormFormatter extends FormatterBase {
       return FALSE;
     }
 
-    if (parent::isApplicable($field_definition)) {
-      $media_type = $field_definition->getTargetBundle();
-
-      if ($media_type) {
-        $media_type = MediaType::load($media_type);
-        return $media_type && $media_type->getSource() instanceof GoogleForm;
-      }
-    }
-    return FALSE;
+    $media_type = MediaType::load($field_definition->getTargetBundle());
+    return $media_type && $media_type->getSource() instanceof GoogleForm;
   }
 
   /**

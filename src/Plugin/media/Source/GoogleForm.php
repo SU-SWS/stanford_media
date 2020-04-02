@@ -66,9 +66,8 @@ class GoogleForm extends MediaSourceBase implements MediaSourceFieldConstraintsI
    *   Google form id.
    */
   protected function getId(MediaInterface $media) {
-    $url = $media->get($this->configuration['source_field'])->getValue()['value'];
-    preg_match('/google.*forms\/([^ ]*)\/viewform/', $url, $form_id);
-    return $form_id['0'];
+    preg_match('/google.*forms\/([^ ]*)\/viewform/', $this->getSourceFieldValue($media), $form_id);
+    return $form_id[1];
   }
 
 }

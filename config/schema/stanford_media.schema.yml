@@ -72,3 +72,7 @@ field.formatter.settings.media_multimedia_formatter:
         view_mode:
           type: string
           label: 'The view mode to fallback to the type.'
+
+media.source.google_form:
+  type: media.source.field_aware
+  label: '"Google Form" media source configuration'
