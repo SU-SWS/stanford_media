@@ -9,7 +9,7 @@ use Drupal\media\Entity\MediaType;
 use Drupal\stanford_media\Plugin\media\Source\GoogleForm;
 
 /**
- *<iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfzyXaUm79KFDak5Az3raD26xyaE2nuZfMloEwAgWsV3P6arg/viewform?embedded=true" width="640" height="382" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+ * Field formatter for google form iframes.
  *
  * @FieldFormatter (
  *   id = "google_form_formatter",

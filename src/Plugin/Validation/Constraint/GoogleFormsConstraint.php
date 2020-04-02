@@ -19,6 +19,4 @@ class GoogleFormsConstraint extends Constraint {
 
   public $invalidUrl = 'The given URL is not a google forms url.';
 
-  public $invalidEmbedCode = 'The given embed code does not contain a google form.';
-
 }

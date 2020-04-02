@@ -42,7 +42,7 @@ class GoogleForm extends MediaSourceBase implements MediaSourceFieldConstraintsI
     switch ($attribute_name) {
       case self::METADATA_ATTRIBUTE_ID:
         return $this->getId($media);
-        break;
+
     }
     return parent::getMetadata($media, $attribute_name);
   }
