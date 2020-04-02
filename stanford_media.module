@@ -7,9 +7,10 @@
 
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\editor\Entity\Editor;
 use Drupal\stanford_media\Form\MediaLibraryFileUploadForm;
-use Drupal\Core\Form\FormStateInterface;
+use Drupal\stanford_media\Form\MediaLibraryGoogleFormForm;
 
 /**
  * Implements hook_field_widget_WIDGET_TYPE_form_alter().
@@ -86,6 +87,7 @@ function stanford_media_media_source_info_alter(array &$sources) {
   $sources['file']['forms']['media_library_add'] = MediaLibraryFileUploadForm::class;
   $sources['image']['forms']['media_library_add'] = MediaLibraryFileUploadForm::class;
   $sources['video_file']['forms']['media_library_add'] = MediaLibraryFileUploadForm::class;
+  $sources['google_form']['forms']['media_library_add'] = MediaLibraryGoogleFormForm::class;
 }
 
 /**
