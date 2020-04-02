@@ -58,13 +58,14 @@ class MediaLibraryGoogleFormForm extends AddFormBase {
       ],
     ];
 
+    $ajax_query = $this->getMediaLibraryState($form_state)->all();
+    $ajax_query += [FormBuilderInterface::AJAX_FORM_REQUEST => TRUE];
     $form['container']['submit'] = [
       '#type' => 'submit',
       '#value' => $this->t('Add'),
       '#button_type' => 'primary',
       '#validate' => ['::validateUrl'],
       '#submit' => ['::addButtonSubmit'],
-      // @todo Move validation in https://www.drupal.org/node/2988215
       '#ajax' => [
         'callback' => '::updateFormCallback',
         'wrapper' => 'media-library-wrapper',
@@ -73,11 +74,7 @@ class MediaLibraryGoogleFormForm extends AddFormBase {
         // @todo Remove when https://www.drupal.org/project/drupal/issues/2504115
         //   is fixed.
         'url' => Url::fromRoute('media_library.ui'),
-        'options' => [
-          'query' => $this->getMediaLibraryState($form_state)->all() + [
-              FormBuilderInterface::AJAX_FORM_REQUEST => TRUE,
-            ],
-        ],
+        'options' => ['query' => $ajax_query],
       ],
     ];
 
