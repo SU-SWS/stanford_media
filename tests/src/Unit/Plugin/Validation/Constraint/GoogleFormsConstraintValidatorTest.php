@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\Tests\stanford_media\Kernel\Plugin\Validation\Constraint;
+namespace Drupal\Tests\stanford_media\Unit\Plugin\Validation\Constraint;
 
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\TypedData\Validation\ExecutionContext;
@@ -28,10 +28,23 @@ class GoogleFormsConstraintValidatorTest extends UnitTestCase {
    */
   protected $validator;
 
+  /**
+   * Validation context object.
+   *
+   * @var \Drupal\Core\TypedData\Validation\ExecutionContext
+   */
   protected $validationContext;
 
+  /**
+   * Field value from mocked media entity.
+   *
+   * @var string
+   */
   protected $sourceFieldValue;
 
+  /**
+   * {@inheritDoc}
+   */
   protected function setUp() {
     parent::setUp();
 
@@ -43,6 +56,9 @@ class GoogleFormsConstraintValidatorTest extends UnitTestCase {
     $this->validator->initialize($this->validationContext);
   }
 
+  /**
+   * Non google form source will throw an error.
+   */
   public function testValidationNonGoogleForm() {
     $source = $this->createMock(MediaSourceInterface::class);
     $entity = $this->createMock(MediaInterface::class);
@@ -55,6 +71,9 @@ class GoogleFormsConstraintValidatorTest extends UnitTestCase {
     $this->validator->validate($field_item_list, $constraint);
   }
 
+  /**
+   * Various field values from the media will validate in different ways.
+   */
   public function testValidationGoogleForm() {
     $source = $this->createMock(GoogleForm::class);
     $source->method('getSourceFieldValue')->willReturnReference($this->sourceFieldValue);
