@@ -5,8 +5,6 @@ namespace Drupal\stanford_media\Form;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
-use Drupal\media\OEmbed\ResourceException;
-use Drupal\media\Plugin\media\Source\OEmbedInterface;
 use Drupal\media_library\Form\AddFormBase;
 use Drupal\stanford_media\Plugin\media\Source\GoogleForm;
 
@@ -97,12 +95,12 @@ class MediaLibraryGoogleFormForm extends AddFormBase {
   public function validateUrl(array &$form, FormStateInterface $form_state) {
     $url = $form_state->getValue('url');
     preg_match('/^http.*google.*forms\/([^ ]*)\/viewform/', $url, $form_id);
-    if(empty($form_id)){
+    if (empty($form_id)) {
       $form_state->setErrorByName('url', $this->t('Invalid google forms url.'));
     }
   }
 
-    /**
+  /**
    * Submit handler for the add button.
    *
    * @param array $form
