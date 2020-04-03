@@ -83,6 +83,7 @@ class Image extends MediaEmbedDialogBase {
       $values['attributes']['data-caption-hash'] = substr(md5($text), 0, 5);
     }
   }
+
   /**
    * {@inheritdoc}
    */
