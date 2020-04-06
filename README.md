@@ -108,4 +108,4 @@ Steps to build a new release:
 - Make a PR to merge your release branch into `master`
 - Give the PR a semver-compliant label, e.g., (`patch`, `minor`, `major`)
 - When the PR is merged to `master`, a new tag will be created automatically, bumping the version by the semver label.
-- The github action is built from: (semver-release-action)[https://github.com/K-Phoen/semver-release-action], and further documentation is available there.
+- The github action is built from: [semver-release-action](https://github.com/K-Phoen/semver-release-action), and further documentation is available there.
