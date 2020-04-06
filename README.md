@@ -96,3 +96,16 @@ Contribution / Collaboration
 You are welcome to contribute functionality, bug fixes, or documentation to this module. If you would like to suggest a
 fix or new functionality you may add a new issue to the GitHub issue queue or you may fork this repository and submit a
 pull request. For more help please see [GitHub's article on fork, branch, and pull requests](https://help.github.com/articles/using-pull-requests)
+
+
+Releases
+---
+
+Steps to build a new release:
+- Checkout the latest commit from the `8.x-2.x` branch.
+- Create a new branch for the release.
+- Commit any necessary changes to the release branch.
+- Make a PR to merge your release branch into `master`
+- Give the PR a semver-compliant label, e.g., (`patch`, `minor`, `major`)
+- When the PR is merged to `master`, a new tag will be created automatically, bumping the version by the semver label.
+- The github action is built from: (semver-release-action)[https://github.com/K-Phoen/semver-release-action], and further documentation is available there.
