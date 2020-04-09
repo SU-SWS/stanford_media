@@ -40,6 +40,8 @@ abstract class MediaEmbedDialogTestBase extends UnitTestCase {
    */
   protected $mediaBundle;
 
+  protected $mediaSource;
+
   /**
    * {@inheritDoc}
    */
@@ -69,8 +71,8 @@ abstract class MediaEmbedDialogTestBase extends UnitTestCase {
     $this->container->set('path.validator', $this->createMock(PathValidatorInterface::class));
     \Drupal::setContainer($this->container);
 
-    $media_source = $this->createMock(MediaSourceInterface::class);
-    $media_source->method('getConfiguration')
+    $this->mediaSource = $this->createMock(MediaSourceInterface::class);
+    $this->mediaSource->method('getConfiguration')
       ->willReturn(['source_field' => 'field_foo']);
 
     $field_list = $this->createMock(FieldItemListInterface::class);
@@ -78,20 +80,9 @@ abstract class MediaEmbedDialogTestBase extends UnitTestCase {
       ->will($this->returnCallback([$this, 'fieldGetStringCallback']));
 
     $this->mediaEntity = $this->createMock(MediaInterface::class);
-    $this->mediaEntity->method('bundle')
-      ->will($this->returnCallback([$this, 'mediaBundleCallback']));
-    $this->mediaEntity->method('getSource')->willReturn($media_source);
+    $this->mediaEntity->method('bundle')->willReturnReference($this->mediaBundle);
+    $this->mediaEntity->method('getSource')->willReturnReference($this->mediaSource);
     $this->mediaEntity->method('get')->willReturn($field_list);
-  }
-
-  /**
-   * Media bundle callback.
-   *
-   * @return string
-   *   What media bundle the mock entity is.
-   */
-  public function mediaBundleCallback() {
-    return $this->mediaBundle;
   }
 
 }
