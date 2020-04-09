@@ -26,7 +26,7 @@ class GoogleFormFormatter extends FormatterBase {
    * {@inheritDoc}
    */
   public static function isApplicable(FieldDefinitionInterface $field_definition) {
-    if ($field_definition->getTargetEntityTypeId() !== 'media') {
+    if ($field_definition->getTargetEntityTypeId() !== 'media' || !$field_definition->getTargetBundle()) {
       return FALSE;
     }
 
@@ -39,6 +39,11 @@ class GoogleFormFormatter extends FormatterBase {
    */
   public function viewElements(FieldItemListInterface $items, $langcode) {
     $elements = [];
+
+    /** @var \Drupal\Core\Entity\Plugin\DataType\EntityAdapter $parent */
+    $parent = $items->getParent();
+    $iframe_title = $parent->getEntity()->label();
+
     /** @var \Drupal\Core\Field\Plugin\Field\FieldType\StringItem $item */
     foreach ($items as $item) {
       $url = $item->getValue()['value'];
@@ -46,7 +51,11 @@ class GoogleFormFormatter extends FormatterBase {
         '#type' => 'html_tag',
         '#tag' => 'iframe',
         '#value' => $this->t('Loading'),
-        '#attributes' => ['src' => $url, 'class' => ['google-form']],
+        '#attributes' => [
+          'src' => $url,
+          'title' => $iframe_title,
+          'class' => ['google-form'],
+        ],
       ];
     }
     $elements['#attached']['library'][] = 'stanford_media/google_forms';
