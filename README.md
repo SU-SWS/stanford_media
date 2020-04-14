@@ -64,7 +64,7 @@ Configuration
 ---
 
 1. Add the Media Library button to the WYSIWYG as needed and check the box "Embed media".
-1. If the WYSIWYG is configured to limit allowed HTML Tags, ensure the the below is added to the list of allowed tags:
+2. If the WYSIWYG is configured to limit allowed HTML Tags, ensure the the below is added to the list of allowed tags:
 `<drupal-media data-entity-type data-entity-uuid data-caption data-align data-* class>`
    * Although `data-*` would allow all data attributes and you wouldn't need to add any others, the UI form validation will throw an error without the above attributes.
    * `data-caption` is only required if captions are allowed. This has to be added and `data-*` cant be relied on due to hard coded checking of the embed form.
