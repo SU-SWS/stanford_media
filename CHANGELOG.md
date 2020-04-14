@@ -1,5 +1,18 @@
 # Stanford Media
 
+8.x-2.5
+--------------------------------------------------------------------------------
+_Release Date: 2020-04-14_
+
+- Removed entity usage plugin that is now in the contrib module (#46)
+- D8CORE-736 Removed image formatter in favor of a core patch (#47)
+- D8CORE-1706: Fixed error when a user cancels uploaded file (#48)
+- D8CORE-1706: updated focal point patch (#48)
+- D8CORE-1644: Switch to dev branch workflow (#51)
+- D8CORE-1223 Added caption field to the image modal in wysiwyg (#50)
+- HSD8-752 google forms media type support (#49)
+- D8CORE-1197 Google forms media type configs (#52)
+
 8.x-2.4
 --------------------------------------------------------------------------------
 _Release Date: 2020-03-23_
