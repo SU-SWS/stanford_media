@@ -15,4 +15,11 @@
       padding: 0.4em 0 1em 1.5em;
     }
   }
+
+  iframe {
+    &.google-form {
+      width: 100%;
+      min-height: 600px;
+    }
+  }
 }

@@ -7,9 +7,10 @@
 
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\editor\Entity\Editor;
 use Drupal\stanford_media\Form\MediaLibraryFileUploadForm;
-use Drupal\Core\Form\FormStateInterface;
+use Drupal\stanford_media\Form\MediaLibraryGoogleFormForm;
 
 /**
  * Implements hook_field_widget_WIDGET_TYPE_form_alter().
@@ -34,7 +35,6 @@ function stanford_media_ckeditor_css_alter(array &$css, Editor $editor) {
 function stanford_media_theme_registry_alter(&$theme_registry) {
   // Register the path to the template files.
   $path = drupal_get_path('module', 'stanford_media') . '/templates';
-  $theme_registry['responsive_image_formatter']['path'] = $path;
   $theme_registry['dropzonejs']['path'] = $path;
   $theme_registry['filter_caption']['path'] = $path;
 }
@@ -87,6 +87,7 @@ function stanford_media_media_source_info_alter(array &$sources) {
   $sources['file']['forms']['media_library_add'] = MediaLibraryFileUploadForm::class;
   $sources['image']['forms']['media_library_add'] = MediaLibraryFileUploadForm::class;
   $sources['video_file']['forms']['media_library_add'] = MediaLibraryFileUploadForm::class;
+  $sources['google_form']['forms']['media_library_add'] = MediaLibraryGoogleFormForm::class;
 }
 
 /**

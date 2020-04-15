@@ -2,8 +2,6 @@
 
 namespace Drupal\stanford_media\Form;
 
-use Drupal\Core\Ajax\AjaxResponse;
-use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\File\FileSystemInterface;
@@ -134,18 +132,6 @@ class MediaLibraryFileUploadForm extends FileUploadForm {
     $element['container']['upload']['#type'] = 'hidden';
     unset($element['container']['upload']['#process']);
     return $element;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public function updateFormCallback(array &$form, FormStateInterface $form_state) {
-    if (empty($form_state->getValue(['dropzone', 'uploaded_files']))) {
-      $response = new AjaxResponse();
-      $response->addCommand(new ReplaceCommand('#media-library-add-form-wrapper', $form));
-      return $response;
-    }
-    return parent::updateFormCallback($form, $form_state);
   }
 
   /**

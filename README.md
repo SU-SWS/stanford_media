@@ -64,7 +64,7 @@ Configuration
 ---
 
 1. Add the Media Library button to the WYSIWYG as needed and check the box "Embed media".
-1. If the WYSIWYG is configured to limit allowed HTML Tags, ensure the the below is added to the list of allowed tags:
+2. If the WYSIWYG is configured to limit allowed HTML Tags, ensure the the below is added to the list of allowed tags:
 `<drupal-media data-entity-type data-entity-uuid data-caption data-align data-* class>`
    * Although `data-*` would allow all data attributes and you wouldn't need to add any others, the UI form validation will throw an error without the above attributes.
    * `data-caption` is only required if captions are allowed. This has to be added and `data-*` cant be relied on due to hard coded checking of the embed form.
@@ -96,3 +96,16 @@ Contribution / Collaboration
 You are welcome to contribute functionality, bug fixes, or documentation to this module. If you would like to suggest a
 fix or new functionality you may add a new issue to the GitHub issue queue or you may fork this repository and submit a
 pull request. For more help please see [GitHub's article on fork, branch, and pull requests](https://help.github.com/articles/using-pull-requests)
+
+
+Releases
+---
+
+Steps to build a new release:
+- Checkout the latest commit from the `8.x-2.x` branch.
+- Create a new branch for the release.
+- Commit any necessary changes to the release branch.
+- Make a PR to merge your release branch into `master`
+- Give the PR a semver-compliant label, e.g., (`patch`, `minor`, `major`)
+- When the PR is merged to `master`, a new tag will be created automatically, bumping the version by the semver label.
+- The github action is built from: [semver-release-action](https://github.com/K-Phoen/semver-release-action), and further documentation is available there.
