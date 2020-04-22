@@ -207,6 +207,7 @@ class MultiMediaFormatter extends MediaFormatterBase {
     }
 
     $element['#stanford_media_image_style'] = ($op == "image_style") ? $this->settings['image']['image_formatter_image_style'] : $this->settings['image']['image_formatter_responsive_image_style'];
+    $element['#cache']['keys'][] = $element['#stanford_media_image_style'];
 
     if ($op == 'image_style') {
       $element['#pre_render'][] = [MediaImageFormatter::class, 'preRender'];
@@ -214,6 +215,7 @@ class MultiMediaFormatter extends MediaFormatterBase {
     }
 
     $element['#pre_render'][] = [MediaResponsiveImageFormatter::class, 'preRender'];
+
   }
 
   /**

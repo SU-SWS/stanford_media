@@ -43,15 +43,13 @@ class MediaImageFormatter extends MediaImageFormatterBase {
       $item = &$element[$source_field][$delta];
       $item['#theme'] = 'image_formatter';
       $item['#image_style'] = $element['#stanford_media_image_style'];
-      // Disable cache for this field formatter.
-      $item['#cache']['keys'][] = $element['#stanford_media_image_style'];
-      
+
       if (isset($element['#stanford_media_url'])) {
         $item['#url'] = $element['#stanford_media_url'];
         $item['#attributes']['title'] = $element['#stanford_media_url_title'];
       }
-
     }
+
     return $element;
   }
 
