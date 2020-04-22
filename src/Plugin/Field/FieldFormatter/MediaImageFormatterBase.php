@@ -117,7 +117,6 @@ abstract class MediaImageFormatterBase extends MediaFormatterBase implements Tru
     }
 
     $elements['#cache']['keys'][] = $style;
-    $elements['#pre_rendered'] = TRUE;
     return $elements;
   }
 
