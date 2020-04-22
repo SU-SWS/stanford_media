@@ -58,6 +58,7 @@ class MediaResponsiveImageFormatter extends MediaImageFormatterBase {
         $item['#attributes']['title'] = $element['#stanford_media_url_title'];
       }
     }
+
     return $element;
   }
 

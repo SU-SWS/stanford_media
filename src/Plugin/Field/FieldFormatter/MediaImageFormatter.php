@@ -48,8 +48,8 @@ class MediaImageFormatter extends MediaImageFormatterBase {
         $item['#url'] = $element['#stanford_media_url'];
         $item['#attributes']['title'] = $element['#stanford_media_url_title'];
       }
-
     }
+
     return $element;
   }
 
