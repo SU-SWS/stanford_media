@@ -50,6 +50,10 @@ class MediaImageFormatter extends MediaImageFormatterBase {
       }
 
     }
+    // Disable cache for this field formatter.
+    // https://www.drupal.org/project/drupal/issues/2099131.
+    // https://www.drupal.org/node/2151609.
+    $element['#cache'] = FALSE;
     return $element;
   }
 
