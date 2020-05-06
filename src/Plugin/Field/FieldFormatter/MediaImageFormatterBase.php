@@ -113,6 +113,7 @@ abstract class MediaImageFormatterBase extends MediaFormatterBase implements Tru
 
         $element['#stanford_media_url'] = $parent->toUrl();
         $element['#stanford_media_url_title'] = $parent->label();
+        $element['#cache']['keys'][] = $element['#stanford_media_url'];
       }
       $element['#cache']['keys'][] = $style;
     }
