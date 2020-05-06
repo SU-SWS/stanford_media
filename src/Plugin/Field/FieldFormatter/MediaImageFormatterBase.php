@@ -105,7 +105,7 @@ abstract class MediaImageFormatterBase extends MediaFormatterBase implements Tru
 
     foreach ($elements as &$element) {
       $element['#stanford_media_image_style'] = $style;
-      $element['#pre_render'][] = [$this, 'preRender'];
+      $element['#pre_render'][] = [get_class($this), 'preRender'];
 
       if ($this->getSetting('link')) {
         /** @var \Drupal\Core\Entity\EntityInterface $parent */
@@ -114,9 +114,9 @@ abstract class MediaImageFormatterBase extends MediaFormatterBase implements Tru
         $element['#stanford_media_url'] = $parent->toUrl();
         $element['#stanford_media_url_title'] = $parent->label();
       }
+      $element['#cache']['keys'][] = $style;
     }
 
-    $elements['#cache']['keys'][] = $style;
     return $elements;
   }
 
