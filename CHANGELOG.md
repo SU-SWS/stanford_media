@@ -1,5 +1,13 @@
 # Stanford Media
 
+8.x-2.6
+--------------------------------------------------------------------------------
+_Release Date: 2020-05-15_
+
+- D8CORE-000: Enhanced cache tags (#55) (3659d10)
+- Set cache keys for image field formatters. (#54) (482faaa)
+- Merge branch 'master' into 8.x-2.x (33dee03)
+
 8.x-2.5
 --------------------------------------------------------------------------------
 _Release Date: 2020-04-14_
