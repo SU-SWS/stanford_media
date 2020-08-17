@@ -71,8 +71,8 @@ back_to_dev: &back_to_dev
 jobs:
   run-coverage:
     <<: *code_coverage
-  run-behat:
-    <<: *behat
+#  run-behat:
+#    <<: *behat
   run-back-to-dev:
     <<: *back_to_dev
 
@@ -92,7 +92,7 @@ workflows:
   weekly:
     jobs:
       - run-coverage
-      - run-behat
+#      - run-behat
     triggers:
       - schedule:
           cron: "0 0 * * 0"
@@ -103,5 +103,5 @@ workflows:
   tests:
     jobs:
       - run-coverage
-      - run-behat
+#      - run-behat
 
