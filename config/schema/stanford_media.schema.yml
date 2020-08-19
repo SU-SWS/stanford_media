@@ -73,6 +73,40 @@ field.formatter.settings.media_multimedia_formatter:
           type: string
           label: 'The view mode to fallback to the type.'
 
+field.formatter.settings.embeddable_formatter:
+  type: mapping
+  label: 'oEmbed display format settings'
+  mapping:
+    max_width:
+      type: integer
+      label: 'Maximum width'
+    max_height:
+      type: integer
+      label: 'Maximum height'
+
 media.source.google_form:
   type: media.source.field_aware
   label: '"Google Form" media source configuration'
+
+media.source.embeddable:
+  type: media.source.field_aware
+  label: '"Embeddable" media source configuration'
+  mapping:
+    thumbnails_directory:
+      type: uri
+      label: 'URI of thumbnail storage directory'
+    providers:
+      type: sequence
+      label: 'Allowed oEmbed providers'
+      sequence:
+        type: string
+        label: 'Provider name'
+    oembed_field_name:
+      type: uri
+      label: 'The field for the oembed link'
+    unstructured_field_name:
+      type: string
+      label: 'The field for the unstructured code'
+    source_field:
+      type: uri
+      label: 'Source field'
