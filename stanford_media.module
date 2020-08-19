@@ -88,6 +88,7 @@ function stanford_media_media_source_info_alter(array &$sources) {
   $sources['image']['forms']['media_library_add'] = MediaLibraryFileUploadForm::class;
   $sources['video_file']['forms']['media_library_add'] = MediaLibraryFileUploadForm::class;
   $sources['google_form']['forms']['media_library_add'] = MediaLibraryGoogleFormForm::class;
+  $sources['stanford_embed']['forms']['media_library_add'] = MediaLibraryStanfordEmbedForm::class;
 }
 
 /**
