@@ -6,7 +6,7 @@ use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\media_library\Form\AddFormBase;
-use Drupal\stanford_media\Plugin\media\Source\GoogleForm;
+use Drupal\stanford_media\Plugin\media\Source\Embeddable;
 
 /**
  * Media library add stanford embed input form.
@@ -31,9 +31,9 @@ class MediaLibraryStanfordEmbedForm extends AddFormBase {
     }
 
     $media_type = parent::getMediaType($form_state);
-    if (!$media_type->getSource() instanceof GoogleForm) {
-      throw new \InvalidArgumentException('Can only add media types that use the following sources: Flikr, DeviantArt');
-    }
+    //if (!$media_type->getSource() instanceof GoogleForm) {
+    //  throw new \InvalidArgumentException('Can only add media types that use the following sources: Flikr, DeviantArt');
+    //}
     return $media_type;
   }
 

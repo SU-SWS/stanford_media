@@ -11,6 +11,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\editor\Entity\Editor;
 use Drupal\stanford_media\Form\MediaLibraryFileUploadForm;
 use Drupal\stanford_media\Form\MediaLibraryGoogleFormForm;
+use Drupal\stanford_media\Form\MediaLibraryStanfordEmbedForm;
 
 /**
  * Implements hook_field_widget_WIDGET_TYPE_form_alter().
