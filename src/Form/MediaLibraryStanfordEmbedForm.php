@@ -52,11 +52,23 @@ class MediaLibraryStanfordEmbedForm extends AddFormBase {
         '@type' => $this->getMediaType($form_state)->label(),
       ]),
       '#description' => $this->t('Works with oEmbed providers.'),
-      '#required' => TRUE,
+      '#required' => FALSE,
       '#attributes' => [
         'placeholder' => 'https://oembed.com',
       ],
     ];
+
+    $form['container']['su_stanford_embed_plain'] = [
+      '#type' => 'textarea',
+      '#title' => $this->t('Embed Code'),
+      '#description' => $this->t('Use this field to paste in embed codes which are not available through oEmbed'),
+      '#required' => FALSE,
+      '#attributes' => [
+        'placeholder' => '',
+      ],
+    ];
+
+
 
     $ajax_query = $this->getMediaLibraryState($form_state)->all();
     $ajax_query += [FormBuilderInterface::AJAX_FORM_REQUEST => TRUE];
