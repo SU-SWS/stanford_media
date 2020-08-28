@@ -11,7 +11,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\editor\Entity\Editor;
 use Drupal\stanford_media\Form\MediaLibraryFileUploadForm;
 use Drupal\stanford_media\Form\MediaLibraryGoogleFormForm;
-use Drupal\stanford_media\Form\MediaLibraryStanfordEmbedForm;
+use Drupal\stanford_media\Form\MediaLibraryEmbeddableForm;
 
 /**
  * Implements hook_field_widget_WIDGET_TYPE_form_alter().
@@ -89,7 +89,7 @@ function stanford_media_media_source_info_alter(array &$sources) {
   $sources['image']['forms']['media_library_add'] = MediaLibraryFileUploadForm::class;
   $sources['video_file']['forms']['media_library_add'] = MediaLibraryFileUploadForm::class;
   $sources['google_form']['forms']['media_library_add'] = MediaLibraryGoogleFormForm::class;
-  $sources['stanford_embed']['forms']['media_library_add'] = MediaLibraryStanfordEmbedForm::class;
+  $sources['embeddable']['forms']['media_library_add'] = MediaLibraryEmbeddableForm::class;
 }
 
 /**

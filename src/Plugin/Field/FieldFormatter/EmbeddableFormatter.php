@@ -1,0 +1,66 @@
+<?php
+
+namespace Drupal\stanford_media\Plugin\Field\FieldFormatter;
+
+use Drupal\Core\Field\FieldDefinitionInterface;
+use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Core\Field\FormatterBase;
+use Drupal\media\Entity\MediaType;
+use Drupal\stanford_media\Plugin\media\Source\Embeddable;
+
+/**
+ * Field formatter for embeddables.
+ *
+ * @FieldFormatter (
+ *   id = "embeddable_formatter",
+ *   label = @Translation("Embeddable field formatter"),
+ *   description = @Translation("Apply an image style to image media items."),
+ *   field_types = {
+ *     "string"
+ *   }
+ * )
+ */
+class EmbeddableFormatter extends FormatterBase {
+
+  /**
+   * {@inheritDoc}
+   */
+  public static function isApplicable(FieldDefinitionInterface $field_definition) {
+    if ($field_definition->getTargetEntityTypeId() !== 'media' || !$field_definition->getTargetBundle()) {
+      return FALSE;
+    }
+
+    $media_type = MediaType::load($field_definition->getTargetBundle());
+    return $media_type && $media_type->getSource() instanceof Embeddable;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function viewElements(FieldItemListInterface $items, $langcode) {
+    $elements = [];
+
+    /** @var \Drupal\Core\Entity\Plugin\DataType\EntityAdapter $parent */
+    $parent = $items->getParent();
+    $iframe_title = $parent->getEntity()->label();
+
+    /** @var \Drupal\Core\Field\Plugin\Field\FieldType\StringItem $item */
+    foreach ($items as $item) {
+      $url = $item->getValue()['value'];
+      $elements[] = [
+        '#type' => 'html_tag',
+        '#tag' => 'iframe',
+        '#value' => $this->t('Loading'),
+        '#attributes' => [
+          'src' => 'https://www.ianmonroe.com',
+          'title' => 'Field formatter test',
+          'class' => ['embeddable'],
+        ],
+      ];
+    }
+    #$elements['#attached']['library'][] = 'stanford_media/google_forms';
+
+    return $elements;
+  }
+
+}
