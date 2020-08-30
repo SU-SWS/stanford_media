@@ -14,9 +14,9 @@ use Drupal\stanford_media\Plugin\media\Source\Embeddable;
  * @FieldFormatter (
  *   id = "embeddable_formatter",
  *   label = @Translation("Embeddable field formatter"),
- *   description = @Translation("Apply an image style to image media items."),
+ *   description = @Translation("Field formatter for Embeddable media."),
  *   field_types = {
- *     "string"
+ *     "string_long"
  *   }
  * )
  */
@@ -40,26 +40,24 @@ class EmbeddableFormatter extends FormatterBase {
   public function viewElements(FieldItemListInterface $items, $langcode) {
     $elements = [];
 
-    /** @var \Drupal\Core\Entity\Plugin\DataType\EntityAdapter $parent */
-    $parent = $items->getParent();
-    $iframe_title = $parent->getEntity()->label();
-
     /** @var \Drupal\Core\Field\Plugin\Field\FieldType\StringItem $item */
-    foreach ($items as $item) {
-      $url = $item->getValue()['value'];
-      $elements[] = [
-        '#type' => 'html_tag',
-        '#tag' => 'iframe',
-        '#value' => $this->t('Loading'),
-        '#attributes' => [
-          'src' => 'https://www.ianmonroe.com',
-          'title' => 'Field formatter test',
-          'class' => ['embeddable'],
-        ],
-      ];
+    foreach ($items as $delta => $item) {
+      $embed_markup = $item->getValue()['value'];
+      if (!empty($embed_markup)){
+        $elements[$delta] = [
+          '#markup' => $item->getValue()['value'],
+          '#allowed_tags' => [
+            'iframe',
+            'video',
+            'source',
+            'embed',
+            'script',
+          ],
+          '#prefix' => '<div class="embeddable-content">',
+          '#suffix' => '</div>',
+        ];
+      }
     }
-    #$elements['#attached']['library'][] = 'stanford_media/google_forms';
-
     return $elements;
   }
 

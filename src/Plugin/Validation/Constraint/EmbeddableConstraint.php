@@ -3,6 +3,7 @@
 namespace Drupal\stanford_media\Plugin\Validation\Constraint;
 
 use Symfony\Component\Validator\Constraint;
+use Drupal\media\Plugin\Validation\Constraint\OEmbedResourceConstraint;
 
 /**
  * Class EmbeddableConstraint.
@@ -13,10 +14,8 @@ use Symfony\Component\Validator\Constraint;
  *   type = "string"
  * )
  */
-class EmbeddableConstraint extends Constraint {
+class EmbeddableConstraint extends OEmbedResourceConstraint {
 
-  public $invalidString = 'The given data does not contain a valid url';
-
-  public $invalidUrl = 'The given URL is not a google forms url.';
+  // Extra constraints for the Embeddable media type should go here.
 
 }

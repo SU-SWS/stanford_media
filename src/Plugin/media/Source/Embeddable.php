@@ -10,21 +10,11 @@ use \Drupal\media\MediaInterface;
  *   id = "embeddable",
  *   label = @Translation("Stanford Embedded Media"),
  *   description = @Translation("Embeds a third-party resource."),
- *   providers = {"Deviantart.com", "Flickr"},
+ *   providers = {"ArcGIS StoryMaps", "CircuitLab", "Codepen", "Dailymotion", "Facebook", "Flickr", "Getty Images", "Instagram", "Issuu", "Livestream", "MathEmbed", "Simplecast", "SlideShare", "SoundCloud", "Spotify", "Stanford Digital Repository", "Twitter"},
  *   allowed_field_types = {"string"},
  * )
  */
 class Embeddable extends OEmbed {
-  // No need for anything in here; the base plugin can take care of typical interactions
-  // with external oEmbed services.
-
-  /**
-   * Key for "Form ID" metadata attribute.
-   *
-   * @var string
-   */
-  const METADATA_ATTRIBUTE_ID = 'unstructured';
-
 
   /**
    * {@inheritdoc}
@@ -46,7 +36,6 @@ class Embeddable extends OEmbed {
       'width' => $this->t('The width of the resource'),
       'height' => $this->t('The height of the resource'),
       'html' => $this->t('The HTML representation of the resource'),
-      'unstructured' => $this->t('Is this an unstructured embed'),
     ];
   }
 
@@ -73,7 +62,6 @@ class Embeddable extends OEmbed {
    * {@inheritdoc}
    */
   public function getUnstructuredMetadata(MediaInterface $media, $name) {
-
     switch ($name) {
       case 'default_name':
         if ($title = $this->getMetadata($media, 'title')) {
@@ -83,9 +71,6 @@ class Embeddable extends OEmbed {
           return $url;
         }
         return parent::getMetadata($media, 'default_name');
-
-      case 'unstructured':
-        return $this->get('field_media_embeddable_code')->getValue() ? true : false;
 
       case 'thumbnail_uri':
       case 'type':
@@ -101,8 +86,7 @@ class Embeddable extends OEmbed {
       case 'width':
       case 'height':
       case 'html':
-          return 'no value for unstructured.';
-
+          return null;
 
       default:
         break;
@@ -141,9 +125,6 @@ class Embeddable extends OEmbed {
         }
         return parent::getMetadata($media, 'default_name');
 
-      case 'unstructured':
-        return $this->get('field_media_embeddable_code')->getValue() ? true : false;
-
       case 'thumbnail_uri':
         return $this->getLocalThumbnailUri($resource) ?: parent::getMetadata($media, 'thumbnail_uri');
 
@@ -181,10 +162,12 @@ class Embeddable extends OEmbed {
         return $url ? $url->toString() : NULL;
 
       case 'width':
-        return $resource->getWidth();
+        //return $resource->getWidth();
+        return '100%';
 
       case 'height':
         return $resource->getHeight();
+
 
       case 'html':
         return $resource->getHtml();
@@ -210,6 +193,15 @@ class Embeddable extends OEmbed {
       return TRUE;
     }
     return FALSE;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function getSourceFieldConstraints() {
+    return [
+      'embeddable' => [],
+    ];
   }
 
 
