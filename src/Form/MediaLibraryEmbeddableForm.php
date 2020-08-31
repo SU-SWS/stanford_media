@@ -27,6 +27,15 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
    */
   protected function buildInputElement(array $form, FormStateInterface $form_state) {
     // This was taken from \Drupal\media_library\Form\OembedForm.
+
+    $user = \Drupal::currentUser();
+    $authorized_for_unstructured = FALSE;
+    if ($user->hasPermission('create field_media_embeddable_code') ||
+        $user->hasPermission('edit field_media_embeddable_code') ) {
+      $authorized_for_unstructured = TRUE;
+    }
+
+
     $media_type = $this->getMediaType($form_state);
     $providers = $media_type->getSource()->getProviders();
 
@@ -46,17 +55,17 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
       ],
     ];
 
-    $form['container']['field_media_embeddable_code'] = [
-      '#type' => 'textarea',
-      '#title' => $this->t('Embed Code'),
-      '#description' => $this->t('Use this field to paste in embed codes which are not available through oEmbed'),
-      '#required' => FALSE,
-      '#attributes' => [
-        'placeholder' => '',
-      ],
-    ];
-
-
+    if ($authorized_for_unstructured){
+      $form['container']['field_media_embeddable_code'] = [
+        '#type' => 'textarea',
+        '#title' => $this->t('Embed Code'),
+        '#description' => $this->t('Use this field to paste in embed codes which are not available through oEmbed'),
+        '#required' => FALSE,
+        '#attributes' => [
+          'placeholder' => '',
+        ],
+      ];
+    }
 
     $ajax_query = $this->getMediaLibraryState($form_state)->all();
     $ajax_query += [FormBuilderInterface::AJAX_FORM_REQUEST => TRUE];
