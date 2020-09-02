@@ -98,22 +98,13 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
    *   The current form state.
    */
   public function validateEmbeddable(array &$form, FormStateInterface $form_state) {
-    $url = $form_state->getValue('field_media_embeddable_oembed');
     $embed_code = $form_state->getValue('field_media_embeddable_code');
 
-    // No validation on the URL if we have an embed code.
+    // No validation necessary if we have an embed code.
     if ($embed_code) {
       return;
-    }
-
-    if ($url) {
-      try {
-        $resource_url = $this->urlResolver->getResourceUrl($url);
-        $this->resourceFetcher->fetchResource($resource_url);
-      }
-      catch (ResourceException $e) {
-        $form_state->setErrorByName('url', $e->getMessage());
-      }
+    } else {
+      parent::validateEmbeddable($form, $form_state);
     }
   }
 
@@ -130,36 +121,6 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
       $form_state->getValue('field_media_embeddable_oembed'),
     ];
     $this->processInputValues($values, $form, $form_state);
-  }
-
-  /**
-   * Creates media items from source field input values.
-   *
-   * @param mixed[] $source_field_values
-   *   The values for source fields of the media items.
-   * @param array $form
-   *   The complete form.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   The current form state.
-   */
-  protected function processInputValues(array $source_field_values, array $form, FormStateInterface $form_state) {
-    $media_type = $this->getMediaType($form_state);
-    $media_storage = $this->entityTypeManager->getStorage('media');
-    $source_field_name = $this->getSourceFieldName($media_type);
-    $media = array_map(function ($source_field_value) use ($media_type, $media_storage, $source_field_name) {
-      return $this->createMediaFromValue($media_type, $media_storage, $source_field_name, $source_field_value);
-    }, $source_field_values);
-    // Re-key the media items before setting them in the form state.
-    $form_state->set('media', array_values($media));
-    // Save the selected items in the form state so they are remembered when an
-    // item is removed.
-    $media = $this->entityTypeManager->getStorage('media')
-      ->loadMultiple(explode(',', $form_state->getValue('current_selection')));
-    // Any ID can be passed to the form, so we have to check access.
-    $form_state->set('current_selection', array_filter($media, function ($media_item) {
-      return $media_item->access('view');
-    }));
-    $form_state->setRebuild();
   }
 
 }
