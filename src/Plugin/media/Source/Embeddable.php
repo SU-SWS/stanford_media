@@ -19,29 +19,6 @@ use Drupal\media\MediaTypeInterface;
 class Embeddable extends OEmbed {
 
   /**
-   * {@inheritdoc}
-   */
-  public function getMetadataAttributes() {
-    return [
-      'type' => $this->t('Resource type'),
-      'title' => $this->t('Resource title'),
-      'author_name' => $this->t('The name of the author/owner'),
-      'author_url' => $this->t('The URL of the author/owner'),
-      'provider_name' => $this->t("The name of the provider"),
-      'provider_url' => $this->t('The URL of the provider'),
-      'cache_age' => $this->t('Suggested cache lifetime'),
-      'default_name' => $this->t('Default name of the media item'),
-      'thumbnail_uri' => $this->t('Local URI of the thumbnail'),
-      'thumbnail_width' => $this->t('Thumbnail width'),
-      'thumbnail_height' => $this->t('Thumbnail height'),
-      'url' => $this->t('The source URL of the resource'),
-      'width' => $this->t('The width of the resource'),
-      'height' => $this->t('The height of the resource'),
-      'html' => $this->t('The HTML representation of the resource'),
-    ];
-  }
-
-  /**
    * Gets the value for a metadata attribute for a given media item.
    *
    * @param \Drupal\media\MediaInterface $media
@@ -60,7 +37,16 @@ class Embeddable extends OEmbed {
   }
 
   /**
-   * {@inheritdoc}
+   * Gets the value for a metadata attribute for a given media item.
+   * This is an alternate version to account for unstructured embeds.
+   *
+   * @param \Drupal\media\MediaInterface $media
+   *   A media item.
+   * @param string $attribute_name
+   *   Name of the attribute to fetch.
+   *
+   * @return mixed|null
+   *   Metadata attribute value or NULL if unavailable.
    */
   public function getUnstructuredMetadata(MediaInterface $media, $name) {
     switch ($name) {
@@ -74,8 +60,6 @@ class Embeddable extends OEmbed {
         return parent::getMetadata($media, 'default_name');
 
       case 'thumbnail_uri':
-        // $default_thumbnail_filename = $this->pluginDefinition['default_thumbnail_filename'];
-        // return $this->configFactory->get('media.settings')->get('icon_base_uri') . '/' . $default_thumbnail_filename;
         parent::getMetadata($media, 'thumbnail_uri');
       case 'type':
       case 'title':
@@ -87,10 +71,10 @@ class Embeddable extends OEmbed {
       case 'thumbnail_width':
       case 'thumbnail_height':
       case 'url':
-        return $media->get('field_media_embeddable_oembed')->getValue();
-
       case 'width':
       case 'height':
+        return null;
+
       case 'html':
         return $media->get('field_media_embeddable_code')->getValue();
 
@@ -101,87 +85,6 @@ class Embeddable extends OEmbed {
 
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  public function getOEmbedMetadata(MediaInterface $media, $name) {
-    $media_url = $this->getSourceFieldValue($media);
-    // The URL may be NULL if the source field is empty, in which case just
-    // return NULL.
-    if (empty($media_url)) {
-      return NULL;
-    }
-
-    try {
-      $resource_url = $this->urlResolver->getResourceUrl($media_url);
-      $resource = $this->resourceFetcher->fetchResource($resource_url);
-    }
-    catch (ResourceException $e) {
-      $this->messenger->addError($e->getMessage());
-      return NULL;
-    }
-
-    switch ($name) {
-      case 'default_name':
-        if ($title = $this->getMetadata($media, 'title')) {
-          return $title;
-        }
-        elseif ($url = $this->getMetadata($media, 'url')) {
-          return $url;
-        }
-        return parent::getMetadata($media, 'default_name');
-
-      case 'thumbnail_uri':
-        return $this->getLocalThumbnailUri($resource) ?: parent::getMetadata($media, 'thumbnail_uri');
-
-      case 'type':
-        return $resource->getType();
-
-      case 'title':
-        return $resource->getTitle();
-
-      case 'author_name':
-        return $resource->getAuthorName();
-
-      case 'author_url':
-        return $resource->getAuthorUrl();
-
-      case 'provider_name':
-        $provider = $resource->getProvider();
-        return $provider ? $provider->getName() : '';
-
-      case 'provider_url':
-        $provider = $resource->getProvider();
-        return $provider ? $provider->getUrl() : NULL;
-
-      case 'cache_age':
-        return $resource->getCacheMaxAge();
-
-      case 'thumbnail_width':
-        return $resource->getThumbnailWidth();
-
-      case 'thumbnail_height':
-        return $resource->getThumbnailHeight();
-
-      case 'url':
-        $url = $resource->getUrl();
-        return $url ? $url->toString() : NULL;
-
-      case 'width':
-        // Return $resource->getWidth();
-        return '100%';
-
-      case 'height':
-        return $resource->getHeight();
-
-      case 'html':
-        return $resource->getHtml();
-
-      default:
-        break;
-    }
-    return NULL;
-  }
 
   /**
    * Is there a value for the oEmbed URL?
@@ -222,23 +125,6 @@ class Embeddable extends OEmbed {
     return [
       'embeddable' => [],
     ];
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public function getSourceFieldDefinition(MediaTypeInterface $type) {
-    // Nothing to do if no source field is configured yet.
-    $field = $this->configuration['source_field'];
-    if ($field) {
-      // Even if we do know the name of the source field, there is no
-      // guarantee that it already exists.
-      $fields = $this->entityFieldManager
-        ->getFieldDefinitions('media', $type
-          ->id());
-      return isset($fields[$field]) ? $fields[$field] : NULL;
-    }
-    return NULL;
   }
 
   /**
