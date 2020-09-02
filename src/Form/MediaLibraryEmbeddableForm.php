@@ -6,7 +6,6 @@ use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\media_library\Form\OEmbedForm;
-use Drupal\stanford_media\Plugin\media\Source\Embeddable;
 
 /**
  * Media library add stanford embed input form.
@@ -27,14 +26,12 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
    */
   protected function buildInputElement(array $form, FormStateInterface $form_state) {
     // This was adapted from \Drupal\media_library\Form\OembedForm.
-
     $user = \Drupal::currentUser();
     $authorized_for_unstructured = FALSE;
     if ($user->hasPermission('create field_media_embeddable_code') ||
-        $user->hasPermission('edit field_media_embeddable_code') ) {
+        $user->hasPermission('edit field_media_embeddable_code')) {
       $authorized_for_unstructured = TRUE;
     }
-
 
     $media_type = $this->getMediaType($form_state);
     $providers = $media_type->getSource()->getProviders();
@@ -57,7 +54,7 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
       ],
     ];
 
-    if ($authorized_for_unstructured){
+    if ($authorized_for_unstructured) {
       $form['container']['field_media_embeddable_code'] = [
         '#type' => 'textarea',
         '#title' => $this->t('Embed Code'),
@@ -92,7 +89,6 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
     return $form;
   }
 
-
   /**
    * Validates the oEmbed URL.
    *
@@ -105,7 +101,7 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
     $url = $form_state->getValue('field_media_embeddable_oembed');
     $embed_code = $form_state->getValue('field_media_embeddable_code');
 
-    // no validation on the URL if we have an embed code.
+    // No validation on the URL if we have an embed code.
     if ($embed_code) {
       return;
     }
@@ -135,7 +131,6 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
     ];
     $this->processInputValues($values, $form, $form_state);
   }
-
 
   /**
    * Creates media items from source field input values.

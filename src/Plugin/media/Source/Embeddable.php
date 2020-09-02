@@ -52,13 +52,12 @@ class Embeddable extends OEmbed {
    * @return mixed|null
    *   Metadata attribute value or NULL if unavailable.
    */
-  public function getMetadata(MediaInterface $media, $name){
-    if ($this->hasUnstructured($media)){
+  public function getMetadata(MediaInterface $media, $name) {
+    if ($this->hasUnstructured($media)) {
       return $this->getUnstructuredMetadata($media, $name);
     }
     return parent::getMetadata($media, $name);
   }
-
 
   /**
    * {@inheritdoc}
@@ -75,9 +74,9 @@ class Embeddable extends OEmbed {
         return parent::getMetadata($media, 'default_name');
 
       case 'thumbnail_uri':
-          //$default_thumbnail_filename = $this->pluginDefinition['default_thumbnail_filename'];
-          //return $this->configFactory->get('media.settings')->get('icon_base_uri') . '/' . $default_thumbnail_filename;
-          parent::getMetadata($media, 'thumbnail_uri');
+        // $default_thumbnail_filename = $this->pluginDefinition['default_thumbnail_filename'];
+        // return $this->configFactory->get('media.settings')->get('icon_base_uri') . '/' . $default_thumbnail_filename;
+        parent::getMetadata($media, 'thumbnail_uri');
       case 'type':
       case 'title':
       case 'author_name':
@@ -88,11 +87,12 @@ class Embeddable extends OEmbed {
       case 'thumbnail_width':
       case 'thumbnail_height':
       case 'url':
-          return $media->get('field_media_embeddable_oembed')->getValue();
+        return $media->get('field_media_embeddable_oembed')->getValue();
+
       case 'width':
       case 'height':
       case 'html':
-          return $media->get('field_media_embeddable_code')->getValue();
+        return $media->get('field_media_embeddable_code')->getValue();
 
       default:
         break;
@@ -168,12 +168,11 @@ class Embeddable extends OEmbed {
         return $url ? $url->toString() : NULL;
 
       case 'width':
-        //return $resource->getWidth();
+        // Return $resource->getWidth();
         return '100%';
 
       case 'height':
         return $resource->getHeight();
-
 
       case 'html':
         return $resource->getHtml();
@@ -183,7 +182,6 @@ class Embeddable extends OEmbed {
     }
     return NULL;
   }
-
 
   /**
    * Is there a value for the oEmbed URL?
@@ -195,7 +193,7 @@ class Embeddable extends OEmbed {
    *   TRUE means it has an Unstructured embed, FALSE means that field is empty
    */
   public function hasOEmbed(MediaInterface $media) {
-    if (!empty($media->get('field_media_embeddable_oembed')->getValue())){
+    if (!empty($media->get('field_media_embeddable_oembed')->getValue())) {
       return TRUE;
     }
     return FALSE;
@@ -211,7 +209,7 @@ class Embeddable extends OEmbed {
    *   TRUE means it has an Unstructured embed, FALSE means that field is empty
    */
   public function hasUnstructured(MediaInterface $media) {
-    if (!empty($media->get('field_media_embeddable_code')->getValue())){
+    if (!empty($media->get('field_media_embeddable_code')->getValue())) {
       return TRUE;
     }
     return FALSE;
@@ -237,20 +235,20 @@ class Embeddable extends OEmbed {
       // guarantee that it already exists.
       $fields = $this->entityFieldManager
         ->getFieldDefinitions('media', $type
-        ->id());
+          ->id());
       return isset($fields[$field]) ? $fields[$field] : NULL;
     }
     return NULL;
   }
 
-
   /**
    * {@inheritdoc}
    */
   public function getSourceFieldValue(MediaInterface $media) {
-    if ($this->hasUnstructured($media)){
+    if ($this->hasUnstructured($media)) {
       $source_field = 'field_media_embeddable_code';
-    } else {
+    }
+    else {
       $source_field = $this->configuration['source_field'];
     }
     if (empty($source_field)) {
@@ -267,9 +265,5 @@ class Embeddable extends OEmbed {
     return $field_item->{$field_item
       ->mainPropertyName()};
   }
-
-
-
-
 
 }

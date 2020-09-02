@@ -2,7 +2,6 @@
 
 namespace Drupal\stanford_media\Plugin\Validation\Constraint;
 
-use Symfony\Component\Validator\Constraint;
 use Drupal\media\Plugin\Validation\Constraint\OEmbedResourceConstraint;
 
 /**

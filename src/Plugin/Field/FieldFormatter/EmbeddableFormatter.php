@@ -3,23 +3,12 @@
 namespace Drupal\stanford_media\Plugin\Field\FieldFormatter;
 
 use Drupal\Core\Cache\CacheableMetadata;
-use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
-use Drupal\Core\Field\FormatterBase;
-use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Logger\LoggerChannelFactoryInterface;
-use Drupal\Core\Messenger\MessengerInterface;
-use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Url;
 use Drupal\media\Entity\MediaType;
-use Drupal\media\IFrameUrlHelper;
 use Drupal\media\OEmbed\Resource;
 use Drupal\media\OEmbed\ResourceException;
-use Drupal\media\OEmbed\ResourceFetcherInterface;
-use Drupal\media\OEmbed\UrlResolverInterface;
-use Drupal\media\Plugin\media\Source\OEmbedInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\stanford_media\Plugin\media\Source\Embeddable;
 use Drupal\media\Plugin\Field\FieldFormatter\OEmbedFormatter;
 
@@ -39,14 +28,6 @@ use Drupal\media\Plugin\Field\FieldFormatter\OEmbedFormatter;
  */
 class EmbeddableFormatter extends OEmbedFormatter {
 
-
-  /**
-   * {@inheritDoc}
-   */
-  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, $label, $view_mode, array $third_party_settings, MessengerInterface $messenger, ResourceFetcherInterface $resource_fetcher, UrlResolverInterface $url_resolver, LoggerChannelFactoryInterface $logger_factory, ConfigFactoryInterface $config_factory, IFrameUrlHelper $iframe_url_helper) {
-    parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings, $messenger, $resource_fetcher, $url_resolver, $logger_factory, $config_factory, $iframe_url_helper);
-  }
-
   /**
    * {@inheritDoc}
    */
@@ -65,12 +46,11 @@ class EmbeddableFormatter extends OEmbedFormatter {
   public function viewElements(FieldItemListInterface $items, $langcode) {
     $embed_type = $items->getName();
 
-    if ($embed_type == "field_media_embeddable_oembed"){
+    if ($embed_type == "field_media_embeddable_oembed") {
       // Here, we override the Drupal\media\Plugin\Field\FieldFormatter\oEmbedFormatter
       // viewElements function, to make sure it works precisely the way we want.
       // To use the original version in core, just uncomment the following line.
-      // return parent::viewElements($items, $langcode);
-
+      // return parent::viewElements($items, $langcode);.
       $element = [];
       $max_width = $this->getSetting('max_width');
       $max_height = $this->getSetting('max_height');
@@ -124,13 +104,13 @@ class EmbeddableFormatter extends OEmbedFormatter {
 
           // Render videos and rich content in an iframe for security reasons.
           // @see: https://oembed.com/#section3
-
           // iFrame heights are a problem here. Some oEmbed providers don't give you one.
           // Some providers get it wrong, so we add a few pixels to be safe.
           // Here, we make some sane defaults.
-          if (!empty($resource->getHeight())){
+          if (!empty($resource->getHeight())) {
             $iframe_height = $resource->getHeight() + 25;
-          } else {
+          }
+          else {
             $iframe_height = 300;
           }
           if ($iframe_height < $max_height) {
@@ -170,15 +150,15 @@ class EmbeddableFormatter extends OEmbedFormatter {
         }
       }
       return $element;
-    } else {
+    }
+    else {
       // Here, we will handle Embeddables that are unstructured, and just inject the
       // markup unchanged.
-
       $elements = [];
       /** @var \Drupal\Core\Field\Plugin\Field\FieldType\StringItem $item */
       foreach ($items as $delta => $item) {
         $embed_markup = $item->getValue()['value'];
-        if (!empty($embed_markup)){
+        if (!empty($embed_markup)) {
           $elements[$delta] = [
             '#markup' => $item->getValue()['value'],
             '#allowed_tags' => [
