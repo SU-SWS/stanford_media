@@ -16,6 +16,6 @@ use Drupal\media\Plugin\Validation\Constraint\OEmbedResourceConstraint;
  */
 class EmbeddableConstraint extends OEmbedResourceConstraint {
 
-  // Extra constraints for the Embeddable media type should go here.
+  public $oEmbedNotAllowed = 'An oEmbed link is not permitted on an Embeddable which has a custom Embed Code.';
 
 }

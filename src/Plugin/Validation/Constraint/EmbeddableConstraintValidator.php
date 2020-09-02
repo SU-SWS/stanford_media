@@ -25,11 +25,13 @@ class EmbeddableConstraintValidator extends OEmbedResourceConstraintValidator {
       throw new \LogicException('Media source must implement ' . Embeddable::class);
     }
 
-    $is_unstructured = $source->isUnstructured($media);
-
     // if this is an unstructured embed, do our validation here. Otherwise, pass it along to the oEmbed validation.
-    if ($is_unstructured) {
-        // do the thing.
+    if ($source->hasUnstructured($media)) {
+        // Do not allow oEmbed values on unstructured embeds.
+        if ($source->hasOEmbed($media)) {
+          $this->context->addViolation($constraint->oEmbedNotAllowed);
+          return;
+        }
         return;
     } else {
         parent::validate($value, $constraint);

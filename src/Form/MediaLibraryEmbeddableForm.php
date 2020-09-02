@@ -26,7 +26,7 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
    * {@inheritDoc}
    */
   protected function buildInputElement(array $form, FormStateInterface $form_state) {
-    // This was taken from \Drupal\media_library\Form\OembedForm.
+    // This was adapted from \Drupal\media_library\Form\OembedForm.
 
     $user = \Drupal::currentUser();
     $authorized_for_unstructured = FALSE;
@@ -48,10 +48,12 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
       '#title' => $this->t('Add @type via URL', [
         '@type' => $this->getMediaType($form_state)->label(),
       ]),
-      '#description' => $this->t('Works with oEmbed providers.'),
+      '#description' => $this->t('Allowed providers: @providers. For custom embeds, please request support.', [
+        '@providers' => implode(', ', $providers),
+      ]),
       '#required' => FALSE,
       '#attributes' => [
-        'placeholder' => 'https://something.com',
+        'placeholder' => 'https://',
       ],
     ];
 
@@ -147,9 +149,6 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
    */
   protected function processInputValues(array $source_field_values, array $form, FormStateInterface $form_state) {
     $media_type = $this->getMediaType($form_state);
-
-    dpm($media_type);
-
     $media_storage = $this->entityTypeManager->getStorage('media');
     $source_field_name = $this->getSourceFieldName($media_type);
     $media = array_map(function ($source_field_value) use ($media_type, $media_storage, $source_field_name) {

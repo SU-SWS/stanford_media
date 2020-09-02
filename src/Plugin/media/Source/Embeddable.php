@@ -3,15 +3,17 @@
 namespace Drupal\stanford_media\Plugin\media\Source;
 
 use Drupal\media\Plugin\media\Source\OEmbed;
-use \Drupal\media\MediaInterface;
+use Drupal\media\MediaInterface;
+use Drupal\media\MediaTypeInterface;
 
 /**
  * @MediaSource(
  *   id = "embeddable",
  *   label = @Translation("Stanford Embedded Media"),
  *   description = @Translation("Embeds a third-party resource."),
+ *   default_thumbnail_filename = "generic.png",
  *   providers = {"ArcGIS StoryMaps", "CircuitLab", "Codepen", "Dailymotion", "Facebook", "Flickr", "Getty Images", "Instagram", "Issuu", "Livestream", "MathEmbed", "Simplecast", "SlideShare", "SoundCloud", "Spotify", "Stanford Digital Repository", "Twitter"},
- *   allowed_field_types = {"string"},
+ *   allowed_field_types = {"string", "string_long"},
  * )
  */
 class Embeddable extends OEmbed {
@@ -51,10 +53,10 @@ class Embeddable extends OEmbed {
    *   Metadata attribute value or NULL if unavailable.
    */
   public function getMetadata(MediaInterface $media, $name){
-    if ($this->isUnstructured($media)){
+    if ($this->hasUnstructured($media)){
       return $this->getUnstructuredMetadata($media, $name);
     }
-    return $this->getOEmbedMetadata($media, $name);
+    return parent::getMetadata($media, $name);
   }
 
 
@@ -73,6 +75,9 @@ class Embeddable extends OEmbed {
         return parent::getMetadata($media, 'default_name');
 
       case 'thumbnail_uri':
+          //$default_thumbnail_filename = $this->pluginDefinition['default_thumbnail_filename'];
+          //return $this->configFactory->get('media.settings')->get('icon_base_uri') . '/' . $default_thumbnail_filename;
+          parent::getMetadata($media, 'thumbnail_uri');
       case 'type':
       case 'title':
       case 'author_name':
@@ -83,10 +88,11 @@ class Embeddable extends OEmbed {
       case 'thumbnail_width':
       case 'thumbnail_height':
       case 'url':
+          return $media->get('field_media_embeddable_oembed')->getValue();
       case 'width':
       case 'height':
       case 'html':
-          return null;
+          return $media->get('field_media_embeddable_code')->getValue();
 
       default:
         break;
@@ -180,15 +186,31 @@ class Embeddable extends OEmbed {
 
 
   /**
-   * Determine if this is an oEmbed, or an Unstructured Embed
+   * Is there a value for the oEmbed URL?
    *
    * @param \Drupal\media\MediaInterface $media
    *   A media item.
    *
    * @return bool
-   *   TRUE means it is an Unstructured embed, FALSE means it is an oEmbed
+   *   TRUE means it has an Unstructured embed, FALSE means that field is empty
    */
-  public function isUnstructured(MediaInterface $media) {
+  public function hasOEmbed(MediaInterface $media) {
+    if (!empty($media->get('field_media_embeddable_oembed')->getValue())){
+      return TRUE;
+    }
+    return FALSE;
+  }
+
+  /**
+   * Is there a value for the Unstructured Embed?
+   *
+   * @param \Drupal\media\MediaInterface $media
+   *   A media item.
+   *
+   * @return bool
+   *   TRUE means it has an Unstructured embed, FALSE means that field is empty
+   */
+  public function hasUnstructured(MediaInterface $media) {
     if (!empty($media->get('field_media_embeddable_code')->getValue())){
       return TRUE;
     }
@@ -203,6 +225,51 @@ class Embeddable extends OEmbed {
       'embeddable' => [],
     ];
   }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function getSourceFieldDefinition(MediaTypeInterface $type) {
+    // Nothing to do if no source field is configured yet.
+    $field = $this->configuration['source_field'];
+    if ($field) {
+      // Even if we do know the name of the source field, there is no
+      // guarantee that it already exists.
+      $fields = $this->entityFieldManager
+        ->getFieldDefinitions('media', $type
+        ->id());
+      return isset($fields[$field]) ? $fields[$field] : NULL;
+    }
+    return NULL;
+  }
+
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getSourceFieldValue(MediaInterface $media) {
+    if ($this->hasUnstructured($media)){
+      $source_field = 'field_media_embeddable_code';
+    } else {
+      $source_field = $this->configuration['source_field'];
+    }
+    if (empty($source_field)) {
+      throw new \RuntimeException('Source field for media source is not defined.');
+    }
+    $items = $media
+      ->get($source_field);
+    if ($items
+      ->isEmpty()) {
+      return NULL;
+    }
+    $field_item = $items
+      ->first();
+    return $field_item->{$field_item
+      ->mainPropertyName()};
+  }
+
+
+
 
 
 }
