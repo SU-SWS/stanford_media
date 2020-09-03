@@ -39,9 +39,16 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
    */
   public static function create(ContainerInterface $container) {
     return new static(
+      $container->get('entity_type.manager'),
+      $container->get('media_library.ui_builder'),
+      $container->get('media.oembed.url_resolver'),
+      $container->get('media.oembed.resource_fetcher'),
+      $container->get('media_library.opener_resolver'),
       $container->get('current_user')
     );
   }
+
+
 
   /**
    * {@inheritDoc}
@@ -115,7 +122,7 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
    * @return bool
    *   True if unstructured, otherwise false.
    */
-  protected function isUnstructured(FormStateInterface $form_state) {
+  public function isUnstructured(FormStateInterface $form_state) {
     return !empty($form_state->getValue('field_media_embeddable_code'));
   }
 
