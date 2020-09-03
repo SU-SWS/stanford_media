@@ -122,13 +122,8 @@ class EmbeddableFormatter extends OEmbedFormatter {
             '#tag' => 'iframe',
             '#attributes' => [
               'src' => $url->toString(),
-              'frameborder' => 0,
-              'scrolling' => FALSE,
-              'allowtransparency' => TRUE,
-              // We always want our iFrame to be full width.
-              'width' => '100%',
-              'height' => $iframe_height,
               'class' => ['media-oembed-content'],
+              'style' => 'height: '.$iframe_height.'px;'
             ],
             '#attached' => [
               'library' => [
@@ -164,6 +159,7 @@ class EmbeddableFormatter extends OEmbedFormatter {
             '#allowed_tags' => [
               'iframe',
               'video',
+              'audio',
               'source',
               'embed',
               'script',
