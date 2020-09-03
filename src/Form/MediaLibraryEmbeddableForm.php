@@ -129,10 +129,9 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
    */
   public function validateEmbeddable(array &$form, FormStateInterface $form_state) {
     // No validation necessary if we have an embed code.
-    if ($this->isUnstructured($form_state)) {
-      return;
+    if (!$this->isUnstructured($form_state)) {
+      parent::validateUrl($form, $form_state);
     }
-    parent::validateUrl($form, $form_state);
   }
 
   /**
@@ -158,11 +157,9 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
   protected function processInputValues(array $source_field_values, array $form, FormStateInterface $form_state) {
     $media_type = $this->getMediaType($form_state);
     $media_storage = $this->entityTypeManager->getStorage('media');
-    if ($this->isUnstructured($form_state)) {
-      $source_field_name = 'field_media_embeddable_code';
-    } else {
-      $source_field_name = 'field_media_embeddable_oembed';
-    }
+
+    $source_field_name = $this->isUnstructured($form_state) ? 'field_media_embeddable_code' : 'field_media_embeddable_oembed';
+
     $media = array_map(function ($source_field_value) use ($media_type, $media_storage, $source_field_name) {
       return $this->createMediaFromValue($media_type, $media_storage, $source_field_name, $source_field_value);
     }, $source_field_values);

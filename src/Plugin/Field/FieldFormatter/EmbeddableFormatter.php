@@ -45,132 +45,164 @@ class EmbeddableFormatter extends OEmbedFormatter {
    */
   public function viewElements(FieldItemListInterface $items, $langcode) {
     $embed_type = $items->getName();
+    return ($embed_type == "field_media_embeddable_oembed") ?
+      $this->viewOEmbedElements($items, $langcode) : $this->viewUnstructuredElements($items, $langcode);
+  }
 
-    if ($embed_type == "field_media_embeddable_oembed") {
-      // Here, we override the Drupal\media\Plugin\Field\FieldFormatter\oEmbedFormatter
-      // viewElements function, to make sure it works precisely the way we want.
-      // To use the original version in core, just uncomment the following line.
-      // return parent::viewElements($items, $langcode);.
-      $element = [];
-      $max_width = $this->getSetting('max_width');
-      $max_height = $this->getSetting('max_height');
+  /**
+   * Format oEmbeds.
+   *
+   * This overrides the parent::viewElements function and corrects some problems.
+   *
+   * @param Drupal\Core\Field\FieldItemListInterface $items
+   *   The content of the field.
+   *
+   * @param string $langcode
+   *   The language
+   *
+   * @return array
+   *   A renderable array.
+   */
+  protected function viewOEmbedElements(FieldItemListInterface $items, $langcode) {
+    // Here, we override the Drupal\media\Plugin\Field\FieldFormatter\oEmbedFormatter
+    // viewElements function, to make sure it works precisely the way we want.
+    // To use the original version in core, just uncomment the following line.
+    // return parent::viewElements($items, $langcode);.
 
-      foreach ($items as $delta => $item) {
-        $main_property = $item->getFieldDefinition()->getFieldStorageDefinition()->getMainPropertyName();
-        $value = $item->{$main_property};
+    $element = [];
+    $max_width = $this->getSetting('max_width');
+    $max_height = $this->getSetting('max_height');
 
-        if (empty($value)) {
-          continue;
+    foreach ($items as $delta => $item) {
+      $main_property = $item->getFieldDefinition()->getFieldStorageDefinition()->getMainPropertyName();
+      $value = $item->{$main_property};
+
+      if (empty($value)) {
+        continue;
+      }
+
+      try {
+        $resource_url = $this->urlResolver->getResourceUrl($value, $max_width, $max_height);
+        $resource = $this->resourceFetcher->fetchResource($resource_url);
+      }
+      catch (ResourceException $exception) {
+        $this->logger->error("Could not retrieve the remote URL (@url).", ['@url' => $value]);
+        continue;
+      }
+
+      if ($resource->getType() === Resource::TYPE_LINK) {
+        $element[$delta] = [
+          '#title' => $resource->getTitle(),
+          '#type' => 'link',
+          '#url' => Url::fromUri($value),
+        ];
+      }
+      elseif ($resource->getType() === Resource::TYPE_PHOTO) {
+        $element[$delta] = [
+          '#theme' => 'image',
+          '#uri' => $resource->getUrl()->toString(),
+          '#width' => $max_width ?: $resource->getWidth(),
+          '#height' => $max_height ?: $resource->getHeight(),
+        ];
+      }
+      else {
+        $url = Url::fromRoute('media.oembed_iframe', [], [
+          'query' => [
+            'url' => $value,
+            'max_width' => $max_width,
+            'max_height' => $max_height,
+            'hash' => $this->iFrameUrlHelper->getHash($value, $max_width, $max_height),
+          ],
+        ]);
+
+        $domain = $this->config->get('iframe_domain');
+        if ($domain) {
+          $url->setOption('base_url', $domain);
         }
 
-        try {
-          $resource_url = $this->urlResolver->getResourceUrl($value, $max_width, $max_height);
-          $resource = $this->resourceFetcher->fetchResource($resource_url);
-        }
-        catch (ResourceException $exception) {
-          $this->logger->error("Could not retrieve the remote URL (@url).", ['@url' => $value]);
-          continue;
-        }
-
-        if ($resource->getType() === Resource::TYPE_LINK) {
-          $element[$delta] = [
-            '#title' => $resource->getTitle(),
-            '#type' => 'link',
-            '#url' => Url::fromUri($value),
-          ];
-        }
-        elseif ($resource->getType() === Resource::TYPE_PHOTO) {
-          $element[$delta] = [
-            '#theme' => 'image',
-            '#uri' => $resource->getUrl()->toString(),
-            '#width' => $max_width ?: $resource->getWidth(),
-            '#height' => $max_height ?: $resource->getHeight(),
-          ];
+        // Render videos and rich content in an iframe for security reasons.
+        // @see: https://oembed.com/#section3
+        // iFrame heights are a problem here. Some oEmbed providers don't give you one.
+        // Some providers get it wrong, so we add a few pixels to be safe.
+        // Here, we make some sane defaults.
+        if (!empty($resource->getHeight())) {
+          $iframe_height = $resource->getHeight() + 20;
         }
         else {
-          $url = Url::fromRoute('media.oembed_iframe', [], [
-            'query' => [
-              'url' => $value,
-              'max_width' => $max_width,
-              'max_height' => $max_height,
-              'hash' => $this->iFrameUrlHelper->getHash($value, $max_width, $max_height),
-            ],
-          ]);
-
-          $domain = $this->config->get('iframe_domain');
-          if ($domain) {
-            $url->setOption('base_url', $domain);
-          }
-
-          // Render videos and rich content in an iframe for security reasons.
-          // @see: https://oembed.com/#section3
-          // iFrame heights are a problem here. Some oEmbed providers don't give you one.
-          // Some providers get it wrong, so we add a few pixels to be safe.
-          // Here, we make some sane defaults.
-          if (!empty($resource->getHeight())) {
-            $iframe_height = $resource->getHeight() + 20;
-          }
-          else {
-            $iframe_height = 300;
-          }
-          if ($iframe_height < $max_height) {
-            $iframe_height = $max_height;
-          }
-
-          $element[$delta] = [
-            '#type' => 'html_tag',
-            '#tag' => 'iframe',
-            '#attributes' => [
-              'src' => $url->toString(),
-              'class' => ['media-oembed-content'],
-              'style' => 'height: '.$iframe_height.'px;'
-            ],
-            '#attached' => [
-              'library' => [
-                'media/oembed.formatter',
-              ],
-            ],
-          ];
-
-          // An empty title attribute will disable title inheritance, so only
-          // add it if the resource has a title.
-          $title = $resource->getTitle();
-          if ($title) {
-            $element[$delta]['#attributes']['title'] = $title;
-          }
-
-          CacheableMetadata::createFromObject($resource)
-            ->addCacheTags($this->config->getCacheTags())
-            ->applyTo($element[$delta]);
+          $iframe_height = 300;
         }
-      }
-      return $element;
-    }
-    else {
-      // Here, we will handle Embeddables that are unstructured, and just inject the
-      // markup unchanged.
-      $elements = [];
-      /** @var \Drupal\Core\Field\Plugin\Field\FieldType\StringItem $item */
-      foreach ($items as $delta => $item) {
-        $embed_markup = $item->getValue()['value'];
-        if (!empty($embed_markup)) {
-          $elements[$delta] = [
-            '#markup' => $item->getValue()['value'],
-            '#allowed_tags' => [
-              'iframe',
-              'video',
-              'audio',
-              'source',
-              'embed',
-              'script',
-            ],
-            '#prefix' => '<div class="embeddable-content">',
-            '#suffix' => '</div>',
-          ];
+        if ($iframe_height < $max_height) {
+          $iframe_height = $max_height;
         }
+
+        $element[$delta] = [
+          '#type' => 'html_tag',
+          '#tag' => 'iframe',
+          '#attributes' => [
+            'src' => $url->toString(),
+            'class' => ['media-oembed-content'],
+            'style' => 'height: '.$iframe_height.'px;'
+          ],
+          '#attached' => [
+            'library' => [
+              'media/oembed.formatter',
+            ],
+          ],
+        ];
+
+        // An empty title attribute will disable title inheritance, so only
+        // add it if the resource has a title.
+        $title = $resource->getTitle();
+        if ($title) {
+          $element[$delta]['#attributes']['title'] = $title;
+        }
+
+        CacheableMetadata::createFromObject($resource)
+          ->addCacheTags($this->config->getCacheTags())
+          ->applyTo($element[$delta]);
       }
-      return $elements;
     }
+    return $element;
+
   }
+
+  /**
+   * Format unstructured embeds.
+   *
+   * @param Drupal\Core\Field\FieldItemListInterface $items
+   *   The content of the field.
+   *
+   * @param string $langcode
+   *   The language
+   *
+   * @return array
+   *   A renderable array.
+   */
+  protected function viewUnstructuredElements(FieldItemListInterface $items, $langcode) {
+    // Here, we will handle Embeddables that are unstructured, and just inject the
+    // markup unchanged.
+    $elements = [];
+    /** @var \Drupal\Core\Field\Plugin\Field\FieldType\StringItem $item */
+    foreach ($items as $delta => $item) {
+      $embed_markup = $item->getValue()['value'];
+      if (!empty($embed_markup)) {
+        $elements[$delta] = [
+          '#markup' => $item->getValue()['value'],
+          '#allowed_tags' => [
+            'iframe',
+            'video',
+            'audio',
+            'source',
+            'embed',
+            'script',
+          ],
+          '#prefix' => '<div class="embeddable-content">',
+          '#suffix' => '</div>',
+        ];
+      }
+    }
+    return $elements;
+  }
+
 
 }
