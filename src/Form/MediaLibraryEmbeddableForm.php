@@ -78,15 +78,13 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
       ],
     ];
 
-    if ($authorized_for_unstructured) {
-      $form['container']['field_media_embeddable_code'] = [
-        '#type' => 'textarea',
-        '#title' => $this->t('Embed Code'),
-        '#description' => $this->t('Use this field to paste in embed codes which are not available through oEmbed'),
-        '#required' => FALSE,
-        '#access' => $authorized_for_unstructured,
-      ];
-    }
+    $form['container']['field_media_embeddable_code'] = [
+      '#type' => 'textarea',
+      '#title' => $this->t('Embed Code'),
+      '#description' => $this->t('Use this field to paste in embed codes which are not available through oEmbed'),
+      '#required' => FALSE,
+      '#access' => $authorized_for_unstructured,
+    ];
 
     $ajax_query = $this->getMediaLibraryState($form_state)->all();
     $ajax_query += [FormBuilderInterface::AJAX_FORM_REQUEST => TRUE];
