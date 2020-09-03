@@ -149,7 +149,6 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
     } else {
       $source_field_name = 'field_media_embeddable_oembed';
     }
-    //$source_field_name = $this->getSourceFieldName($media_type);
     $media = array_map(function ($source_field_value) use ($media_type, $media_storage, $source_field_name) {
       return $this->createMediaFromValue($media_type, $media_storage, $source_field_name, $source_field_value);
     }, $source_field_values);
