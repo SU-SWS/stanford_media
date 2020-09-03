@@ -27,11 +27,7 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
   protected function buildInputElement(array $form, FormStateInterface $form_state) {
     // This was adapted from \Drupal\media_library\Form\OembedForm.
     $user = \Drupal::currentUser();
-    $authorized_for_unstructured = FALSE;
-    if ($user->hasPermission('create field_media_embeddable_code') ||
-        $user->hasPermission('edit field_media_embeddable_code')) {
-      $authorized_for_unstructured = TRUE;
-    }
+    $authorized_for_unstructured = $user->hasPermission('create field_media_embeddable_code') || $user->hasPermission('edit field_media_embeddable_code');
 
     $media_type = $this->getMediaType($form_state);
     $providers = $media_type->getSource()->getProviders();
@@ -98,11 +94,7 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
    *   True if unstructured, otherwise false.
    */
   public function isUnstructured(FormStateInterface $form_state) {
-    $embed_code = $form_state->getValue('field_media_embeddable_code');
-    if ($embed_code) {
-      return TRUE;
-    }
-    return FALSE;
+    return !empty($form_state->getValue('field_media_embeddable_code'));
   }
 
   /**
