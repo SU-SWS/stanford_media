@@ -90,6 +90,22 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
   }
 
   /**
+   * Informs us if we are working with an unstructured embed.
+   *
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current form state.
+   * @return bool
+   *   True if unstructured, otherwise false.
+   */
+  public function isUnstructured(FormStateInterface $form_state) {
+    $embed_code = $form_state->getValue('field_media_embeddable_code');
+    if ($embed_code) {
+      return TRUE;
+    }
+    return FALSE;
+  }
+
+  /**
    * Validates the oEmbed URL.
    *
    * @param array $form
@@ -98,14 +114,11 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
    *   The current form state.
    */
   public function validateEmbeddable(array &$form, FormStateInterface $form_state) {
-    $embed_code = $form_state->getValue('field_media_embeddable_code');
-
     // No validation necessary if we have an embed code.
-    if ($embed_code) {
+    if ($this->isUnstructured($form_state)) {
       return;
-    } else {
-      parent::validateEmbeddable($form, $form_state);
     }
+    parent::validateUrl($form, $form_state);
   }
 
   /**
@@ -117,10 +130,42 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
    *   The form state.
    */
   public function addButtonSubmit(array $form, FormStateInterface $form_state) {
-    $values = [
-      $form_state->getValue('field_media_embeddable_oembed'),
-    ];
+    if ($this->isUnstructured($form_state)) {
+      $values = [$form_state->getValue('field_media_embeddable_code')];
+    } else {
+      $values = [$form_state->getValue('field_media_embeddable_oembed')];
+    }
     $this->processInputValues($values, $form, $form_state);
   }
+
+  /**
+   * {@inheritDoc}
+   */
+  protected function processInputValues(array $source_field_values, array $form, FormStateInterface $form_state) {
+    $media_type = $this->getMediaType($form_state);
+    $media_storage = $this->entityTypeManager->getStorage('media');
+    if ($this->isUnstructured($form_state)) {
+      $source_field_name = 'field_media_embeddable_code';
+    } else {
+      $source_field_name = 'field_media_embeddable_oembed';
+    }
+    //$source_field_name = $this->getSourceFieldName($media_type);
+    $media = array_map(function ($source_field_value) use ($media_type, $media_storage, $source_field_name) {
+      return $this->createMediaFromValue($media_type, $media_storage, $source_field_name, $source_field_value);
+    }, $source_field_values);
+    // Re-key the media items before setting them in the form state.
+    $form_state->set('media', array_values($media));
+    // Save the selected items in the form state so they are remembered when an
+    // item is removed.
+    $media = $this->entityTypeManager->getStorage('media')
+      ->loadMultiple(explode(',', $form_state->getValue('current_selection')));
+    // Any ID can be passed to the form, so we have to check access.
+    $form_state->set('current_selection', array_filter($media, function ($media_item) {
+      return $media_item->access('view');
+    }));
+    $form_state->setRebuild();
+  }
+
+
 
 }

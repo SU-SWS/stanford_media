@@ -108,7 +108,7 @@ class EmbeddableFormatter extends OEmbedFormatter {
           // Some providers get it wrong, so we add a few pixels to be safe.
           // Here, we make some sane defaults.
           if (!empty($resource->getHeight())) {
-            $iframe_height = $resource->getHeight() + 25;
+            $iframe_height = $resource->getHeight() + 20;
           }
           else {
             $iframe_height = 300;
