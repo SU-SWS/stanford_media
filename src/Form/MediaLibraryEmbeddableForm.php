@@ -72,7 +72,6 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
       '#description' => $this->t('Allowed providers: @providers. For custom embeds, please request support.', [
         '@providers' => implode(', ', $providers),
       ]),
-      '#required' => FALSE,
       '#attributes' => [
         'placeholder' => 'https://',
       ],
@@ -82,7 +81,6 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
       '#type' => 'textarea',
       '#title' => $this->t('Embed Code'),
       '#description' => $this->t('Use this field to paste in embed codes which are not available through oEmbed'),
-      '#required' => FALSE,
       '#access' => $authorized_for_unstructured,
     ];
 

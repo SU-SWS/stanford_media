@@ -58,9 +58,8 @@ class Embeddable extends OEmbed {
           return $url;
         }
         return parent::getMetadata($media, 'default_name');
-
       case 'thumbnail_uri':
-        parent::getMetadata($media, 'thumbnail_uri');
+        return parent::getMetadata($media, 'thumbnail_uri');
       case 'html':
         return $media->get('field_media_embeddable_code')->getValue();
       case 'type':
