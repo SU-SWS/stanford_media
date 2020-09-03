@@ -2,9 +2,18 @@
 
 namespace Drupal\stanford_media\Form;
 
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\media\OEmbed\ResourceException;
+use Drupal\media\OEmbed\ResourceFetcherInterface;
+use Drupal\media\OEmbed\UrlResolverInterface;
+use Drupal\media\Plugin\media\Source\OEmbedInterface;
+use Drupal\media_library\MediaLibraryUiBuilder;
+use Drupal\media_library\OpenerResolverInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\media_library\Form\OEmbedForm;
 
 /**
@@ -13,6 +22,26 @@ use Drupal\media_library\Form\OEmbedForm;
  * @package Drupal\stanford_media\Form
  */
 class MediaLibraryEmbeddableForm extends OEmbedForm {
+
+  protected $currentUser;
+
+
+  /**
+   * {@inheritDoc}
+   */
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, MediaLibraryUiBuilder $library_ui_builder, UrlResolverInterface $url_resolver, ResourceFetcherInterface $resource_fetcher, OpenerResolverInterface $opener_resolver = NULL, AccountInterface $account) {
+    parent::__construct($entity_type_manager, $library_ui_builder, $url_resolver, $resource_fetcher, $opener_resolver);
+    $this->currentUser = $account;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('current_user')
+    );
+  }
 
   /**
    * {@inheritDoc}
@@ -26,8 +55,7 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
    */
   protected function buildInputElement(array $form, FormStateInterface $form_state) {
     // This was adapted from \Drupal\media_library\Form\OembedForm.
-    $user = \Drupal::currentUser();
-    $authorized_for_unstructured = $user->hasPermission('create field_media_embeddable_code') || $user->hasPermission('edit field_media_embeddable_code');
+    $authorized_for_unstructured = $this->currentUser->hasPermission('create field_media_embeddable_code') || $user->hasPermission('edit field_media_embeddable_code');
 
     $media_type = $this->getMediaType($form_state);
     $providers = $media_type->getSource()->getProviders();
@@ -56,9 +84,7 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
         '#title' => $this->t('Embed Code'),
         '#description' => $this->t('Use this field to paste in embed codes which are not available through oEmbed'),
         '#required' => FALSE,
-        '#attributes' => [
-          'placeholder' => '',
-        ],
+        '#access' => $authorized_for_unstructured,
       ];
     }
 
@@ -93,7 +119,7 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
    * @return bool
    *   True if unstructured, otherwise false.
    */
-  public function isUnstructured(FormStateInterface $form_state) {
+  protected function isUnstructured(FormStateInterface $form_state) {
     return !empty($form_state->getValue('field_media_embeddable_code'));
   }
 

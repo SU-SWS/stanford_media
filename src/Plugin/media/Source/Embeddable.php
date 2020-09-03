@@ -61,6 +61,8 @@ class Embeddable extends OEmbed {
 
       case 'thumbnail_uri':
         parent::getMetadata($media, 'thumbnail_uri');
+      case 'html':
+        return $media->get('field_media_embeddable_code')->getValue();
       case 'type':
       case 'title':
       case 'author_name':
@@ -73,13 +75,8 @@ class Embeddable extends OEmbed {
       case 'url':
       case 'width':
       case 'height':
-        return null;
-
-      case 'html':
-        return $media->get('field_media_embeddable_code')->getValue();
-
       default:
-        break;
+        return null;
     }
     return NULL;
 
@@ -96,10 +93,7 @@ class Embeddable extends OEmbed {
    *   TRUE means it has an Unstructured embed, FALSE means that field is empty
    */
   public function hasOEmbed(MediaInterface $media) {
-    if (!empty($media->get('field_media_embeddable_oembed')->getValue())) {
-      return TRUE;
-    }
-    return FALSE;
+    return !empty($media->get('field_media_embeddable_oembed')->getValue());
   }
 
   /**
@@ -112,10 +106,7 @@ class Embeddable extends OEmbed {
    *   TRUE means it has an Unstructured embed, FALSE means that field is empty
    */
   public function hasUnstructured(MediaInterface $media) {
-    if (!empty($media->get('field_media_embeddable_code')->getValue())) {
-      return TRUE;
-    }
-    return FALSE;
+    return !empty($media->get('field_media_embeddable_code')->getValue());
   }
 
   /**
