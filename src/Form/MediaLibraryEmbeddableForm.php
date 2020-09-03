@@ -48,8 +48,6 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
     );
   }
 
-
-
   /**
    * {@inheritDoc}
    */

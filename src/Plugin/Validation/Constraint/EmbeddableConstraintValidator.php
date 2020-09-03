@@ -32,9 +32,8 @@ class EmbeddableConstraintValidator extends OEmbedResourceConstraintValidator {
       }
       return;
     }
-    else {
-      parent::validate($value, $constraint);
-    }
+
+    parent::validate($value, $constraint);
 
   }
 
