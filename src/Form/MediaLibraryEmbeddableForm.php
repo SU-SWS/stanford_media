@@ -23,8 +23,26 @@ use Drupal\media_library\Form\OEmbedForm;
  */
 class MediaLibraryEmbeddableForm extends OEmbedForm {
 
+  /**
+   * The current User.
+   *
+   * @var Drupal\Core\Session\AccountInterface
+   */
   protected $currentUser;
 
+  /**
+   * The name of the oEmbed field.
+   *
+   * @var string
+   */
+  protected $oEmbedField;
+
+  /**
+   * The name of the Unstructured field.
+   *
+   * @var string
+   */
+  protected $unstructuredField;
 
   /**
    * {@inheritDoc}
@@ -32,6 +50,9 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
   public function __construct(EntityTypeManagerInterface $entity_type_manager, MediaLibraryUiBuilder $library_ui_builder, UrlResolverInterface $url_resolver, ResourceFetcherInterface $resource_fetcher, OpenerResolverInterface $opener_resolver = NULL, AccountInterface $account) {
     parent::__construct($entity_type_manager, $library_ui_builder, $url_resolver, $resource_fetcher, $opener_resolver);
     $this->currentUser = $account;
+    $configuration = $this->getConfiguration();
+    $this->oEmbedField = $configuration['oembed_field_name'];
+    $this->unstructuredField = $configuration['unstructured_field_name'];
   }
 
   /**
@@ -69,7 +90,7 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
       '#type' => 'container',
     ];
 
-    $form['container']['field_media_embeddable_oembed'] = [
+    $form['container'][$this->oEmbedField] = [
       '#type' => 'url',
       '#title' => $this->t('Add @type via URL', [
         '@type' => $this->getMediaType($form_state)->label(),
@@ -82,7 +103,7 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
       ],
     ];
 
-    $form['container']['field_media_embeddable_code'] = [
+    $form['container'][$this->unstructuredField] = [
       '#type' => 'textarea',
       '#title' => $this->t('Embed Code'),
       '#description' => $this->t('Use this field to paste in embed codes which are not available through oEmbed'),
@@ -121,7 +142,7 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
    *   True if unstructured, otherwise false.
    */
   public function isUnstructured(FormStateInterface $form_state) {
-    return !empty($form_state->getValue('field_media_embeddable_code'));
+    return !empty($form_state->getValue($this->unstructuredField));
   }
 
   /**
@@ -149,9 +170,9 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
    */
   public function addButtonSubmit(array $form, FormStateInterface $form_state) {
     if ($this->isUnstructured($form_state)) {
-      $values = [$form_state->getValue('field_media_embeddable_code')];
+      $values = [$form_state->getValue($this->unstructuredField)];
     } else {
-      $values = [$form_state->getValue('field_media_embeddable_oembed')];
+      $values = [$form_state->getValue($this->oEmbedField)];
     }
     $this->processInputValues($values, $form, $form_state);
   }
@@ -163,7 +184,7 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
     $media_type = $this->getMediaType($form_state);
     $media_storage = $this->entityTypeManager->getStorage('media');
 
-    $source_field_name = $this->isUnstructured($form_state) ? 'field_media_embeddable_code' : 'field_media_embeddable_oembed';
+    $source_field_name = $this->isUnstructured($form_state) ? $this->unstructuredField : $this->oEmbedField;
 
     $media = array_map(function ($source_field_value) use ($media_type, $media_storage, $source_field_name) {
       return $this->createMediaFromValue($media_type, $media_storage, $source_field_name, $source_field_value);
@@ -180,7 +201,5 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
     }));
     $form_state->setRebuild();
   }
-
-
 
 }

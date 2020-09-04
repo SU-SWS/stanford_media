@@ -2,9 +2,38 @@
 
 namespace Drupal\stanford_media\Plugin\media\Source;
 
-use Drupal\media\Plugin\media\Source\OEmbed;
 use Drupal\media\MediaInterface;
 use Drupal\media\MediaTypeInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\EntityFieldManagerInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Field\FieldTypePluginManagerInterface;
+use Drupal\Core\Messenger\MessengerInterface;
+use Psr\Log\LoggerInterface;
+use GuzzleHttp\ClientInterface;
+use Drupal\media\OEmbed\ResourceFetcherInterface;
+use Drupal\media\OEmbed\UrlResolverInterface;
+use Drupal\media\IFrameUrlHelper;
+use Drupal\Core\File\FileSystemInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\media\Plugin\media\Source\OEmbed;
+
+
+/*
+use Drupal\Component\Utility\Crypt;
+use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\Core\File\Exception\FileException;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
+use Drupal\media\OEmbed\Resource;
+use Drupal\media\OEmbed\ResourceException;
+use Drupal\media\MediaSourceBase;
+use GuzzleHttp\Exception\RequestException;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+*/
+
+
 
 /**
  * @MediaSource(
@@ -17,6 +46,73 @@ use Drupal\media\MediaTypeInterface;
  * )
  */
 class Embeddable extends OEmbed {
+
+  /**
+   * The name of the oEmbed field.
+   *
+   * @var string
+   */
+  protected $oEmbedField;
+
+  /**
+   * The name of the Unstructured field.
+   *
+   * @var string
+   */
+  protected $unstructuredField;
+
+
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, EntityFieldManagerInterface $entity_field_manager, ConfigFactoryInterface $config_factory, FieldTypePluginManagerInterface $field_type_manager, LoggerInterface $logger, MessengerInterface $messenger, ClientInterface $http_client, ResourceFetcherInterface $resource_fetcher, UrlResolverInterface $url_resolver, IFrameUrlHelper $iframe_url_helper, FileSystemInterface $file_system = NULL) {
+
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager, $entity_field_manager, $config_factory, $field_type_manager, $logger, $messenger, $http_client, $resource_fetcher, $url_resolver, $iframe_url_helper, $file_system);
+    $configuration = $this->getConfiguration();
+    $this->oEmbedField = $configuration['oembed_field_name'];
+    $this->unstructuredField = $configuration['unstructured_field_name'];
+
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function defaultConfiguration() {
+    /*
+    return [
+      'thumbnails_directory' => 'public://oembed_thumbnails',
+      'providers' => [],
+    ] + parent::defaultConfiguration();
+    */
+    return [
+      'oembed_field_name' => '',
+      'unstructured_field_name' => 'field_media_embeddable_code',
+    ] + parent::defaultConfiguration();
+    //return parent::defaultConfiguration();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
+    $form = parent::buildConfigurationForm($form, $form_state);
+    $options = $this->getSourceFieldOptions();
+    $form['oembed_field_name'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Field with oEmbed information'),
+      '#default_value' => $this->configuration['oembed_field_name'],
+      '#empty_option' => $this->t('-'),
+      '#options' => $options,
+      '#description' => $this->t('Select the field that will store the link, if it is an oEmbed.'),
+    ];
+    $form['unstructured_field_name'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Field for unstructured embed codes'),
+      '#default_value' => $this->configuration['unstructured_field_name'],
+      '#empty_option' => $this->t('-'),
+      '#options' => $options,
+      '#description' => $this->t('Select the field that will store essential information about the media item.'),
+    ];
+    return $form;
+  }
+
 
   /**
    * Gets the value for a metadata attribute for a given media item.
@@ -61,7 +157,7 @@ class Embeddable extends OEmbed {
       case 'thumbnail_uri':
         return parent::getMetadata($media, 'thumbnail_uri');
       case 'html':
-        return $media->get('field_media_embeddable_code')->getValue();
+        return $media->get($this->unstructuredField)->getValue();
       case 'type':
       case 'title':
       case 'author_name':
@@ -92,7 +188,7 @@ class Embeddable extends OEmbed {
    *   TRUE means it has an Unstructured embed, FALSE means that field is empty
    */
   public function hasOEmbed(MediaInterface $media) {
-    return !empty($media->get('field_media_embeddable_oembed')->getValue());
+    return !empty($media->get($this->oEmbedField)->getValue());
   }
 
   /**
@@ -105,7 +201,7 @@ class Embeddable extends OEmbed {
    *   TRUE means it has an Unstructured embed, FALSE means that field is empty
    */
   public function hasUnstructured(MediaInterface $media) {
-    return !empty($media->get('field_media_embeddable_code')->getValue());
+    return !empty($media->get($this->unstructuredField)->getValue());
   }
 
   /**
@@ -122,10 +218,11 @@ class Embeddable extends OEmbed {
    */
   public function getSourceFieldValue(MediaInterface $media) {
     if ($this->hasUnstructured($media)) {
-      $source_field = 'field_media_embeddable_code';
+      $source_field = $this->unstructuredField;
     }
     else {
-      $source_field = $this->configuration['source_field'];
+      //$source_field = $this->configuration['source_field'];
+      $source_field = $this->oEmbedField;
     }
     if (empty($source_field)) {
       throw new \RuntimeException('Source field for media source is not defined.');
