@@ -169,11 +169,8 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
    *   The form state.
    */
   public function addButtonSubmit(array $form, FormStateInterface $form_state) {
-    if ($this->isUnstructured($form_state)) {
-      $values = [$form_state->getValue($this->unstructuredField)];
-    } else {
-      $values = [$form_state->getValue($this->oEmbedField)];
-    }
+    $values = ($this->isUnstructured($form_state)) ?
+      [$form_state->getValue($this->unstructuredField)] : [$form_state->getValue($this->oEmbedField)];
     $this->processInputValues($values, $form, $form_state);
   }
 

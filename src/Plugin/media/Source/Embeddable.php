@@ -75,17 +75,10 @@ class Embeddable extends OEmbed {
    * {@inheritdoc}
    */
   public function defaultConfiguration() {
-    /*
-    return [
-      'thumbnails_directory' => 'public://oembed_thumbnails',
-      'providers' => [],
-    ] + parent::defaultConfiguration();
-    */
     return [
       'oembed_field_name' => '',
       'unstructured_field_name' => 'field_media_embeddable_code',
     ] + parent::defaultConfiguration();
-    //return parent::defaultConfiguration();
   }
 
   /**
@@ -217,13 +210,7 @@ class Embeddable extends OEmbed {
    * {@inheritdoc}
    */
   public function getSourceFieldValue(MediaInterface $media) {
-    if ($this->hasUnstructured($media)) {
-      $source_field = $this->unstructuredField;
-    }
-    else {
-      //$source_field = $this->configuration['source_field'];
-      $source_field = $this->oEmbedField;
-    }
+    $source_field = ($this->hasUnstructured($media)) ? $this->unstructuredField : $this->oEmbedField;
     if (empty($source_field)) {
       throw new \RuntimeException('Source field for media source is not defined.');
     }
