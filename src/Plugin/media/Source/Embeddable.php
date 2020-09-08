@@ -76,7 +76,7 @@ class Embeddable extends OEmbed {
    */
   public function defaultConfiguration() {
     return [
-      'oembed_field_name' => '',
+      'oembed_field_name' => 'field_media_embeddable_oembed',
       'unstructured_field_name' => 'field_media_embeddable_code',
     ] + parent::defaultConfiguration();
   }
