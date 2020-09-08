@@ -6,7 +6,6 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\media\OEmbed\ResourceException;
 use Drupal\media\OEmbed\ResourceFetcherInterface;
 use Drupal\media\OEmbed\UrlResolverInterface;
-use Drupal\media\Plugin\media\Source\OEmbedInterface;
 use Drupal\media_library\MediaLibraryUiBuilder;
 use Drupal\media_library\OpenerResolverInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -81,7 +80,7 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
    */
   protected function buildInputElement(array $form, FormStateInterface $form_state) {
     // This was adapted from \Drupal\media_library\Form\OembedForm.
-    $authorized_for_unstructured = $this->currentUser->hasPermission('create field_media_embeddable_code') || $user->hasPermission('edit field_media_embeddable_code');
+    $authorized_for_unstructured = $this->currentUser->hasPermission('create field_media_embeddable_code') || $this->currentUser->hasPermission('edit field_media_embeddable_code');
 
     $media_type = $this->getMediaType($form_state);
     $providers = $media_type->getSource()->getProviders();
@@ -138,6 +137,7 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
    *
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current form state.
+   *
    * @return bool
    *   True if unstructured, otherwise false.
    */

@@ -3,7 +3,6 @@
 namespace Drupal\stanford_media\Plugin\media\Source;
 
 use Drupal\media\MediaInterface;
-use Drupal\media\MediaTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -17,23 +16,6 @@ use Drupal\media\IFrameUrlHelper;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\media\Plugin\media\Source\OEmbed;
-
-
-/*
-use Drupal\Component\Utility\Crypt;
-use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
-use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
-use Drupal\Core\File\Exception\FileException;
-use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Url;
-use Drupal\media\OEmbed\Resource;
-use Drupal\media\OEmbed\ResourceException;
-use Drupal\media\MediaSourceBase;
-use GuzzleHttp\Exception\RequestException;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-*/
-
-
 
 /**
  * @MediaSource(
@@ -61,7 +43,9 @@ class Embeddable extends OEmbed {
    */
   protected $unstructuredField;
 
-
+  /**
+   * {@inheritdoc}
+   */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, EntityFieldManagerInterface $entity_field_manager, ConfigFactoryInterface $config_factory, FieldTypePluginManagerInterface $field_type_manager, LoggerInterface $logger, MessengerInterface $messenger, ClientInterface $http_client, ResourceFetcherInterface $resource_fetcher, UrlResolverInterface $url_resolver, IFrameUrlHelper $iframe_url_helper, FileSystemInterface $file_system = NULL) {
 
     parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager, $entity_field_manager, $config_factory, $field_type_manager, $logger, $messenger, $http_client, $resource_fetcher, $url_resolver, $iframe_url_helper, $file_system);
@@ -106,13 +90,12 @@ class Embeddable extends OEmbed {
     return $form;
   }
 
-
   /**
    * Gets the value for a metadata attribute for a given media item.
    *
    * @param \Drupal\media\MediaInterface $media
    *   A media item.
-   * @param string $attribute_name
+   * @param string $name
    *   Name of the attribute to fetch.
    *
    * @return mixed|null
@@ -127,11 +110,12 @@ class Embeddable extends OEmbed {
 
   /**
    * Gets the value for a metadata attribute for a given media item.
+   *
    * This is an alternate version to account for unstructured embeds.
    *
    * @param \Drupal\media\MediaInterface $media
    *   A media item.
-   * @param string $attribute_name
+   * @param string $name
    *   Name of the attribute to fetch.
    *
    * @return mixed|null
@@ -147,10 +131,13 @@ class Embeddable extends OEmbed {
           return $url;
         }
         return parent::getMetadata($media, 'default_name');
+
       case 'thumbnail_uri':
         return parent::getMetadata($media, 'thumbnail_uri');
+
       case 'html':
         return $media->get($this->unstructuredField)->getValue();
+
       case 'type':
       case 'title':
       case 'author_name':
@@ -164,12 +151,12 @@ class Embeddable extends OEmbed {
       case 'width':
       case 'height':
       default:
-        return null;
+        return NULL;
+
     }
     return NULL;
 
   }
-
 
   /**
    * Is there a value for the oEmbed URL?

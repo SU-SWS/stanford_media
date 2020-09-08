@@ -83,7 +83,7 @@ class EmbeddableFormatter extends OEmbedFormatter {
    */
   protected function viewOEmbedElements(FieldItemListInterface $items, $langcode) {
     $items = parent::viewElements($items, $langcode);
-    foreach ($items as $delta => &$render_array) {
+    foreach ($items as &$render_array) {
 
       // We only care about modifying iframes.
       if ($render_array['#type'] == 'html_tag' && $render_array['#tag'] == 'iframe') {
