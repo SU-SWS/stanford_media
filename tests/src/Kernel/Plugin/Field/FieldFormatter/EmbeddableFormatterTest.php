@@ -52,8 +52,9 @@ class EmbeddableFormatterTest extends KernelTestBase {
    * {@inheritDoc}
    */
   protected function setUp() {
-    /*
     parent::setUp();
+    /*
+
     $this->installEntitySchema('user');
     $this->installEntitySchema('media');
     $this->installEntitySchema('field_storage_config');

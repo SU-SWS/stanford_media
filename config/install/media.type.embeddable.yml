@@ -20,4 +20,3 @@ source_configuration:
   source_field: field_media_embeddable_oembed
 field_map:
   title: name
-

@@ -23,8 +23,9 @@ class MediaLibraryEmbeddableFormTest extends StanfordMediaFormTestBase {
    * {@inheritDoc}
    */
   protected function setUp() {
-    /*
     parent::setUp();
+    /*
+
     $this->installConfig('media_library');
     $this->installSchema('system', ['sequences']);
 

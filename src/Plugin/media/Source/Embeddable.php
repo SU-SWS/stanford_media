@@ -65,6 +65,24 @@ class Embeddable extends OEmbed {
     ] + parent::defaultConfiguration();
   }
 
+  public function createAllFields() {
+    $this->entityTypeManager
+    ->getStorage('field_storage_config')
+    ->create([
+      'entity_type' => 'media',
+      'field_name' => $this->oEmbedField,
+      'type' => reset($this->pluginDefinition['allowed_field_types']),
+    ]);
+
+    $this->entityTypeManager
+    ->getStorage('field_storage_config')
+    ->create([
+      'entity_type' => 'media',
+      'field_name' => $this->$unstructuredField,
+      'type' => reset($this->pluginDefinition['allowed_field_types']),
+    ]);
+  }
+
   /**
    * {@inheritdoc}
    */
