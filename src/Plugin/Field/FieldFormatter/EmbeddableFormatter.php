@@ -73,7 +73,7 @@ class EmbeddableFormatter extends OEmbedFormatter {
    *
    * This overrides parent::viewElements function and corrects some problems.
    *
-   * @param Drupal\Core\Field\FieldItemListInterface $items
+   * @param \Drupal\Core\Field\FieldItemListInterface $items
    *   The content of the field.
    * @param string $langcode
    *   The language.
@@ -111,7 +111,7 @@ class EmbeddableFormatter extends OEmbedFormatter {
   /**
    * Format unstructured embeds.
    *
-   * @param Drupal\Core\Field\FieldItemListInterface $items
+   * @param \Drupal\Core\Field\FieldItemListInterface $items
    *   The content of the field.
    * @param string $langcode
    *   The language.

@@ -18,6 +18,8 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\media\Plugin\media\Source\OEmbed;
 
 /**
+ * Embeddable Media Source plugin.
+ *
  * @MediaSource(
  *   id = "embeddable",
  *   label = @Translation("Stanford Embedded Media"),
@@ -122,7 +124,7 @@ class Embeddable extends OEmbed {
    *   Metadata attribute value or NULL if unavailable.
    */
   public function getUnstructuredMetadata(MediaInterface $media, $name) {
-    // we short-circuit requests for URL here, to ensure kernel tests pass
+    // We short-circuit requests for URL here, to ensure kernel tests pass.
     if (($name = 'url') && ($this->hasOEmbed($media))) {
       return NULL;
     }

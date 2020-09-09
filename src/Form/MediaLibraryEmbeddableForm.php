@@ -3,7 +3,6 @@
 namespace Drupal\stanford_media\Form;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\media\OEmbed\ResourceException;
 use Drupal\media\OEmbed\ResourceFetcherInterface;
 use Drupal\media\OEmbed\UrlResolverInterface;
 use Drupal\media_library\MediaLibraryUiBuilder;
@@ -47,10 +46,9 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
   /**
    * {@inheritDoc}
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, MediaLibraryUiBuilder $library_ui_builder, UrlResolverInterface $url_resolver, ResourceFetcherInterface $resource_fetcher, ConfigFactoryInterface $config_factory, AccountInterface $account, OpenerResolverInterface $opener_resolver = NULL ) {
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, MediaLibraryUiBuilder $library_ui_builder, UrlResolverInterface $url_resolver, ResourceFetcherInterface $resource_fetcher, ConfigFactoryInterface $config_factory, AccountInterface $account, OpenerResolverInterface $opener_resolver = NULL) {
     parent::__construct($entity_type_manager, $library_ui_builder, $url_resolver, $resource_fetcher, $opener_resolver);
     $this->currentUser = $account;
-    //$config_factory = new ConfigFactory;
     $this->oEmbedField = $config_factory->get('media.type.embeddable')->get('source_configuration.oembed_field_name');
     $this->unstructuredField = $config_factory->get('media.type.embeddable')->get('source_configuration.unstructured_field_name');
   }
