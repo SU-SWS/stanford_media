@@ -9,6 +9,7 @@ use Drupal\media\OEmbed\UrlResolverInterface;
 use Drupal\media_library\MediaLibraryUiBuilder;
 use Drupal\media_library\OpenerResolverInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
@@ -46,12 +47,12 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
   /**
    * {@inheritDoc}
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, MediaLibraryUiBuilder $library_ui_builder, UrlResolverInterface $url_resolver, ResourceFetcherInterface $resource_fetcher, OpenerResolverInterface $opener_resolver = NULL, AccountInterface $account) {
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, MediaLibraryUiBuilder $library_ui_builder, UrlResolverInterface $url_resolver, ResourceFetcherInterface $resource_fetcher, ConfigFactoryInterface $config_factory, AccountInterface $account, OpenerResolverInterface $opener_resolver = NULL ) {
     parent::__construct($entity_type_manager, $library_ui_builder, $url_resolver, $resource_fetcher, $opener_resolver);
     $this->currentUser = $account;
-    $configuration = $this->getConfiguration();
-    $this->oEmbedField = $configuration['oembed_field_name'];
-    $this->unstructuredField = $configuration['unstructured_field_name'];
+    //$config_factory = new ConfigFactory;
+    $this->oEmbedField = $config_factory->get('media.type.embeddable')->get('source_configuration.oembed_field_name');
+    $this->unstructuredField = $config_factory->get('media.type.embeddable')->get('source_configuration.unstructured_field_name');
   }
 
   /**
@@ -63,8 +64,9 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
       $container->get('media_library.ui_builder'),
       $container->get('media.oembed.url_resolver'),
       $container->get('media.oembed.resource_fetcher'),
-      $container->get('media_library.opener_resolver'),
-      $container->get('current_user')
+      $container->get('config.factory'),
+      $container->get('current_user'),
+      $container->get('media_library.opener_resolver')
     );
   }
 
