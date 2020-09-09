@@ -153,7 +153,7 @@ class EmbeddableFormatterTest extends KernelTestBase {
       'mode' => 'default',
       'status' => TRUE,
     ]);
-    $display->setComponent('field_media_embeddable_oembed', $display_options)
+    $display->setComponent('field_media_embeddable_code', $display_options)
       ->removeComponent('thumbnail')
       ->save();
 
@@ -184,7 +184,7 @@ class EmbeddableFormatterTest extends KernelTestBase {
     }
 
     public function testOtherMediaTypeField() {
-      /*
+
       $mediaType = MediaType::create([
         'id' => 'video',
         'label' => 'video',
@@ -194,20 +194,14 @@ class EmbeddableFormatterTest extends KernelTestBase {
       $source_field = $mediaType->getSource()->createSourceField($mediaType);
 
       $this->assertFalse(EmbeddableFormatter::isApplicable($source_field));
-      */
+
     }
 
   public function testEmbeddableFormatter() {
-    /*
-    $source_field = $this->media->getSource()->getSourceFieldDefinition($this->mediaType);
+    $source_field = $this->oembed_media->getSource()->getSourceFieldDefinition($this->mediaType);
     $this->assertTrue(EmbeddableFormatter::isApplicable($source_field));
-
-    $view_builder = \Drupal::entityTypeManager()->getViewBuilder('media');
-    $display = $view_builder->view($this->media, 'default');
-    $display = \Drupal::service('renderer')->renderPlain($display);
-    preg_match('/<iframe.*src="http:\/\/google.com\/forms\/a\/b\/formid\/viewform"/', $display, $matches);
-    $this->assertCount(1, $matches);
-    */
+    $source_field = $this->unstructured_media->getSource()->getSourceFieldDefinition($this->mediaType);
+    $this->assertTrue(EmbeddableFormatter::isApplicable($source_field));
   }
 
 }
