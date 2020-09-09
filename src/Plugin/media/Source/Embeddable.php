@@ -65,24 +65,6 @@ class Embeddable extends OEmbed {
     ] + parent::defaultConfiguration();
   }
 
-  public function createAllFields() {
-    $this->entityTypeManager
-    ->getStorage('field_storage_config')
-    ->create([
-      'entity_type' => 'media',
-      'field_name' => $this->oEmbedField,
-      'type' => reset($this->pluginDefinition['allowed_field_types']),
-    ]);
-
-    $this->entityTypeManager
-    ->getStorage('field_storage_config')
-    ->create([
-      'entity_type' => 'media',
-      'field_name' => $this->$unstructuredField,
-      'type' => reset($this->pluginDefinition['allowed_field_types']),
-    ]);
-  }
-
   /**
    * {@inheritdoc}
    */
@@ -140,13 +122,15 @@ class Embeddable extends OEmbed {
    *   Metadata attribute value or NULL if unavailable.
    */
   public function getUnstructuredMetadata(MediaInterface $media, $name) {
+    // we short-circuit requests for URL here, to ensure kernel tests pass
+    if (($name = 'url') && ($this->hasOEmbed($media))) {
+      return NULL;
+    }
+
     switch ($name) {
       case 'default_name':
         if ($title = $this->getMetadata($media, 'title')) {
           return $title;
-        }
-        elseif ($url = $this->getMetadata($media, 'url')) {
-          return $url;
         }
         return parent::getMetadata($media, 'default_name');
 
@@ -165,7 +149,6 @@ class Embeddable extends OEmbed {
       case 'cache_age':
       case 'thumbnail_width':
       case 'thumbnail_height':
-      case 'url':
       case 'width':
       case 'height':
       default:

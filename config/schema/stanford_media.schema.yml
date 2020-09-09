@@ -73,6 +73,17 @@ field.formatter.settings.media_multimedia_formatter:
           type: string
           label: 'The view mode to fallback to the type.'
 
+field.formatter.settings.embeddable_formatter:
+  type: mapping
+  label: 'oEmbed display format settings'
+  mapping:
+    max_width:
+      type: integer
+      label: 'Maximum width'
+    max_height:
+      type: integer
+      label: 'Maximum height'
+
 media.source.google_form:
   type: media.source.field_aware
   label: '"Google Form" media source configuration'

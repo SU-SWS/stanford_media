@@ -20,34 +20,24 @@ class MediaLibraryEmbeddableFormTest extends UnitTestCase {
    */
   protected function setUp() {
     parent::setUp();
-    /*
     $container = new ContainerBuilder();
     $container->set('string_translation', $this->getStringTranslationStub());
     \Drupal::setContainer($container);
-    */
   }
 
   /**
    * Urls should validate correctly.
    */
-  public function testUrlValidate() {
-
-    /*
+  public function testFormValidation() {
 
     $form_object = new TestMediaLibraryEmbeddableForm();
     $form_state = new FormState();
     $form = [];
 
-    $form_state->setValue('url', 'foo-bar');
-    $form_object->validateUrl($form, $form_state);
-    $this->assertTrue($form_state::hasAnyErrors());
-
-    $form_state->clearErrors();
-
-    $form_state->setValue('url', 'http://google.com/forms/a/b/c/viewform');
-    $form_object->validateUrl($form, $form_state);
+    $form_state->setValue($form_object->unstructuredField, ['<iframe src="http://www.test.com"></iframe>']);
+    $form_object->validateEmbeddable($form, $form_state);
     $this->assertFalse($form_state::hasAnyErrors());
-    */
+
   }
 
 }

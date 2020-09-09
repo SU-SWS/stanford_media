@@ -34,14 +34,14 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
    *
    * @var string
    */
-  protected $oEmbedField;
+  public $oEmbedField;
 
   /**
    * The name of the Unstructured field.
    *
    * @var string
    */
-  protected $unstructuredField;
+  public $unstructuredField;
 
   /**
    * {@inheritDoc}

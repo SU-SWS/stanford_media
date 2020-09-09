@@ -32,6 +32,7 @@ class EmbeddableFormatterTest extends KernelTestBase {
     'field',
     'file',
     'entity_test',
+    'field_permissions',
   ];
 
   /**
@@ -39,10 +40,23 @@ class EmbeddableFormatterTest extends KernelTestBase {
    *
    * @var \Drupal\media\MediaInterface
    */
-  protected $media;
+  protected $oembed_media;
 
   /**
-   * Google Form media type bundle.
+   * Generated Media entity.
+   *
+   * @var \Drupal\media\MediaInterface
+   */
+  protected $unstructured_media;
+
+  /**
+   * A test embed string.
+   *
+   * @var string
+   */
+  protected $iframe_code = '<iframe src="http://www.test.com"></iframe>';
+  /**
+   * Embeddable media type bundle.
    *
    * @var \Drupal\media\Entity\MediaType
    */
@@ -53,17 +67,14 @@ class EmbeddableFormatterTest extends KernelTestBase {
    */
   protected function setUp() {
     parent::setUp();
-    /*
-
     $this->installEntitySchema('user');
     $this->installEntitySchema('media');
     $this->installEntitySchema('field_storage_config');
     $this->installEntitySchema('field_config');
     $this->installEntitySchema('file');
-    $this->installEntitySchema('entity_test');
-    $this->installEntitySchema('entity_view_display');
     $this->installSchema('file', ['file_usage']);
     $this->installConfig('system');
+    $this->installConfig('field_permissions');
 
     $this->mediaType = MediaType::create([
       'id' => 'embeddable',
@@ -71,43 +82,85 @@ class EmbeddableFormatterTest extends KernelTestBase {
       'source' => 'embeddable',
     ]);
     $this->mediaType->save();
-    $source_field = $this->mediaType->getSource()->createSourceField($this->mediaType);
-    $source_field->getFieldStorageDefinition()->save();
-    $source_field->save();
+
     $this->mediaType
       ->set('source_configuration', [
-        'source_field' => $source_field->getName(),
+        'oembed_field_name' => 'field_media_embeddable_oembed',
+        'unstructured_field_name' => 'field_media_embeddable_code',
+        'thumbnails_directory' => 'public://oembed_thumbnails',
+        'source_field' => 'field_media_embeddable_oembed',
       ])
       ->save();
 
-    $this->media = Media::create([
-      'bundle' => 'embeddable',
-      'field_media_embeddable' => 'http://google.com/forms/a/b/formid/viewform',
+
+    // Create the fields we need.
+    $field_storage = FieldStorageConfig::create([
+      'field_name' => 'field_media_embeddable_oembed',
+      'entity_type' => 'media',
+      'type' => 'string_long',
     ]);
-    $this->media->save();
+    $field_storage->save();
+
+    FieldConfig::create([
+      'field_storage' => $field_storage,
+      'bundle' => 'embeddable',
+      'label' => 'oembed',
+    ])->save();
+
+    $field_storage = FieldStorageConfig::create([
+      'field_name' => 'field_media_embeddable_code',
+      'entity_type' => 'media',
+      'type' => 'string_long',
+    ]);
+    $field_storage->save();
+
+    FieldConfig::create([
+      'field_storage' => $field_storage,
+      'bundle' => 'embeddable',
+      'label' => 'unstructured',
+    ])->save();
+
+    // set up media instances.
+
+    // We have to test this with a null value.
+    // Otherwise, the outbound http request fails
+    // see also: https://www.drupal.org/project/drupal/issues/2571475
+    $this->oembed_media = Media::create([
+      'bundle' => 'embeddable',
+      'name' => 'oembed embeddable',
+      'field_media_embeddable_oembed' => NULL,
+    ]);
+    $this->oembed_media->save();
+
+
+    $this->unstructured_media = Media::create([
+      'bundle' => 'embeddable',
+      'name' => 'unstructured embeddable',
+      'field_media_embeddable_code' => $this->iframe_code,
+    ]);
+    $this->unstructured_media->save();
 
     $display_options = [
       'type' => 'embeddable_formatter',
     ];
-    */
 
     /** @var \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display */
 
-    /*
+
     $display = EntityViewDisplay::create([
       'targetEntityType' => 'media',
       'bundle' => 'embeddable',
       'mode' => 'default',
       'status' => TRUE,
     ]);
-    $display->setComponent($source_field->getName(), $display_options)
+    $display->setComponent('field_media_embeddable_oembed', $display_options)
       ->removeComponent('thumbnail')
       ->save();
-    */
+
   }
 
     public function testNonMediaField() {
-      /*
+
       EntityTestBundle::create(['id' => 'test'])->save();
 
       $field_storage = FieldStorageConfig::create([
@@ -127,7 +180,7 @@ class EmbeddableFormatterTest extends KernelTestBase {
       $field_config->save();
 
       $this->assertFalse(EmbeddableFormatter::isApplicable($field_config));
-      */
+
     }
 
     public function testOtherMediaTypeField() {
@@ -144,7 +197,7 @@ class EmbeddableFormatterTest extends KernelTestBase {
       */
     }
 
-  public function testEmbeddableatter() {
+  public function testEmbeddableFormatter() {
     /*
     $source_field = $this->media->getSource()->getSourceFieldDefinition($this->mediaType);
     $this->assertTrue(EmbeddableFormatter::isApplicable($source_field));
