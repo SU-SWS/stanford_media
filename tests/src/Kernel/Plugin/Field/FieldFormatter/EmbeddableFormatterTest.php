@@ -92,8 +92,7 @@ class EmbeddableFormatterTest extends KernelTestBase {
       ])
       ->save();
 
-
-    // Create the fields we need.
+      // Create the fields we need.
     $field_storage = FieldStorageConfig::create([
       'field_name' => 'field_media_embeddable_oembed',
       'entity_type' => 'media',
@@ -196,12 +195,32 @@ class EmbeddableFormatterTest extends KernelTestBase {
       $this->assertFalse(EmbeddableFormatter::isApplicable($source_field));
 
     }
-
+  /**
+   * @covers Drupal\stanford_media\Plugin\Field\FieldFormatter\EmbeddableFormatter::isApplicable
+   * @covers Drupal\stanford_media\Plugin\Field\FieldFormatter\EmbeddableFormatter::viewElements
+   * @covers Drupal\stanford_media\Plugin\Field\FieldFormatter\EmbeddableFormatter::viewUnstructuredElements
+   * @covers Drupal\stanford_media\Plugin\Field\FieldFormatter\EmbeddableFormatter::viewOEmbedElements
+   */
   public function testEmbeddableFormatter() {
     $source_field = $this->oembed_media->getSource()->getSourceFieldDefinition($this->mediaType);
     $this->assertTrue(EmbeddableFormatter::isApplicable($source_field));
     $source_field = $this->unstructured_media->getSource()->getSourceFieldDefinition($this->mediaType);
     $this->assertTrue(EmbeddableFormatter::isApplicable($source_field));
+
+
+    $view_builder = \Drupal::entityTypeManager()
+      ->getViewBuilder('media');
+    $view_render = $view_builder->view($this->unstructured_media, 'default');
+    $rendered_view = \Drupal::service('renderer')->renderPlain($view_render);
+    $this->assertStringContainsString('<div class="embeddable-content"><iframe src="http://www.test.com">', $rendered_view);
+
+    // Kernel tests don't let us make remote http requests, so embeds will come back empty.
+    $view_builder = \Drupal::entityTypeManager()
+      ->getViewBuilder('media');
+    $view_render = $view_builder->view($this->oembed_media, 'default');
+    $rendered_view = \Drupal::service('renderer')->renderPlain($view_render);
+    $this->assertStringContainsString('<div>', $rendered_view);
+
   }
 
 }

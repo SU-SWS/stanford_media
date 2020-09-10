@@ -114,13 +114,12 @@ class EmbeddableConstraintValidatorTest extends OEmbedResourceConstraintValidato
 
   /**
    * @covers ::validate
+   *
    */
   public function testValidate() {
     $media = Media::create([
       'bundle' => 'embeddable',
     ]);
-
-
 
     $constraint = new EmbeddableConstraint();
 
@@ -133,15 +132,12 @@ class EmbeddableConstraintValidatorTest extends OEmbedResourceConstraintValidato
     $url_resolver->getProviderByUrl(Argument::any())->shouldNotBeCalled();
 
     $value = new class ($media) {
-
       public function __construct($entity) {
         $this->entity = $entity;
       }
-
       public function getEntity() {
         return $this->entity;
       }
-
     };
 
     $validator = new EmbeddableConstraintValidator(
@@ -151,6 +147,28 @@ class EmbeddableConstraintValidatorTest extends OEmbedResourceConstraintValidato
     );
     $validator->initialize($context->reveal());
     $validator->validate($value, $constraint);
+
+    // The media has both an oEmbed URL and an embed code, so this should return a violation
+    $media = Media::create([
+      'bundle' => 'embeddable',
+      'name' => 'unstructured embeddable',
+      'field_media_embeddable_code' => '<iframe></iframe>',
+      'field_media_embeddable_oembed' => 'http://www.test.com',
+    ]);
+
+    $value = new class ($media) {
+      public function __construct($entity) {
+        $this->entity = $entity;
+      }
+      public function getEntity() {
+        return $this->entity;
+      }
+    };
+    $context = $this->prophesize(ExecutionContextInterface::class);
+    $context->addViolation($constraint->oEmbedNotAllowed)->shouldBeCalled();
+    $validator->initialize($context->reveal());
+    $validator->validate($value, $constraint);
+
   }
 
 }

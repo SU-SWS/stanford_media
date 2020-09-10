@@ -136,6 +136,14 @@ class EmbeddableTest extends KernelTestBase {
 
   /**
    * Test methods on the embeddable source.
+   *
+   * @covers ::getMetadata
+   * @covers ::getUnstructuredMetadata
+   * @covers ::getMetadata
+   * @covers ::getSourceFieldConstraints
+   * @covers ::getSourceFieldValue
+   * @covers ::hasUnstructured
+   *
    */
   public function testEmbeddableSource() {
     $oembed_media_source = $this->oembed_media->getSource();

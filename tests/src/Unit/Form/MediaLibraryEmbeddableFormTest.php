@@ -74,10 +74,16 @@ class MediaLibraryEmbeddableFormTest extends UnitTestCase {
  */
 class TestMediaLibraryEmbeddableForm extends MediaLibraryEmbeddableForm {
 
+  public function __construct() {}
   /**
-   * {@inheritDoc}
+   * We override this so unit tests work without a full form state.
+   *
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current form state.
    */
-  public function __construct() {
+  public function setFieldNames(\Drupal\Core\Form\FormStateInterface $form_state) {
+    $this->oEmbedField = 'field_media_embeddable_oembed';
+    $this->unstructuredField = 'field_media_embeddable_unstructured';
   }
 
 }

@@ -142,17 +142,6 @@ class Embeddable extends OEmbed {
       case 'html':
         return $media->get($this->unstructuredField)->getValue();
 
-      case 'type':
-      case 'title':
-      case 'author_name':
-      case 'author_url':
-      case 'provider_name':
-      case 'provider_url':
-      case 'cache_age':
-      case 'thumbnail_width':
-      case 'thumbnail_height':
-      case 'width':
-      case 'height':
       default:
         return NULL;
 
