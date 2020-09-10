@@ -7,6 +7,7 @@ use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\media\Entity\Media;
 use Drupal\media\Entity\MediaType;
+use Drupal\Core\Form\FormState;
 use Drupal\stanford_media\Plugin\media\Source\Embeddable;
 
 /**
@@ -47,6 +48,13 @@ class EmbeddableTest extends KernelTestBase {
   protected $unstructured_media;
 
   /**
+   * The Media Type.
+   *
+   * @var \Drupal\media\MediaType
+   */
+  protected $media_type;
+
+  /**
    * A test embed string.
    *
    * @var string
@@ -68,14 +76,14 @@ class EmbeddableTest extends KernelTestBase {
     $this->installConfig('system');
     $this->installConfig('field_permissions');
 
-    $media_type = MediaType::create([
+    $this->media_type = MediaType::create([
       'id' => 'embeddable',
       'label' => 'embeddable',
       'source' => 'embeddable',
     ]);
-    $media_type->save();
+    $this->media_type->save();
 
-    $media_type
+    $this->media_type
       ->set('source_configuration', [
         'oembed_field_name' => 'field_media_embeddable_oembed',
         'unstructured_field_name' => 'field_media_embeddable_code',
@@ -159,7 +167,24 @@ class EmbeddableTest extends KernelTestBase {
     $this->assertTrue($unstructured_media_source->hasUnstructured($this->unstructured_media));
     $this->assertCount(15, $unstructured_media_source->getMetadataAttributes());
     $this->assertArrayHasKey('embeddable', $unstructured_media_source->getSourceFieldConstraints());
+    $this->assertNull($unstructured_media_source->getUnstructuredMetadata($this->unstructured_media, 'title'));
+    $this->assertStringContainsString('iframe src', $unstructured_media_source->getSourceFieldValue($this->unstructured_media));
 
+  }
+
+
+  /**
+   * Tests the configuration form.
+   *
+   * @covers ::buildConfigurationForm
+   */
+  public function testBuildConfigurationForm() {
+    $form_state = new FormState();
+    $form = [];
+    $source = $this->unstructured_media->getSource();
+    $form_array = $source->buildConfigurationForm($form, $form_state);
+    $this->assertArrayHasKey('oembed_field_name', $form_array);
+    $this->assertArrayHasKey('unstructured_field_name', $form_array);
   }
 
 }

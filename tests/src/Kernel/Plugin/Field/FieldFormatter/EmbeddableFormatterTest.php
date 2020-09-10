@@ -127,7 +127,7 @@ class EmbeddableFormatterTest extends KernelTestBase {
     $this->oembed_media = Media::create([
       'bundle' => 'embeddable',
       'name' => 'oembed embeddable',
-      'field_media_embeddable_oembed' => NULL,
+      'field_media_embeddable_oembed' => '',
     ]);
     $this->oembed_media->save();
 

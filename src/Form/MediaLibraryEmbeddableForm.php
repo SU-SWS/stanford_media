@@ -92,11 +92,11 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
     $media_type_id = $this->getMediaType($form_state)->id();
 
     $this->oEmbedField = $this->configFactory
-                      ->get('media.type.'.$media_type_id)
-                      ->get('source_configuration.oembed_field_name');
+      ->get('media.type.' . $media_type_id)
+      ->get('source_configuration.oembed_field_name');
     $this->unstructuredField = $this->configFactory
-                      ->get('media.type.'.$media_type_id)
-                      ->get('source_configuration.unstructured_field_name');
+      ->get('media.type.' . $media_type_id)
+      ->get('source_configuration.unstructured_field_name');
   }
 
   /**
@@ -109,15 +109,6 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
     $authorized_for_unstructured = $this->currentUser->hasPermission('create field_media_embeddable_code') || $this->currentUser->hasPermission('edit field_media_embeddable_code');
 
     $media_type = $this->getMediaType($form_state);
-
-    $oEmbedField = $this->configFactory
-                      ->get('media.type.'.$media_type->id())
-                      ->get('source_configuration.oembed_field_name');
-    $unstructuredField = $this->configFactory
-                      ->get('media.type.'.$media_type->id())
-                      ->get('source_configuration.unstructured_field_name');
-
-
     $providers = $media_type->getSource()->getProviders();
 
     $form['container'] = [
