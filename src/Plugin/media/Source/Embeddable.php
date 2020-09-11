@@ -70,21 +70,14 @@ class Embeddable extends OEmbed {
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
     $form = parent::buildConfigurationForm($form, $form_state);
     $options = $this->getSourceFieldOptions();
-    $form['source_field'] = [
-      '#type' => 'select',
-      '#title' => $this->t('Field with oEmbed information'),
-      '#default_value' => $this->configuration['source_field'],
-      '#empty_option' => $this->t('-'),
-      '#options' => $options,
-      '#description' => $this->t('Select the field that will store the link, if it is an oEmbed.'),
-    ];
     $form['unstructured_field_name'] = [
       '#type' => 'select',
       '#title' => $this->t('Field for unstructured embed codes'),
       '#default_value' => $this->configuration['unstructured_field_name'],
-      '#empty_option' => $this->t('-'),
+      '#empty_option' => $this->t('- Choose -'),
       '#options' => $options,
       '#description' => $this->t('Select the field that will store essential information about the media item.'),
+      '#weight' => -99,
     ];
     return $form;
   }
@@ -151,7 +144,7 @@ class Embeddable extends OEmbed {
    *   TRUE means it has an Unstructured embed, FALSE means that field is empty
    */
   public function hasOEmbed(MediaInterface $media) {
-    return !empty($media->get($this->oEmbedField)->getValue());
+    return !$media->get($this->oEmbedField)->isEmpty();
   }
 
   /**
@@ -164,7 +157,7 @@ class Embeddable extends OEmbed {
    *   TRUE means it has an Unstructured embed, FALSE means that field is empty
    */
   public function hasUnstructured(MediaInterface $media) {
-    return !empty($media->get($this->unstructuredField)->getValue());
+    return !$media->get($this->unstructuredField)->isEmpty();
   }
 
   /**
@@ -180,7 +173,7 @@ class Embeddable extends OEmbed {
    * {@inheritdoc}
    */
   public function getSourceFieldValue(MediaInterface $media) {
-    $source_field = ($this->hasUnstructured($media)) ? $this->unstructuredField : $this->oEmbedField;
+    $source_field = $this->hasUnstructured($media) ? $this->unstructuredField : $this->oEmbedField;
     if (empty($source_field)) {
       throw new \RuntimeException('Source field for media source is not defined.');
     }
