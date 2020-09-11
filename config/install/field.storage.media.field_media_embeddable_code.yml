@@ -2,11 +2,8 @@ langcode: en
 status: true
 dependencies:
   module:
-    - field_permissions
     - media
-third_party_settings:
-  field_permissions:
-    permission_type: custom
+third_party_settings: {  }
 id: media.field_media_embeddable_code
 field_name: field_media_embeddable_code
 entity_type: media
@@ -20,4 +17,3 @@ translatable: true
 indexes: {  }
 persist_with_no_fields: false
 custom_storage: false
-

@@ -29,7 +29,6 @@ class EmbeddableTest extends KernelTestBase {
     'path_alias',
     'field',
     'file',
-    'field_permissions',
     'stanford_media',
   ];
 
@@ -74,7 +73,6 @@ class EmbeddableTest extends KernelTestBase {
     $this->installEntitySchema('file');
     $this->installSchema('file', ['file_usage']);
     $this->installConfig('system');
-    $this->installConfig('field_permissions');
 
     $this->media_type = MediaType::create([
       'id' => 'embeddable',

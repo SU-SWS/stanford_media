@@ -17,4 +17,3 @@ dependencies:
   - drupal:path
   - entity_usage:entity_usage
   - focal_point:focal_point
-  - drupal:field_permissions

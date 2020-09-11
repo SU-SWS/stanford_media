@@ -34,7 +34,6 @@ class EmbeddableFormatterTest extends KernelTestBase {
     'field',
     'file',
     'entity_test',
-    'field_permissions',
   ];
 
   /**
@@ -87,7 +86,6 @@ class EmbeddableFormatterTest extends KernelTestBase {
     $this->installEntitySchema('file');
     $this->installSchema('file', ['file_usage']);
     $this->installConfig('system');
-    $this->installConfig('field_permissions');
 
     $this->client = $this->createMock(Client::class);
     $this->client

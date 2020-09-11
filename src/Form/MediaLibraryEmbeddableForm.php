@@ -42,7 +42,6 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
 
     // This was adapted from \Drupal\media_library\Form\OembedForm.
     $this->setFieldNames($form_state);
-
     $media_type = $this->getMediaType($form_state);
     $providers = $media_type->getSource()->getProviders();
 
