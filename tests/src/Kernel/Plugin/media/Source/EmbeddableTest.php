@@ -183,7 +183,7 @@ class EmbeddableTest extends KernelTestBase {
     $form = [];
     $source = $this->unstructured_media->getSource();
     $form_array = $source->buildConfigurationForm($form, $form_state);
-    $this->assertArrayHasKey('oembed_field_name', $form_array);
+    $this->assertArrayHasKey('source_field', $form_array);
     $this->assertArrayHasKey('unstructured_field_name', $form_array);
   }
 
