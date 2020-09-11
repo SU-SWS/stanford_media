@@ -49,12 +49,10 @@ class Embeddable extends OEmbed {
    * {@inheritdoc}
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, EntityFieldManagerInterface $entity_field_manager, ConfigFactoryInterface $config_factory, FieldTypePluginManagerInterface $field_type_manager, LoggerInterface $logger, MessengerInterface $messenger, ClientInterface $http_client, ResourceFetcherInterface $resource_fetcher, UrlResolverInterface $url_resolver, IFrameUrlHelper $iframe_url_helper, FileSystemInterface $file_system = NULL) {
-
     parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager, $entity_field_manager, $config_factory, $field_type_manager, $logger, $messenger, $http_client, $resource_fetcher, $url_resolver, $iframe_url_helper, $file_system);
     $configuration = $this->getConfiguration();
-    $this->oEmbedField = $configuration['oembed_field_name'];
+    $this->oEmbedField = $configuration['source_field'];
     $this->unstructuredField = $configuration['unstructured_field_name'];
-
   }
 
   /**
@@ -62,7 +60,6 @@ class Embeddable extends OEmbed {
    */
   public function defaultConfiguration() {
     return [
-      'oembed_field_name' => 'field_media_embeddable_oembed',
       'unstructured_field_name' => 'field_media_embeddable_code',
     ] + parent::defaultConfiguration();
   }
@@ -73,21 +70,14 @@ class Embeddable extends OEmbed {
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
     $form = parent::buildConfigurationForm($form, $form_state);
     $options = $this->getSourceFieldOptions();
-    $form['oembed_field_name'] = [
-      '#type' => 'select',
-      '#title' => $this->t('Field with oEmbed information'),
-      '#default_value' => $this->configuration['oembed_field_name'],
-      '#empty_option' => $this->t('-'),
-      '#options' => $options,
-      '#description' => $this->t('Select the field that will store the link, if it is an oEmbed.'),
-    ];
     $form['unstructured_field_name'] = [
       '#type' => 'select',
       '#title' => $this->t('Field for unstructured embed codes'),
       '#default_value' => $this->configuration['unstructured_field_name'],
-      '#empty_option' => $this->t('-'),
+      '#empty_option' => $this->t('- Choose -'),
       '#options' => $options,
       '#description' => $this->t('Select the field that will store essential information about the media item.'),
+      '#weight' => -99,
     ];
     return $form;
   }
@@ -141,13 +131,7 @@ class Embeddable extends OEmbed {
 
       case 'html':
         return $media->get($this->unstructuredField)->getValue();
-
-      default:
-        return NULL;
-
     }
-    return NULL;
-
   }
 
   /**
@@ -160,7 +144,7 @@ class Embeddable extends OEmbed {
    *   TRUE means it has an Unstructured embed, FALSE means that field is empty
    */
   public function hasOEmbed(MediaInterface $media) {
-    return !empty($media->get($this->oEmbedField)->getValue());
+    return !$media->get($this->oEmbedField)->isEmpty();
   }
 
   /**
@@ -173,7 +157,7 @@ class Embeddable extends OEmbed {
    *   TRUE means it has an Unstructured embed, FALSE means that field is empty
    */
   public function hasUnstructured(MediaInterface $media) {
-    return !empty($media->get($this->unstructuredField)->getValue());
+    return !$media->get($this->unstructuredField)->isEmpty();
   }
 
   /**
@@ -189,20 +173,18 @@ class Embeddable extends OEmbed {
    * {@inheritdoc}
    */
   public function getSourceFieldValue(MediaInterface $media) {
-    $source_field = ($this->hasUnstructured($media)) ? $this->unstructuredField : $this->oEmbedField;
+    $source_field = $this->hasUnstructured($media) ? $this->unstructuredField : $this->oEmbedField;
     if (empty($source_field)) {
       throw new \RuntimeException('Source field for media source is not defined.');
     }
-    $items = $media
-      ->get($source_field);
-    if ($items
-      ->isEmpty()) {
+
+    $items = $media->get($source_field);
+    if ($items->isEmpty()) {
       return NULL;
     }
-    $field_item = $items
-      ->first();
-    return $field_item->{$field_item
-      ->mainPropertyName()};
+
+    $field_item = $items->first();
+    return $field_item->{$field_item->mainPropertyName()};
   }
 
 }

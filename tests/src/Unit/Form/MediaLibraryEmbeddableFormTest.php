@@ -41,18 +41,7 @@ class MediaLibraryEmbeddableFormTest extends UnitTestCase {
     \Drupal::setContainer($container);
   }
 
-  /**
-   * Urls should validate correctly.
-   */
-  public function testFormValidation() {
-    $form_object = new TestMediaLibraryEmbeddableForm();
-    $form_state = new FormState();
-    $form = [];
 
-    $form_state->setValue($form_object->unstructuredField, ['<iframe src="http://www.test.com"></iframe>']);
-    $form_object->validateEmbeddable($form, $form_state);
-    $this->assertFalse($form_state::hasAnyErrors());
-  }
 
   public function testGetFormId() {
     $form_object = new TestMediaLibraryEmbeddableForm();
