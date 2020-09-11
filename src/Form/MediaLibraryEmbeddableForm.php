@@ -2,17 +2,9 @@
 
 namespace Drupal\stanford_media\Form;
 
-use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\media\OEmbed\ResourceFetcherInterface;
-use Drupal\media\OEmbed\UrlResolverInterface;
-use Drupal\media_library\MediaLibraryUiBuilder;
-use Drupal\media_library\OpenerResolverInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
-use Drupal\Core\Session\AccountInterface;
 use Drupal\media_library\Form\OEmbedForm;
 
 /**
@@ -21,59 +13,6 @@ use Drupal\media_library\Form\OEmbedForm;
  * @package Drupal\stanford_media\Form
  */
 class MediaLibraryEmbeddableForm extends OEmbedForm {
-
-  /**
-   * The current User.
-   *
-   * @var \Drupal\Core\Session\AccountInterface
-   */
-  protected $currentUser;
-
-  /**
-   * The name of the oEmbed field.
-   *
-   * @var string
-   */
-  public $oEmbedField;
-
-  /**
-   * The name of the Unstructured field.
-   *
-   * @var string
-   */
-  public $unstructuredField;
-
-  /**
-   * The config factory.
-   *
-   * @var \Drupal\Core\Config\ConfigFactoryInterface
-   */
-  protected $configFactory;
-
-  /**
-   * {@inheritDoc}
-   */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, MediaLibraryUiBuilder $library_ui_builder, UrlResolverInterface $url_resolver, ResourceFetcherInterface $resource_fetcher, ConfigFactoryInterface $config_factory, AccountInterface $account, OpenerResolverInterface $opener_resolver = NULL) {
-    parent::__construct($entity_type_manager, $library_ui_builder, $url_resolver, $resource_fetcher, $opener_resolver);
-    $this->currentUser = $account;
-    $this->configFactory = $config_factory;
-
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('entity_type.manager'),
-      $container->get('media_library.ui_builder'),
-      $container->get('media.oembed.url_resolver'),
-      $container->get('media.oembed.resource_fetcher'),
-      $container->get('config.factory'),
-      $container->get('current_user'),
-      $container->get('media_library.opener_resolver')
-    );
-  }
 
   /**
    * {@inheritDoc}
@@ -88,15 +27,12 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current form state.
    */
-  public function setFieldNames(FormStateInterface $form_state) {
-    $media_type_id = $this->getMediaType($form_state)->id();
-
-    $this->oEmbedField = $this->configFactory
-      ->get('media.type.' . $media_type_id)
-      ->get('source_configuration.oembed_field_name');
-    $this->unstructuredField = $this->configFactory
-      ->get('media.type.' . $media_type_id)
-      ->get('source_configuration.unstructured_field_name');
+  protected function setFieldNames(FormStateInterface $form_state) {
+    $source_config = $this->getMediaType($form_state)
+      ->getSource()
+      ->getConfiguration();
+    $form_state->set('source_field', $source_config['source_field']);
+    $form_state->set('unstructured_field_name', $source_config['unstructured_field_name']);
   }
 
   /**
@@ -106,7 +42,6 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
 
     // This was adapted from \Drupal\media_library\Form\OembedForm.
     $this->setFieldNames($form_state);
-    $authorized_for_unstructured = $this->currentUser->hasPermission('create field_media_embeddable_code') || $this->currentUser->hasPermission('edit field_media_embeddable_code');
 
     $media_type = $this->getMediaType($form_state);
     $providers = $media_type->getSource()->getProviders();
@@ -115,7 +50,7 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
       '#type' => 'container',
     ];
 
-    $form['container'][$this->oEmbedField] = [
+    $form['container'][$form_state->get('source_field')] = [
       '#type' => 'url',
       '#title' => $this->t('Add @type via URL', [
         '@type' => $this->getMediaType($form_state)->label(),
@@ -128,11 +63,10 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
       ],
     ];
 
-    $form['container'][$this->unstructuredField] = [
+    $form['container'][$form_state->get('unstructured_field_name')] = [
       '#type' => 'textarea',
       '#title' => $this->t('Embed Code'),
       '#description' => $this->t('Use this field to paste in embed codes which are not available through oEmbed'),
-      '#access' => $authorized_for_unstructured,
     ];
 
     $ajax_query = $this->getMediaLibraryState($form_state)->all();
@@ -168,8 +102,7 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
    *   True if unstructured, otherwise false.
    */
   public function isUnstructured(FormStateInterface $form_state) {
-    $this->setFieldNames($form_state);
-    return !empty($form_state->getValue($this->unstructuredField));
+    return !empty($form_state->getValue($form_state->get('unstructured_field_name')));
   }
 
   /**
@@ -181,7 +114,6 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
    *   The current form state.
    */
   public function validateEmbeddable(array &$form, FormStateInterface $form_state) {
-    $this->setFieldNames($form_state);
     // No validation necessary if we have an embed code.
     if (!$this->isUnstructured($form_state)) {
       parent::validateUrl($form, $form_state);
@@ -197,9 +129,7 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
    *   The form state.
    */
   public function addButtonSubmit(array $form, FormStateInterface $form_state) {
-    $this->setFieldNames($form_state);
-    $values = ($this->isUnstructured($form_state)) ?
-      [$form_state->getValue($this->unstructuredField)] : [$form_state->getValue($this->oEmbedField)];
+    $values = $this->isUnstructured($form_state) ? [$form_state->getValue($form_state->get('unstructured_field_name'))] : [$form_state->getValue($form_state->get('source_field'))];
     $this->processInputValues($values, $form, $form_state);
   }
 
@@ -207,21 +137,22 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
    * {@inheritDoc}
    */
   protected function processInputValues(array $source_field_values, array $form, FormStateInterface $form_state) {
-    $this->setFieldNames($form_state);
     $media_type = $this->getMediaType($form_state);
     $media_storage = $this->entityTypeManager->getStorage('media');
 
-    $source_field_name = $this->isUnstructured($form_state) ? $this->unstructuredField : $this->oEmbedField;
+    $source_field_name = $this->isUnstructured($form_state) ? $form_state->get('unstructured_field_name') : $form_state->get('source_field');
 
     $media = array_map(function ($source_field_value) use ($media_type, $media_storage, $source_field_name) {
       return $this->createMediaFromValue($media_type, $media_storage, $source_field_name, $source_field_value);
     }, $source_field_values);
+
     // Re-key the media items before setting them in the form state.
     $form_state->set('media', array_values($media));
     // Save the selected items in the form state so they are remembered when an
     // item is removed.
     $media = $this->entityTypeManager->getStorage('media')
       ->loadMultiple(explode(',', $form_state->getValue('current_selection')));
+
     // Any ID can be passed to the form, so we have to check access.
     $form_state->set('current_selection', array_filter($media, function ($media_item) {
       return $media_item->access('view');

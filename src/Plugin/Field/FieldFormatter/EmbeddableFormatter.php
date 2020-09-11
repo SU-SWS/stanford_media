@@ -4,7 +4,6 @@ namespace Drupal\stanford_media\Plugin\Field\FieldFormatter;
 
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
-use Drupal\media\Entity\MediaType;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\media\OEmbed\ResourceFetcherInterface;
 use Drupal\media\OEmbed\UrlResolverInterface;
@@ -41,10 +40,10 @@ class EmbeddableFormatter extends OEmbedFormatter {
    * {@inheritDoc}
    */
   public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, $label, $view_mode, array $third_party_settings, MessengerInterface $messenger, ResourceFetcherInterface $resource_fetcher, UrlResolverInterface $url_resolver, LoggerChannelFactoryInterface $logger_factory, ConfigFactoryInterface $config_factory, IFrameUrlHelper $iframe_url_helper) {
-
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings, $messenger, $resource_fetcher, $url_resolver, $logger_factory, $config_factory, $iframe_url_helper);
 
-    $this->oEmbedField = $config_factory->get('media.type.embeddable')->get('source_configuration.oembed_field_name');
+    $media_type = self::getMediaType($field_definition->getTargetBundle());
+    $this->oEmbedField = $media_type->getSource()->getConfiguration()['source_field'];
   }
 
   /**
@@ -55,8 +54,26 @@ class EmbeddableFormatter extends OEmbedFormatter {
       return FALSE;
     }
 
-    $media_type = MediaType::load($field_definition->getTargetBundle());
+    $media_type = self::getMediaType($field_definition->getTargetBundle());
     return $media_type && $media_type->getSource() instanceof Embeddable;
+  }
+
+  /**
+   * Load the media type from the media type id.
+   *
+   * @param string $media_type_id
+   *   Media type machine name.
+   *
+   * @return \Drupal\media\MediaTypeInterface|null
+   *   Media type entity.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   */
+  protected static function getMediaType($media_type_id) {
+    return \Drupal::entityTypeManager()
+      ->getStorage('media_type')
+      ->load($media_type_id);
   }
 
   /**
@@ -64,8 +81,7 @@ class EmbeddableFormatter extends OEmbedFormatter {
    */
   public function viewElements(FieldItemListInterface $items, $langcode) {
     $embed_type = $items->getName();
-    return ($embed_type == $this->oEmbedField) ?
-      $this->viewOEmbedElements($items, $langcode) : $this->viewUnstructuredElements($items, $langcode);
+    return $embed_type == $this->oEmbedField ? $this->viewOEmbedElements($items, $langcode) : $this->viewUnstructuredElements($items, $langcode);
   }
 
   /**
@@ -82,8 +98,8 @@ class EmbeddableFormatter extends OEmbedFormatter {
    *   A renderable array.
    */
   protected function viewOEmbedElements(FieldItemListInterface $items, $langcode) {
-    $items = parent::viewElements($items, $langcode);
-    foreach ($items as &$render_array) {
+    $elements = parent::viewElements($items, $langcode);
+    foreach ($elements as &$render_array) {
 
       // We only care about modifying iframes.
       if ($render_array['#type'] == 'html_tag' && $render_array['#tag'] == 'iframe') {
@@ -105,7 +121,7 @@ class EmbeddableFormatter extends OEmbedFormatter {
       }
 
     }
-    return $items;
+    return $elements;
   }
 
   /**
