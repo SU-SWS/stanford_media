@@ -14,21 +14,6 @@ use Drupal\media_library\Form\OEmbedForm;
  */
 class MediaLibraryEmbeddableForm extends OEmbedForm {
 
-
-  /**
-   * The name of the oEmbed field.
-   *
-   * @var string
-   */
-  public $oEmbedField;
-
-  /**
-   * The name of the Unstructured field.
-   *
-   * @var string
-   */
-  public $unstructuredField;
-
   /**
    * {@inheritDoc}
    */
@@ -43,15 +28,11 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
    *   The current form state.
    */
   protected function setFieldNames(FormStateInterface $form_state) {
-    if (!empty($this->oEmbedField)) {
-      return;
-    }
     $source_config = $this->getMediaType($form_state)
       ->getSource()
       ->getConfiguration();
-
-    $this->oEmbedField = $source_config['source_field'];
-    $this->unstructuredField = $source_config['unstructured_field_name'];
+    $form_state->set('source_field', $source_config['source_field']);
+    $form_state->set('unstructured_field_name', $source_config['unstructured_field_name']);
   }
 
   /**
@@ -69,7 +50,7 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
       '#type' => 'container',
     ];
 
-    $form['container'][$this->oEmbedField] = [
+    $form['container'][$form_state->get('source_field')] = [
       '#type' => 'url',
       '#title' => $this->t('Add @type via URL', [
         '@type' => $this->getMediaType($form_state)->label(),
@@ -82,7 +63,7 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
       ],
     ];
 
-    $form['container'][$this->unstructuredField] = [
+    $form['container'][$form_state->get('unstructured_field_name')] = [
       '#type' => 'textarea',
       '#title' => $this->t('Embed Code'),
       '#description' => $this->t('Use this field to paste in embed codes which are not available through oEmbed'),
@@ -121,8 +102,7 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
    *   True if unstructured, otherwise false.
    */
   public function isUnstructured(FormStateInterface $form_state) {
-    $this->setFieldNames($form_state);
-    return !empty($form_state->getValue($this->unstructuredField));
+    return !empty($form_state->getValue($form_state->get('unstructured_field_name')));
   }
 
   /**
@@ -134,7 +114,6 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
    *   The current form state.
    */
   public function validateEmbeddable(array &$form, FormStateInterface $form_state) {
-    $this->setFieldNames($form_state);
     // No validation necessary if we have an embed code.
     if (!$this->isUnstructured($form_state)) {
       parent::validateUrl($form, $form_state);
@@ -150,9 +129,7 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
    *   The form state.
    */
   public function addButtonSubmit(array $form, FormStateInterface $form_state) {
-    $this->setFieldNames($form_state);
-    $values = ($this->isUnstructured($form_state)) ?
-      [$form_state->getValue($this->unstructuredField)] : [$form_state->getValue($this->oEmbedField)];
+    $values = $this->isUnstructured($form_state) ? [$form_state->getValue($form_state->get('unstructured_field_name'))] : [$form_state->getValue($form_state->get('source_field'))];
     $this->processInputValues($values, $form, $form_state);
   }
 
@@ -160,11 +137,10 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
    * {@inheritDoc}
    */
   protected function processInputValues(array $source_field_values, array $form, FormStateInterface $form_state) {
-    $this->setFieldNames($form_state);
     $media_type = $this->getMediaType($form_state);
     $media_storage = $this->entityTypeManager->getStorage('media');
 
-    $source_field_name = $this->isUnstructured($form_state) ? $this->unstructuredField : $this->oEmbedField;
+    $source_field_name = $this->isUnstructured($form_state) ? $form_state->get('unstructured_field_name') : $form_state->get('source_field');
 
     $media = array_map(function ($source_field_value) use ($media_type, $media_storage, $source_field_name) {
       return $this->createMediaFromValue($media_type, $media_storage, $source_field_name, $source_field_value);
