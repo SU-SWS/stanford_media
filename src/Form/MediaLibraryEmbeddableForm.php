@@ -106,8 +106,6 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
 
     // This was adapted from \Drupal\media_library\Form\OembedForm.
     $this->setFieldNames($form_state);
-    $authorized_for_unstructured = $this->currentUser->hasPermission('create field_media_embeddable_code') || $this->currentUser->hasPermission('edit field_media_embeddable_code');
-
     $media_type = $this->getMediaType($form_state);
     $providers = $media_type->getSource()->getProviders();
 
@@ -132,7 +130,6 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
       '#type' => 'textarea',
       '#title' => $this->t('Embed Code'),
       '#description' => $this->t('Use this field to paste in embed codes which are not available through oEmbed'),
-      '#access' => $authorized_for_unstructured,
     ];
 
     $ajax_query = $this->getMediaLibraryState($form_state)->all();

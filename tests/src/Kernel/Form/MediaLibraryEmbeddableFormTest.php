@@ -32,7 +32,6 @@ class MediaLibraryEmbeddableFormTest extends StanfordMediaFormTestBase {
     'path_alias',
     'field',
     'file',
-    'field_permissions',
     'stanford_media',
   ];
 
@@ -51,7 +50,6 @@ class MediaLibraryEmbeddableFormTest extends StanfordMediaFormTestBase {
     $this->installEntitySchema('file');
     //$this->installSchema('file', ['file_usage']);
     $this->installConfig('system');
-    $this->installConfig('field_permissions');
 
     $media_type = MediaType::create([
       'id' => 'embeddable',

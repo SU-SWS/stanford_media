@@ -2,7 +2,6 @@ langcode: en
 status: true
 dependencies:
   module:
-    - field_permissions
     - media
 id: media.field_media_embeddable_oembed
 field_name: field_media_embeddable_oembed
@@ -19,4 +18,3 @@ translatable: true
 indexes: {  }
 persist_with_no_fields: false
 custom_storage: false
-

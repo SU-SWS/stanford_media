@@ -27,7 +27,7 @@ class EmbeddableConstraintValidatorTest extends OEmbedResourceConstraintValidato
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['system','path_alias','entity_test','field', 'file', 'image', 'media', 'user', 'field_permissions', 'stanford_media'];
+  protected static $modules = ['system','path_alias','entity_test','field', 'file', 'image', 'media', 'user', 'stanford_media'];
 
 
   /**
@@ -62,8 +62,6 @@ class EmbeddableConstraintValidatorTest extends OEmbedResourceConstraintValidato
    */
   protected function setUp() {
     parent::setUp();
-
-    $this->installConfig('field_permissions');
 
     $this->mediaType = MediaType::create([
       'id' => 'embeddable',

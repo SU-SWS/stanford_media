@@ -28,7 +28,6 @@ class MediaLibraryEmbeddableFormTest extends UnitTestCase {
     'path_alias',
     'field',
     'file',
-    'field_permissions',
     'stanford_media',
   ];
 
