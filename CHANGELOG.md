@@ -1,5 +1,15 @@
 # Stanford Media
 
+8.x-2.8
+--------------------------------------------------------------------------------
+_Release Date: 2020-09-14_
+
+- D8CORE-2521: adding form for embeddables (5bbea72)
+- Bump decompress from 4.2.0 to 4.2.1 (#63) (b224087)
+- D8CORE-2499 Updated composer license (#62) (384a274)
+- DEVOPS-000: Removes fixed focal-point patch (#60) (8dcbcd2)
+- Bump websocket-extensions from 0.1.3 to 0.1.4 (#57) (8165443)
+
 8.x-2.7
 --------------------------------------------------------------------------------
 _Release Date: 2020-07-13_
