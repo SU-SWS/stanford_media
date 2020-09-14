@@ -10,7 +10,7 @@
             "role": "Developer"
         }
     ],
-    "license": "GPL-2.0+",
+    "license": "GPL-2.0-or-later",
     "minimum-stability": "dev",
     "repositories": [
         {
@@ -39,8 +39,7 @@
                 "https://www.drupal.org/project/drupal/issues/3064751": "https://www.drupal.org/files/issues/2019-07-02/3064751-5.patch"
             },
             "drupal/focal_point": {
-                "https://www.drupal.org/project/focal_point/issues/3094478": "https://www.drupal.org/files/issues/2020-01-09/3094478-10.patch",
-                "https://www.drupal.org/project/focal_point/issues/3098235": "https://www.drupal.org/files/issues/2020-03-23/focal_point-3098235-13.patch"
+                "https://www.drupal.org/project/focal_point/issues/3094478": "https://www.drupal.org/files/issues/2020-01-09/3094478-10.patch"
             }
         }
     },
