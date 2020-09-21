@@ -52,11 +52,12 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
 
     $form['container'][$form_state->get('source_field')] = [
       '#type' => 'url',
-      '#title' => $this->t('Add @type via URL', [
+      '#title' => $this->t('oEmbed URL', [
         '@type' => $this->getMediaType($form_state)->label(),
       ]),
-      '#description' => $this->t('Allowed providers: @providers. For custom embeds, please request support.', [
+      '#description' => $this->t('Allowed providers: @providers. For custom embeds, please <a href="@snow_form">request support.</a>', [
         '@providers' => implode(', ', $providers),
+        '@snow_form' => 'https://stanford.service-now.com/it_services?id=sc_cat_item&sys_id=83daed294f4143009a9a97411310c70a',
       ]),
       '#attributes' => [
         'placeholder' => 'https://',

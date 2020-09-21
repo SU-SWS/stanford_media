@@ -8,6 +8,7 @@
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Component\Render\FormattableMarkup;
 use Drupal\editor\Entity\Editor;
 use Drupal\stanford_media\Form\MediaLibraryFileUploadForm;
 use Drupal\stanford_media\Form\MediaLibraryGoogleFormForm;
@@ -116,4 +117,22 @@ function stanford_media_preprocess_media(&$variables) {
   if (empty($variables['content'][$source_field][0]['#description'])) {
     $variables['content'][$source_field][0]['#description'] = $variables['name'];
   }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function stanford_media_form_media_embeddable_add_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+
+  $source_config = $form_state
+    ->getFormObject()
+    ->getEntity()
+    ->getSource()
+    ->getConfiguration();
+  $source_field = $source_config['oembed_field_name'];
+  $new_desc = 'Allowed providers: @providers. For custom embeds, please <a href="@snow_form">request support.</a>';
+  $args = $form[$source_field]['widget'][0]['value']['#description']->getArguments();
+  $args['@snow_form'] = 'https://stanford.service-now.com/it_services?id=sc_cat_item&sys_id=83daed294f4143009a9a97411310c70a';
+  $form[$source_field]['widget'][0]['value']['#description'] = new FormattableMarkup($new_desc, $args);
+
 }
