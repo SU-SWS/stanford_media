@@ -152,6 +152,7 @@ class EmbeddableFormatter extends OEmbedFormatter {
             'source',
             'embed',
             'script',
+            'div',
           ],
           '#prefix' => '<div class="embeddable-content">',
           '#suffix' => '</div>',
