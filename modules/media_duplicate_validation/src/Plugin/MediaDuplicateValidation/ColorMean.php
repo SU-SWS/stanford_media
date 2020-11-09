@@ -241,6 +241,12 @@ class ColorMean extends MediaDuplicateValidationBase {
    */
   protected function createImage($path) {
     $mime = $this->mimeType($path);
+    if (!$mime) {
+      // Unable to detect the mime type, so lets just build a fake array that
+      // Will still pass through the switch below.
+      $mime = [FALSE, FALSE, FALSE];
+    }
+
     switch ($mime[2]) {
       case 'jpg':
         return imagecreatefromjpeg($path);

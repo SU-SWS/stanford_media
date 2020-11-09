@@ -1,5 +1,12 @@
 # Stanford Media
 
+8.x-2.10
+--------------------------------------------------------------------------------
+_Release Date: 2020-11-06_
+
+- Allow `<a>` tags in embeddable code. (#71) (e58be88)
+- Add a check for when the mime type of the image is not known (08af22a)
+
 8.x-2.9
 --------------------------------------------------------------------------------
 _Release Date: 2020-10-05_
