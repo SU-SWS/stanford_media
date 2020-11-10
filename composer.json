@@ -36,7 +36,8 @@
         },
         "patches": {
             "drupal/core": {
-                "https://www.drupal.org/project/drupal/issues/3064751": "https://www.drupal.org/files/issues/2019-07-02/3064751-5.patch"
+                "https://www.drupal.org/project/drupal/issues/3064751": "https://www.drupal.org/files/issues/2019-07-02/3064751-5.patch",
+                "https://www.drupal.org/project/drupal/issues/3059955": "https://www.drupal.org/files/issues/2019-12-28/3082690-80.patch"
             },
             "drupal/focal_point": {
                 "https://www.drupal.org/project/focal_point/issues/3094478": "https://www.drupal.org/files/issues/2020-01-09/3094478-10.patch"
