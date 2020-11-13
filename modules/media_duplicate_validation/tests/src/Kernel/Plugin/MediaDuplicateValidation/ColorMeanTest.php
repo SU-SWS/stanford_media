@@ -26,7 +26,7 @@ class ColorMeanTest extends MediaDuplicateValidationTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $this->plugin = $this->duplicationManager->createInstance('color_mean');
   }
