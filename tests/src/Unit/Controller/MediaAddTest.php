@@ -40,7 +40,7 @@ class MediaAddTest extends UnitTestCase {
   /**
    * {@inheritDoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $media_definition = $this->createMock(EntityTypeInterface::class);

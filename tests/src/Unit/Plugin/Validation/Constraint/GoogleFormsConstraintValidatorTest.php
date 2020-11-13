@@ -45,7 +45,7 @@ class GoogleFormsConstraintValidatorTest extends UnitTestCase {
   /**
    * {@inheritDoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $validator = $this->createMock(ValidatorInterface::class);

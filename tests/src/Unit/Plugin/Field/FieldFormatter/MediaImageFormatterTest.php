@@ -22,7 +22,7 @@ class MediaImageFormatterTest extends FieldFormatterTestBase {
   /**
    * {@inheritDoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $config = [

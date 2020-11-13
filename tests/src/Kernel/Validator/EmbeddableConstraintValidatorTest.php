@@ -60,7 +60,7 @@ class EmbeddableConstraintValidatorTest extends OEmbedResourceConstraintValidato
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->mediaType = MediaType::create([
