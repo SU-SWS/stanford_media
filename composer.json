@@ -20,7 +20,7 @@
     ],
     "require": {
         "davidbarratt/custom-installer": "~1.0",
-        "drupal/core": "^8.8.0",
+        "drupal/core": "^8.8 || ^9.0",
         "drupal/dropzonejs": "^2.0@alpha",
         "drupal/entity_usage": "^2.0-beta3",
         "drupal/inline_entity_form": "^1.0@beta",
