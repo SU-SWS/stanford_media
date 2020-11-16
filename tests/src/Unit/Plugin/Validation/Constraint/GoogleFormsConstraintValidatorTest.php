@@ -4,6 +4,7 @@ namespace Drupal\Tests\stanford_media\Unit\Plugin\Validation\Constraint;
 
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\TypedData\Validation\ExecutionContext;
+use Drupal\Core\Validation\DrupalTranslator;
 use Drupal\Core\Validation\TranslatorInterface;
 use Drupal\media\MediaInterface;
 use Drupal\media\MediaSourceInterface;
@@ -49,7 +50,7 @@ class GoogleFormsConstraintValidatorTest extends UnitTestCase {
     parent::setUp();
 
     $validator = $this->createMock(ValidatorInterface::class);
-    $translator = $this->createMock(TranslatorInterface::class);
+    $translator = new DrupalTranslator();
     $this->validationContext = new ExecutionContext($validator, NULL, $translator);
 
     $this->validator = new GoogleFormsConstraintValidator();
@@ -75,6 +76,7 @@ class GoogleFormsConstraintValidatorTest extends UnitTestCase {
    * Various field values from the media will validate in different ways.
    */
   public function testValidationGoogleForm() {
+
     $source = $this->createMock(GoogleForm::class);
     $source->method('getSourceFieldValue')->willReturnReference($this->sourceFieldValue);
     $entity = $this->createMock(MediaInterface::class);
