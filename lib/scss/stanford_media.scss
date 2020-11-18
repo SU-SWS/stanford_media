@@ -1,20 +1,25 @@
-.caption {
-  figcaption {
-    font-style: italic;
-    text-align: left;
-  }
-}
+@charset 'UTF-8';
+
+// Import Decanter Library:
+@import 'decanter/core/src/scss/decanter-no-markup';
 
 .align-left {
   figcaption {
     padding: 0.4em 1.5em 1em 0;
-    text-align: left;
   }
 }
 
 .align-right {
   figcaption {
     padding: 0.4em 0 1em 1.5em;
+  }
+}
+
+.caption {
+  figcaption {
+    @include modular-spacing('padding-top', -1);
+
+    font-style: italic;
     text-align: left;
   }
 }
@@ -22,11 +27,11 @@
 .media {
   &.image {
     .align-left & {
-      padding: 0.4em 1.5em 1em 0;
+      padding: 0.4em 1.5em 0 0;
     }
 
     .align-right & {
-      padding: 0.4em 0 1em 1.5em;
+      padding: 0.4em 0 0 1.5em;
     }
   }
 

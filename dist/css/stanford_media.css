@@ -1,20 +1,27 @@
+.align-left figcaption {
+  padding: 0.4em 1.5em 1em 0; }
+
+.align-right figcaption {
+  padding: 0.4em 0 1em 1.5em; }
+
 .caption figcaption {
   font-style: italic;
   text-align: left; }
-
-.align-left figcaption {
-  padding: 0.4em 1.5em 1em 0;
-  text-align: left; }
-
-.align-right figcaption {
-  padding: 0.4em 0 1em 1.5em;
-  text-align: left; }
+  @media only screen and (min-width: 0) {
+    .caption figcaption {
+      padding-top: 1.07rem; } }
+  @media only screen and (min-width: 768px) {
+    .caption figcaption {
+      padding-top: 1.2rem; } }
+  @media only screen and (min-width: 1500px) {
+    .caption figcaption {
+      padding-top: 1.27rem; } }
 
 .align-left .media.image {
-  padding: 0.4em 1.5em 1em 0; }
+  padding: 0.4em 1.5em 0 0; }
 
 .align-right .media.image {
-  padding: 0.4em 0 1em 1.5em; }
+  padding: 0.4em 0 0 1.5em; }
 
 .media iframe.google-form {
   width: 100%;
