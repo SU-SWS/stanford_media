@@ -3,11 +3,10 @@ admin:
   version: VERSION
   css:
     component:
-      css/stanford_media.admin.css: {}
+      dist/css/stanford_media.admin.css: {}
 
 display:
   version: VERSION
   css:
     component:
-      css/stanford_media.css: {}
-
+      dist/css/stanford_media.css: {}

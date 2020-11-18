@@ -1,7 +1,21 @@
 .caption {
   figcaption {
     font-style: italic;
-    text-align: right;
+    text-align: left;
+  }
+}
+
+.align-left {
+  figcaption {
+    padding: 0.4em 1.5em 1em 0;
+    text-align: left;
+  }
+}
+
+.align-right {
+  figcaption {
+    padding: 0.4em 0 1em 1.5em;
+    text-align: left;
   }
 }
 
