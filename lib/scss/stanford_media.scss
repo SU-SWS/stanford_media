@@ -17,7 +17,7 @@
 
 .caption {
   figcaption {
-    @include modular-spacing('padding-top', -1);
+    @include responsive-spacing('padding-top', -1);
 
     font-style: italic;
     text-align: left;
