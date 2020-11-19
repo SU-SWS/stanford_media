@@ -38,6 +38,20 @@ class MediaLibraryGoogleFormForm extends AddFormBase {
   }
 
   /**
+   * Sets up the field names for the media type.
+   *
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current form state.
+   */
+  protected function setFieldNames(FormStateInterface $form_state) {
+    $source_config = $this->getMediaType($form_state)
+      ->getSource()
+      ->getConfiguration();
+    $form_state->set('source_field', $source_config['source_field']);
+    $form_state->set('unstructured_field_name', $source_config['unstructured_field_name']);
+  }
+
+  /**
    * {@inheritDoc}
    */
   protected function buildInputElement(array $form, FormStateInterface $form_state) {
@@ -56,6 +70,14 @@ class MediaLibraryGoogleFormForm extends AddFormBase {
       '#attributes' => [
         'placeholder' => 'https://docs.google.com/forms/',
       ],
+    ];
+
+    $form['container']['form_height'] = [
+      '#type' => 'number',
+      '#title' => 'Form Height',
+      '#description' => 'The height, in pixels, of the iframe used to embed the Google Form, must be 600 or greater.',
+      '#required' => TRUE,
+      '#default_value' => '600',
     ];
 
     $ajax_query = $this->getMediaLibraryState($form_state)->all();
@@ -94,6 +116,10 @@ class MediaLibraryGoogleFormForm extends AddFormBase {
     preg_match('/^http.*google.*forms\/([^ ]*)\/viewform/', $url, $form_id);
     if (empty($form_id)) {
       $form_state->setErrorByName('url', $this->t('Invalid google forms url.'));
+    }
+    $height = $form_state->getValue('form_height');
+    if (int($height) < 600) {
+      $form_state->setErrorByName('form_height', $this->t('Height must be 600 or greater.'));
     }
   }
 
