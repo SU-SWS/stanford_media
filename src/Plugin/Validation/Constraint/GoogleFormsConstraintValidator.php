@@ -42,9 +42,6 @@ class GoogleFormsConstraintValidator extends ConstraintValidator {
     if (!isset($form_id[1])) {
       $this->context->addViolation($constraint->invalidUrl);
     }
-
-    $iframe_height = $source->
-
   }
 
 }

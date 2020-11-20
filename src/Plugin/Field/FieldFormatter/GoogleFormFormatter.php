@@ -23,6 +23,23 @@ use Drupal\stanford_media\Plugin\media\Source\GoogleForm;
 class GoogleFormFormatter extends FormatterBase {
 
   /**
+   * The name of the iframe height field.
+   *
+   * @var string
+   */
+  protected $iframeHeightField;
+
+
+  /**
+   * {@inheritDoc}
+   */
+  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, $label, $view_mode, array $third_party_settings) {
+    parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings);
+    $media_type = MediaType::load($field_definition->getTargetBundle());
+    $this->iframeHeightField = $media_type->getSource()->getConfiguration()['height_field_name'];
+  }
+
+  /**
    * {@inheritDoc}
    */
   public static function isApplicable(FieldDefinitionInterface $field_definition) {
@@ -45,13 +62,11 @@ class GoogleFormFormatter extends FormatterBase {
     $parent = $items->getParent();
     $iframe_title = $parent->getEntity()->label();
     $fields = $parent->getEntity()->getFields();
-    if (!empty($fields['field_media_google_form_hgt'])) {
-      $iframe_height = !empty($fields['field_media_google_form_hgt']->getValue()[0]['value']) ?
-        $fields['field_media_google_form_hgt']->getValue()[0]['value'] : '600';
-    }
 
-    dpm($iframe_height);
-    //$render_array['#attributes']['style'] = 'height: ' . $iframe_height . 'px;';
+    if (!empty($fields[$this->iframeHeightField])) {
+      $iframe_height = !empty($fields[$this->iframeHeightField]->getValue()[0]['value']) ?
+        $fields[$this->iframeHeightField]->getValue()[0]['value'] : '600';
+    }
 
     /** @var \Drupal\Core\Field\Plugin\Field\FieldType\StringItem $item */
     foreach ($items as $item) {
