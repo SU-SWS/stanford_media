@@ -29,7 +29,6 @@ class GoogleFormFormatter extends FormatterBase {
    */
   protected $iframeHeightField;
 
-
   /**
    * {@inheritDoc}
    */
