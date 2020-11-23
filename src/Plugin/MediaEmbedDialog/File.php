@@ -39,7 +39,7 @@ class File extends MediaEmbedDialogBase {
   public function alterDialogForm(array &$form, FormStateInterface $form_state) {
     parent::alterDialogForm($form, $form_state);
     $user_input = $this->getUserInput($form_state);
-
+    unset($form['caption']);
     $form['description'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Description'),
