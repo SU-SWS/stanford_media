@@ -26,7 +26,7 @@ class Md5Test extends MediaDuplicateValidationTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $this->plugin = $this->duplicationManager->createInstance('md5');
   }

@@ -28,7 +28,7 @@ abstract class BundleSuggestionTestBase extends UnitTestCase {
   /**
    * {@inheritDoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $media_source = $this->createMock(MediaSourceInterface::class);
@@ -57,23 +57,10 @@ abstract class BundleSuggestionTestBase extends UnitTestCase {
     $entity_type_manager->method('getStorage')->willReturn($entity_storage);
 
     $file_system = $this->createMock(FileSystemInterface::class);
-    $file_system->method('uriScheme')->will($this->returnCallback([
-      $this,
-      'fileSystemUriSchemeCallback',
-    ]));
 
     $this->container = new ContainerBuilder();
     $this->container->set('entity_type.manager', $entity_type_manager);
     $this->container->set('file_system', $file_system);
-  }
-
-  public function fileSystemUriSchemeCallback($input) {
-    if (preg_match('/^([\w\-]+):\/\/|^(data):/', $input, $matches)) {
-      // The scheme will always be the last element in the matches array.
-      return array_pop($matches);
-    }
-
-    return FALSE;
   }
 
   public function fieldGetSetting($setting) {

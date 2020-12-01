@@ -43,6 +43,7 @@ class GoogleForm extends MediaSourceBase implements MediaSourceFieldConstraintsI
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, EntityFieldManagerInterface $entity_field_manager, FieldTypePluginManagerInterface $field_type_manager, ConfigFactoryInterface $config_factory) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager, $entity_field_manager, $field_type_manager, $config_factory);
+    $configuration = $this->getConfiguration();
     $this->heightField = $configuration['height_field_name'];
   }
 
@@ -132,16 +133,6 @@ class GoogleForm extends MediaSourceBase implements MediaSourceFieldConstraintsI
   protected function getId(MediaInterface $media) {
     preg_match('/google.*forms\/([^ ]*)\/viewform/', $this->getSourceFieldValue($media), $form_id);
     return $form_id[1];
-  }
-
-  /**
-   * Get the field name for the height field.
-   *
-   * @return string
-   *   The machine name of the height field.
-   */
-  public function getHeightFieldName() {
-    return $this->heightField;
   }
 
 }

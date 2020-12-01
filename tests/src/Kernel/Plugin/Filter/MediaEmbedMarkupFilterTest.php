@@ -107,7 +107,7 @@ class MediaEmbedMarkupFilterTest extends MediaEmbedFilterTestBase {
     $filter_result = $this->processText($content, "en", ['media_embed', 'stanford_media_embed_markup']);
     $output = $filter_result->getProcessedText();
 
-    $this->assertNotContains("</source>", $output);
+    $this->assertStringNotContainsString("</source>", $output);
   }
 
 }

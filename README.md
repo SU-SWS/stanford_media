@@ -80,15 +80,25 @@ issues try posting an issue on the GitHub issues page.
 Developer
 ---
 
-If you wish to develop on this module you will most likely need to compile some new css. Please use the sass structure
-provided and compile with the sass compiler packaged in this module. To install:
+Development tools: To build and compile the CSS, Javascript, and Image assets required to make this theme great, you will need to have npm and nvm installed.
+Navigate to the root of the theme then.
 
+Run:
 ```
+nvm use
 npm install
-grunt watch
- or
-grunt devmode
 ```
+
+This project uses webpack to assemble the assets for this theme. To compile sass, javascript and push all assets in to place:
+
+Run:
+```
+npm run publish
+```
+
+This script will compile all assets from `/src` into `/dist`.
+
+Check out `package.json` for additional npm scripts and functionality.
 
 Contribution / Collaboration
 ---

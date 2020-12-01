@@ -8,8 +8,6 @@ use Drupal\media\Entity\MediaType;
 use Drupal\media_library\MediaLibraryState;
 use Drupal\stanford_media\Form\MediaLibraryGoogleFormForm;
 use Drupal\Tests\user\Traits\UserCreationTrait;
-use Drupal\field\Entity\FieldConfig;
-use Drupal\field\Entity\FieldStorageConfig;
 
 /**
  * Class MediaLibraryGoogleFormFormTest.
@@ -24,44 +22,21 @@ class MediaLibraryGoogleFormFormTest extends StanfordMediaFormTestBase {
   /**
    * {@inheritDoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $this->installConfig('media_library');
     $this->installSchema('system', ['sequences']);
-    $this->installEntitySchema('media');
-    $this->installEntitySchema('field_storage_config');
-    $this->installEntitySchema('field_config');
 
     $media_type = MediaType::create([
       'id' => 'google_form',
       'label' => 'google_form',
       'source' => 'google_form',
     ]);
-
     $media_type->save();
-
     $source_field = $media_type->getSource()->createSourceField($media_type);
     $source_field->getFieldStorageDefinition()->save();
     $source_field->save();
-    $media_type
-      ->set('source_configuration', [
-        'source_field' => $source_field->getName(),
-        'height_field_name' => 'field_media_google_form_hgt',
-      ])->save();
-
-    // Create the field we need.
-    $field_storage = FieldStorageConfig::create([
-      'field_name' => 'field_media_google_form_hgt',
-      'entity_type' => 'media',
-      'type' => 'integer',
-    ]);
-    $field_storage->save();
-
-    FieldConfig::create([
-      'field_storage' => $field_storage,
-      'bundle' => 'google_form',
-      'label' => 'Form Height',
-    ])->save();
+    $media_type->set('source_configuration', ['source_field' => $source_field->getName()])->save();
 
     $user = $this->createUser(['create google_form media', 'view media']);
     $this->setCurrentUser($user);

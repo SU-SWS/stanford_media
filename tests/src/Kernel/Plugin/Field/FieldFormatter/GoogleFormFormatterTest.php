@@ -51,7 +51,7 @@ class GoogleFormFormatterTest extends KernelTestBase {
   /**
    * {@inheritDoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $this->installEntitySchema('user');
     $this->installEntitySchema('media');
@@ -75,12 +75,28 @@ class GoogleFormFormatterTest extends KernelTestBase {
     $this->mediaType
       ->set('source_configuration', [
         'source_field' => $source_field->getName(),
+        'height_field_name' => 'field_media_google_form_hgt'
       ])
       ->save();
+
+    // Create the fields we need.
+    $field_storage = FieldStorageConfig::create([
+      'field_name' => 'field_media_google_form_hgt',
+      'entity_type' => 'media',
+      'type' => 'integer',
+    ]);
+    $field_storage->save();
+
+    FieldConfig::create([
+      'field_storage' => $field_storage,
+      'bundle' => 'google_form',
+      'label' => 'Form Height',
+    ])->save();
 
     $this->media = Media::create([
       'bundle' => 'google_form',
       'field_media_google_form' => 'http://google.com/forms/a/b/formid/viewform',
+      'field_media_google_form_hgt' => '750',
     ]);
     $this->media->save();
 
@@ -143,6 +159,8 @@ class GoogleFormFormatterTest extends KernelTestBase {
     $display = $view_builder->view($this->media, 'default');
     $display = \Drupal::service('renderer')->renderPlain($display);
     preg_match('/<iframe.*src="http:\/\/google.com\/forms\/a\/b\/formid\/viewform"/', $display, $matches);
+    $this->assertCount(1, $matches);
+    preg_match('/<iframe.*style="height: 750px;.*/', $display, $matches);
     $this->assertCount(1, $matches);
   }
 

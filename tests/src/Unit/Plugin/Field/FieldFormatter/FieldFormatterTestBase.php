@@ -39,7 +39,7 @@ abstract class FieldFormatterTestBase extends UnitTestCase {
   /**
    * {@inheritDoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $logger_factory = $this->createMock(LoggerChannelFactoryInterface::class);
 
