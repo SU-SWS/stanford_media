@@ -5,6 +5,9 @@ namespace Drupal\Tests\stanford_media\Kernel\Plugin\media\Source;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\media\Entity\Media;
 use Drupal\media\Entity\MediaType;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\Core\Form\FormState;
 
 /**
  * Class GoogleFormTest.
@@ -60,12 +63,28 @@ class GoogleFormTest extends KernelTestBase {
     $media_type
       ->set('source_configuration', [
         'source_field' => $source_field->getName(),
+        'height_field_name' => 'field_media_google_form_hgt'
       ])
       ->save();
+
+    // Create the fields we need.
+    $field_storage = FieldStorageConfig::create([
+      'field_name' => 'field_media_google_form_hgt',
+      'entity_type' => 'media',
+      'type' => 'integer',
+    ]);
+    $field_storage->save();
+
+    FieldConfig::create([
+      'field_storage' => $field_storage,
+      'bundle' => 'google_form',
+      'label' => 'Form Height',
+    ])->save();
 
     $this->media = Media::create([
       'bundle' => 'google_form',
       'field_media_google_form' => 'http://google.com/forms/a/b/formid/viewform',
+      'field_media_google_form_hgt' => '750',
     ]);
     $this->media->save();
   }
@@ -80,6 +99,19 @@ class GoogleFormTest extends KernelTestBase {
     $this->assertCount(1, $media_source->getMetadataAttributes());
     $this->assertArrayHasKey('id', $media_source->getMetadataAttributes());
     $this->assertArrayHasKey('google_forms', $media_source->getSourceFieldConstraints());
+  }
+
+  /**
+   * Test configuration form
+   * @covers ::buildConfigurationForm
+   * @covers ::getHeightFieldOptions
+   */
+  public function testGoogleFormConfigurationForm() {
+    $form_state = new FormState();
+    $form = [];
+    $media_source = $this->media->getSource();
+    $form_array = $media_source->buildConfigurationForm($form, $form_state);
+    $this->assertArrayHasKey('height_field_name', $form_array);
   }
 
 }
