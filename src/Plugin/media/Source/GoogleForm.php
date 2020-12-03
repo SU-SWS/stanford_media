@@ -52,7 +52,7 @@ class GoogleForm extends MediaSourceBase implements MediaSourceFieldConstraintsI
    */
   public function defaultConfiguration() {
     return [
-      'height_field_name' => 'field_media_google_form_hgt',
+      'height_field_name' => NULL,
     ] + parent::defaultConfiguration();
   }
 
