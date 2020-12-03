@@ -91,7 +91,7 @@ class GoogleForm extends MediaSourceBase implements MediaSourceFieldConstraintsI
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
     $form = parent::buildConfigurationForm($form, $form_state);
-    $bundle = $form_state->get('type')->id();
+    $bundle = $form_state->get('type')->get('id');
     $height_options = $this->getHeightFieldOptions($bundle);
     $form['height_field_name'] = [
       '#type' => 'select',
