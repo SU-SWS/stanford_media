@@ -32,29 +32,11 @@ class GoogleForm extends MediaSourceBase implements MediaSourceFieldConstraintsI
   const METADATA_ATTRIBUTE_ID = 'id';
 
   /**
-   * The name of the height field.
+   * Field for the height attribute on the iframe.
    *
    * @var string
    */
-  protected $heightField;
-
-  /**
-   * {@inheritdoc}
-   */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, EntityFieldManagerInterface $entity_field_manager, FieldTypePluginManagerInterface $field_type_manager, ConfigFactoryInterface $config_factory) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager, $entity_field_manager, $field_type_manager, $config_factory);
-    $configuration = $this->getConfiguration();
-    $this->heightField = $configuration['height_field_name'];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function defaultConfiguration() {
-    return [
-      'height_field_name' => NULL,
-    ] + parent::defaultConfiguration();
-  }
+  const METADATA_ATTRIBUTE_HEIGHT = 'height';
 
   /**
    * {@inheritDoc}
@@ -62,6 +44,7 @@ class GoogleForm extends MediaSourceBase implements MediaSourceFieldConstraintsI
   public function getMetadataAttributes() {
     return [
       self::METADATA_ATTRIBUTE_ID => $this->t('Form ID'),
+      self::METADATA_ATTRIBUTE_HEIGHT => $this->t('Height'),
     ];
   }
 
@@ -73,6 +56,8 @@ class GoogleForm extends MediaSourceBase implements MediaSourceFieldConstraintsI
       case self::METADATA_ATTRIBUTE_ID:
         return $this->getId($media);
 
+      case self::METADATA_ATTRIBUTE_HEIGHT:
+        return $this->getIframeHeight($media);
     }
     return parent::getMetadata($media, $attribute_name);
   }
@@ -84,45 +69,6 @@ class GoogleForm extends MediaSourceBase implements MediaSourceFieldConstraintsI
     return [
       'google_forms' => [],
     ];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
-    $form = parent::buildConfigurationForm($form, $form_state);
-    $bundle = $form_state->get('type')->get('id');
-    $height_options = $this->getHeightFieldOptions($bundle);
-    $form['height_field_name'] = [
-      '#type' => 'select',
-      '#title' => $this->t('iFrame Height'),
-      '#default_value' => $this->configuration['height_field_name'],
-      '#empty_option' => $this->t('- Choose -'),
-      '#options' => $height_options,
-      '#description' => $this->t('Select the field that will store the height of the iFrame.'),
-      '#weight' => -99,
-    ];
-    return $form;
-  }
-
-  /**
-   * Get the field options for the iframe height.
-   *
-   * @param string $bundle
-   *   The name of the bundle we are working with.
-   *
-   * @return string[]
-   *   A list of field options for the media type form.
-   */
-  protected function getHeightFieldOptions($bundle) {
-    $fields = $this->entityFieldManager->getFieldDefinitions('media', $bundle);
-    $options = [];
-    foreach ($fields as $field_name => $field) {
-      if ($field->getType() == 'integer') {
-        $options[$field_name] = $field->getLabel();
-      }
-    }
-    return $options;
   }
 
   /**
@@ -140,13 +86,27 @@ class GoogleForm extends MediaSourceBase implements MediaSourceFieldConstraintsI
   }
 
   /**
-   * Returns the name of the height field.
+   * Get the height of the iframe from the field value if there is one.
    *
-   * @return string
-   *   The name of the height field.
+   * @param \Drupal\media\MediaInterface $media
+   *   Media entity.
+   *
+   * @return int
+   *   Iframe height in pixels.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function getHeightFieldName() {
-    return $this->heightField;
+  protected function getIframeHeight(MediaInterface $media): int {
+    $field_map = $this->entityTypeManager->getStorage('media_type')
+      ->load($media->bundle())
+      ->getFieldMap();
+
+    if (isset($field_map[self::METADATA_ATTRIBUTE_HEIGHT]) && $media->hasField($field_map[self::METADATA_ATTRIBUTE_HEIGHT])) {
+      return (int) $media->get($field_map[self::METADATA_ATTRIBUTE_HEIGHT])
+        ->getString() ?: 600;
+    }
+    return 600;
   }
 
 }
