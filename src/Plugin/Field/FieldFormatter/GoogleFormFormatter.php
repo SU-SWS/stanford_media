@@ -35,7 +35,7 @@ class GoogleFormFormatter extends FormatterBase {
   public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, $label, $view_mode, array $third_party_settings) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings);
     $media_type = MediaType::load($field_definition->getTargetBundle());
-    $this->iframeHeightField = $media_type->getSource()->getConfiguration()['height_field_name'];
+    $this->iframeHeightField = $media_type->getSource()->getHeightFieldName();
   }
 
   /**
@@ -61,10 +61,11 @@ class GoogleFormFormatter extends FormatterBase {
     $parent = $items->getParent();
     $iframe_title = $parent->getEntity()->label();
     $fields = $parent->getEntity()->getFields();
-
-    if (!empty($fields[$this->iframeHeightField])) {
-      $iframe_height = !empty($fields[$this->iframeHeightField]->getValue()[0]['value']) ?
-        $fields[$this->iframeHeightField]->getValue()[0]['value'] : '600';
+    $iframe_height = '600';
+    $iframe_height_field = $fields[$this->iframeHeightField];
+    if (!empty($iframe_height_field) &&
+      !empty($iframe_height_field->getValue()[0]['value'])) {
+        $iframe_height = $iframe_height_field->getValue()[0]['value'];
     }
 
     /** @var \Drupal\Core\Field\Plugin\Field\FieldType\StringItem $item */
@@ -78,7 +79,7 @@ class GoogleFormFormatter extends FormatterBase {
           'src' => $url,
           'title' => $iframe_title,
           'class' => ['google-form'],
-          'style' => 'height: ' . $iframe_height . 'px;',
+          'height' => $iframe_height,
         ],
       ];
     }

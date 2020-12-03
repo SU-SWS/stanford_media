@@ -135,4 +135,14 @@ class GoogleForm extends MediaSourceBase implements MediaSourceFieldConstraintsI
     return $form_id[1];
   }
 
+  /**
+   * Returns the name of the height field.
+   *
+   * @return string
+   *   The name of the height field.
+   */
+  public function getHeightFieldName() {
+    return $this->heightField;
+  }
+
 }
