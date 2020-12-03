@@ -65,7 +65,7 @@ class GoogleFormFormatter extends FormatterBase {
     $iframe_height_field = $fields[$this->iframeHeightField];
     if (!empty($iframe_height_field) &&
       !empty($iframe_height_field->getValue()[0]['value'])) {
-        $iframe_height = $iframe_height_field->getValue()[0]['value'];
+      $iframe_height = $iframe_height_field->getValue()[0]['value'];
     }
 
     /** @var \Drupal\Core\Field\Plugin\Field\FieldType\StringItem $item */

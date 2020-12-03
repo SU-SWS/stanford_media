@@ -91,7 +91,8 @@ class GoogleForm extends MediaSourceBase implements MediaSourceFieldConstraintsI
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
     $form = parent::buildConfigurationForm($form, $form_state);
-    $height_options = $this->getHeightFieldOptions();
+    $bundle = $form_state->get('type')->id();
+    $height_options = $this->getHeightFieldOptions($bundle);
     $form['height_field_name'] = [
       '#type' => 'select',
       '#title' => $this->t('iFrame Height'),
@@ -107,11 +108,14 @@ class GoogleForm extends MediaSourceBase implements MediaSourceFieldConstraintsI
   /**
    * Get the field options for the iframe height.
    *
+   * @param string $bundle
+   *   The name of the bundle we are working with.
+   *
    * @return string[]
    *   A list of field options for the media type form.
    */
-  protected function getHeightFieldOptions() {
-    $fields = $this->entityFieldManager->getFieldDefinitions('media', 'google_form');
+  protected function getHeightFieldOptions($bundle) {
+    $fields = $this->entityFieldManager->getFieldDefinitions('media', $bundle);
     $options = [];
     foreach ($fields as $field_name => $field) {
       if ($field->getType() == 'integer') {
