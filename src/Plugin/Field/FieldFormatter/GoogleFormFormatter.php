@@ -38,11 +38,16 @@ class GoogleFormFormatter extends FormatterBase {
    * {@inheritDoc}
    */
   public function viewElements(FieldItemListInterface $items, $langcode) {
+
     $elements = [];
 
     /** @var \Drupal\Core\Entity\Plugin\DataType\EntityAdapter $parent */
     $parent = $items->getParent();
     $iframe_title = $parent->getEntity()->label();
+
+    $iframe_height = $parent->getEntity()
+      ->getSource()
+      ->getMetadata($parent->getEntity(), GoogleForm::METADATA_ATTRIBUTE_HEIGHT);
 
     /** @var \Drupal\Core\Field\Plugin\Field\FieldType\StringItem $item */
     foreach ($items as $item) {
@@ -55,6 +60,7 @@ class GoogleFormFormatter extends FormatterBase {
           'src' => $url,
           'title' => $iframe_title,
           'class' => ['google-form'],
+          'height' => $iframe_height,
         ],
       ];
     }
