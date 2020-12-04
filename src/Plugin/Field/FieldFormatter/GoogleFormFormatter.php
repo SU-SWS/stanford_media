@@ -49,7 +49,6 @@ class GoogleFormFormatter extends FormatterBase {
       ->getSource()
       ->getMetadata($parent->getEntity(), GoogleForm::METADATA_ATTRIBUTE_HEIGHT);
 
-
     /** @var \Drupal\Core\Field\Plugin\Field\FieldType\StringItem $item */
     foreach ($items as $item) {
       $url = $item->getValue()['value'];
