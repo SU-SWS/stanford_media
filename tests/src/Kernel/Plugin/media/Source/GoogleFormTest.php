@@ -63,7 +63,9 @@ class GoogleFormTest extends KernelTestBase {
     $media_type
       ->set('source_configuration', [
         'source_field' => $source_field->getName(),
-        'height_field_name' => 'field_media_google_form_hgt'
+      ])
+      ->set('field_map', [
+        'height' => 'field_media_google_form_hgt',
       ])
       ->save();
 
@@ -96,22 +98,12 @@ class GoogleFormTest extends KernelTestBase {
     $media_source = $this->media->getSource();
     $this->assertEquals('a/b/formid', $media_source->getMetadata($this->media, 'id'));
 
-    $this->assertCount(1, $media_source->getMetadataAttributes());
+    $this->assertCount(2, $media_source->getMetadataAttributes());
     $this->assertArrayHasKey('id', $media_source->getMetadataAttributes());
+    $this->assertArrayHasKey('height', $media_source->getMetadataAttributes());
     $this->assertArrayHasKey('google_forms', $media_source->getSourceFieldConstraints());
   }
 
-  /**
-   * Test configuration form
-   * @covers ::buildConfigurationForm
-   * @covers ::getHeightFieldOptions
-   */
-  public function testGoogleFormConfigurationForm() {
-    $form_state = new FormState();
-    $form = [];
-    $media_source = $this->media->getSource();
-    $form_array = $media_source->buildConfigurationForm($form, $form_state);
-    $this->assertArrayHasKey('height_field_name', $form_array);
-  }
+
 
 }

@@ -101,7 +101,6 @@ class GoogleForm extends MediaSourceBase implements MediaSourceFieldConstraintsI
     $field_map = $this->entityTypeManager->getStorage('media_type')
       ->load($media->bundle())
       ->getFieldMap();
-
     if (isset($field_map[self::METADATA_ATTRIBUTE_HEIGHT]) && $media->hasField($field_map[self::METADATA_ATTRIBUTE_HEIGHT])) {
       return (int) $media->get($field_map[self::METADATA_ATTRIBUTE_HEIGHT])
         ->getString() ?: 600;

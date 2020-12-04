@@ -75,7 +75,9 @@ class GoogleFormFormatterTest extends KernelTestBase {
     $this->mediaType
       ->set('source_configuration', [
         'source_field' => $source_field->getName(),
-        'height_field_name' => 'field_media_google_form_hgt'
+      ])
+      ->set('field_map', [
+        'height' => 'field_media_google_form_hgt',
       ])
       ->save();
 
@@ -158,6 +160,7 @@ class GoogleFormFormatterTest extends KernelTestBase {
     $view_builder = \Drupal::entityTypeManager()->getViewBuilder('media');
     $display = $view_builder->view($this->media, 'default');
     $display = \Drupal::service('renderer')->renderPlain($display);
+    
     preg_match('/<iframe.*src="http:\/\/google.com\/forms\/a\/b\/formid\/viewform"/', $display, $matches);
     $this->assertCount(1, $matches);
     preg_match('/<iframe.*height="750".*/', $display, $matches);
