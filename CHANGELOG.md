@@ -1,5 +1,18 @@
 # Stanford Media
 
+8.x-2.12
+--------------------------------------------------------------------------------
+_Release Date: 2020-12-04_
+
+- D8CORE-2431: adding height field to google form. (#81) (5071ffd)
+- D8CORE-2267 Removed caption checkbox from file media (#82) (98fb98b)
+- fixed ckeditor style paths (2c4ae9e)
+- Adjusted tests to pass on D9 (#79) (cced142)
+- D8CORE-2753: convert to webpack and caption edits. (#80) (3b44cf8)
+- phpunit void return annoation (0147dd6)
+- phpunit void return annoation (ac2c3da)
+- D9 Ready (#78) (cd90328)
+
 8.x-2.11
 --------------------------------------------------------------------------------
 _Release Date: 2020-11-09_

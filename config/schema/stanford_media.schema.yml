@@ -87,6 +87,14 @@ field.formatter.settings.embeddable_formatter:
 media.source.google_form:
   type: media.source.field_aware
   label: '"Google Form" media source configuration'
+  mapping:
+    source_field:
+      type: uri
+      label: 'Source field'
+    height_field_name:
+      type: string
+      label: 'The iframe height field'
+
 
 media.source.embeddable:
   type: media.source.field_aware
