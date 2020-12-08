@@ -96,5 +96,5 @@ workflows:
   tests:
     jobs:
       - run-coverage
-#      - run-codeception
+      - run-codeception
 
