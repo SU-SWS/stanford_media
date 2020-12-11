@@ -116,3 +116,13 @@ function stanford_media_preprocess_media(&$variables) {
     $variables['content'][$source_field][0]['#description'] = $variables['name'];
   }
 }
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function stanford_media_preprocess_filter_caption(&$variables){
+  if (!isset($variables['classes'])) {
+    $variables['classes'] = '';
+  }
+  $variables['classes'] = trim($variables['classes'] . ' caption');
+}
