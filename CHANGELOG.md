@@ -1,5 +1,13 @@
 # Stanford Media
 
+8.x-2.13
+--------------------------------------------------------------------------------
+_Release Date: 2021-02-08_
+
+- D8CORE-3425 Patch drupal core for better embeddable handling (#88) (86a2fa2)
+- D9 automated Tests (#85) (9661793)
+- Remove the filter caption template in favor of preprocess hook' (#87) (7ae18ee)
+
 8.x-2.12
 --------------------------------------------------------------------------------
 _Release Date: 2020-12-04_
