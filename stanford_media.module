@@ -5,13 +5,17 @@
  * stanford_media.module
  */
 
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\editor\Entity\Editor;
+use Drupal\media\MediaInterface;
+use Drupal\stanford_media\Form\MediaLibraryEmbeddableForm;
 use Drupal\stanford_media\Form\MediaLibraryFileUploadForm;
 use Drupal\stanford_media\Form\MediaLibraryGoogleFormForm;
-use Drupal\stanford_media\Form\MediaLibraryEmbeddableForm;
 
 /**
  * Implements hook_field_widget_WIDGET_TYPE_form_alter().
@@ -109,8 +113,12 @@ function stanford_media_preprocess_media(&$variables) {
   if ($media->getSource()->getPluginId() != 'file') {
     return;
   }
-  $media_type = \Drupal::entityTypeManager()->getStorage('media_type')->load($media->bundle());
-  $source_field = $media->getSource()->getSourceFieldDefinition($media_type)->getName();
+  $media_type = \Drupal::entityTypeManager()
+    ->getStorage('media_type')
+    ->load($media->bundle());
+  $source_field = $media->getSource()
+    ->getSourceFieldDefinition($media_type)
+    ->getName();
 
   if (empty($variables['content'][$source_field][0]['#description'])) {
     $variables['content'][$source_field][0]['#description'] = $variables['name'];
@@ -125,4 +133,69 @@ function stanford_media_preprocess_filter_caption(&$variables) {
     $variables['classes'] = '';
   }
   $variables['classes'] = trim($variables['classes'] . ' caption');
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_prepare_form().
+ */
+function stanford_media_media_prepare_form(MediaInterface $media, $operation, FormStateInterface $form_state) {
+  /** @var \Drupal\entity_usage\EntityUsageInterface $entity_usage_service */
+  $entity_usage_service = \Drupal::service('entity_usage.usage');
+  $sources = $entity_usage_service->listSources($media);
+  $count = 0;
+  foreach ($sources as $source) {
+    $count += count($source);
+  }
+  // Display a message to the user to alert them than editing will affect
+  // multiple pieces of content.
+  if ($count) {
+    $message = \Drupal::translation()->formatPlural(
+      $count,
+      'Changing this media item will affect %count piece of content.',
+      'Changing this media item will affect %count pieces of content.',
+      ['%count' => $count]
+    );
+    \Drupal::messenger()->addWarning($message);
+  }
+
+}
+
+/**
+ * Implements hook_entity_access().
+ *
+ * Restrict access to media entities that are used as field default values.
+ */
+function stanford_media_entity_access(EntityInterface $entity, $operation, AccountInterface $account) {
+
+  // Only lock down the media entities since they are the default field values
+  // that we care about.
+  if (
+    $entity->getEntityTypeId() != 'media' ||
+    !in_array($operation, ['update', 'delete'])
+  ) {
+    return AccessResult::neutral();
+  }
+
+  $configs = \Drupal::configFactory()->listAll('field.field.');
+  foreach ($configs as $config_name) {
+    $config = \Drupal::config($config_name);
+
+    // Check for the fields we are interested by checking their type and handler
+    // settings.
+    if (
+      $config->get('field_type') == 'entity_reference' &&
+      $config->get('settings.handler') == 'default:media' &&
+      !empty($config->get('default_value'))
+    ) {
+      $default_value = $config->get('default_value');
+
+      // The field default value matches the current media entity so we want to
+      // forbid editing/deleting if the user doesn't have the proper permission.
+      if (!empty($default_value[0]['target_uuid']) && $entity->uuid() == $default_value[0]['target_uuid']) {
+        return AccessResult::forbiddenIf(!$account->hasPermission('edit field default media'), 'The entity is set as a default field value.');
+      }
+    }
+  }
+
+  return AccessResult::neutral();
 }
