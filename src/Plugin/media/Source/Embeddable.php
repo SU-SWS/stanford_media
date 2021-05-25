@@ -65,6 +65,13 @@ class Embeddable extends OEmbed {
   }
 
   /**
+   * {@inheritDoc}
+   */
+  public function getSourceFieldConstraints() {
+    return [];
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
@@ -113,38 +120,11 @@ class Embeddable extends OEmbed {
    * @return mixed|null
    *   Metadata attribute value or NULL if unavailable.
    */
-  public function getUnstructuredMetadata(MediaInterface $media, $name) {
-    // We short-circuit requests for URL here, to ensure kernel tests pass.
-    if (($name = 'url') && ($this->hasOEmbed($media))) {
-      return NULL;
-    }
-
+  protected function getUnstructuredMetadata(MediaInterface $media, $name) {
     switch ($name) {
-      case 'default_name':
-        if ($title = $this->getMetadata($media, 'title')) {
-          return $title;
-        }
-        return parent::getMetadata($media, 'default_name');
-
-      case 'thumbnail_uri':
-        return parent::getMetadata($media, 'thumbnail_uri');
-
-      case 'html':
-        return $media->get($this->unstructuredField)->getValue();
+      case 'title':
+        return $media->label();
     }
-  }
-
-  /**
-   * Is there a value for the oEmbed URL?
-   *
-   * @param \Drupal\media\MediaInterface $media
-   *   A media item.
-   *
-   * @return bool
-   *   TRUE means it has an Unstructured embed, FALSE means that field is empty
-   */
-  public function hasOEmbed(MediaInterface $media) {
-    return !$media->get($this->oEmbedField)->isEmpty();
   }
 
   /**
@@ -157,16 +137,7 @@ class Embeddable extends OEmbed {
    *   TRUE means it has an Unstructured embed, FALSE means that field is empty
    */
   public function hasUnstructured(MediaInterface $media) {
-    return !$media->get($this->unstructuredField)->isEmpty();
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public function getSourceFieldConstraints() {
-    return [
-      'embeddable' => [],
-    ];
+    return !$media->get($this->unstructuredField)->isEmpty() && $media->get($this->oEmbedField)->isEmpty();
   }
 
   /**
