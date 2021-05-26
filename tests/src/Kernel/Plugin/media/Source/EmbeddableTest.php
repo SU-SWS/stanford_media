@@ -156,8 +156,8 @@ class EmbeddableTest extends KernelTestBase {
     $this->assertEquals(NULL, $oembed_media_source->getMetadata($this->oembed_media, 'url'));
     $this->assertEquals(NULL, $oembed_media_source->getSourceFieldValue($this->oembed_media));
     $this->assertFalse($oembed_media_source->hasUnstructured($this->oembed_media));
-    $this->assertEmpty($oembed_media_source->getSourceFieldConstraints());
     $this->assertCount(15, $oembed_media_source->getMetadataAttributes());
+    $this->assertArrayHasKey('embeddable', $oembed_media_source->getSourceFieldConstraints());
 
     $unstructured_media_source = $this->unstructured_media->getSource();
     $this->assertEquals($this->iframe_code, $unstructured_media_source->getSourceFieldValue($this->unstructured_media));
@@ -165,7 +165,6 @@ class EmbeddableTest extends KernelTestBase {
     $this->assertCount(15, $unstructured_media_source->getMetadataAttributes());
     $this->assertNotNull($unstructured_media_source->getMetadata($this->unstructured_media, 'title'));
     $this->assertStringContainsString('iframe src', $unstructured_media_source->getSourceFieldValue($this->unstructured_media));
-
   }
 
 

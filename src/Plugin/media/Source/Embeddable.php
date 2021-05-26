@@ -29,7 +29,7 @@ use Drupal\media\Plugin\media\Source\OEmbed;
  *   allowed_field_types = {"string", "string_long"},
  * )
  */
-class Embeddable extends OEmbed {
+class Embeddable extends OEmbed implements EmbeddableInterface {
 
   /**
    * The name of the oEmbed field.
@@ -65,13 +65,6 @@ class Embeddable extends OEmbed {
   }
 
   /**
-   * {@inheritDoc}
-   */
-  public function getSourceFieldConstraints() {
-    return [];
-  }
-
-  /**
    * {@inheritdoc}
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
@@ -90,15 +83,7 @@ class Embeddable extends OEmbed {
   }
 
   /**
-   * Gets the value for a metadata attribute for a given media item.
-   *
-   * @param \Drupal\media\MediaInterface $media
-   *   A media item.
-   * @param string $name
-   *   Name of the attribute to fetch.
-   *
-   * @return mixed|null
-   *   Metadata attribute value or NULL if unavailable.
+   * {@inheritDoc}
    */
   public function getMetadata(MediaInterface $media, $name) {
     if ($this->hasUnstructured($media)) {
@@ -128,16 +113,17 @@ class Embeddable extends OEmbed {
   }
 
   /**
-   * Is there a value for the Unstructured Embed?
-   *
-   * @param \Drupal\media\MediaInterface $media
-   *   A media item.
-   *
-   * @return bool
-   *   TRUE means it has an Unstructured embed, FALSE means that field is empty
+   * {@inheritDoc}
    */
   public function hasUnstructured(MediaInterface $media) {
     return !$media->get($this->unstructuredField)->isEmpty() && $media->get($this->oEmbedField)->isEmpty();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function getSourceFieldConstraints() {
+    return ['embeddable' => []];
   }
 
   /**
