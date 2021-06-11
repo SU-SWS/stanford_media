@@ -2,7 +2,7 @@
 
 namespace Drupal\stanford_media\Plugin\Validation\Constraint;
 
-use Drupal\stanford_media\Plugin\media\Source\Embeddable;
+use Drupal\stanford_media\Plugin\media\Source\EmbeddableInterface;
 use Symfony\Component\Validator\Constraint;
 use Drupal\media\Plugin\Validation\Constraint\OEmbedResourceConstraintValidator;
 
@@ -19,23 +19,15 @@ class EmbeddableConstraintValidator extends OEmbedResourceConstraintValidator {
     $media = $value->getEntity();
     $source = $media->getSource();
 
-    if (!($source instanceof Embeddable)) {
-      throw new \LogicException('Media source must implement ' . Embeddable::class);
+    if (!($source instanceof EmbeddableInterface)) {
+      throw new \LogicException('Media source must implement ' . EmbeddableInterface::class);
     }
 
     // If this is an unstructured embed, do our validation here.
     // Otherwise, pass it along to the oEmbed validation.
-    if ($source->hasUnstructured($media)) {
-      // Do not allow oEmbed values on unstructured embeds.
-      if ($source->hasOEmbed($media)) {
-        $this->context->addViolation($constraint->oEmbedNotAllowed);
-        return;
-      }
-      return;
+    if (!$source->hasUnstructured($media)) {
+      parent::validate($value, $constraint);
     }
-
-    parent::validate($value, $constraint);
-
   }
 
 }

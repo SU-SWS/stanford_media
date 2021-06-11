@@ -5,7 +5,6 @@ namespace Drupal\Tests\stanford_media\Unit\Plugin\Validation\Constraint;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\TypedData\Validation\ExecutionContext;
 use Drupal\Core\Validation\DrupalTranslator;
-use Drupal\Core\Validation\TranslatorInterface;
 use Drupal\media\MediaInterface;
 use Drupal\media\MediaSourceInterface;
 use Drupal\stanford_media\Plugin\media\Source\GoogleForm;
