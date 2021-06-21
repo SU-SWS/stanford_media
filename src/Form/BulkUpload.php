@@ -94,12 +94,7 @@ class BulkUpload extends FormBase {
    *   Access Result.
    */
   public function access(AccountInterface $account) {
-    foreach (array_keys($this->bundleSuggestion->getUploadBundles()) as $media_type) {
-      if ($account->hasPermission("create $media_type media")) {
-        return AccessResult::allowed();
-      }
-    }
-    return AccessResult::forbidden();
+    return AccessResult::allowedIf(!empty($this->bundleSuggestion->getUploadBundles()));
   }
 
   /**

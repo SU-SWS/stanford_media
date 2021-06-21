@@ -25,7 +25,6 @@ class MediaLibraryGoogleFormFormTest extends StanfordMediaFormTestBase {
   protected function setUp(): void {
     parent::setUp();
     $this->installConfig('media_library');
-    $this->installSchema('system', ['sequences']);
 
     $media_type = MediaType::create([
       'id' => 'google_form',

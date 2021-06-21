@@ -6,6 +6,8 @@ use Drupal\Core\Form\FormState;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\stanford_media\Form\BulkUpload;
+use Drupal\user\Entity\Role;
+use Drupal\user\Entity\User;
 
 /**
  * Class BulkUploadFormTest.
@@ -104,9 +106,18 @@ class BulkUploadFormTest extends StanfordMediaFormTestBase {
     $account->method('hasPermission')->willReturn(FALSE);
     $this->assertFalse($form_object->access($account)->isAllowed());
 
-    $account = $this->createMock(AccountInterface::class);
-    $account->method('hasPermission')->willReturn(TRUE);
-    $this->assertTrue($form_object->access($account)->isAllowed());
+    $admin_role = Role::create(['id' => 'admin']);
+    $admin_role->grantPermission('administer media');
+    $admin_role->save();
+
+    $user = User::create(['name' => 'admin','roles' => ['admin']]);
+    $user->activate();
+    $user->save();
+    \Drupal::currentUser()->setAccount($user);
+
+    drupal_flush_all_caches();
+
+    $this->assertTrue($form_object->access(\Drupal::currentUser())->isAllowed());
   }
 
 }

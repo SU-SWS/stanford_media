@@ -251,8 +251,17 @@ class BundleSuggestionManager extends DefaultPluginManager implements BundleSugg
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   protected function getMediaBundles(array $bundles = []) {
-    return $this->entityTypeManager->getStorage('media_type')
+    /** @var \Drupal\media\MediaTypeInterface[] $media_types */
+    $media_types = $this->entityTypeManager->getStorage('media_type')
       ->loadMultiple($bundles ?: NULL);
+
+    // Check the current user has access to create the various media types.
+    return array_filter($media_types, function (MediaTypeInterface $media_type) {
+      /** @var \Drupal\media\Entity\Media $empty_media */
+      $empty_media = $this->entityTypeManager->getStorage('media')
+        ->create(['bundle' => $media_type->id()]);
+      return $empty_media->access('create');
+    });
   }
 
 }
