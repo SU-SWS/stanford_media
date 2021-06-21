@@ -41,7 +41,6 @@ class MediaLibraryEmbeddableFormTest extends StanfordMediaFormTestBase {
   protected function setUp(): void {
     parent::setUp();
     $this->installConfig('media_library');
-    $this->installSchema('system', ['sequences']);
 
     $this->installEntitySchema('user');
     $this->installEntitySchema('media');

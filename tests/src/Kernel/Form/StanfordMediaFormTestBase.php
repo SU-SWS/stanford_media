@@ -37,6 +37,7 @@ abstract class StanfordMediaFormTestBase extends KernelTestBase {
     $this->installEntitySchema('user');
     $this->installEntitySchema('media');
     $this->installSchema('file', ['file_usage']);
+    $this->installSchema('system', ['sequences']);
     $this->installConfig('system');
 
     $this->mediaType = MediaType::create([
