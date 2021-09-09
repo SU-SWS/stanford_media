@@ -15,6 +15,25 @@ use Drupal\media\MediaInterface;
 use Drupal\stanford_media\Form\MediaLibraryEmbeddableForm;
 use Drupal\stanford_media\Form\MediaLibraryFileUploadForm;
 use Drupal\stanford_media\Form\MediaLibraryGoogleFormForm;
+use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\media\Entity\MediaType;
+
+/**
+ * Implements hook_entity_bundle_field_info_alter().
+ */
+function stanford_media_entity_bundle_field_info_alter(&$fields, EntityTypeInterface $entity_type, $bundle) {
+  if ($entity_type->id() == 'media') {
+    /** @var \Drupal\media\MediaTypeInterface $media_type */
+    $media_type = MediaType::load($bundle);
+    $source = $media_type->getSource();
+    if ($source->getPluginId() == 'embeddable') {
+      $unstructured_field = $source->getConfiguration()['unstructured_field_name'] ?? '';
+      if (isset($fields[$unstructured_field])) {
+        $fields[$unstructured_field]->addConstraint('embeddable');
+      }
+    }
+  }
+}
 
 /**
  * Implements hook_field_widget_WIDGET_TYPE_form_alter().

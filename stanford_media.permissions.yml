@@ -1,3 +1,7 @@
 edit field default media:
   title: 'Edit Field Default Media'
   description: 'Users can edit and replace the images/files/etc set for default field values'
+bypass embed field validation:
+  title: 'Bypass Embed Code Field Validation'
+  description: 'Allow users to enter any embeddable code without validation'
+  restrict access: true

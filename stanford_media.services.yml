@@ -10,3 +10,6 @@ services:
     class: Drupal\stanford_media\Plugin\BundleSuggestionManager
     parent: default_plugin_manager
     arguments: ['@entity_field.manager', '@entity_type.manager']
+  plugin.manager.embed_validator_plugin_manager:
+    class: Drupal\stanford_media\Plugin\EmbedValidatorPluginManager
+    parent: default_plugin_manager

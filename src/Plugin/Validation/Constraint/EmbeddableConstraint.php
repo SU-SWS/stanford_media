@@ -17,4 +17,6 @@ class EmbeddableConstraint extends OEmbedResourceConstraint {
 
   public $oEmbedNotAllowed = 'An oEmbed link is not permitted on an Embeddable which has a custom Embed Code.';
 
+  public $embedCodeNotAllowed = 'The given embeddable code is not permitted.';
+
 }
