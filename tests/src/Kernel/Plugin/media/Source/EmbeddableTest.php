@@ -180,4 +180,24 @@ class EmbeddableTest extends KernelTestBase {
     $this->assertArrayHasKey('unstructured_field_name', $form_array);
   }
 
+  /**
+   * When restricted, the embed code should not be allowed.
+   */
+  public function testAllowedEmbeds() {
+    /** @var \Drupal\stanford_media\Plugin\media\Source\EmbeddableInterface $source */
+    $source = $this->unstructured_media->getSource();
+    $this->assertTrue($source->embedCodeIsAllowed('<script src="foo.bar"></script>'));
+
+    $config = $source->getConfiguration();
+    $config['embed_validation'] = ['localist'];
+    $source->setConfiguration($config);
+    $this->assertFalse($source->embedCodeIsAllowed('<script src="foo.bar"></script>'));
+
+    $div = '<div id="localist-widget-1234"></div>';
+    $script = '<script src="stanford.enterprise.localist.com"></script>';
+    $this->assertTrue($source->embedCodeIsAllowed("$div$script"));
+
+    $this->assertEquals("$div\n$script", $source->prepareEmbedCode("$div$script<a href='#'>Foo</a>"));
+  }
+
 }
