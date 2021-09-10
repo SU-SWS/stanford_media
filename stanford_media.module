@@ -43,14 +43,18 @@ function stanford_media_entity_bundle_field_info_alter(&$fields, EntityTypeInter
  */
 function stanford_media_media_presave(MediaInterface $entity) {
   $source = MediaType::load($entity->bundle())->getSource();
-
-  if ($source->getPluginId() == 'embeddable' && !\Drupal::currentUser()->hasPermission('bypass embed field validation')) {
+  // When the media entity has raw embed code, modify it using the validation
+  // plugin before the entity is saved.
+  if (
+    $source->getPluginId() == 'embeddable' &&
+    !\Drupal::currentUser()->hasPermission('bypass embed field validation')
+  ) {
     /** @var \Drupal\stanford_media\Plugin\media\Source\Embeddable $source */
     if ($source->hasUnstructured($entity)) {
       $unstructured_field = $source->getConfiguration()['unstructured_field_name'] ?? '';
       /** @var \Drupal\stanford_media\Plugin\EmbedValidatorPluginManager $embed_validator */
       $embed_validator = \Drupal::service('plugin.manager.embed_validator_plugin_manager');
-      $code = $entity->get($unstructured_field)->getString();
+      $code = $source->getSourceFieldValue($entity);
       $code = $embed_validator->prepareEmbedCode($code);
       $entity->set($unstructured_field, $code);
     }
