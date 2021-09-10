@@ -118,3 +118,9 @@ media.source.embeddable:
     source_field:
       type: uri
       label: 'Source field'
+    embed_validation:
+      type: sequence
+      label: 'Embed validation plugin ids'
+      sequence:
+        type: string
+        label: 'Plugin ID'

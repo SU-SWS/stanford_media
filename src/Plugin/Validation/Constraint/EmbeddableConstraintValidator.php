@@ -73,7 +73,10 @@ class EmbeddableConstraintValidator extends OEmbedResourceConstraintValidator {
     }
 
     $unstructured_field = $source->getConfiguration()['unstructured_field_name'] ?? '';
-    if ($this->account->hasPermission('bypass embed field validation') || $this->context->getPropertyName() != $unstructured_field) {
+    if (
+      $this->account->hasPermission('bypass embed field validation') ||
+      $this->context->getPropertyName() != $unstructured_field
+    ) {
       return;
     }
 

@@ -8,7 +8,6 @@ use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\media\Entity\Media;
 use Drupal\media\Entity\MediaType;
 use Drupal\Core\Form\FormState;
-use Drupal\stanford_media\Plugin\media\Source\Embeddable;
 
 /**
  * Class EmbeddableTest.
@@ -49,7 +48,7 @@ class EmbeddableTest extends KernelTestBase {
   /**
    * The Media Type.
    *
-   * @var \Drupal\media\MediaType
+   * @var \Drupal\media\entity\MediaType
    */
   protected $media_type;
 
@@ -129,7 +128,6 @@ class EmbeddableTest extends KernelTestBase {
       'field_media_embeddable_oembed' => NULL,
     ]);
     $this->oembed_media->save();
-
 
     $this->unstructured_media = Media::create([
       'bundle' => 'embeddable',

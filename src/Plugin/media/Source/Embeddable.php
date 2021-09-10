@@ -33,6 +33,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class Embeddable extends OEmbed implements EmbeddableInterface {
 
+  /**
+   * Embed validation plugin manager.
+   *
+   * @var \Drupal\stanford_media\Plugin\EmbedValidatorPluginManager
+   */
   protected $embedValidation;
 
   /**
@@ -61,7 +66,7 @@ class Embeddable extends OEmbed implements EmbeddableInterface {
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, EntityFieldManagerInterface $entity_field_manager, ConfigFactoryInterface $config_factory, FieldTypePluginManagerInterface $field_type_manager, LoggerInterface $logger, MessengerInterface $messenger, ClientInterface $http_client, ResourceFetcherInterface $resource_fetcher, UrlResolverInterface $url_resolver, IFrameUrlHelper $iframe_url_helper, FileSystemInterface $file_system = NULL, EmbedValidatorPluginManager $embed_validation) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, EntityFieldManagerInterface $entity_field_manager, ConfigFactoryInterface $config_factory, FieldTypePluginManagerInterface $field_type_manager, LoggerInterface $logger, MessengerInterface $messenger, ClientInterface $http_client, ResourceFetcherInterface $resource_fetcher, UrlResolverInterface $url_resolver, IFrameUrlHelper $iframe_url_helper, FileSystemInterface $file_system = NULL, EmbedValidatorPluginManager $embed_validation = NULL) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager, $entity_field_manager, $config_factory, $field_type_manager, $logger, $messenger, $http_client, $resource_fetcher, $url_resolver, $iframe_url_helper, $file_system);
     $this->embedValidation = $embed_validation;
   }
