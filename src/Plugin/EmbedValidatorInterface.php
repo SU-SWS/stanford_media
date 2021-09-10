@@ -24,7 +24,7 @@ interface EmbedValidatorInterface extends PluginInspectionInterface {
    * Prepare and process the raw html code.
    *
    * @param string $code
-   *  Raw html embed code.
+   *   Raw html embed code.
    *
    * @return string
    *   Prepared and ready html code.

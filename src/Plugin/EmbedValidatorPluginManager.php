@@ -11,7 +11,6 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
  */
 class EmbedValidatorPluginManager extends DefaultPluginManager {
 
-
   /**
    * Constructs a new EmbedValidatorPluginManager object.
    *
