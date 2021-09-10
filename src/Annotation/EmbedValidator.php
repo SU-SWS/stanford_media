@@ -5,7 +5,7 @@ namespace Drupal\stanford_media\Annotation;
 use Drupal\Component\Annotation\Plugin;
 
 /**
- * Defines a Oembed validator plugin item annotation object.
+ * Defines an Embed validator plugin item annotation object.
  *
  * @see \Drupal\stanford_media\Plugin\EmbedValidatorPluginManager
  * @see plugin_api

@@ -71,15 +71,14 @@ class EmbeddableConstraintValidator extends OEmbedResourceConstraintValidator {
       parent::validate($value, $constraint);
       return;
     }
-    if ($this->account->hasPermission('bypass embed field validation')) {
-      return;
-    }
+
     $unstructured_field = $source->getConfiguration()['unstructured_field_name'] ?? '';
-    if ($this->context->getPropertyName() != $unstructured_field) {
+    if ($this->account->hasPermission('bypass embed field validation') || $this->context->getPropertyName() != $unstructured_field) {
       return;
     }
 
-    if (!$this->validationManager->embedCodeIsAllowed($value)) {
+    /** @var \Drupal\Core\Field\FieldItemListInterface $value */
+    if (!$this->validationManager->embedCodeIsAllowed($value->getString())) {
       $this->context->addViolation($constraint->embedCodeNotAllowed);
     }
   }

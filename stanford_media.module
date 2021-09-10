@@ -26,11 +26,33 @@ function stanford_media_entity_bundle_field_info_alter(&$fields, EntityTypeInter
     /** @var \Drupal\media\MediaTypeInterface $media_type */
     $media_type = MediaType::load($bundle);
     $source = $media_type->getSource();
+
+    // If the media type is using the embeddable plugin, add a constraint on the
+    // unstructured code field.
     if ($source->getPluginId() == 'embeddable') {
       $unstructured_field = $source->getConfiguration()['unstructured_field_name'] ?? '';
       if (isset($fields[$unstructured_field])) {
         $fields[$unstructured_field]->addConstraint('embeddable');
       }
+    }
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_presave().
+ */
+function stanford_media_media_presave(MediaInterface $entity) {
+  $source = MediaType::load($entity->bundle())->getSource();
+
+  if ($source->getPluginId() == 'embeddable' && !\Drupal::currentUser()->hasPermission('bypass embed field validation')) {
+    /** @var \Drupal\stanford_media\Plugin\media\Source\Embeddable $source */
+    if ($source->hasUnstructured($entity)) {
+      $unstructured_field = $source->getConfiguration()['unstructured_field_name'] ?? '';
+      /** @var \Drupal\stanford_media\Plugin\EmbedValidatorPluginManager $embed_validator */
+      $embed_validator = \Drupal::service('plugin.manager.embed_validator_plugin_manager');
+      $code = $entity->get($unstructured_field)->getString();
+      $code = $embed_validator->prepareEmbedCode($code);
+      $entity->set($unstructured_field, $code);
     }
   }
 }

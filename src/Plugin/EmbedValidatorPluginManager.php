@@ -24,7 +24,7 @@ class EmbedValidatorPluginManager extends DefaultPluginManager {
    *   The module handler to invoke the alter hook with.
    */
   public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler) {
-    parent::__construct('Plugin/OembedValidator', $namespaces, $module_handler, 'Drupal\stanford_media\Plugin\EmbedValidatorInterface', 'Drupal\stanford_media\Annotation\EmbedValidator');
+    parent::__construct('Plugin/EmbedValidator', $namespaces, $module_handler, 'Drupal\stanford_media\Plugin\EmbedValidatorInterface', 'Drupal\stanford_media\Annotation\EmbedValidator');
 
     $this->alterInfo('stanford_media_embed_validator_plugin_info');
     $this->setCacheBackend($cache_backend, 'stanford_media_embed_validator_plugin_plugins');
@@ -39,6 +39,22 @@ class EmbedValidatorPluginManager extends DefaultPluginManager {
       }
     }
     return FALSE;
+  }
+
+  /**
+   * @param $code
+   *
+   * @return string
+   */
+  public function prepareEmbedCode($code): string {
+    foreach ($this->getDefinitions() as $definition) {
+      /** @var \Drupal\stanford_media\Plugin\EmbedValidatorInterface $plugin */
+      $plugin = $this->createInstance($definition['id']);
+      if ($plugin->isEmbedCodeAllowed($code)) {
+        return $plugin->prepareEmbedCode($code);
+      }
+    }
+    return $code;
   }
 
 }

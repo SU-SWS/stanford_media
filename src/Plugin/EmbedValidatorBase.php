@@ -9,4 +9,11 @@ use Drupal\Component\Plugin\PluginBase;
  */
 abstract class EmbedValidatorBase extends PluginBase implements EmbedValidatorInterface {
 
+  /**
+   * {@inheritDoc}
+   */
+  public function prepareEmbedCode($code): string {
+    return $code;
+  }
+
 }
