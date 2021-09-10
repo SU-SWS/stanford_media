@@ -63,7 +63,16 @@ class EmbeddableConstraintValidatorTest extends UnitTestCase {
     $logger_factory = $this->createMock(LoggerChannelFactoryInterface::class);
     $embed_validation = $this->createMock(EmbedValidatorPluginManager::class);
     $account = $this->createMock(AccountProxyInterface::class);
-    $this->validator = new EmbeddableConstraintValidator($url_resolver, $resource_fetcher, $logger_factory, $embed_validation, $account);
+
+    $container = new ContainerBuilder();
+    $container->set('media.oembed.url_resolver', $url_resolver);
+    $container->set('media.oembed.resource_fetcher', $resource_fetcher);
+    $container->set('logger.factory', $logger_factory);
+    $container->set('plugin.manager.embed_validator_plugin_manager', $embed_validation);
+    $container->set('current_user', $account);
+    \Drupal::setContainer($container);
+
+    $this->validator = EmbeddableConstraintValidator::create(\Drupal::getContainer());
     $this->validator->initialize($this->validationContext);
 
     $container = new ContainerBuilder();
