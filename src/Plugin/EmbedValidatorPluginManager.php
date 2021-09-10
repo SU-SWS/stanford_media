@@ -29,48 +29,4 @@ class EmbedValidatorPluginManager extends DefaultPluginManager {
     $this->setCacheBackend($cache_backend, 'stanford_media_embed_validator_plugin_plugins');
   }
 
-  /**
-   * Go through all available plugins and validate one of them allows the code.
-   *
-   * @param string $code
-   *   Raw html embed code.
-   *
-   * @return bool
-   *   True if one of the plugins validates successfully.
-   *
-   * @throws \Drupal\Component\Plugin\Exception\PluginException
-   */
-  public function embedCodeIsAllowed($code): bool {
-    foreach ($this->getDefinitions() as $definition) {
-      /** @var \Drupal\stanford_media\Plugin\EmbedValidatorInterface $plugin */
-      $plugin = $this->createInstance($definition['id']);
-      if ($plugin->isEmbedCodeAllowed($code)) {
-        return TRUE;
-      }
-    }
-    return FALSE;
-  }
-
-  /**
-   * Modify the raw html embed code using the applicable validation plugin.
-   *
-   * @param string $code
-   *   Raw html embed code.
-   *
-   * @return string
-   *   Modified html embed code.
-   *
-   * @throws \Drupal\Component\Plugin\Exception\PluginException
-   */
-  public function prepareEmbedCode($code): string {
-    foreach ($this->getDefinitions() as $definition) {
-      /** @var \Drupal\stanford_media\Plugin\EmbedValidatorInterface $plugin */
-      $plugin = $this->createInstance($definition['id']);
-      if ($plugin->isEmbedCodeAllowed($code)) {
-        return $plugin->prepareEmbedCode($code);
-      }
-    }
-    return $code;
-  }
-
 }

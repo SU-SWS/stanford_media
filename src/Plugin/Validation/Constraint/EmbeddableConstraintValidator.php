@@ -78,7 +78,7 @@ class EmbeddableConstraintValidator extends OEmbedResourceConstraintValidator {
     }
 
     /** @var \Drupal\Core\Field\FieldItemListInterface $value */
-    if (!$this->validationManager->embedCodeIsAllowed($value->getString())) {
+    if (!$source->embedCodeIsAllowed($value->getString())) {
       $this->context->addViolation($constraint->embedCodeNotAllowed);
     }
   }

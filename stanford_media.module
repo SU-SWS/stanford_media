@@ -8,15 +8,15 @@
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\editor\Entity\Editor;
+use Drupal\media\Entity\MediaType;
 use Drupal\media\MediaInterface;
 use Drupal\stanford_media\Form\MediaLibraryEmbeddableForm;
 use Drupal\stanford_media\Form\MediaLibraryFileUploadForm;
 use Drupal\stanford_media\Form\MediaLibraryGoogleFormForm;
-use Drupal\Core\Entity\EntityTypeInterface;
-use Drupal\media\Entity\MediaType;
 
 /**
  * Implements hook_entity_bundle_field_info_alter().
@@ -52,10 +52,8 @@ function stanford_media_media_presave(MediaInterface $entity) {
     /** @var \Drupal\stanford_media\Plugin\media\Source\Embeddable $source */
     if ($source->hasUnstructured($entity)) {
       $unstructured_field = $source->getConfiguration()['unstructured_field_name'] ?? '';
-      /** @var \Drupal\stanford_media\Plugin\EmbedValidatorPluginManager $embed_validator */
-      $embed_validator = \Drupal::service('plugin.manager.embed_validator_plugin_manager');
       $code = $source->getSourceFieldValue($entity);
-      $code = $embed_validator->prepareEmbedCode($code);
+      $code = $source->prepareEmbedCode($code);
       $entity->set($unstructured_field, $code);
     }
   }
