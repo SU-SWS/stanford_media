@@ -27,8 +27,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   label = @Translation("Stanford Embedded Media"),
  *   description = @Translation("Embeds a third-party resource."),
  *   default_thumbnail_filename = "generic.png",
- *   providers = {"ArcGIS StoryMaps", "CircuitLab", "Codepen", "Dailymotion", "Facebook", "Flickr", "Getty Images", "Instagram", "Issuu", "Livestream", "MathEmbed", "Simplecast", "SlideShare", "SoundCloud", "Spotify", "Stanford Digital Repository", "Twitter"},
- *   allowed_field_types = {"string", "string_long"},
+ *   providers = {"ArcGIS StoryMaps", "CircuitLab", "Codepen", "Dailymotion",
+ *   "Facebook", "Flickr", "Getty Images", "Instagram", "Issuu", "Livestream",
+ *   "MathEmbed", "Simplecast", "SlideShare", "SoundCloud", "Spotify",
+ *   "Stanford Digital Repository", "Twitter"}, allowed_field_types =
+ *   {"string", "string_long"},
  * )
  */
 class Embeddable extends OEmbed implements EmbeddableInterface {
@@ -146,7 +149,8 @@ class Embeddable extends OEmbed implements EmbeddableInterface {
    */
   public function hasUnstructured(MediaInterface $media) {
     return (
-      !$media->get($this->configuration['unstructured_field_name'])->isEmpty() &&
+      !$media->get($this->configuration['unstructured_field_name'])
+        ->isEmpty() &&
       $media->get($this->configuration['source_field'])->isEmpty()
     );
   }
@@ -215,7 +219,11 @@ class Embeddable extends OEmbed implements EmbeddableInterface {
         $plugins[$plugin_id] = $this->embedValidation->createInstance($plugin_id);
       }
       catch (\Exception $e) {
-        // The plugin didn't exist, ignore it.
+        // The plugin didn't exist, log in and move on.
+        $this->logger->error($this->t('Unable to create embed validation plugin @plugin_id. @message'), [
+          '@plugin_id' => $plugin_id,
+          '@message' => $e->getMessage(),
+        ]);
       }
     }
     return $plugins;
