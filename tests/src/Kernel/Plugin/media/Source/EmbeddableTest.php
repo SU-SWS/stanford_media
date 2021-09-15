@@ -8,7 +8,6 @@ use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\media\Entity\Media;
 use Drupal\media\Entity\MediaType;
 use Drupal\Core\Form\FormState;
-use Drupal\stanford_media\Plugin\media\Source\Embeddable;
 
 /**
  * Class EmbeddableTest.
@@ -49,7 +48,7 @@ class EmbeddableTest extends KernelTestBase {
   /**
    * The Media Type.
    *
-   * @var \Drupal\media\MediaType
+   * @var \Drupal\media\entity\MediaType
    */
   protected $media_type;
 
@@ -130,7 +129,6 @@ class EmbeddableTest extends KernelTestBase {
     ]);
     $this->oembed_media->save();
 
-
     $this->unstructured_media = Media::create([
       'bundle' => 'embeddable',
       'name' => 'unstructured embeddable',
@@ -180,6 +178,26 @@ class EmbeddableTest extends KernelTestBase {
     $form_array = $source->buildConfigurationForm($form, $form_state);
     $this->assertArrayHasKey('source_field', $form_array);
     $this->assertArrayHasKey('unstructured_field_name', $form_array);
+  }
+
+  /**
+   * When restricted, the embed code should not be allowed.
+   */
+  public function testAllowedEmbeds() {
+    /** @var \Drupal\stanford_media\Plugin\media\Source\EmbeddableInterface $source */
+    $source = $this->unstructured_media->getSource();
+    $this->assertTrue($source->embedCodeIsAllowed('<script src="foo.bar"></script>'));
+
+    $config = $source->getConfiguration();
+    $config['embed_validation'] = ['localist'];
+    $source->setConfiguration($config);
+    $this->assertFalse($source->embedCodeIsAllowed('<script src="foo.bar"></script>'));
+
+    $div = '<div id="localist-widget-1234"></div>';
+    $script = '<script src="stanford.enterprise.localist.com"></script>';
+    $this->assertTrue($source->embedCodeIsAllowed("$div$script"));
+
+    $this->assertEquals("$div\n$script", $source->prepareEmbedCode("$div$script<a href='#'>Foo</a>"));
   }
 
 }

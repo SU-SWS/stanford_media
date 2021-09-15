@@ -8,13 +8,56 @@
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\editor\Entity\Editor;
+use Drupal\media\Entity\MediaType;
 use Drupal\media\MediaInterface;
 use Drupal\stanford_media\Form\MediaLibraryEmbeddableForm;
 use Drupal\stanford_media\Form\MediaLibraryFileUploadForm;
 use Drupal\stanford_media\Form\MediaLibraryGoogleFormForm;
+
+/**
+ * Implements hook_entity_bundle_field_info_alter().
+ */
+function stanford_media_entity_bundle_field_info_alter(&$fields, EntityTypeInterface $entity_type, $bundle) {
+  if ($entity_type->id() == 'media') {
+    /** @var \Drupal\media\MediaTypeInterface $media_type */
+    $media_type = MediaType::load($bundle);
+    $source = $media_type->getSource();
+
+    // If the media type is using the embeddable plugin, add a constraint on the
+    // unstructured code field.
+    if ($source->getPluginId() == 'embeddable') {
+      $unstructured_field = $source->getConfiguration()['unstructured_field_name'] ?? '';
+      if (isset($fields[$unstructured_field])) {
+        $fields[$unstructured_field]->addConstraint('embeddable');
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_presave().
+ */
+function stanford_media_media_presave(MediaInterface $entity) {
+  $source = MediaType::load($entity->bundle())->getSource();
+  // When the media entity has raw embed code, modify it using the validation
+  // plugin before the entity is saved.
+  if (
+    $source->getPluginId() == 'embeddable' &&
+    !\Drupal::currentUser()->hasPermission('bypass embed field validation')
+  ) {
+    /** @var \Drupal\stanford_media\Plugin\media\Source\Embeddable $source */
+    if ($source->hasUnstructured($entity)) {
+      $unstructured_field = $source->getConfiguration()['unstructured_field_name'] ?? '';
+      $code = $source->getSourceFieldValue($entity);
+      $code = $source->prepareEmbedCode($code);
+      $entity->set($unstructured_field, $code);
+    }
+  }
+}
 
 /**
  * Implements hook_field_widget_WIDGET_TYPE_form_alter().
