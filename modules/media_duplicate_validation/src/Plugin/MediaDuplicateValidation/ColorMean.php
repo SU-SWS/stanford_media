@@ -171,7 +171,16 @@ class ColorMean extends MediaDuplicateValidationBase {
     while ($mid = $result->fetchField()) {
       $mids[] = $mid;
     }
+    if (empty($mids)) {
+      return [];
+    }
 
+    // Load the media ids that match the bundle from the compared media item.
+    $mids = $this->entityTypeManager->getStorage('media')
+      ->getQuery()
+      ->condition('bundle', $entity->bundle())
+      ->condition('mid', $mids, 'IN')
+      ->execute();
     return $this->entityTypeManager->getStorage('media')->loadMultiple($mids);
   }
 
