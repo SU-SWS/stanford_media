@@ -107,7 +107,7 @@ class Embeddable extends OEmbed implements EmbeddableInterface {
     $form['embed_validation'] = [
       '#type' => 'checkboxes',
       '#title' => $this->t('Enabled Embeds Validation'),
-      '#description' => $this->t("Validate the entered embed code for users who don't have the 'Bypass Embed Code Field Validation' permission. Leaving this empty will allow any embeddable code to be entered."),
+      '#description' => $this->t("Validate the entered embed code for users who don't have the 'Bypass Embed Code Field Validation' permission. Leaving this empty will enable all validators."),
       '#options' => $embed_validation_plugins,
       '#default_value' => $this->configuration['embed_validation'],
     ];
@@ -213,7 +213,8 @@ class Embeddable extends OEmbed implements EmbeddableInterface {
    */
   protected function getEnabledValidationPlugins(): array {
     $plugins = [];
-    foreach ($this->configuration['embed_validation'] as $plugin_id) {
+    $plugin_ids = $this->configuration['embed_validation'] ?? array_keys($this->getPluginDefinition());
+    foreach ($plugin_ids as $plugin_id) {
       /** @var \Drupal\stanford_media\Plugin\EmbedValidatorInterface $plugin */
       try {
         $plugins[$plugin_id] = $this->embedValidation->createInstance($plugin_id);
