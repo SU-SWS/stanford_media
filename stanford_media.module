@@ -12,6 +12,7 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\editor\Entity\Editor;
+use Drupal\file\FileInterface;
 use Drupal\media\Entity\MediaType;
 use Drupal\media\MediaInterface;
 use Drupal\stanford_media\Form\MediaLibraryEmbeddableForm;
@@ -240,4 +241,48 @@ function stanford_media_entity_access(EntityInterface $entity, $operation, Accou
   }
 
   return AccessResult::neutral();
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ */
+function stanford_media_file_insert(FileInterface $file) {
+  $extension = pathinfo($file->getFileUri(), PATHINFO_EXTENSION);
+  $file_path = \Drupal::service('file_system')->realpath($file->getFileUri());
+  if (
+    !in_array($extension, ['jpg', 'jpeg', 'png']) ||
+    !file_exists($file_path) ||
+    !class_exists('Imagick')
+  ) {
+    return;
+  }
+  try {
+    $image = new Imagick($file_path);
+    switch ($image->getImageOrientation()) {
+      case imagick::ORIENTATION_BOTTOMRIGHT:
+        // Rotate 180 degrees.
+        $image->rotateimage("#000", 180);
+        break;
+
+      case imagick::ORIENTATION_RIGHTTOP:
+        // Rotate 90 degrees CW.
+        $image->rotateimage("#000", 90);
+        break;
+
+      case imagick::ORIENTATION_LEFTBOTTOM:
+        // Rotate 90 degrees CCW.
+        $image->rotateimage("#000", -90);
+        break;
+    }
+
+    // Now that it's rotated, set the orientation, before stripping all other
+    // tags.
+    $image->setImageOrientation(imagick::ORIENTATION_TOPLEFT);
+    $image->stripImage();
+    $image->writeImage($file_path);
+  }
+  catch (\Exception $e) {
+    \Drupal::logger('stanford_media')
+      ->error('Unable to strip metadata & fix orientation from image: %path', ['%path' => $file_path]);
+  }
 }
