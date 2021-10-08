@@ -1,5 +1,15 @@
 # Stanford Media
 
+
+8.x-2.19
+--------------------------------------------------------------------------------
+_Release Date: 2021-10-08_
+
+- D8CORE-4698 Fix image orientation and strip tags updon upload (#104)
+- Changed logic with embeddable validation
+- Adjust duplicate media validation to only compare against the same bundles.
+- Add Embeddable validation plugin for allowing content editor embed entry (#103)
+
 8.x-2.18
 --------------------------------------------------------------------------------
 _Release Date: 2021-08-03_

@@ -23,4 +23,26 @@ interface EmbeddableInterface extends OEmbedInterface {
    */
   public function hasUnstructured(MediaInterface $media);
 
+  /**
+   * Go through all available plugins and validate one of them allows the code.
+   *
+   * @param string $code
+   *   Raw html embed code.
+   *
+   * @return bool
+   *   True if one of the plugins validates successfully.
+   */
+  public function embedCodeIsAllowed($code): bool;
+
+  /**
+   * Modify the raw html embed code using the applicable validation plugin.
+   *
+   * @param string $code
+   *   Raw html embed code.
+   *
+   * @return string
+   *   Modified html embed code.
+   */
+  public function prepareEmbedCode($code): string;
+
 }

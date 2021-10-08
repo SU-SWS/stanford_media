@@ -48,7 +48,9 @@ class Md5 extends MediaDuplicateValidationBase {
       $similar_media["$key"] = $media_storage->load($media_id);
       $key -= '.01';
     }
-    return array_filter($similar_media);
+    return array_filter($similar_media, function (MediaInterface $media = NULL) use ($entity) {
+      return $media && $media->bundle() == $entity->bundle();
+    });
   }
 
   /**
