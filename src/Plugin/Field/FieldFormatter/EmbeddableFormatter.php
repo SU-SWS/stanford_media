@@ -106,7 +106,7 @@ class EmbeddableFormatter extends OEmbedFormatter {
    * Validate the allowed tags value by removing non alpha characters.
    *
    * @param array $element
-   *   Form Element
+   *   Form Element.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Submitted form state.
    * @param array $form
