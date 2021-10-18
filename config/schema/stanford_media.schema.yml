@@ -84,11 +84,8 @@ field.formatter.settings.embeddable_formatter:
       type: integer
       label: 'Maximum height'
     allowed_tags:
-      type: sequence
+      type: string
       label: 'Allowed HTML tags'
-      sequence:
-        type: string
-        label: 'Allowed HTML Tag'
 
 media.source.google_form:
   type: media.source.field_aware
