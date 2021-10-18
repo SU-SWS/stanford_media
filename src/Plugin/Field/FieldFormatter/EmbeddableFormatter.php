@@ -114,8 +114,8 @@ class EmbeddableFormatter extends OEmbedFormatter {
    */
   public function validateAllowedTags(array $element, FormStateInterface $form_state, array $form) {
     $tags = $form_state->getValue($element['#parents']);
-    $adjusted_tags = preg_replace('/[^a-z ]/', '', strtolower($tags));
-    $form_state->setValue($element['#parents'], $adjusted_tags);
+    $adjusted_tags = preg_replace('/  +/', ' ', preg_replace('/[^a-z ]/', '', strtolower($tags)));
+    $form_state->setValue($element['#parents'], trim($adjusted_tags));
   }
 
   /**
