@@ -4,6 +4,7 @@ namespace Drupal\stanford_media\Plugin\Field\FieldFormatter;
 
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\media\OEmbed\ResourceFetcherInterface;
 use Drupal\media\OEmbed\UrlResolverInterface;
@@ -39,11 +40,10 @@ class EmbeddableFormatter extends OEmbedFormatter {
   /**
    * {@inheritDoc}
    */
-  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, $label, $view_mode, array $third_party_settings, MessengerInterface $messenger, ResourceFetcherInterface $resource_fetcher, UrlResolverInterface $url_resolver, LoggerChannelFactoryInterface $logger_factory, ConfigFactoryInterface $config_factory, IFrameUrlHelper $iframe_url_helper) {
-    parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings, $messenger, $resource_fetcher, $url_resolver, $logger_factory, $config_factory, $iframe_url_helper);
-
-    $media_type = self::getMediaType($field_definition->getTargetBundle());
-    $this->oEmbedField = $media_type->getSource()->getConfiguration()['source_field'];
+  public static function defaultSettings() {
+    $settings = parent::defaultSettings();
+    $settings['allowed_tags'] = 'iframe script div a';
+    return $settings;
   }
 
   /**
@@ -74,6 +74,48 @@ class EmbeddableFormatter extends OEmbedFormatter {
     return \Drupal::entityTypeManager()
       ->getStorage('media_type')
       ->load($media_type_id);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, $label, $view_mode, array $third_party_settings, MessengerInterface $messenger, ResourceFetcherInterface $resource_fetcher, UrlResolverInterface $url_resolver, LoggerChannelFactoryInterface $logger_factory, ConfigFactoryInterface $config_factory, IFrameUrlHelper $iframe_url_helper) {
+    parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings, $messenger, $resource_fetcher, $url_resolver, $logger_factory, $config_factory, $iframe_url_helper);
+
+    $media_type = self::getMediaType($field_definition->getTargetBundle());
+    $this->oEmbedField = $media_type->getSource()
+      ->getConfiguration()['source_field'];
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function settingsForm(array $form, FormStateInterface $form_state) {
+    $element = parent::settingsForm($form, $form_state);
+    $element['allowed_tags'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Allowed HTML Tags'),
+      '#default_value' => $this->getSetting('allowed_tags'),
+      '#description' => $this->t('HTML Tags that will be allowed for the unstructured embeddable formatter'),
+      '#element_validate' => [[$this, 'validateAllowedTags']],
+    ];
+    return $element;
+  }
+
+  /**
+   * Validate the allowed tags value by removing non alpha characters.
+   *
+   * @param array $element
+   *   Form Element.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Submitted form state.
+   * @param array $form
+   *   Complete form.
+   */
+  public function validateAllowedTags(array $element, FormStateInterface $form_state, array $form) {
+    $tags = $form_state->getValue($element['#parents']);
+    $adjusted_tags = preg_replace('/  +/', ' ', preg_replace('/[^a-z ]/', '', strtolower($tags)));
+    $form_state->setValue($element['#parents'], trim($adjusted_tags));
   }
 
   /**
@@ -145,16 +187,7 @@ class EmbeddableFormatter extends OEmbedFormatter {
       if (!empty($embed_markup)) {
         $elements[$delta] = [
           '#markup' => $item->getValue()['value'],
-          '#allowed_tags' => [
-            'iframe',
-            'video',
-            'audio',
-            'source',
-            'embed',
-            'script',
-            'div',
-            'a',
-          ],
+          '#allowed_tags' => explode(' ', $this->getSetting('allowed_tags')),
           '#prefix' => '<div class="embeddable-content">',
           '#suffix' => '</div>',
         ];

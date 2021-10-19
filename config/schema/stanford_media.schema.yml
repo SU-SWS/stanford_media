@@ -83,6 +83,9 @@ field.formatter.settings.embeddable_formatter:
     max_height:
       type: integer
       label: 'Maximum height'
+    allowed_tags:
+      type: string
+      label: 'Allowed HTML tags'
 
 media.source.google_form:
   type: media.source.field_aware
