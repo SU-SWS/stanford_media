@@ -331,10 +331,12 @@ class EmbeddableFormatterTest extends KernelTestBase {
     $formatter_plugin_manager = \Drupal::service('plugin.manager.field.formatter');
     /** @var EmbeddableFormatter $formatter */
     $formatter = $formatter_plugin_manager->createInstance('embeddable_formatter', $configuration);
+
     $element = ['#parents' => ['allowed_tags']];
     $form_state = new FormState();
     $form_state->setValue('allowed_tags', '<foo> <bar>     div 123 &$%');
     $form = [];
+    $this->assertNotEmpty($formatter->settingsForm($form, $form_state));
     $formatter->validateAllowedTags($element, $form_state, $form);
     $this->assertEquals('foo bar div', $form_state->getValue('allowed_tags'));
   }
