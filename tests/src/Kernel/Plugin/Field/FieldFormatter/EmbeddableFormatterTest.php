@@ -3,6 +3,8 @@
 namespace Drupal\Tests\stanford_media\Kernel\Plugin\Field\FieldFormatter;
 
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
+use Drupal\Core\Field\FieldDefinitionInterface;
+use Drupal\Core\Form\FormState;
 use Drupal\entity_test\Entity\EntityTestBundle;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
@@ -283,10 +285,12 @@ class EmbeddableFormatterTest extends KernelTestBase {
    * @covers Drupal\stanford_media\Plugin\Field\FieldFormatter\EmbeddableFormatter::viewOEmbedElements
    */
   public function testEmbeddableFormatter() {
-    $source_field = $this->oembed_media->getSource()->getSourceFieldDefinition($this->mediaType);
+    $source_field = $this->oembed_media->getSource()
+      ->getSourceFieldDefinition($this->mediaType);
     $this->assertTrue(EmbeddableFormatter::isApplicable($source_field));
 
-    $source_field = $this->unstructured_media->getSource()->getSourceFieldDefinition($this->mediaType);
+    $source_field = $this->unstructured_media->getSource()
+      ->getSourceFieldDefinition($this->mediaType);
     $this->assertTrue(EmbeddableFormatter::isApplicable($source_field));
 
     $view_builder = \Drupal::entityTypeManager()
@@ -307,6 +311,34 @@ class EmbeddableFormatterTest extends KernelTestBase {
     $this->assertStringNotContainsString('frameborder', $rendered_view);
     $this->assertStringNotContainsString('scrolling', $rendered_view);
     $this->assertStringNotContainsString('allowtransparency', $rendered_view);
+  }
+
+  /**
+   * Display settings on the formatter test.
+   */
+  public function testDisplayFormSettings() {
+    $source_field = $this->unstructured_media->getSource()
+      ->getSourceFieldDefinition($this->mediaType);
+    $configuration = [
+      'field_definition' => $source_field,
+      'settings' => [],
+      'label' => 'foo',
+      'view_mode' => 'default',
+      'third_party_settings' => [],
+    ];
+
+    /** @var \Drupal\Core\Field\FormatterPluginManager $formatter_plugin_manager */
+    $formatter_plugin_manager = \Drupal::service('plugin.manager.field.formatter');
+    /** @var EmbeddableFormatter $formatter */
+    $formatter = $formatter_plugin_manager->createInstance('embeddable_formatter', $configuration);
+
+    $element = ['#parents' => ['allowed_tags']];
+    $form_state = new FormState();
+    $form_state->setValue('allowed_tags', '<foo> <bar>     div 123 &$%');
+    $form = [];
+    $this->assertNotEmpty($formatter->settingsForm($form, $form_state));
+    $formatter->validateAllowedTags($element, $form_state, $form);
+    $this->assertEquals('foo bar div', $form_state->getValue('allowed_tags'));
   }
 
 }

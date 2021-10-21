@@ -26,6 +26,10 @@ function stanford_media_entity_bundle_field_info_alter(&$fields, EntityTypeInter
   if ($entity_type->id() == 'media') {
     /** @var \Drupal\media\MediaTypeInterface $media_type */
     $media_type = MediaType::load($bundle);
+    if (!$media_type) {
+      return;
+    }
+
     $source = $media_type->getSource();
 
     // If the media type is using the embeddable plugin, add a constraint on the
