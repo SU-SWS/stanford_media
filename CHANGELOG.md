@@ -1,6 +1,14 @@
 # Stanford Media
 
 
+8.x-2.20
+--------------------------------------------------------------------------------
+_Release Date: 2021-10-21_
+
+- Fixed error when adding new media types
+- D8CORE-4816 Remove hard coded allowed tags in favor of config (#106)
+
+
 8.x-2.19
 --------------------------------------------------------------------------------
 _Release Date: 2021-10-08_
