@@ -12,6 +12,7 @@ dependencies:
   - drupal:field
   - drupal:media
   - drupal:media_library
+  - drupal:oembed_providers
   - drupal:responsive_image
   - drupal:views
   - drupal:path
