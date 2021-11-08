@@ -12,9 +12,9 @@ dependencies:
   - drupal:field
   - drupal:media
   - drupal:media_library
+  - drupal:path
   - drupal:responsive_image
   - drupal:views
-  - drupal:path
   - entity_usage:entity_usage
   - focal_point:focal_point
   - inline_entity_form:inline_entity_form
