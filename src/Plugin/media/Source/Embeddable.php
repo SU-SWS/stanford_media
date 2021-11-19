@@ -29,7 +29,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   default_thumbnail_filename = "generic.png",
  *   providers = {"ArcGIS StoryMaps", "CircuitLab", "Codepen", "Dailymotion",
  *   "Facebook", "Flickr", "Getty Images", "Instagram", "Issuu", "Livestream",
- *   "MathEmbed", "Simplecast", "SlideShare", "SoundCloud", "Spotify",
+ *   "MathEmbed", "SimpleCast", "SlideShare", "SoundCloud", "Spotify",
  *   "Stanford Digital Repository", "Twitter"}, allowed_field_types =
  *   {"string", "string_long"},
  * )
