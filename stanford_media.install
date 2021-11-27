@@ -257,3 +257,10 @@ function stanford_media_update_8201(&$sandbox) {
   $form->setComponent($field_name, $options);
   $form->save();
 }
+
+/**
+ * Install oembed_providers module.
+ */
+function stanford_media_update_8202(){
+  \Drupal::service('module_installer')->install(['oembed_providers']);
+}
