@@ -45,7 +45,7 @@ class StanfordMediaDialogFormTest extends StanfordMediaFormTestBase {
    * Test form structure.
    */
   public function testFormStructure() {
-    FilterFormat::create(['format' => 'html'])->save();
+    FilterFormat::create(['format' => 'html', 'name' => 'test format'])->save();
     $editor = Editor::create([
       'format' => 'html',
       'editor' => 'ckeditor',
