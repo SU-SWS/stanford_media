@@ -12,7 +12,7 @@ use Drupal\filter\FilterProcessResult;
  *   id = "stanford_media_embed_markup",
  *   title = @Translation("Stanford Media Embed Filter"),
  *   description = @Translation("This helps with core markup issues. This filter has to run after the Embed Media filter."),
- *   type = Drupal\filter\Plugin\FilterInterface::TYPE_MARKUP_LANGUAGE,
+ *   type = Drupal\filter\Plugin\FilterInterface::TYPE_TRANSFORM_REVERSIBLE
  * )
  */
 class MediaEmbedMarkupFilter extends FilterBase {
