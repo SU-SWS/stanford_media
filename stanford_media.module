@@ -93,8 +93,8 @@ function stanford_media_ckeditor_css_alter(array &$css, Editor $editor) {
   /** @var \Drupal\Core\Extension\ModuleExtensionList $extensions */
   $extensions = \Drupal::service('extension.list.module');
   // Add styles inside the ckeditor iframe.
-  $css[] = $extensions->getPathname('stanford_media') . '/dist/css/stanford_media.admin.css';
-  $css[] = $extensions->getPathname('stanford_media') . '/dist/css/stanford_media.css';
+  $css[] = $extensions->getPath('stanford_media') . '/dist/css/stanford_media.admin.css';
+  $css[] = $extensions->getPath('stanford_media') . '/dist/css/stanford_media.css';
 }
 
 /**
@@ -102,7 +102,7 @@ function stanford_media_ckeditor_css_alter(array &$css, Editor $editor) {
  */
 function stanford_media_theme_registry_alter(&$theme_registry) {
   // Register the path to the template files.
-  $path = \Drupal::service('extension.list.module')->getPathname('stanford_media') . '/templates';
+  $path = \Drupal::service('extension.list.module')->getPath('stanford_media') . '/templates';
   $theme_registry['dropzonejs']['path'] = $path;
 }
 
