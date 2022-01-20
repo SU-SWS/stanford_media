@@ -65,6 +65,20 @@ function stanford_media_media_presave(MediaInterface $entity) {
 }
 
 /**
+ * Implements hook_field_widget_form_alter().
+ */
+function stanford_media_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
+  /** @var \Drupal\Core\Field\FieldItemListInterface $items */
+  $items = $context['items'];
+  if ($items->getFieldDefinition()->getType() == 'image') {
+    $element['#process'][] = [
+      '\Drupal\stanford_media\StanfordMedia',
+      'imageWidgetProcess',
+    ];
+  }
+}
+
+/**
  * Implements hook_field_widget_WIDGET_TYPE_form_alter().
  */
 function stanford_media_field_widget_text_textarea_form_alter(&$element, FormStateInterface $form_state, $context) {
@@ -76,9 +90,11 @@ function stanford_media_field_widget_text_textarea_form_alter(&$element, FormSta
  * Implements hook_ckeditor_css_alter().
  */
 function stanford_media_ckeditor_css_alter(array &$css, Editor $editor) {
-  // Adds styles inside the ckeditor iframe.
-  $css[] = drupal_get_path('module', 'stanford_media') . '/dist/css/stanford_media.admin.css';
-  $css[] = drupal_get_path('module', 'stanford_media') . '/dist/css/stanford_media.css';
+  /** @var \Drupal\Core\Extension\ModuleExtensionList $extensions */
+  $extensions = \Drupal::service('extension.list.module');
+  // Add styles inside the ckeditor iframe.
+  $css[] = $extensions->getPath('stanford_media') . '/dist/css/stanford_media.admin.css';
+  $css[] = $extensions->getPath('stanford_media') . '/dist/css/stanford_media.css';
 }
 
 /**
@@ -86,7 +102,7 @@ function stanford_media_ckeditor_css_alter(array &$css, Editor $editor) {
  */
 function stanford_media_theme_registry_alter(&$theme_registry) {
   // Register the path to the template files.
-  $path = drupal_get_path('module', 'stanford_media') . '/templates';
+  $path = \Drupal::service('extension.list.module')->getPath('stanford_media') . '/templates';
   $theme_registry['dropzonejs']['path'] = $path;
 }
 
