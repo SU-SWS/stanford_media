@@ -106,7 +106,7 @@ class BulkUploadFormTest extends StanfordMediaFormTestBase {
     $account->method('hasPermission')->willReturn(FALSE);
     $this->assertFalse($form_object->access($account)->isAllowed());
 
-    $admin_role = Role::create(['id' => 'admin']);
+    $admin_role = Role::create(['id' => 'admin', 'label' => 'Admin']);
     $admin_role->grantPermission('administer media');
     $admin_role->save();
 
