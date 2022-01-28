@@ -1,6 +1,16 @@
 # Stanford Media
 
 
+8.x-2.22
+--------------------------------------------------------------------------------
+_Release Date: 2022-01-27_
+
+- D8CORE-5241 Adjust image alt text description (#112)
+- Adjust validation to work with D9.3
+- Updated tests for D9.3 (#110)
+- Enable oembed providers via update hook
+
+
 8.x-2.21
 --------------------------------------------------------------------------------
 _Release Date: 2021-11-19_
