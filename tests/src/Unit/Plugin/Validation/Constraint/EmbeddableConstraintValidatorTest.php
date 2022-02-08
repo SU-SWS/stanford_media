@@ -7,7 +7,6 @@ use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Symfony\Component\Validator\Context\ExecutionContext;
-use Drupal\Core\Validation\DrupalTranslator;
 use Drupal\media\MediaInterface;
 use Drupal\media\MediaSourceInterface;
 use Drupal\media\OEmbed\ResourceFetcherInterface;
@@ -18,6 +17,7 @@ use Drupal\stanford_media\Plugin\Validation\Constraint\EmbeddableConstraint;
 use Drupal\stanford_media\Plugin\Validation\Constraint\EmbeddableConstraintValidator;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Class GoogleFormsConstraintValidatorTest
@@ -55,7 +55,7 @@ class EmbeddableConstraintValidatorTest extends UnitTestCase {
     parent::setUp();
 
     $validator = $this->createMock(ValidatorInterface::class);
-    $translator = new DrupalTranslator();
+    $translator = $this->createMock(TranslatorInterface::class);
     $this->validationContext = new ExecutionContext($validator, NULL, $translator);
 
     $url_resolver = $this->createMock(UrlResolverInterface::class);
@@ -104,7 +104,7 @@ class EmbeddableConstraintValidatorTest extends UnitTestCase {
     $constraint = $this->createMock(EmbeddableConstraint::class);
 
     $this->validator->validate($field_item_list, $constraint);
-    $this->assertStringContainsString('valid oEmbed resource', (string) $this->validationContext->getViolations()->get(0)->getMessage());
+    $this->assertStringContainsString('valid oEmbed resource', (string) $this->validationContext->getViolations()->get(0)->getMessageTemplate());
   }
 
   public function testUnstructuredEmbeddable(){

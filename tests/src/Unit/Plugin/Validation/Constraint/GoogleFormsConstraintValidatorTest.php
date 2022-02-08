@@ -12,6 +12,7 @@ use Drupal\stanford_media\Plugin\Validation\Constraint\GoogleFormsConstraint;
 use Drupal\stanford_media\Plugin\Validation\Constraint\GoogleFormsConstraintValidator;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Class GoogleFormsConstraintValidatorTest
@@ -49,7 +50,7 @@ class GoogleFormsConstraintValidatorTest extends UnitTestCase {
     parent::setUp();
 
     $validator = $this->createMock(ValidatorInterface::class);
-    $translator = new DrupalTranslator();
+    $translator = $this->createMock(TranslatorInterface::class);
     $this->validationContext = new ExecutionContext($validator, NULL, $translator);
 
     $this->validator = new GoogleFormsConstraintValidator();
