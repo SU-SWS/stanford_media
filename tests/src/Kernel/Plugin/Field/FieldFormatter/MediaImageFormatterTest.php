@@ -112,6 +112,7 @@ class MediaImageFormatterTest extends KernelTestBase {
         'view_mode' => 'default',
         'image_style' => 'large',
         'link' => TRUE,
+        'remove_alt' => FALSE,
       ],
     ]);
     $display->save();
@@ -122,7 +123,7 @@ class MediaImageFormatterTest extends KernelTestBase {
     $file->save();
     $this->mediaEntity = Media::create([
       'bundle' => 'image',
-      $source_field->getName() => $file->id(),
+      $source_field->getName() => ['target_id' => $file->id(), 'alt' => 'Foo Bar Alt'],
     ]);
     $this->mediaEntity->save();
 
@@ -159,6 +160,27 @@ class MediaImageFormatterTest extends KernelTestBase {
     $rendered_node = \Drupal::service('renderer')->renderPlain($node_render);
     preg_match_all('/<a.*href="\/node\/.*\/large\/.*\/logo.png.*\/a>/s', $rendered_node, $preg_match);
     $this->assertNotEmpty($preg_match[0]);
+    preg_match_all('/alt="Foo Bar Alt"/', $rendered_node, $preg_match);
+    $this->assertNotEmpty($preg_match[0]);
+
+    EntityViewDisplay::load('node.article.default')->setComponent('foo', [
+      'type' => 'media_image_formatter',
+      'settings' => [
+        'view_mode' => 'default',
+        'image_style' => 'large',
+        'link' => TRUE,
+        'remove_alt' => TRUE,
+      ],
+    ])->save();
+
+    $view_builder = \Drupal::entityTypeManager()
+      ->getViewBuilder('node');
+    $node_render = $view_builder->view($node, 'default');
+    $rendered_node = \Drupal::service('renderer')->renderPlain($node_render);
+    preg_match_all('/<a.*href="\/node\/.*\/large\/.*\/logo.png.*\/a>/s', $rendered_node, $preg_match);
+    $this->assertNotEmpty($preg_match[0]);
+    preg_match_all('/alt="Foo Bar Alt"/', $rendered_node, $preg_match);
+    $this->assertEmpty($preg_match[0]);
   }
 
 }

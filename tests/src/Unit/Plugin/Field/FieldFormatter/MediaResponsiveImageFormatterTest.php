@@ -62,6 +62,7 @@ class MediaResponsiveImageFormatterTest extends FieldFormatterTestBase {
     $this->assertEquals('foo', $element['field_foo'][0]['#responsive_image_style_id']);
     $this->assertArrayNotHasKey('#url', $element['field_foo'][0]);
 
+    $element['#stanford_media_remove_alt'] = TRUE;
     $element['#stanford_media_url'] = 'http://foo.bar';
     $element['#stanford_media_url_title'] = 'Foo Bar';
 
