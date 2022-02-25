@@ -11,6 +11,9 @@ field.formatter.settings.media_image_formatter:
     image_style:
       type: string
       label: 'Image style'
+    remove_alt:
+      type: boolean
+      label: 'Remove the alt text'
 
 field.formatter.settings.media_responsive_image_formatter:
   type: mapping

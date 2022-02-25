@@ -42,6 +42,10 @@ class MediaImageFormatter extends MediaImageFormatterBase {
     foreach (Element::children($element[$source_field]) as $delta) {
       $item = &$element[$source_field][$delta];
       $item['#theme'] = 'image_formatter';
+      // If the field formatter is configured to remove the alt text.
+      if ($element['#stanford_media_remove_alt']) {
+        $item['#item']->set('alt', '');
+      }
       $item['#image_style'] = $element['#stanford_media_image_style'];
 
       if (isset($element['#stanford_media_url'])) {
