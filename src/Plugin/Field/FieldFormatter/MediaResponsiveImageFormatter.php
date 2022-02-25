@@ -53,7 +53,7 @@ class MediaResponsiveImageFormatter extends MediaImageFormatterBase {
       $item['#theme'] = 'responsive_image_formatter';
       $item['#responsive_image_style_id'] = $element['#stanford_media_image_style'];
       // If the field formatter is configured to remove the alt text.
-      if ($element['#stanford_media_remove_alt']) {
+      if (!empty($element['#stanford_media_remove_alt'])) {
         $item['#item']->set('alt', '');
       }
 

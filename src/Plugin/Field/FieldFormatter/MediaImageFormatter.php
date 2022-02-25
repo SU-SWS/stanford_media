@@ -43,7 +43,7 @@ class MediaImageFormatter extends MediaImageFormatterBase {
       $item = &$element[$source_field][$delta];
       $item['#theme'] = 'image_formatter';
       // If the field formatter is configured to remove the alt text.
-      if ($element['#stanford_media_remove_alt']) {
+      if (!empty($element['#stanford_media_remove_alt'])) {
         $item['#item']->set('alt', '');
       }
       $item['#image_style'] = $element['#stanford_media_image_style'];

@@ -40,11 +40,10 @@ class MediaImageFormatterTest extends FieldFormatterTestBase {
    * Static method returns.
    */
   public function testStaticMethods() {
-    $this->assertArrayEquals([
-      'image_style' => NULL,
-      'link' => 0,
-      'view_mode' => 'default',
-    ], $this->plugin::defaultSettings());
+    $default_settings = $this->plugin::defaultSettings();
+    $this->assertArrayHasKey('image_style', $default_settings);
+    $this->assertArrayHasKey('link', $default_settings);
+    $this->assertArrayHasKey('view_mode', $default_settings);
 
     $this->assertTrue($this->plugin::isApplicable($this->fieldDefinition));
     $this->fieldTargetIsMedia = FALSE;

@@ -110,7 +110,7 @@ abstract class MediaImageFormatterBase extends MediaFormatterBase implements Tru
       return $elements;
     }
 
-    $remove_alt = $this->getSetting('remove_alt') ?? FALSE;
+    $remove_alt = (bool) $this->getSetting('remove_alt') ?? FALSE;
     foreach ($elements as &$element) {
       $element['#stanford_media_image_style'] = $style;
       $element['#pre_render'][] = [get_class($this), 'preRender'];
