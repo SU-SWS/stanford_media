@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\stanford_media\Unit\Plugin\Field\FieldFormatter;
 
+use Drupal\Core\Field\FieldItemInterface;
 use Drupal\stanford_media\Plugin\Field\FieldFormatter\MediaResponsiveImageFormatter;
 
 /**
@@ -53,7 +54,9 @@ class MediaResponsiveImageFormatterTest extends FieldFormatterTestBase {
       '#stanford_media_image_style' => 'foo',
       'field_foo' => [
         '#field_type' => 'image',
-        0 => [],
+        0 => [
+          '#item' => $this->createMock(FieldItemInterface::class)
+        ],
       ],
     ];
     $element = $this->plugin->preRender($original_element);
