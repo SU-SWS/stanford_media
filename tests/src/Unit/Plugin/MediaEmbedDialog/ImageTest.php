@@ -71,7 +71,7 @@ class ImageTest extends MediaEmbedDialogTestBase {
     $form_state->setValues(['hasCaption' => 1, 'caption_text' => '<div>Foo <a href="/here">Bar</a> Baz</div>']);
     $plugin->alterDialogValues($values, $form, $form_state);
 
-    $this->assertArrayEquals([
+    $this->assertEquals([
       'attributes' => [
         'data-caption' => 'Foo <a href="/here">Bar</a> Baz',
         'data-caption-hash' => 'badc6',

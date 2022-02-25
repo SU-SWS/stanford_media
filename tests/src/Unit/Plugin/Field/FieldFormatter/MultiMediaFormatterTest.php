@@ -52,7 +52,7 @@ class MultiMediaFormatterTest extends FieldFormatterTestBase {
    * Static method returns.
    */
   public function testDefaultSettings() {
-    $this->assertArrayEquals([
+    $this->assertEquals([
       'link' => FALSE,
       'view_mode' => 'default',
       'image' => [

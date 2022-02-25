@@ -90,7 +90,7 @@ class MediaImageFormatterTest extends FieldFormatterTestBase {
       ],
     ];
     $after = $this->plugin->preRender($before);
-    $this->assertArrayEquals($before, $after);
+    $this->assertEquals($before, $after);
   }
 
 }

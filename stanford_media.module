@@ -110,7 +110,7 @@ function stanford_media_theme_registry_alter(&$theme_registry) {
  * Implements hook_ENTITY_TYPE_view_alter().
  */
 function stanford_media_media_view_alter(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display) {
-  if (empty($build['#embed']) || !$build['#embed']) {
+  if (empty($build['#embed'])) {
     return;
   }
 
