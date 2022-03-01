@@ -6,6 +6,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\media\MediaInterface;
 use Drupal\stanford_media\Plugin\MediaEmbedDialogBase;
 use Drupal\media\Plugin\media\Source\Image as ImageSource;
+use Drupal\stanford_media\StanfordMedia;
 
 /**
  * Changes embedded Image media form.
@@ -53,6 +54,7 @@ class Image extends MediaEmbedDialogBase {
       return;
     }
 
+    $form['#process'][] = [StanfordMedia::class, 'imageWidgetProcess'];
     // Allow a user to edit the caption text in the modal.
     $form['caption_text'] = [
       '#type' => 'textarea',
