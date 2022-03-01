@@ -198,7 +198,7 @@ class BundleSuggestionManager extends DefaultPluginManager implements BundleSugg
         }
       }
     }
-    $server_max = Bytes::toInt(Environment::getUploadMaxSize());
+    $server_max = Bytes::toNumber(Environment::getUploadMaxSize());
     return !$max_filesize || $server_max < $max_filesize ? $server_max : $max_filesize;
   }
 
@@ -212,7 +212,7 @@ class BundleSuggestionManager extends DefaultPluginManager implements BundleSugg
     if ($source_field) {
       $field = $this->entityTypeManager->getStorage('field_config')
         ->load("media.{$media_type->id()}.$source_field");
-      return Bytes::toInt($field->getSetting('max_filesize'));
+      return Bytes::toNumber($field->getSetting('max_filesize'));
     }
     return 0;
   }
