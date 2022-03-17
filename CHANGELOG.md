@@ -1,6 +1,14 @@
 # Stanford Media
 
 
+8.x-2.24
+--------------------------------------------------------------------------------
+_Release Date: 2022-03-17_
+
+- D8CORE-5180 D8CORE-5227 Remove alt text on people images (#118)
+- D8CORE-5410 Apply the modified alt help text to embedded images (#117)
+
+
 8.x-2.23
 --------------------------------------------------------------------------------
 _Release Date: 2022-02-08_

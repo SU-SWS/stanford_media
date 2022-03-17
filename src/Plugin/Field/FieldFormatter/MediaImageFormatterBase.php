@@ -35,6 +35,7 @@ abstract class MediaImageFormatterBase extends MediaFormatterBase implements Tru
     $settings = [
       'image_style' => NULL,
       'link' => 0,
+      'remove_alt' => FALSE,
     ];
     return $settings + parent::defaultSettings();
   }
@@ -62,6 +63,12 @@ abstract class MediaImageFormatterBase extends MediaFormatterBase implements Tru
       '#type' => 'checkbox',
       '#title' => $this->t('Link Media to Parent'),
       '#default_value' => $this->getSetting('link'),
+    ];
+    $elements['remove_alt'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Remove Alt Attribute'),
+      '#description' => $this->t('If the image is always "decorative", remove the alt text that might exist on the media image.'),
+      '#default_value' => $this->getSetting('remove_alt') ?: FALSE,
     ];
     return $elements;
   }
@@ -103,9 +110,11 @@ abstract class MediaImageFormatterBase extends MediaFormatterBase implements Tru
       return $elements;
     }
 
+    $remove_alt = (bool) $this->getSetting('remove_alt') ?? FALSE;
     foreach ($elements as &$element) {
       $element['#stanford_media_image_style'] = $style;
       $element['#pre_render'][] = [get_class($this), 'preRender'];
+      $element['#stanford_media_remove_alt'] = $remove_alt;
 
       if ($this->getSetting('link')) {
         /** @var \Drupal\Core\Entity\EntityInterface $parent */
@@ -116,6 +125,9 @@ abstract class MediaImageFormatterBase extends MediaFormatterBase implements Tru
         $element['#cache']['keys'][] = substr(md5($element['#stanford_media_url']->toUriString()), 0, 5);
       }
       $element['#cache']['keys'][] = $style;
+      if ($remove_alt) {
+        $element['#cache']['keys'][] = 'no-alt';
+      }
     }
 
     return $elements;

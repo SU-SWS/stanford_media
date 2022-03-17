@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\stanford_media\Unit\Plugin\Field\FieldFormatter;
 
+use Drupal\Core\Field\FieldItemInterface;
 use Drupal\stanford_media\Plugin\Field\FieldFormatter\MediaResponsiveImageFormatter;
 
 /**
@@ -53,7 +54,9 @@ class MediaResponsiveImageFormatterTest extends FieldFormatterTestBase {
       '#stanford_media_image_style' => 'foo',
       'field_foo' => [
         '#field_type' => 'image',
-        0 => [],
+        0 => [
+          '#item' => $this->createMock(FieldItemInterface::class)
+        ],
       ],
     ];
     $element = $this->plugin->preRender($original_element);
@@ -62,6 +65,7 @@ class MediaResponsiveImageFormatterTest extends FieldFormatterTestBase {
     $this->assertEquals('foo', $element['field_foo'][0]['#responsive_image_style_id']);
     $this->assertArrayNotHasKey('#url', $element['field_foo'][0]);
 
+    $element['#stanford_media_remove_alt'] = TRUE;
     $element['#stanford_media_url'] = 'http://foo.bar';
     $element['#stanford_media_url_title'] = 'Foo Bar';
 

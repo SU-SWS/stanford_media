@@ -261,7 +261,7 @@ class MediaLibraryFileUploadForm extends FileUploadForm {
    *   Ignore this because `render()` is not established during unit tests.
    */
   protected static function getRenderDisplay(array &$render_array) {
-    return render($render_array);
+    return \Drupal::service('renderer')->render($render_array);
   }
 
   /**
