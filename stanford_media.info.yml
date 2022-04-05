@@ -19,3 +19,4 @@ dependencies:
   - focal_point:focal_point
   - inline_entity_form:inline_entity_form
   - oembed_providers:oembed_providers
+  - transliterate_filenames:transliterate_filenames
