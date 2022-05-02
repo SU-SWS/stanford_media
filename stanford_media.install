@@ -102,7 +102,7 @@ function stanford_media_update_8005(&$sandbox) {
   $entity_type_manager = \Drupal::entityTypeManager();
   $entity_ids = array_splice($sandbox['entities'], 0, 25);
   foreach ($entity_ids as $item) {
-    list($entity_type, $field_name, $entity_id) = explode(':', $item);
+    [$entity_type, $field_name, $entity_id] = explode(':', $item);
     $entity_storage = $entity_type_manager->getStorage($entity_type);
     $entity = $entity_storage->load($entity_id);
 
@@ -127,7 +127,7 @@ function stanford_media_update_8005(&$sandbox) {
 function _stanford_media_update_8005_entity_list() {
   $list = [];
   foreach (_stanford_media_update_8005_get_filter_fields() as $field) {
-    list($entity_type, $field_name) = explode(':', $field);
+    [$entity_type, $field_name] = explode(':', $field);
 
     try {
       $entity_ids = \Drupal::entityQuery($entity_type)
@@ -261,6 +261,13 @@ function stanford_media_update_8201(&$sandbox) {
 /**
  * Install oembed_providers module.
  */
-function stanford_media_update_8202(){
+function stanford_media_update_8202() {
   \Drupal::service('module_installer')->install(['oembed_providers']);
+}
+
+/**
+ * Enable transliterate_filenames module.
+ */
+function stanford_media_update_8220() {
+  \Drupal::service('module_installer')->install(['transliterate_filenames']);
 }
