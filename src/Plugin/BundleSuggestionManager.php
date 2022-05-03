@@ -228,7 +228,8 @@ class BundleSuggestionManager extends DefaultPluginManager implements BundleSugg
     if ($source_field) {
       $field = $this->entityTypeManager->getStorage('field_config')
         ->load("media.{$media_type->id()}.$source_field");
-      $path = 'public://' . $field->getSetting('file_directory');
+      $scheme = $field->getSetting('uri_scheme');
+      $path = $scheme . '://' . $field->getSetting('file_directory');
     }
 
     // Ensure the path has a trailing slash.
