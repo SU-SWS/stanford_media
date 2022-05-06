@@ -5,6 +5,7 @@ namespace Drupal\stanford_media\Plugin;
 use Drupal\Component\Utility\Bytes;
 use Drupal\Component\Utility\Environment;
 use Drupal\Core\Cache\CacheBackendInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
@@ -34,6 +35,13 @@ class BundleSuggestionManager extends DefaultPluginManager implements BundleSugg
   protected $entityTypeManager;
 
   /**
+   * Config factory service.
+   *
+   * @var \Drupal\Core\Entity\ConfigFactoryInterface
+   */
+  protected $configFactory;
+
+  /**
    * Constructs a BundleSuggestionManager object.
    *
    * @param \Traversable $namespaces
@@ -48,7 +56,7 @@ class BundleSuggestionManager extends DefaultPluginManager implements BundleSugg
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   Entity type manager service.
    */
-  public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler, EntityFieldManagerInterface $field_manager, EntityTypeManagerInterface $entity_type_manager) {
+  public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler, EntityFieldManagerInterface $field_manager, EntityTypeManagerInterface $entity_type_manager, ConfigFactoryInterface $config_factory) {
     parent::__construct(
       'Plugin/BundleSuggestion',
       $namespaces,
@@ -60,6 +68,7 @@ class BundleSuggestionManager extends DefaultPluginManager implements BundleSugg
     $this->setCacheBackend($cache_backend, 'bundle_suggestion_info_plugins');
     $this->fieldManager = $field_manager;
     $this->entityTypeManager = $entity_type_manager;
+    $this->configFactory = $config_factory;
   }
 
   /**
@@ -223,7 +232,7 @@ class BundleSuggestionManager extends DefaultPluginManager implements BundleSugg
   public function getUploadPath(MediaTypeInterface $media_type) {
     $source_field = $media_type->getSource()
       ->getConfiguration()['source_field'];
-    $path = \Drupal::config('system.file')->get('default_scheme') . '://';
+    $path = $this->configFactory->get('system.file')->get('default_scheme') . '://';
 
     if ($source_field) {
       $field = $this->entityTypeManager->getStorage('field_config')
