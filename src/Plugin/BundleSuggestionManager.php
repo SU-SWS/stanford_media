@@ -232,7 +232,9 @@ class BundleSuggestionManager extends DefaultPluginManager implements BundleSugg
   public function getUploadPath(MediaTypeInterface $media_type) {
     $source_field = $media_type->getSource()
       ->getConfiguration()['source_field'];
-    $default_scheme = $this->configFactory->get('system.file')->get('default_scheme');
+    $default_scheme = $this->configFactory->get('system.file')
+      ->get('default_scheme');
+    $path = "$default_scheme://";
 
     if ($source_field) {
       $field = $this->entityTypeManager->getStorage('field_config')
