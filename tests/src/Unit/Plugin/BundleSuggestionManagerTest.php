@@ -3,6 +3,7 @@
 namespace Drupal\Tests\stanford_media\Unit\Plugin;
 
 use Drupal\Core\Cache\CacheBackendInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -28,6 +29,13 @@ class BundleSuggestionManagerTest extends UnitTestCase {
    * @var \Drupal\stanford_media\Plugin\BundleSuggestionManager
    */
   protected $suggestionManager;
+
+  /**
+   * Field uri scheme setting.
+   *
+   * @var string
+   */
+  protected $fieldUriScheme = 'public';
 
   /**
    * {@inheritDoc}
@@ -57,6 +65,8 @@ class BundleSuggestionManagerTest extends UnitTestCase {
     $entity_storage->method('loadMultiple')->willReturn(['foo' => $media_type]);
     $entity_storage->method('load')->willReturn($field_config);
 
+    $config_factory = $this->getConfigFactoryStub(['system.file' => ['default_scheme' => 'public']]);
+
     $media = $this->createMock(MediaInterface::class);
     $media->method('access')->willReturn(TRUE);
     $entity_storage->method('create')->willReturn($media);
@@ -64,7 +74,7 @@ class BundleSuggestionManagerTest extends UnitTestCase {
     $entity_type_manager = $this->createMock(EntityTypeManagerInterface::class);
     $entity_type_manager->method('getStorage')->willReturn($entity_storage);
 
-    $this->suggestionManager = new BundleSuggestionManagerOverride($namespaces, $cache, $module_handler, $field_manager, $entity_type_manager);
+    $this->suggestionManager = new BundleSuggestionManagerOverride($namespaces, $cache, $module_handler, $field_manager, $entity_type_manager, $config_factory);
   }
 
   /**
@@ -87,6 +97,8 @@ class BundleSuggestionManagerTest extends UnitTestCase {
       case 'file_extensions':
         return 'jpg png jpeg';
 
+      case 'uri_scheme':
+        return $this->fieldUriScheme;
     }
   }
 
@@ -119,27 +131,42 @@ class BundleSuggestionManagerTest extends UnitTestCase {
       'jpeg',
     ], $this->suggestionManager->getAllExtensions());
   }
-//
-//  /**
-//   * File size should be the correct number.
-//   */
-//  public function testFilesize() {
-//    $this->assertEquals(2097152, (int) $this->suggestionManager->getMaxFileSize());
-//  }
-//
-//  /**
-//   * Verify upload path comes back appropriately.
-//   */
-//  public function testUploadPath() {
-//    $source = $this->createMock(MediaSourceInterface::class);
-//    $source->method('getConfiguration')
-//      ->willReturn(['source_field' => $this->randomMachineName()]);
-//
-//    $media_type = $this->createMock(MediaTypeInterface::class);
-//    $media_type->method('getSource')->willReturn($source);
-//
-//    $this->assertEquals('public://foo/bar/baz/', $this->suggestionManager->getUploadPath($media_type));
-//  }
+
+  /**
+   * File size should be the correct number.
+   */
+  public function testFilesize() {
+    $this->assertEquals(2097152, (int) $this->suggestionManager->getMaxFileSize());
+  }
+
+  /**
+   * Verify upload path comes back appropriately.
+   */
+  public function testUploadPath() {
+    $source = $this->createMock(MediaSourceInterface::class);
+    $source->method('getConfiguration')
+      ->willReturn(['source_field' => $this->randomMachineName()]);
+
+    $media_type = $this->createMock(MediaTypeInterface::class);
+    $media_type->method('getSource')->willReturn($source);
+
+    $this->assertEquals('public://foo/bar/baz/', $this->suggestionManager->getUploadPath($media_type));
+  }
+
+  /**
+   * Verify upload path comes back appropriately.
+   */
+  public function testPrivateUploadPath() {
+    $this->fieldUriScheme= 'private';
+    $source = $this->createMock(MediaSourceInterface::class);
+    $source->method('getConfiguration')
+      ->willReturn(['source_field' => $this->randomMachineName()]);
+
+    $media_type = $this->createMock(MediaTypeInterface::class);
+    $media_type->method('getSource')->willReturn($source);
+
+    $this->assertEquals('private://foo/bar/baz/', $this->suggestionManager->getUploadPath($media_type));
+  }
 
   /**
    * Get a mocked cache object.
