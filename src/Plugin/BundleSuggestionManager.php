@@ -223,7 +223,7 @@ class BundleSuggestionManager extends DefaultPluginManager implements BundleSugg
   public function getUploadPath(MediaTypeInterface $media_type) {
     $source_field = $media_type->getSource()
       ->getConfiguration()['source_field'];
-    $path = \Drupal::config('system.file')->get('default_scheme') . "://";
+    $path = \Drupal::config('system.file')->get('default_scheme') . '://';
 
     if ($source_field) {
       $field = $this->entityTypeManager->getStorage('field_config')
