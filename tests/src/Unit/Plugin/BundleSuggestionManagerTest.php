@@ -3,6 +3,7 @@
 namespace Drupal\Tests\stanford_media\Unit\Plugin;
 
 use Drupal\Core\Cache\CacheBackendInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -57,6 +58,8 @@ class BundleSuggestionManagerTest extends UnitTestCase {
     $entity_storage->method('loadMultiple')->willReturn(['foo' => $media_type]);
     $entity_storage->method('load')->willReturn($field_config);
 
+    $config_factory = $this->createMock(ConfigFactoryInterface::class);
+
     $media = $this->createMock(MediaInterface::class);
     $media->method('access')->willReturn(TRUE);
     $entity_storage->method('create')->willReturn($media);
@@ -64,7 +67,7 @@ class BundleSuggestionManagerTest extends UnitTestCase {
     $entity_type_manager = $this->createMock(EntityTypeManagerInterface::class);
     $entity_type_manager->method('getStorage')->willReturn($entity_storage);
 
-    $this->suggestionManager = new BundleSuggestionManagerOverride($namespaces, $cache, $module_handler, $field_manager, $entity_type_manager);
+    $this->suggestionManager = new BundleSuggestionManagerOverride($namespaces, $cache, $module_handler, $field_manager, $entity_type_manager, $config_factory);
   }
 
   /**
