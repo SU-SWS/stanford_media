@@ -31,6 +31,13 @@ class BundleSuggestionManagerTest extends UnitTestCase {
   protected $suggestionManager;
 
   /**
+   * Field uri scheme setting.
+   *
+   * @var string
+   */
+  protected $fieldUriScheme = 'public';
+
+  /**
    * {@inheritDoc}
    */
   protected function setUp(): void {
@@ -58,7 +65,7 @@ class BundleSuggestionManagerTest extends UnitTestCase {
     $entity_storage->method('loadMultiple')->willReturn(['foo' => $media_type]);
     $entity_storage->method('load')->willReturn($field_config);
 
-    $config_factory = $this->createMock(ConfigFactoryInterface::class);
+    $config_factory = $this->getConfigFactoryStub(['system.file' => ['default_scheme' => 'public']]);
 
     $media = $this->createMock(MediaInterface::class);
     $media->method('access')->willReturn(TRUE);
@@ -90,6 +97,8 @@ class BundleSuggestionManagerTest extends UnitTestCase {
       case 'file_extensions':
         return 'jpg png jpeg';
 
+      case 'uri_scheme':
+        return $this->fieldUriScheme;
     }
   }
 
@@ -122,27 +131,42 @@ class BundleSuggestionManagerTest extends UnitTestCase {
       'jpeg',
     ], $this->suggestionManager->getAllExtensions());
   }
-//
-//  /**
-//   * File size should be the correct number.
-//   */
-//  public function testFilesize() {
-//    $this->assertEquals(2097152, (int) $this->suggestionManager->getMaxFileSize());
-//  }
-//
-//  /**
-//   * Verify upload path comes back appropriately.
-//   */
-//  public function testUploadPath() {
-//    $source = $this->createMock(MediaSourceInterface::class);
-//    $source->method('getConfiguration')
-//      ->willReturn(['source_field' => $this->randomMachineName()]);
-//
-//    $media_type = $this->createMock(MediaTypeInterface::class);
-//    $media_type->method('getSource')->willReturn($source);
-//
-//    $this->assertEquals('public://foo/bar/baz/', $this->suggestionManager->getUploadPath($media_type));
-//  }
+
+  /**
+   * File size should be the correct number.
+   */
+  public function testFilesize() {
+    $this->assertEquals(2097152, (int) $this->suggestionManager->getMaxFileSize());
+  }
+
+  /**
+   * Verify upload path comes back appropriately.
+   */
+  public function testUploadPath() {
+    $source = $this->createMock(MediaSourceInterface::class);
+    $source->method('getConfiguration')
+      ->willReturn(['source_field' => $this->randomMachineName()]);
+
+    $media_type = $this->createMock(MediaTypeInterface::class);
+    $media_type->method('getSource')->willReturn($source);
+
+    $this->assertEquals('public://foo/bar/baz/', $this->suggestionManager->getUploadPath($media_type));
+  }
+
+  /**
+   * Verify upload path comes back appropriately.
+   */
+  public function testPrivateUploadPath() {
+    $this->fieldUriScheme= 'private';
+    $source = $this->createMock(MediaSourceInterface::class);
+    $source->method('getConfiguration')
+      ->willReturn(['source_field' => $this->randomMachineName()]);
+
+    $media_type = $this->createMock(MediaTypeInterface::class);
+    $media_type->method('getSource')->willReturn($source);
+
+    $this->assertEquals('private://foo/bar/baz/', $this->suggestionManager->getUploadPath($media_type));
+  }
 
   /**
    * Get a mocked cache object.
