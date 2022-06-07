@@ -73,6 +73,8 @@ jobs:
       selenium:
         image: selenium/standalone-chrome
         options: --health-cmd '/opt/bin/check-grid.sh'
+        ports:
+          - 4444:80
       mysql:
         image: mysql:5.7
         env:
