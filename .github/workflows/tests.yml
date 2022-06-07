@@ -93,9 +93,9 @@ jobs:
         run: |
           apt install default-jdk nodejs npm -y
           npm install selenium-standalone -g
-          selenium-standalone install && selenium-standalone start
+          selenium-standalone install && selenium-standalone start &
       - name: Run tests
         run: |
           composer global require fzaninotto/faker:'dev-master as 1.9.2'
-          composer global require SU-SWS/stanford-caravan:dev-gh-actions
+          composer global require SU-SWS/stanford-caravan:dev-8.x-2.x
           ~/.composer/vendor/bin/sws-caravan codeception /var/www/html --extension-dir=$GITHUB_WORKSPACE/project --suites=functional
