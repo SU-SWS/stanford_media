@@ -91,7 +91,7 @@ jobs:
           path: project
       - name: Setup Selenium
         run: |
-          apt install nodejs npm -y
+          apt install default-jdk nodejs npm -y
           npm install selenium-standalone -g
           selenium-standalone install && selenium-standalone start
       - name: Run tests
