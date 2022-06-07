@@ -70,11 +70,9 @@ jobs:
     container:
       image: pookmish/drupal8ci:php8
     services:
-#      selenium:
-#        image: selenium/standalone-chrome
-#        options: --health-cmd '/opt/bin/check-grid.sh'
-#        ports:
-#          - 4444:80
+      localhost:
+        image: selenium/standalone-chrome
+        options: --health-cmd '/opt/bin/check-grid.sh'
       mysql:
         image: mysql:5.7
         env:
