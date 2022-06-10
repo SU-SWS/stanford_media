@@ -39,6 +39,9 @@ class StanfordMedia implements TrustedCallbackInterface {
       $link = Link::fromTextAndUrl($url->toString(), $url)->toString();
       $element['alt']['#description'] = new TranslatableMarkup('Short description of the image used by screen readers and displayed when the image is not loaded. Leave blank if image is decorative. Learn more about alternative text: @link', ['@link' => $link]);
     }
+    if ($element['#alt_field_required'] || !$element['alt']['#access']) {
+      return $element;
+    }
 
     $element['decorative'] = [
       '#type' => 'checkbox',
@@ -46,10 +49,11 @@ class StanfordMedia implements TrustedCallbackInterface {
       '#description' => t('Check this only if the image presents no additional information to the viewer.'),
       '#weight' => -99,
       '#default_value' => empty($element['alt']['#default_value']),
-      '#attributes' => ['data-decorative' => true],
+      '#attributes' => ['data-decorative' => TRUE],
     ];
     $element['alt']['#states']['visible'][':input[data-decorative]']['checked'] = FALSE;
     $element['alt']['#value_callback'] = [self::class, 'imageAltValue'];
+
     return $element;
   }
 
