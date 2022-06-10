@@ -37,7 +37,10 @@ class StanfordMediaTest extends UnitTestCase {
   public function testCallbacks() {
     $this->assertNotEmpty(StanfordMedia::trustedCallbacks());
 
-    $element = ['alt' => ['#description' => 'Foo Bar Baz']];
+    $element = [
+      '#alt_field_required' => FALSE,
+      'alt' => ['#access' => TRUE, '#description' => 'Foo Bar Baz'],
+    ];
     $form_state = new FormState();
     $form = [];
 
