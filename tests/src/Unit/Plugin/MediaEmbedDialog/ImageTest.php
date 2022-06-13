@@ -3,6 +3,8 @@
 namespace Drupal\Tests\stanford_media\Unit\Plugin\MediaEmbedDialog;
 
 use Drupal\Core\Form\FormState;
+use Drupal\Core\TypedData\TypedDataInterface;
+use Drupal\image\Plugin\Field\FieldType\ImageItem;
 use Drupal\stanford_media\Plugin\MediaEmbedDialog\Image;
 use Drupal\media\Plugin\media\Source\Image as ImageSource;
 
@@ -68,7 +70,10 @@ class ImageTest extends MediaEmbedDialogTestBase {
     $plugin = Image::create($this->container, ['entity' => $this->mediaEntity], '', []);
     $values = [];
     $form_state = new FormState();
-    $form_state->setValues(['hasCaption' => 1, 'caption_text' => '<div>Foo <a href="/here">Bar</a> Baz</div>']);
+    $form_state->setValues([
+      'hasCaption' => 1,
+      'caption_text' => '<div>Foo <a href="/here">Bar</a> Baz</div>',
+    ]);
     $plugin->alterDialogValues($values, $form, $form_state);
 
     $this->assertEquals([
@@ -83,10 +88,19 @@ class ImageTest extends MediaEmbedDialogTestBase {
    * PreRender should set the field value.
    */
   public function testPreRender() {
+    $field_item = $this->createMock(TypedDataInterface::class);
+    $field_item->method('getString')
+      ->willReturn(Image::DECORATIVE);
+    $image_item = $this->createMock(ImageItem::class);
+    $image_item->method('get')->willReturn($field_item);
+
+    $this->mediaSource->method('getConfiguration')
+      ->willReturn(['source_field' => 'field_foo']);
     $plugin = Image::create($this->container, ['entity' => $this->mediaEntity], '', []);
     $build = [
       '#media' => $this->mediaEntity,
       '#attributes' => ['data-caption-hash' => 'foo bar'],
+      'field_foo' => [['#item' => $image_item]],
     ];
     $plugin->embedAlter($build, $this->mediaEntity);
     $this->assertArrayNotHasKey('data-caption-hash', $build['#attributes']);
