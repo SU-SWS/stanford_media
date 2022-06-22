@@ -18,7 +18,7 @@ interface EmbedValidatorInterface extends PluginInspectionInterface {
    * @return bool
    *   If the given embeddable code is allowed.
    */
-  public function isEmbedCodeAllowed($code): bool;
+  public function isEmbedCodeAllowed(string $code): bool;
 
   /**
    * Prepare and process the raw html code.
@@ -29,6 +29,6 @@ interface EmbedValidatorInterface extends PluginInspectionInterface {
    * @return string
    *   Prepared and ready html code.
    */
-  public function prepareEmbedCode($code): string;
+  public function prepareEmbedCode(string $code): string;
 
 }

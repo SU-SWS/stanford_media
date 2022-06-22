@@ -5,7 +5,7 @@ namespace Drupal\stanford_media\Plugin\EmbedValidator;
 use Drupal\stanford_media\Plugin\EmbedValidatorBase;
 
 /**
- * Upload file plugin suggestion.
+ * Localist Events embed code validation.
  *
  * @EmbedValidator (
  *   id = "localist",
@@ -17,7 +17,7 @@ class LocalistValidator extends EmbedValidatorBase {
   /**
    * {@inheritDoc}
    */
-  public function isEmbedCodeAllowed($code): bool {
+  public function isEmbedCodeAllowed(string $code): bool {
     $code = str_replace("\n", ' ', $code);
     preg_match('/id="localist-widget-/', $code, $localist_id);
     preg_match('/<script.*src=".*stanford.*localist.*?"/', $code, $localist_script);
@@ -27,7 +27,7 @@ class LocalistValidator extends EmbedValidatorBase {
   /**
    * {@inheritDoc}
    */
-  public function prepareEmbedCode($code): string {
+  public function prepareEmbedCode(string $code): string {
     $code = str_replace("\n", ' ', $code);
     // Localist only needs the div with the widget id and the javascript. Ignore
     // any other tags or contents.
