@@ -8,7 +8,7 @@ use Drupal\stanford_media\Plugin\EmbedValidatorBase;
  * Abstract IFrame Validator.
  *
  */
-class AbstractIframeValidator extends EmbedValidatorBase {
+abstract class AbstractIframeValidator extends EmbedValidatorBase {
 
   /**
    * {@inheritDoc}
