@@ -23,7 +23,7 @@ abstract class AbstractIframeValidator extends EmbedValidatorBase {
       return FALSE;
     }
     $source = parse_url($source_matches[1]);
-    return $source['host'] == self::EMBEDDOMAIN;
+    return $source['host'] == self::EMBEDDOMAIN || strpos($source['host'], self::EMBEDDOMAIN) !== FALSE;
   }
 
   /**
