@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\stanford_media\Plugin\EmbedValidator;
+namespace Drupal\stanford_media\Plugin;
 
 use Drupal\stanford_media\Plugin\EmbedValidatorBase;
 
