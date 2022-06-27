@@ -10,6 +10,8 @@ use Drupal\stanford_media\Plugin\EmbedValidatorBase;
  */
 abstract class AbstractIframeValidator extends EmbedValidatorBase {
 
+  const EMBEDDOMAIN = '';
+
   /**
    * {@inheritDoc}
    */
