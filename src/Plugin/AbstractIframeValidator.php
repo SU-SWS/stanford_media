@@ -18,7 +18,7 @@ abstract class AbstractIframeValidator extends EmbedValidatorBase {
   public function isEmbedCodeAllowed(string $code): bool {
     $code = str_replace("\n", ' ', $code);
     preg_match('/<iframe.* src="(.+?)"/', $code, $source_matches);
-    preg_match('/<iframe.* title="(.+?)"/', $code, $title_matches);
+    preg_match('/<iframe.* title="(.*)"/', $code, $title_matches);
     if (empty($source_matches[1]) || empty($title_matches[1])) {
       return FALSE;
     }
