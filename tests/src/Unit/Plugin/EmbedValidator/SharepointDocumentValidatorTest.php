@@ -36,7 +36,7 @@ class SharepointDocumentValidatorTest extends UnitTestCase {
     $this->assertFalse($this->plugin->isEmbedCodeAllowed(''));
     $this->assertFalse($this->plugin->isEmbedCodeAllowed('<script src="stanford.airtable.com></script>'));
     $this->assertFalse($this->plugin->isEmbedCodeAllowed('<iframe data-foo="foo" src="http://foobar.com">'));
-    $this->assertTrue($this->plugin->isEmbedCodeAllowed('<div><iframe data-foo="bar" src="https://office365stanford.sharepoint.com/foo-bar"></iframe>'));
+    $this->assertTrue($this->plugin->isEmbedCodeAllowed('<div><iframe data-foo="bar" src="https://office365stanford.sharepoint.com/foo-bar" title="test embed"></iframe>'));
   }
 
   /**
@@ -45,6 +45,6 @@ class SharepointDocumentValidatorTest extends UnitTestCase {
   public function testPreparedCode(){
     $this->assertEquals('', $this->plugin->prepareEmbedCode(''));
     $this->assertEquals('', $this->plugin->prepareEmbedCode('<div id="foo-bar"><script src="foo.bar"></script>'));
-    $this->assertEquals('<iframe src="foo-bar"></iframe>', $this->plugin->prepareEmbedCode('<div></div><iframe src="foo-bar"><p></p></iframe><div></div>'));
+    $this->assertEquals('<iframe src="foo-bar" title="test embed"></iframe>', $this->plugin->prepareEmbedCode('<div></div><iframe src="foo-bar" title="test embed"><p></p></iframe><div></div>'));
   }
 }
