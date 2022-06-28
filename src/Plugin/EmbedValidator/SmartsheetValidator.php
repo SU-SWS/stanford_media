@@ -12,7 +12,7 @@ use Drupal\stanford_media\Plugin\IframeEmbedValidatorBase;
  *   label = "Smartsheet"
  * )
  */
-class SmartsheetEmbedValidatorBase extends IframeEmbedValidatorBase {
+class SmartsheetValidator extends IframeEmbedValidatorBase {
 
   const EMBED_DOMAIN = 'app.smartsheet.com';
 

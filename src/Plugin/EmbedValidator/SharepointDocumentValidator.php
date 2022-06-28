@@ -12,7 +12,7 @@ use Drupal\stanford_media\Plugin\IframeEmbedValidatorBase;
  *   label = "Sharepoint Document"
  * )
  */
-class SharepointDocumentEmbedValidatorBase extends IframeEmbedValidatorBase {
+class SharepointDocumentValidator extends IframeEmbedValidatorBase {
 
   const EMBED_DOMAIN = 'office365stanford.sharepoint.com';
 

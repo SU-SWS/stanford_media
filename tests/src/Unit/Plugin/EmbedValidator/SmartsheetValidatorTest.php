@@ -3,30 +3,30 @@
 namespace Drupal\Tests\stanford_media\Unit\Plugin\EmbedValidator;
 
 use Drupal\stanford_media\Plugin\EmbedValidator\LocalistValidator;
-use Drupal\stanford_media\Plugin\EmbedValidator\SmartsheetEmbedValidatorBase;
+use Drupal\stanford_media\Plugin\EmbedValidator\SmartsheetValidator;
 use Drupal\Tests\UnitTestCase;
 
 /**
  * Test the smartsheet embed validator.
  *
  * @group stanford_media
- * @coversDefaultClass \Drupal\stanford_media\Plugin\EmbedValidator\SmartsheetEmbedValidatorBase
+ * @coversDefaultClass \Drupal\stanford_media\Plugin\EmbedValidator\SmartsheetValidator
  */
 class SmartsheetValidatorTest extends UnitTestCase {
 
   /**
    * Plugin object.
    *
-   * @var \Drupal\stanford_media\Plugin\EmbedValidator\SmartsheetEmbedValidatorBase
+   * @var \Drupal\stanford_media\Plugin\EmbedValidator\SmartsheetValidator
    */
   protected $plugin;
 
   /**
    * {@inheritDoc}
    */
-  protected function setUp() {
+  protected function setup(): void {
     parent::setUp();
-    $this->plugin = new SmartsheetEmbedValidatorBase([], '', []);
+    $this->plugin = new SmartsheetValidator([], '', []);
   }
   /**
    * Only airtable iframe code is allowed.

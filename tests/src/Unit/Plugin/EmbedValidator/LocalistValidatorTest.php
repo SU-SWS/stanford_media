@@ -23,7 +23,7 @@ class LocalistValidatorTest extends UnitTestCase {
   /**
    * {@inheritDoc}
    */
-  protected function setUp() {
+  protected function setup(): void {
     parent::setUp();
     $this->plugin = new LocalistValidator([], '', []);
   }

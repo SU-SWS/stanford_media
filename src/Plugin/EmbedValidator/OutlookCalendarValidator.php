@@ -12,7 +12,7 @@ use Drupal\stanford_media\Plugin\IframeEmbedValidatorBase;
  *   label = "Outlook Calendar"
  * )
  */
-class OutlookCalendarEmbedValidatorBase extends IframeEmbedValidatorBase {
+class OutlookCalendarValidator extends IframeEmbedValidatorBase {
 
   const EMBED_DOMAIN = 'outlook.office365.com';
 

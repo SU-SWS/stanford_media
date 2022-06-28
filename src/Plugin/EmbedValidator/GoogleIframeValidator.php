@@ -12,7 +12,7 @@ use Drupal\stanford_media\Plugin\IframeEmbedValidatorBase;
  *   label = "Google IFrames"
  * )
  */
-class GoogleIframeEmbedValidatorBase extends IframeEmbedValidatorBase {
+class GoogleIframeValidator extends IframeEmbedValidatorBase {
 
   const EMBED_DOMAIN = '.google.com';
 

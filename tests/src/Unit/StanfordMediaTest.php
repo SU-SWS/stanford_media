@@ -20,7 +20,7 @@ class StanfordMediaTest extends UnitTestCase {
   /**
    * {@inheritDoc}
    */
-  protected function setUp() {
+  protected function setup(): void {
     parent::setUp();
     $url_assembler = $this->createMock(UnroutedUrlAssemblerInterface::class);
     $link_generator = $this->createMock(LinkGeneratorInterface::class);

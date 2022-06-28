@@ -12,7 +12,7 @@ use Drupal\stanford_media\Plugin\IframeEmbedValidatorBase;
  *   label = "Airtable"
  * )
  */
-class AirtableEmbedValidatorBase extends IframeEmbedValidatorBase {
+class AirtableValidator extends IframeEmbedValidatorBase {
 
   const EMBED_DOMAIN = 'airtable.com';
 

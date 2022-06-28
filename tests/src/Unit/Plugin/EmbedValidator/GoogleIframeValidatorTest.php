@@ -2,30 +2,30 @@
 
 namespace Drupal\Tests\stanford_media\Unit\Plugin\EmbedValidator;
 
-use Drupal\stanford_media\Plugin\EmbedValidator\GoogleIframeEmbedValidatorBase;
+use Drupal\stanford_media\Plugin\EmbedValidator\GoogleIframeValidator;
 use Drupal\Tests\UnitTestCase;
 
 /**
  * Test the Google Iframe embed validator.
  *
  * @group stanford_media
- * @coversDefaultClass \Drupal\stanford_media\Plugin\EmbedValidator\GoogleIframeEmbedValidatorBase
+ * @coversDefaultClass \Drupal\stanford_media\Plugin\EmbedValidator\GoogleIframeValidator
  */
 class GoogleIframeValidatorTest extends UnitTestCase {
 
   /**
    * Plugin object.
    *
-   * @var \Drupal\stanford_media\Plugin\EmbedValidator\GoogleIframeEmbedValidatorBase
+   * @var \Drupal\stanford_media\Plugin\EmbedValidator\GoogleIframeValidator
    */
   protected $plugin;
 
   /**
    * {@inheritDoc}
    */
-  protected function setUp() {
+  protected function setup(): void {
     parent::setUp();
-    $this->plugin = new GoogleIframeEmbedValidatorBase([], '', []);
+    $this->plugin = new GoogleIframeValidator([], '', []);
   }
   /**
    * Only airtable iframe code is allowed.
