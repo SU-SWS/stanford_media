@@ -20,7 +20,7 @@ class StanfordMediaTest extends UnitTestCase {
   /**
    * {@inheritDoc}
    */
-  protected function setUp() {
+  protected function setup(): void {
     parent::setUp();
     $url_assembler = $this->createMock(UnroutedUrlAssemblerInterface::class);
     $link_generator = $this->createMock(LinkGeneratorInterface::class);
@@ -40,6 +40,8 @@ class StanfordMediaTest extends UnitTestCase {
     $element = [
       '#alt_field_required' => FALSE,
       'alt' => ['#access' => TRUE, '#description' => 'Foo Bar Baz'],
+      '#default_value' => 'Foo',
+      '#parents' => [],
     ];
     $form_state = new FormState();
     $form = [];
@@ -47,6 +49,13 @@ class StanfordMediaTest extends UnitTestCase {
     $new_element = StanfordMedia::imageWidgetProcess($element, $form_state, $form);
     $this->assertNotEmpty($new_element);
     $this->assertStringContainsString('Leave blank if image is decorative', (string) $new_element['alt']['#description']);
+
+    $form_state->setValue(['decorative'], FALSE);
+    $this->assertEquals('Foo', StanfordMedia::imageAltValue($element, FALSE, $form_state));
+    $this->assertEquals('Foo', StanfordMedia::imageAltValue($element, 'Foo', $form_state));
+
+    $form_state->setValue(['decorative'], TRUE);
+    $this->assertEquals('', StanfordMedia::imageAltValue($element, 'Foo', $form_state));
   }
 
 }
