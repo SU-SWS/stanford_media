@@ -2,7 +2,7 @@
 
 namespace Drupal\stanford_media\Plugin\EmbedValidator;
 
-use Drupal\stanford_media\Plugin\AbstractIframeValidator;
+use Drupal\stanford_media\Plugin\IframeEmbedValidatorBase;
 
 /**
  * Sharepoint Document Iframe validation.
@@ -12,8 +12,8 @@ use Drupal\stanford_media\Plugin\AbstractIframeValidator;
  *   label = "Sharepoint Document"
  * )
  */
-class SharepointDocumentValidator extends AbstractIframeValidator {
+class SharepointDocumentEmbedValidatorBase extends IframeEmbedValidatorBase {
 
-  const EMBEDDOMAIN = 'office365stanford.sharepoint.com';
+  const EMBED_DOMAIN = 'office365stanford.sharepoint.com';
 
 }

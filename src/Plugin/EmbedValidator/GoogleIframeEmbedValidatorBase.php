@@ -2,7 +2,7 @@
 
 namespace Drupal\stanford_media\Plugin\EmbedValidator;
 
-use Drupal\stanford_media\Plugin\AbstractIframeValidator;
+use Drupal\stanford_media\Plugin\IframeEmbedValidatorBase;
 
 /**
  * Google Calendar Iframe validation.
@@ -12,8 +12,8 @@ use Drupal\stanford_media\Plugin\AbstractIframeValidator;
  *   label = "Google IFrames"
  * )
  */
-class GoogleIframeValidator extends AbstractIframeValidator {
+class GoogleIframeEmbedValidatorBase extends IframeEmbedValidatorBase {
 
-  const EMBEDDOMAIN = '.google.com';
+  const EMBED_DOMAIN = '.google.com';
 
 }

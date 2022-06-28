@@ -2,21 +2,21 @@
 
 namespace Drupal\Tests\stanford_media\Unit\Plugin\EmbedValidator;
 
-use Drupal\stanford_media\Plugin\EmbedValidator\AirtableValidator;
+use Drupal\stanford_media\Plugin\EmbedValidator\AirtableEmbedValidatorBase;
 use Drupal\Tests\UnitTestCase;
 
 /**
  * Test the localist embed validator.
  *
  * @group stanford_media
- * @coversDefaultClass \Drupal\stanford_media\Plugin\EmbedValidator\AirtableValidator
+ * @coversDefaultClass \Drupal\stanford_media\Plugin\EmbedValidator\AirtableEmbedValidatorBase
  */
 class AirtableValidatorTest extends UnitTestCase {
 
   /**
    * Plugin object.
    *
-   * @var \Drupal\stanford_media\Plugin\EmbedValidator\AirtableValidator
+   * @var \Drupal\stanford_media\Plugin\EmbedValidator\AirtableEmbedValidatorBase
    */
   protected $plugin;
 
@@ -25,7 +25,7 @@ class AirtableValidatorTest extends UnitTestCase {
    */
   protected function setUp() {
     parent::setUp();
-    $this->plugin = new AirtableValidator([], '', []);
+    $this->plugin = new AirtableEmbedValidatorBase([], '', []);
   }
 
   /**

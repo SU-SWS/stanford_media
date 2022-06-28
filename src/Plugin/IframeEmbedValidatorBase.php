@@ -2,15 +2,15 @@
 
 namespace Drupal\stanford_media\Plugin;
 
-use Drupal\stanford_media\Plugin\EmbedValidatorBase;
-
 /**
  * Abstract IFrame Validator.
- *
  */
-abstract class AbstractIframeValidator extends EmbedValidatorBase {
+abstract class IframeEmbedValidatorBase extends EmbedValidatorBase {
 
-  const EMBEDDOMAIN = '';
+  /**
+   * Domain string used to compare the iframe src attribute.
+   */
+  const EMBED_DOMAIN = '';
 
   /**
    * {@inheritDoc}
@@ -24,7 +24,7 @@ abstract class AbstractIframeValidator extends EmbedValidatorBase {
       return FALSE;
     }
     $source = parse_url($source_matches[1]);
-    return $source['host'] == self::EMBEDDOMAIN || strpos($source['host'], self::EMBEDDOMAIN) !== FALSE;
+    return $source['host'] == self::EMBED_DOMAIN || strpos($source['host'], self::EMBED_DOMAIN) !== FALSE;
   }
 
   /**

@@ -3,21 +3,21 @@
 namespace Drupal\Tests\stanford_media\Unit\Plugin\EmbedValidator;
 
 use Drupal\stanford_media\Plugin\EmbedValidator\LocalistValidator;
-use Drupal\stanford_media\Plugin\EmbedValidator\SharepointDocumentValidator;
+use Drupal\stanford_media\Plugin\EmbedValidator\SharepointDocumentEmbedValidatorBase;
 use Drupal\Tests\UnitTestCase;
 
 /**
  * Test the Sharepoint Document embed validator.
  *
  * @group stanford_media
- * @coversDefaultClass \Drupal\stanford_media\Plugin\EmbedValidator\SharepointDocumentValidator
+ * @coversDefaultClass \Drupal\stanford_media\Plugin\EmbedValidator\SharepointDocumentEmbedValidatorBase
  */
 class SharepointDocumentValidatorTest extends UnitTestCase {
 
   /**
    * Plugin object.
    *
-   * @var \Drupal\stanford_media\Plugin\EmbedValidator\SharepointDocumentValidator
+   * @var \Drupal\stanford_media\Plugin\EmbedValidator\SharepointDocumentEmbedValidatorBase
    */
   protected $plugin;
 
@@ -26,7 +26,7 @@ class SharepointDocumentValidatorTest extends UnitTestCase {
    */
   protected function setUp() {
     parent::setUp();
-    $this->plugin = new SharepointDocumentValidator([], '', []);
+    $this->plugin = new SharepointDocumentEmbedValidatorBase([], '', []);
   }
 
   /**

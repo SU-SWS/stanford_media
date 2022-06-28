@@ -2,7 +2,7 @@
 
 namespace Drupal\stanford_media\Plugin\EmbedValidator;
 
-use Drupal\stanford_media\Plugin\AbstractIframeValidator;
+use Drupal\stanford_media\Plugin\IframeEmbedValidatorBase;
 
 /**
  * Outlook Calendar Iframe validation.
@@ -12,8 +12,8 @@ use Drupal\stanford_media\Plugin\AbstractIframeValidator;
  *   label = "Outlook Calendar"
  * )
  */
-class OutlookCalendarValidator extends AbstractIframeValidator {
+class OutlookCalendarEmbedValidatorBase extends IframeEmbedValidatorBase {
 
-  const EMBEDDOMAIN = 'outlook.office365.com';
+  const EMBED_DOMAIN = 'outlook.office365.com';
 
 }
