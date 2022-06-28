@@ -2,21 +2,21 @@
 
 namespace Drupal\Tests\stanford_media\Unit\Plugin\EmbedValidator;
 
-use Drupal\stanford_media\Plugin\EmbedValidator\GoogleIframeValidator;
+use Drupal\stanford_media\Plugin\EmbedValidator\GoogleIframeEmbedValidatorBase;
 use Drupal\Tests\UnitTestCase;
 
 /**
  * Test the Google Iframe embed validator.
  *
  * @group stanford_media
- * @coversDefaultClass \Drupal\stanford_media\Plugin\EmbedValidator\GoogleIframeValidator
+ * @coversDefaultClass \Drupal\stanford_media\Plugin\EmbedValidator\GoogleIframeEmbedValidatorBase
  */
 class GoogleIframeValidatorTest extends UnitTestCase {
 
   /**
    * Plugin object.
    *
-   * @var \Drupal\stanford_media\Plugin\EmbedValidator\GoogleIframeValidator
+   * @var \Drupal\stanford_media\Plugin\EmbedValidator\GoogleIframeEmbedValidatorBase
    */
   protected $plugin;
 
@@ -25,7 +25,7 @@ class GoogleIframeValidatorTest extends UnitTestCase {
    */
   protected function setUp() {
     parent::setUp();
-    $this->plugin = new GoogleIframeValidator([], '', []);
+    $this->plugin = new GoogleIframeEmbedValidatorBase([], '', []);
   }
   /**
    * Only airtable iframe code is allowed.
@@ -34,7 +34,7 @@ class GoogleIframeValidatorTest extends UnitTestCase {
     $this->assertFalse($this->plugin->isEmbedCodeAllowed(''));
     $this->assertFalse($this->plugin->isEmbedCodeAllowed('<script src="stanford.airtable.com></script>'));
     $this->assertFalse($this->plugin->isEmbedCodeAllowed('<iframe data-foo="foo" src="http://foobar.com">'));
-    $this->assertTrue($this->plugin->isEmbedCodeAllowed('<div><iframe data-foo="bar" src="https://foobar.google.com/foo-bar"></iframe>'));
+    $this->assertTrue($this->plugin->isEmbedCodeAllowed('<div><iframe data-foo="bar" src="https://foobar.google.com/foo-bar" title="test embed"></iframe>'));
   }
 
   /**
@@ -43,7 +43,7 @@ class GoogleIframeValidatorTest extends UnitTestCase {
   public function testPreparedCode(){
     $this->assertEquals('', $this->plugin->prepareEmbedCode(''));
     $this->assertEquals('', $this->plugin->prepareEmbedCode('<div id="foo-bar"><script src="foo.bar"></script>'));
-    $this->assertEquals('<iframe src="foo-bar"></iframe>', $this->plugin->prepareEmbedCode('<div></div><iframe src="foo-bar"><p></p></iframe><div></div>'));
+    $this->assertEquals('<iframe src="foo-bar" title="test embed"></iframe>', $this->plugin->prepareEmbedCode('<div></div><iframe src="foo-bar" title="test embed"><p></p></iframe><div></div>'));
   }
 
 }
