@@ -4,6 +4,7 @@ namespace Drupal\Tests\stanford_media\Unit;
 
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Form\FormState;
+use Drupal\Core\GeneratedUrl;
 use Drupal\Core\Utility\LinkGeneratorInterface;
 use Drupal\Core\Utility\UnroutedUrlAssemblerInterface;
 use Drupal\stanford_media\StanfordMedia;
@@ -24,6 +25,7 @@ class StanfordMediaTest extends UnitTestCase {
     parent::setUp();
     $url_assembler = $this->createMock(UnroutedUrlAssemblerInterface::class);
     $link_generator = $this->createMock(LinkGeneratorInterface::class);
+    $link_generator->method('generateFromLink')->willReturn('<a href="http://foobar.com">Foobar</a>');
     $container = new ContainerBuilder();
     $container->set('unrouted_url_assembler', $url_assembler);
     $container->set('link_generator', $link_generator);
