@@ -25,7 +25,7 @@ abstract class IframeEmbedValidatorBase extends EmbedValidatorBase {
       return FALSE;
     }
     $source = parse_url($source_matches[1]);
-    return strpos($source['host'], self::EMBED_DOMAIN) !== FALSE;
+    return isset($source['host']) && strpos($source['host'], $this::EMBED_DOMAIN) !== FALSE;
   }
 
   /**
