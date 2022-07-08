@@ -1,5 +1,15 @@
 # Stanford Media
 
+
+8.3.3
+--------------------------------------------------------------------------------
+_Release Date: 2022-07-08_
+
+- Fixup for iframe validators constant value
+- Eliminated deprecated functions and methods
+- D8CORE-5128 provide embed code validators for a few iframe services (#127)
+- fixed composer namespace to lowercase
+
 8.3.2
 --------------------------------------------------------------------------------
 _Release Date: 2022-06-15_
