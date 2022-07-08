@@ -326,7 +326,10 @@ function _stanford_media_post_update_8202_image_display_mode($image_style) {
  */
 function _stanford_media_post_update_8202_entity_list() {
   $list = [];
-  module_load_install('stanford_media');
+  /** @var \Drupal\Core\Extension\ModuleHandlerInterface $module_handler */
+  $module_handler = \Drupal::moduleHandler();
+  $module_handler->loadInclude('stanford_media', 'install');
+
   foreach (_stanford_media_update_8005_get_filter_fields() as $field) {
     [$entity_type, $field_name] = explode(':', $field);
 
