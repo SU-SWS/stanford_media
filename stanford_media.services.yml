@@ -1,4 +1,7 @@
 services:
+  stanford_media:
+    class: Drupal\stanford_media\StanfordMedia
+    arguments: ['@entity_type.manager', '@file.usage', '@config.factory']
   stanford_media.route_subscriber:
     class: Drupal\stanford_media\Routing\RouteSubscriber
     tags:

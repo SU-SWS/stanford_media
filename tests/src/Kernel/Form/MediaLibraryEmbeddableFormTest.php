@@ -9,6 +9,7 @@ use Drupal\media_library\MediaLibraryState;
 use Drupal\stanford_media\Form\MediaLibraryEmbeddableForm;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\Tests\stanford_media\Kernel\StanfordMediaTestBase;
 use Drupal\Tests\user\Traits\UserCreationTrait;
 
 /**
@@ -17,7 +18,7 @@ use Drupal\Tests\user\Traits\UserCreationTrait;
  * @group stanford_media
  * @coversDefaultClass \Drupal\stanford_media\Form\MediaLibraryEmbeddableForm
  */
-class MediaLibraryEmbeddableFormTest extends StanfordMediaFormTestBase {
+class MediaLibraryEmbeddableFormTest extends StanfordMediaTestBase {
 
   use UserCreationTrait;
 

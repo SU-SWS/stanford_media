@@ -2,16 +2,46 @@
 
 namespace Drupal\stanford_media;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
+use Drupal\Core\Messenger\MessengerTrait;
 use Drupal\Core\Security\TrustedCallbackInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
+use Drupal\file\FileUsage\FileUsageInterface;
+use Drupal\media\MediaInterface;
 
 /**
  * Class StanfordMedia.
  */
-class StanfordMedia implements TrustedCallbackInterface {
+class StanfordMedia implements StanfordMediaInterface, TrustedCallbackInterface {
+
+  use MessengerTrait;
+  use StringTranslationTrait;
+
+  /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
+   * The file usage.
+   *
+   * @var \Drupal\file\FileUsage\FileUsageInterface
+   */
+  protected $fileUsage;
+
+  /**
+   * The config factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+  protected $configFactory;
 
   /**
    * {@inheritDoc}
@@ -82,6 +112,76 @@ class StanfordMedia implements TrustedCallbackInterface {
       return '';
     }
     return $input;
+  }
+
+  /**
+   * Constructs a new StanfordMedia.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
+   * @param \Drupal\file\FileUsage\FileUsageInterface $file_usage
+   *   The file usage.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   Config factory service.
+   */
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, FileUsageInterface $file_usage, ConfigFactoryInterface $config_factory) {
+    $this->entityTypeManager = $entity_type_manager;
+    $this->fileUsage = $file_usage;
+    $this->configFactory = $config_factory;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function deleteMediaFiles(MediaInterface $media): void {
+    // Delete the file from the source field for files and image media types.
+    if (in_array($media->getSource()->getPluginId(), ['file', 'image'])) {
+      $media_type = $this->entityTypeManager->getStorage('media_type')
+        ->load($media->bundle());
+      $source_field = $media->getSource()
+        ->getSourceFieldDefinition($media_type)
+        ->getName();
+      $this->deleteFileFromField($media, $source_field);
+    }
+    // Delete the thumbnail for videos and other media types.
+    $this->deleteFileFromField($media, 'thumbnail');
+  }
+
+  /**
+   * Grab the file entity from the media field and delete it.
+   *
+   * @param \Drupal\media\MediaInterface $media
+   *   Media entity.
+   * @param string $field_name
+   *   Field name for the file reference.
+   */
+  protected function deleteFileFromField(MediaInterface $media, string $field_name): void {
+    if (!$media->hasField($field_name)) {
+      return;
+    }
+    /** @var \Drupal\Core\Field\FieldItemInterface $field_value */
+    $field_value = $media->get($field_name)->get(0);
+
+    /** @var \Drupal\file\FileInterface $file */
+    $file = $this->entityTypeManager->getStorage('file')
+      ->load($field_value->get('target_id')->getString());
+
+    $media_icon_path = $this->configFactory->getEditable('media.settings')
+      ->get('icon_base_uri');
+
+    // Remove the scheme of the icon path so that we don't delete private or
+    // public directory icons.
+    $media_icon_path = strpbrk($media_icon_path, '/');
+
+    if (
+      $file &&
+      !$this->fileUsage->listUsage($file) &&
+      !str_contains($file->getFileUri(), $media_icon_path)
+    ) {
+      $this->messenger()
+        ->addStatus($this->t('Permanently deleted file from the server: @file', ['@file' => $file->getFilename()]));
+      $file->delete();
+    }
   }
 
 }

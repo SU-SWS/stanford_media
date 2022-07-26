@@ -1,11 +1,11 @@
 <?php
 
-namespace Drupal\Tests\stanford_media\Kernel\Form;
+namespace Drupal\Tests\stanford_media\Kernel;
 
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\media\Entity\MediaType;
 
-abstract class StanfordMediaFormTestBase extends KernelTestBase {
+abstract class StanfordMediaTestBase extends KernelTestBase {
 
   /**
    * {@inheritDoc}
@@ -39,6 +39,7 @@ abstract class StanfordMediaFormTestBase extends KernelTestBase {
     $this->installSchema('file', ['file_usage']);
     $this->installSchema('system', ['sequences']);
     $this->installConfig('system');
+    $this->installConfig('media');
 
     $this->mediaType = MediaType::create([
       'name' => 'file',

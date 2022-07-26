@@ -20,6 +20,13 @@ use Drupal\stanford_media\Form\MediaLibraryFileUploadForm;
 use Drupal\stanford_media\Form\MediaLibraryGoogleFormForm;
 
 /**
+ * Implements hook_ENTITY_TYPE_delete().
+ */
+function stanford_media_media_delete(MediaInterface $media) {
+  \Drupal::service('stanford_media')->deleteMediaFiles($media);
+}
+
+/**
  * Implements hook_entity_bundle_field_info_alter().
  */
 function stanford_media_entity_bundle_field_info_alter(&$fields, EntityTypeInterface $entity_type, $bundle) {
