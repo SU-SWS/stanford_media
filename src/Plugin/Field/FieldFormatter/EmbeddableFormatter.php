@@ -98,6 +98,7 @@ class EmbeddableFormatter extends OEmbedFormatter {
       '#default_value' => $this->getSetting('allowed_tags'),
       '#description' => $this->t('HTML Tags that will be allowed for the unstructured embeddable formatter'),
       '#element_validate' => [[$this, 'validateAllowedTags']],
+      '#maxlength' => NULL,
     ];
     return $element;
   }
