@@ -7,6 +7,7 @@ use Drupal\media\Entity\Media;
 use Drupal\media\Entity\MediaType;
 use Drupal\media_library\MediaLibraryState;
 use Drupal\stanford_media\Form\MediaLibraryGoogleFormForm;
+use Drupal\Tests\stanford_media\Kernel\StanfordMediaTestBase;
 use Drupal\Tests\user\Traits\UserCreationTrait;
 
 /**
@@ -15,7 +16,7 @@ use Drupal\Tests\user\Traits\UserCreationTrait;
  * @group stanford_media
  * @coversDefaultClass \Drupal\stanford_media\Form\MediaLibraryGoogleFormForm
  */
-class MediaLibraryGoogleFormFormTest extends StanfordMediaFormTestBase {
+class MediaLibraryGoogleFormFormTest extends StanfordMediaTestBase {
 
   use UserCreationTrait;
 
