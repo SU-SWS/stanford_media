@@ -86,6 +86,7 @@ class MultiMediaFormatterTest extends KernelTestBase {
     $this->installEntitySchema('file');
     $this->installSchema('file', ['file_usage']);
     $this->installEntitySchema('media');
+    $this->installConfig('media');
 
     // Ceate a Date Format.
     DateFormat::create([

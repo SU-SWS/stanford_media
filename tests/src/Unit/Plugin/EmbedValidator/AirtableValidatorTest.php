@@ -33,7 +33,7 @@ class AirtableValidatorTest extends UnitTestCase {
    */
   public function testAllowed() {
     $this->assertFalse($this->plugin->isEmbedCodeAllowed(''));
-    $this->assertFalse($this->plugin->isEmbedCodeAllowed('<script src="stanford.airtable.com></script>'));
+    $this->assertFalse($this->plugin->isEmbedCodeAllowed('<script src="stanford.twitter.com"></script>'));
     $this->assertFalse($this->plugin->isEmbedCodeAllowed('<iframe data-foo="foo" src="http://foobar.com">'));
     $this->assertTrue($this->plugin->isEmbedCodeAllowed('<div><iframe data-foo="bar" src="https://airtable.com/foo-bar" title="test embed" ></iframe>'));
   }

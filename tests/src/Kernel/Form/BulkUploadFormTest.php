@@ -6,6 +6,7 @@ use Drupal\Core\Form\FormState;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\stanford_media\Form\BulkUpload;
+use Drupal\Tests\stanford_media\Kernel\StanfordMediaTestBase;
 use Drupal\user\Entity\Role;
 use Drupal\user\Entity\User;
 
@@ -15,7 +16,7 @@ use Drupal\user\Entity\User;
  * @group stanford_media
  * @coversDefaultClass \Drupal\stanford_media\Form\BulkUpload
  */
-class BulkUploadFormTest extends StanfordMediaFormTestBase {
+class BulkUploadFormTest extends StanfordMediaTestBase {
 
   /**
    * Testing form namespace argument.

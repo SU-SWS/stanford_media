@@ -8,6 +8,7 @@ use Drupal\media\Entity\Media;
 use Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationManager;
 use Drupal\media_library\MediaLibraryState;
 use Drupal\stanford_media\Form\MediaLibraryFileUploadForm;
+use Drupal\Tests\stanford_media\Kernel\StanfordMediaTestBase;
 
 /**
  * Class MediaLibraryFileUploadFormTest.
@@ -15,7 +16,7 @@ use Drupal\stanford_media\Form\MediaLibraryFileUploadForm;
  * @group stanford_media
  * @coversDefaultClass \Drupal\stanford_media\Form\MediaLibraryFileUploadForm
  */
-class MediaLibraryFileUploadFormTest extends StanfordMediaFormTestBase {
+class MediaLibraryFileUploadFormTest extends StanfordMediaTestBase {
 
   /**
    * Testing form namespace argument.
@@ -107,7 +108,7 @@ class MediaLibraryFileUploadFormTest extends StanfordMediaFormTestBase {
    * @throws \Drupal\Core\Form\FormAjaxException
    */
   public function testEntityFormElement() {
-    list($form, $form_state) = $this->runEntityFormSetup();
+    [$form, $form_state] = $this->runEntityFormSetup();
     $this->assertArrayNotHasKey('similar_media', $form['media'][0]);
   }
 
@@ -120,7 +121,7 @@ class MediaLibraryFileUploadFormTest extends StanfordMediaFormTestBase {
    */
   public function testEntityFormWithSimilar() {
     $this->addDuplicationService();
-    list($form, $form_state) = $this->runEntityFormSetup();
+    [$form, $form_state] = $this->runEntityFormSetup();
     $this->assertCount(4, $form['media'][0]['similar_media'][0]['#options']);
   }
 
@@ -165,7 +166,7 @@ class MediaLibraryFileUploadFormTest extends StanfordMediaFormTestBase {
   public function testValidation() {
     $this->addDuplicationService();
     /** @var \Drupal\Core\Form\FormStateInterface $form_state */
-    list($form, $form_state) = $this->runEntityFormSetup();
+    [$form, $form_state] = $this->runEntityFormSetup();
     $form_state->setValue(['similar_media'], [2]);
     $form_state->getFormObject()->validateForm($form, $form_state);
     $this->assertEquals(2, $form_state->get(['media', 0])->id());

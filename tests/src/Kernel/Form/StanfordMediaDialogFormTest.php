@@ -6,6 +6,7 @@ use Drupal\Core\Form\FormState;
 use Drupal\editor\Entity\Editor;
 use Drupal\filter\Entity\FilterFormat;
 use Drupal\media\Entity\Media;
+use Drupal\Tests\stanford_media\Kernel\StanfordMediaTestBase;
 
 /**
  * Class StanfordMediaDialogFormTest.
@@ -13,7 +14,7 @@ use Drupal\media\Entity\Media;
  * @group stanford_media
  * @coversDefaultClass \Drupal\stanford_media\Form\StanfordMediaDialogForm
  */
-class StanfordMediaDialogFormTest extends StanfordMediaFormTestBase {
+class StanfordMediaDialogFormTest extends StanfordMediaTestBase {
 
   /**
    * {@inheritDoc}

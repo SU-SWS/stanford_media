@@ -33,7 +33,7 @@ class LocalistValidatorTest extends UnitTestCase {
    */
   public function testAllowed() {
     $this->assertFalse($this->plugin->isEmbedCodeAllowed(''));
-    $this->assertFalse($this->plugin->isEmbedCodeAllowed('<script src="stanford.enterprise.localist.com></script>'));
+    $this->assertFalse($this->plugin->isEmbedCodeAllowed('<script src="stanford.enterprise.localist.com"></script>'));
     $this->assertFalse($this->plugin->isEmbedCodeAllowed('<div id="localist-widget-1234"><script src="foo.bar"></script>'));
     $this->assertTrue($this->plugin->isEmbedCodeAllowed('<div id="localist-widget-1234"></div><script src="stanford.enterprise.localist.com"></script>'));
   }
