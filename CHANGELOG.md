@@ -1,5 +1,13 @@
 # Stanford Media
 
+8.3.5
+--------------------------------------------------------------------------------
+_Release Date: 2022-07-28_
+
+- HSD8-1350 Restore the color profile after stripping the metadata
+- Remove max length on the embed code field formatter settings
+
+
 8.3.4
 --------------------------------------------------------------------------------
 _Release Date: 2022-07-28_
