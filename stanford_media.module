@@ -305,7 +305,16 @@ function stanford_media_file_insert(FileInterface $file) {
     // Now that it's rotated, set the orientation, before stripping all other
     // tags.
     $image->setImageOrientation(imagick::ORIENTATION_TOPLEFT);
+
+    // 1. Extract the ICC profile
+    // 2. Strip EXIF data and image profile
+    // 3. Add the ICC profile back
+    $profiles = $image->getImageProfiles('icc');
     $image->stripImage();
+    if (isset($profiles['icc'])) {
+      $image->profileImage('icc', $profiles['icc']);
+    }
+
     $image->writeImage($file_path);
   }
   catch (\Exception $e) {
