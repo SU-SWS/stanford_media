@@ -6,9 +6,6 @@ services:
     class: Drupal\stanford_media\Routing\RouteSubscriber
     tags:
       - { name: event_subscriber }
-  plugin.manager.media_embed_dialog_manager:
-    class: Drupal\stanford_media\Plugin\MediaEmbedDialogManager
-    parent: default_plugin_manager
   plugin.manager.bundle_suggestion_manager:
     class: Drupal\stanford_media\Plugin\BundleSuggestionManager
     parent: default_plugin_manager

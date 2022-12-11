@@ -72,9 +72,9 @@ function stanford_media_media_presave(MediaInterface $entity) {
 }
 
 /**
- * Implements hook_field_widget_form_alter().
+ * Implements hook_field_widget_single_element_form_alter().
  */
-function stanford_media_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
+function stanford_media_field_widget_single_element_form_alter(array &$element, FormStateInterface $form_state, array $context) {
   /** @var \Drupal\Core\Field\FieldItemListInterface $items */
   $items = $context['items'];
   if ($items->getFieldDefinition()->getType() == 'image') {
@@ -85,23 +85,13 @@ function stanford_media_field_widget_form_alter(&$element, FormStateInterface $f
   }
 }
 
+
 /**
  * Implements hook_field_widget_WIDGET_TYPE_form_alter().
  */
 function stanford_media_field_widget_text_textarea_form_alter(&$element, FormStateInterface $form_state, $context) {
-  // Adds the library outside of ckeditor iframe.
+  // Adds the library outside ckeditor iframe.
   $element['#attached']['library'][] = 'stanford_media/admin';
-}
-
-/**
- * Implements hook_ckeditor_css_alter().
- */
-function stanford_media_ckeditor_css_alter(array &$css, Editor $editor) {
-  /** @var \Drupal\Core\Extension\ModuleExtensionList $extensions */
-  $extensions = \Drupal::service('extension.list.module');
-  // Add styles inside the ckeditor iframe.
-  $css[] = $extensions->getPath('stanford_media') . '/dist/css/stanford_media.admin.css';
-  $css[] = $extensions->getPath('stanford_media') . '/dist/css/stanford_media.css';
 }
 
 /**
@@ -111,46 +101,6 @@ function stanford_media_theme_registry_alter(&$theme_registry) {
   // Register the path to the template files.
   $path = \Drupal::service('extension.list.module')->getPath('stanford_media') . '/templates';
   $theme_registry['dropzonejs']['path'] = $path;
-}
-
-/**
- * Implements hook_ENTITY_TYPE_view_alter().
- */
-function stanford_media_media_view_alter(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display) {
-  if (empty($build['#embed'])) {
-    return;
-  }
-
-  foreach (_stanford_media_get_dialog_plugins($entity) as $plugin) {
-    $plugin->embedAlter($build, $entity);
-  }
-  $build['#attached']['library'][] = 'stanford_media/display';
-}
-
-/**
- * Get a list of all plugins applicable for the entity.
- *
- * @param \Drupal\Core\Entity\EntityInterface $entity
- *   The media entity to check for plugins.
- *
- * @return \Drupal\stanford_media\Plugin\MediaEmbedDialogInterface[]
- *   Array of applicable plugins.
- *
- * @throws \Drupal\Component\Plugin\Exception\PluginException
- */
-function _stanford_media_get_dialog_plugins(EntityInterface $entity) {
-  $plugins = [];
-  /** @var \Drupal\stanford_media\Plugin\MediaEmbedDialogManager $dialog_manager */
-  $dialog_manager = \Drupal::service('plugin.manager.media_embed_dialog_manager');
-  foreach (array_keys($dialog_manager->getDefinitions()) as $plugin_id) {
-    /** @var \Drupal\stanford_media\Plugin\MediaEmbedDialogInterface $plugin */
-    $plugin = $dialog_manager->createInstance($plugin_id, ['entity' => $entity]);
-
-    if ($plugin->isApplicable()) {
-      $plugins[$plugin_id] = $plugin;
-    }
-  }
-  return $plugins;
 }
 
 /**
@@ -193,16 +143,6 @@ function stanford_media_preprocess_media(&$variables) {
   if (empty($variables['content'][$source_field][0]['#description'])) {
     $variables['content'][$source_field][0]['#description'] = $variables['name'];
   }
-}
-
-/**
- * Implements hook_preprocess_HOOK().
- */
-function stanford_media_preprocess_filter_caption(&$variables) {
-  if (!isset($variables['classes'])) {
-    $variables['classes'] = '';
-  }
-  $variables['classes'] = trim($variables['classes'] . ' caption');
 }
 
 /**
@@ -250,8 +190,8 @@ function stanford_media_entity_access(EntityInterface $entity, $operation, Accou
   foreach ($configs as $config_name) {
     $config = \Drupal::config($config_name);
 
-    // Check for the fields we are interested by checking their type and handler
-    // settings.
+    // Check for the fields we are interested in by checking their type and
+    // handler settings.
     if (
       $config->get('field_type') == 'entity_reference' &&
       $config->get('settings.handler') == 'default:media' &&
@@ -259,7 +199,7 @@ function stanford_media_entity_access(EntityInterface $entity, $operation, Accou
     ) {
       $default_value = $config->get('default_value');
 
-      // The field default value matches the current media entity so we want to
+      // The field default value matches the current media entity, so we want to
       // forbid editing/deleting if the user doesn't have the proper permission.
       if (!empty($default_value[0]['target_uuid']) && $entity->uuid() == $default_value[0]['target_uuid']) {
         return AccessResult::forbiddenIf(!$account->hasPermission('edit field default media'), 'The entity is set as a default field value.');
