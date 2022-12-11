@@ -16,11 +16,7 @@ class FileTest extends MediaEmbedDialogTestBase {
   /**
    * {@inheritdoc}
    */
-<<<<<<< HEAD
   public function setup(): void {
-=======
-  protected function setUp(): void {
->>>>>>> should be able to support d9.4
     parent::setUp();
     $this->mediaBundle = 'file';
   }
@@ -41,11 +37,7 @@ class FileTest extends MediaEmbedDialogTestBase {
     $form = [];
     $form_state = new FormState();
     $form_state->clearErrors();
-<<<<<<< HEAD
     $plugin->validateDialogForm($form, $form_state);
-=======
-    $this->assertNull($plugin->validateDialogForm($form, $form_state));
->>>>>>> should be able to support d9.4
     $this->assertFalse($form_state::hasAnyErrors());
   }
 
