@@ -20,7 +20,7 @@ interface MediaEmbedDialogInterface extends PluginInspectionInterface {
   public function isApplicable(): bool;
 
   /**
-   * Get the default form values for the plugin form..
+   * Get the default form values for the plugin form.
    *
    * @return array
    *   Key value paired array of default configuration values.

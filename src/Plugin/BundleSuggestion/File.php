@@ -21,7 +21,7 @@ class File extends BundleSuggestionBase {
   /**
    * {@inheritdoc}
    */
-  public function getBundleFromString(string $input): ?MediaTypeInterface {
+  public function getBundleFromString($input): ?MediaTypeInterface {
     $valid_schemes = ['public', 'private', 'temporary'];
     // Only check for local files. Any url or external source is not applicable.
     if (!in_array(StreamWrapperManager::getScheme($input), $valid_schemes)) {

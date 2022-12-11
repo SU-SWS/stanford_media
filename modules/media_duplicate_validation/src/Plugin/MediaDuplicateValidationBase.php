@@ -94,6 +94,7 @@ abstract class MediaDuplicateValidationBase extends PluginBase implements MediaD
    * {@inheritdoc}
    */
   public function populateTable(): void {
+    /** @var \Drupal\Core\Queue\QueueInterface $queue */
     $queue = $this->queue->get('media_duplicate_validation');
 
     $query = $this->database->select('media', 'm')
