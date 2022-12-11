@@ -139,7 +139,7 @@ class BundleSuggestionManagerTest extends UnitTestCase {
    * File size should be the correct number.
    */
   public function testFilesize() {
-    $this->assertEquals(2097152, (int) $this->suggestionManager->getMaxFileSize());
+    $this->assertEquals(2097152, $this->suggestionManager->getMaxFileSize());
   }
 
   /**

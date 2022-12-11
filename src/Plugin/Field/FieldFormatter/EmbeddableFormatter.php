@@ -114,7 +114,7 @@ class EmbeddableFormatter extends OEmbedFormatter {
    * @param array $form
    *   Complete form.
    */
-  public function validateAllowedTags(array $element, FormStateInterface $form_state, array $form) {
+  public function validateAllowedTags(array $element, FormStateInterface $form_state, array $form): void {
     $tags = $form_state->getValue($element['#parents']);
     $adjusted_tags = preg_replace('/  +/', ' ', preg_replace('/[^a-z ]/', '', strtolower($tags)));
     $form_state->setValue($element['#parents'], trim($adjusted_tags));
@@ -139,9 +139,9 @@ class EmbeddableFormatter extends OEmbedFormatter {
    *   The language.
    *
    * @return array
-   *   A renderable array.
+   *   A render array.
    */
-  protected function viewOEmbedElements(FieldItemListInterface $items, $langcode) {
+  protected function viewOEmbedElements(FieldItemListInterface $items, string $langcode): array {
     $elements = parent::viewElements($items, $langcode);
     foreach ($elements as &$render_array) {
 
@@ -177,9 +177,9 @@ class EmbeddableFormatter extends OEmbedFormatter {
    *   The language.
    *
    * @return array
-   *   A renderable array.
+   *   A render array.
    */
-  protected function viewUnstructuredElements(FieldItemListInterface $items, $langcode) {
+  protected function viewUnstructuredElements(FieldItemListInterface $items, string $langcode): array {
     // Here, we will handle Embeddables that are unstructured, and just inject the
     // markup unchanged.
     $elements = [];

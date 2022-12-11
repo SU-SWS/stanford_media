@@ -27,7 +27,7 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current form state.
    */
-  protected function setFieldNames(FormStateInterface $form_state) {
+  protected function setFieldNames(FormStateInterface $form_state): void {
     $source_config = $this->getMediaType($form_state)
       ->getSource()
       ->getConfiguration();
@@ -38,7 +38,7 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
   /**
    * {@inheritDoc}
    */
-  protected function buildInputElement(array $form, FormStateInterface $form_state) {
+  protected function buildInputElement(array $form, FormStateInterface $form_state): array {
 
     // This was adapted from \Drupal\media_library\Form\OembedForm.
     $this->setFieldNames($form_state);
@@ -101,7 +101,7 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
    * @return bool
    *   True if unstructured, otherwise false.
    */
-  public function isUnstructured(FormStateInterface $form_state) {
+  public function isUnstructured(FormStateInterface $form_state): bool {
     return !empty($form_state->getValue($form_state->get('unstructured_field_name')));
   }
 
@@ -113,7 +113,7 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current form state.
    */
-  public function validateEmbeddable(array &$form, FormStateInterface $form_state) {
+  public function validateEmbeddable(array &$form, FormStateInterface $form_state): void {
     // No validation necessary if we have an embed code.
     if (!$this->isUnstructured($form_state)) {
       parent::validateUrl($form, $form_state);
@@ -128,7 +128,7 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The form state.
    */
-  public function addButtonSubmit(array $form, FormStateInterface $form_state) {
+  public function addButtonSubmit(array $form, FormStateInterface $form_state): void {
     $values = $this->isUnstructured($form_state) ? [$form_state->getValue($form_state->get('unstructured_field_name'))] : [$form_state->getValue($form_state->get('source_field'))];
     $this->processInputValues($values, $form, $form_state);
   }
@@ -136,7 +136,7 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
   /**
    * {@inheritDoc}
    */
-  protected function processInputValues(array $source_field_values, array $form, FormStateInterface $form_state) {
+  protected function processInputValues(array $source_field_values, array $form, FormStateInterface $form_state): void {
     $media_type = $this->getMediaType($form_state);
     $media_storage = $this->entityTypeManager->getStorage('media');
 

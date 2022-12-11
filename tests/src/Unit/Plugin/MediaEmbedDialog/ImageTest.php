@@ -38,7 +38,7 @@ class ImageTest extends MediaEmbedDialogTestBase {
     $form = [];
     $form_state = new FormState();
     $form_state->clearErrors();
-    $this->assertNull($plugin->validateDialogForm($form, $form_state));
+    $plugin->validateDialogForm($form, $form_state);
     $this->assertFalse($form_state::hasAnyErrors());
   }
 

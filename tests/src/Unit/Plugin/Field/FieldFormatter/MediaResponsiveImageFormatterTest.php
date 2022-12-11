@@ -55,7 +55,7 @@ class MediaResponsiveImageFormatterTest extends FieldFormatterTestBase {
       'field_foo' => [
         '#field_type' => 'image',
         0 => [
-          '#item' => $this->createMock(FieldItemInterface::class)
+          '#item' => $this->createMock(FieldItemInterface::class),
         ],
       ],
     ];
@@ -90,7 +90,7 @@ class TestMediaResponsiveImageFormatter extends MediaResponsiveImageFormatter {
   /**
    * {@inheritDoc}
    */
-  public function getStyleOptions() {
+  public function getStyleOptions(): array {
     return parent::getStyleOptions();
   }
 

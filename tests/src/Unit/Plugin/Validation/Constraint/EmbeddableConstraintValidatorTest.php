@@ -104,7 +104,7 @@ class EmbeddableConstraintValidatorTest extends UnitTestCase {
     $constraint = $this->createMock(EmbeddableConstraint::class);
 
     $this->validator->validate($field_item_list, $constraint);
-    $this->assertStringContainsString('valid oEmbed resource', (string) $this->validationContext->getViolations()->get(0)->getMessageTemplate());
+    $this->assertStringContainsString('valid oEmbed resource', $this->validationContext->getViolations()->get(0)->getMessageTemplate());
   }
 
   public function testUnstructuredEmbeddable(){

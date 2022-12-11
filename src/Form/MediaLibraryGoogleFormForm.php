@@ -89,7 +89,7 @@ class MediaLibraryGoogleFormForm extends AddFormBase {
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current form state.
    */
-  public function validateUrl(array &$form, FormStateInterface $form_state) {
+  public function validateUrl(array &$form, FormStateInterface $form_state): void {
     $url = $form_state->getValue('url');
     preg_match('/^http.*google.*forms\/([^ ]*)\/viewform/', $url, $form_id);
     if (empty($form_id)) {
@@ -105,7 +105,7 @@ class MediaLibraryGoogleFormForm extends AddFormBase {
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The form state.
    */
-  public function addButtonSubmit(array $form, FormStateInterface $form_state) {
+  public function addButtonSubmit(array $form, FormStateInterface $form_state): void {
     $this->processInputValues([$form_state->getValue('url')], $form, $form_state);
   }
 

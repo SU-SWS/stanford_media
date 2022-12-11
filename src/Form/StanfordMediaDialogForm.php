@@ -22,6 +22,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class StanfordMediaDialogForm extends EditorMediaDialog {
 
   /**
+   * Dialog plugin manager service.
+   *
    * @var \Drupal\stanford_media\Plugin\MediaEmbedDialogManager
    */
   protected $dialogPluginManager;
@@ -52,7 +54,7 @@ class StanfordMediaDialogForm extends EditorMediaDialog {
     $form = parent::buildForm($form, $form_state, $editor);
     $media = $this->getFormMediaEntity($form_state);
     foreach ($this->getDialogAlterPlugins($media) as $plugin) {
-      $plugin->alterDialogForm($form, $form_state, $editor);
+      $plugin->alterDialogForm($form, $form_state);
     }
     return $form;
   }
@@ -102,7 +104,7 @@ class StanfordMediaDialogForm extends EditorMediaDialog {
    *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  protected function getFormMediaEntity(FormStateInterface $form_state) {
+  protected function getFormMediaEntity(FormStateInterface $form_state): ?MediaInterface {
     $media_uuid = $form_state->get(['media_embed_element', 'data-entity-uuid']);
     return $this->entityRepository->loadEntityByUuid('media', $media_uuid);
   }
@@ -118,7 +120,7 @@ class StanfordMediaDialogForm extends EditorMediaDialog {
    *
    * @throws \Drupal\Component\Plugin\Exception\PluginException
    */
-  protected function getDialogAlterPlugins(MediaInterface $media) {
+  protected function getDialogAlterPlugins(MediaInterface $media): array {
     $plugins = [];
     foreach (array_keys($this->dialogPluginManager->getDefinitions()) as $plugin_id) {
       /** @var \Drupal\stanford_media\Plugin\MediaEmbedDialogInterface $plugin */

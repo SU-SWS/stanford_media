@@ -33,7 +33,7 @@ abstract class MediaFormatterBase extends EntityReferenceEntityFormatter {
    * @return string
    *   Source field on the entity.
    */
-  protected static function getSourceField(MediaInterface $entity) {
+  protected static function getSourceField(MediaInterface $entity): string {
     return $entity->getSource()->getConfiguration()['source_field'];
   }
 
@@ -50,7 +50,7 @@ abstract class MediaFormatterBase extends EntityReferenceEntityFormatter {
    *   This method is only used in the form building function and as that is not
    *   testable, this is not testable.
    */
-  protected function getEntityDisplayModes($type = "media") {
+  protected function getEntityDisplayModes(string $type = "media"): array {
     return $this->entityDisplayRepository->getViewModeOptions($type);
   }
 

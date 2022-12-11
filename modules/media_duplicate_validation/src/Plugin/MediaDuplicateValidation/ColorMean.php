@@ -126,8 +126,7 @@ class ColorMean extends MediaDuplicateValidationBase {
 
     // Calculate the percent of the image that is different.
     $total_pixels = pow(self::RESIZE_DIMENSION, 2);
-    $similarity = 100 * (($total_pixels - $different_pixels) / $total_pixels);
-    return $similarity;
+    return 100 * (($total_pixels - $different_pixels) / $total_pixels);
   }
 
   /**
@@ -198,9 +197,9 @@ class ColorMean extends MediaDuplicateValidationBase {
     if (isset($this->imageColors[$uri])) {
       // We've already gotten the data for this URI, lets use that.
       return $this->imageColors[$uri];
-    };
+    }
 
-    // If the file is not an jpg or png we'll skip it.
+    // If the file is not a jpg or png we'll skip it.
     if (!($image = $this->createImage($uri))) {
       return FALSE;
     }

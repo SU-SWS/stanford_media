@@ -223,12 +223,11 @@ class EmbeddableFormatterTest extends KernelTestBase {
       default:
         $payload = ['error' => 'something went wrong.'];
     }
-    $response = new Response(200, ['Content-type' => 'application/json'], json_encode($payload));
-    return $response;
+    return new Response(200, ['Content-type' => 'application/json'], json_encode($payload));
   }
 
   /**
-   * Callback for the guzzle _call magic method.
+   * Callback for guzzle _call magic method.
    */
   public function getMagicMethodCallback($method, $args) {
     return $this->getOembedCallback($method, $args[0], []);

@@ -54,7 +54,7 @@ abstract class BundleSuggestionBase extends PluginBase implements BundleSuggesti
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  protected function getMediaBundles(array $bundles = []) {
+  protected function getMediaBundles(array $bundles = []): array {
     return $this->entityTypeManager->getStorage('media_type')
       ->loadMultiple($bundles ?: NULL);
   }

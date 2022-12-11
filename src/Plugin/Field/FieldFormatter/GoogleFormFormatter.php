@@ -37,7 +37,7 @@ class GoogleFormFormatter extends FormatterBase {
   /**
    * {@inheritDoc}
    */
-  public function viewElements(FieldItemListInterface $items, $langcode) {
+  public function viewElements(FieldItemListInterface $items, $langcode): array {
 
     $elements = [];
 

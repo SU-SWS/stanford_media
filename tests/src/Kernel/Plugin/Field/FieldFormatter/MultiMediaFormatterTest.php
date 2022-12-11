@@ -230,7 +230,7 @@ class MultiMediaFormatterTest extends KernelTestBase {
   /**
    * Get the rendered output of a node.
    *
-   * @param $node a node object
+   * @param \Drupal\node\NodeInterface $node
    * @param string $view_mode
    *
    * @return string
@@ -239,8 +239,7 @@ class MultiMediaFormatterTest extends KernelTestBase {
     $view_builder = \Drupal::entityTypeManager()
       ->getViewBuilder('node');
     $node_render = $view_builder->view($node, $view_mode);
-    $rendered_node = \Drupal::service('renderer')->renderPlain($node_render);
-    return $rendered_node;
+    return \Drupal::service('renderer')->renderPlain($node_render);
   }
 
   /**
@@ -352,7 +351,7 @@ class MultiMediaFormatterTest extends KernelTestBase {
     $this->entityDisplay->save();
     $node = $this->getANode("file");
     $rendered_node = $this->getRenderedNode($node);
-    preg_match_all('/file--mime-image-png/s', $rendered_node, $preg_match);
+    preg_match_all('/file--mime-image-png/', $rendered_node, $preg_match);
     $this->assertNotEmpty($preg_match[0]);
   }
 

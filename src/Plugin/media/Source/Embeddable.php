@@ -119,11 +119,11 @@ class Embeddable extends OEmbed implements EmbeddableInterface {
   /**
    * {@inheritDoc}
    */
-  public function getMetadata(MediaInterface $media, $name) {
+  public function getMetadata(MediaInterface $media, $attribute_name) {
     if ($this->hasUnstructured($media)) {
-      return $this->getUnstructuredMetadata($media, $name);
+      return $this->getUnstructuredMetadata($media, $attribute_name);
     }
-    return parent::getMetadata($media, $name);
+    return parent::getMetadata($media, $attribute_name);
   }
 
   /**
