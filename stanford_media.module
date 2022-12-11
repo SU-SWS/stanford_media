@@ -104,46 +104,6 @@ function stanford_media_theme_registry_alter(&$theme_registry) {
 }
 
 /**
- * Implements hook_ENTITY_TYPE_view_alter().
- */
-function stanford_media_media_view_alter(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display) {
-  if (empty($build['#embed'])) {
-    return;
-  }
-
-  foreach (_stanford_media_get_dialog_plugins($entity) as $plugin) {
-    $plugin->embedAlter($build, $entity);
-  }
-  $build['#attached']['library'][] = 'stanford_media/display';
-}
-
-/**
- * Get a list of all plugins applicable for the entity.
- *
- * @param \Drupal\Core\Entity\EntityInterface $entity
- *   The media entity to check for plugins.
- *
- * @return \Drupal\stanford_media\Plugin\MediaEmbedDialogInterface[]
- *   Array of applicable plugins.
- *
- * @throws \Drupal\Component\Plugin\Exception\PluginException
- */
-function _stanford_media_get_dialog_plugins(EntityInterface $entity) {
-  $plugins = [];
-  /** @var \Drupal\stanford_media\Plugin\MediaEmbedDialogManager $dialog_manager */
-  $dialog_manager = \Drupal::service('plugin.manager.media_embed_dialog_manager');
-  foreach (array_keys($dialog_manager->getDefinitions()) as $plugin_id) {
-    /** @var \Drupal\stanford_media\Plugin\MediaEmbedDialogInterface $plugin */
-    $plugin = $dialog_manager->createInstance($plugin_id, ['entity' => $entity]);
-
-    if ($plugin->isApplicable()) {
-      $plugins[$plugin_id] = $plugin;
-    }
-  }
-  return $plugins;
-}
-
-/**
  * Implements hook_media_source_info_alter().
  */
 function stanford_media_media_source_info_alter(array &$sources) {
@@ -183,16 +143,6 @@ function stanford_media_preprocess_media(&$variables) {
   if (empty($variables['content'][$source_field][0]['#description'])) {
     $variables['content'][$source_field][0]['#description'] = $variables['name'];
   }
-}
-
-/**
- * Implements hook_preprocess_HOOK().
- */
-function stanford_media_preprocess_filter_caption(&$variables) {
-  if (!isset($variables['classes'])) {
-    $variables['classes'] = '';
-  }
-  $variables['classes'] = trim($variables['classes'] . ' caption');
 }
 
 /**
