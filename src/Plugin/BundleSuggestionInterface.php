@@ -10,7 +10,7 @@ use Drupal\media\MediaTypeInterface;
  *
  * @package Drupal\stanford_media\Plugin
  */
-interface BundleSuggestionInterface extends ContainerFactoryPluginInterface {
+interface BundleSuggestionInterface {
 
   /**
    * Find a matching media type bundle from the user entered data.
@@ -21,7 +21,7 @@ interface BundleSuggestionInterface extends ContainerFactoryPluginInterface {
    * @return \Drupal\media\MediaTypeInterface|null
    *   Media type object if matched.
    */
-  public function getBundleFromString($input): ?MediaTypeInterface;
+  public function getBundleFromString(string $input): ?string;
 
   /**
    * Get the name that should be used on the media entity.
@@ -32,6 +32,6 @@ interface BundleSuggestionInterface extends ContainerFactoryPluginInterface {
    * @return string|null
    *   A name or null if none suggested.
    */
-  public function getName($input): ?string;
+  public function getName(string $input): ?string;
 
 }

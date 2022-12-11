@@ -3,6 +3,7 @@
 namespace Drupal\stanford_media\Plugin\BundleSuggestion;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\PluginBase;
 use Drupal\stanford_media\Plugin\BundleSuggestionInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -12,7 +13,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @package Drupal\stanford_media\Plugin\BundleSuggestion
  */
-abstract class BundleSuggestionBase extends PluginBase implements BundleSuggestionInterface {
+abstract class BundleSuggestionBase extends PluginBase implements BundleSuggestionInterface, ContainerFactoryPluginInterface {
 
   /**
    * Entity Type Manager service.

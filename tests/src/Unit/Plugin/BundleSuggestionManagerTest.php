@@ -9,9 +9,11 @@ use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\field\FieldConfigInterface;
+use Drupal\media\Entity\MediaType;
 use Drupal\media\MediaInterface;
 use Drupal\media\MediaSourceInterface;
 use Drupal\media\MediaTypeInterface;
+use Drupal\stanford_media\Plugin\BundleSuggestionInterface;
 use Drupal\stanford_media\Plugin\BundleSuggestionManager;
 use Drupal\Tests\UnitTestCase;
 
@@ -157,7 +159,7 @@ class BundleSuggestionManagerTest extends UnitTestCase {
    * Verify upload path comes back appropriately.
    */
   public function testPrivateUploadPath() {
-    $this->fieldUriScheme= 'private';
+    $this->fieldUriScheme = 'private';
     $source = $this->createMock(MediaSourceInterface::class);
     $source->method('getConfiguration')
       ->willReturn(['source_field' => $this->randomMachineName()]);
@@ -207,14 +209,14 @@ class BundleSuggestionManagerOverride extends BundleSuggestionManager {
  *
  * @package Drupal\Tests\stanford_media\Unit\Plugin
  */
-class BundleSuggestionPluginTest {
+class BundleSuggestionPluginTest implements BundleSuggestionInterface {
 
-  public function getBundleFromString($input) {
+  public function getBundleFromString(string $input): ?string {
     return $input == 'foo' ? 'foo' : NULL;
   }
 
-  public function getName($input) {
-    return $input == 'foo' ? 'foo' : NULL;
+  public function getName($input): ?string {
+    return $input == 'foo' ? 'foo': NULL;
   }
 
 }

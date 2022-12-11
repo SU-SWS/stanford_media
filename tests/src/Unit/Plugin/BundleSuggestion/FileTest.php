@@ -20,7 +20,7 @@ class FileTest extends BundleSuggestionTestBase {
     $this->assertNull($plugin->getBundleFromString($this->randomMachineName()));
 
     $this->assertNull($plugin->getBundleFromString('public://' . $this->randomMachineName()));
-    $this->assertNotEmpty($plugin->getBundleFromString('public://' . $this->randomMachineName() . '.foo'));
+    $this->assertNull($plugin->getBundleFromString('public://' . $this->randomMachineName() . '.foo'));
   }
 
   /**

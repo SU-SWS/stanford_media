@@ -16,14 +16,14 @@ interface BundleSuggestionManagerInterface extends PluginManagerInterface {
    * With a provided input string from the user, find an media bundle to match.
    *
    * @param string $input
-   *   User entered data, such as a url or file path.
+   *   User entered data, such as url or file path.
    *
    * @return \Drupal\media\MediaTypeInterface|null
    *   Suggested bundle to match the input.
    *
    * @throws \Drupal\Component\Plugin\Exception\PluginException
    */
-  public function getSuggestedBundle(string $input): ?MediaTypeInterface;
+  public function getSuggestedBundle(string $input): ?string;
 
   /**
    * Get the suggested name of the media entity from the input value.
