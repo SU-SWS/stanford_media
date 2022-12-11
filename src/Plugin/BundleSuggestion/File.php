@@ -21,7 +21,7 @@ class File extends BundleSuggestionBase {
   /**
    * {@inheritdoc}
    */
-  public function getBundleFromString(string $input): ?string {
+  public function getBundleFromString(string $input): ?MediaTypeInterface {
     $valid_schemes = ['public', 'private', 'temporary'];
     // Only check for local files. Any url or external source is not applicable.
     if (!in_array(StreamWrapperManager::getScheme($input), $valid_schemes)) {
@@ -34,7 +34,7 @@ class File extends BundleSuggestionBase {
     // the first bundle that allows the given extension, and use that.
     foreach ($this->getMediaBundles() as $media_type) {
       if (in_array($extension, $this->getBundleExtensions($media_type)) !== FALSE) {
-        return $media_type->id();
+        return $media_type;
       }
     }
     return NULL;

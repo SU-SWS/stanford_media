@@ -218,12 +218,15 @@ class BundleSuggestionManagerOverride extends BundleSuggestionManager {
  */
 class BundleSuggestionPluginTest implements BundleSuggestionInterface {
 
-  public function getBundleFromString(string $input): ?string {
-    return $input == 'foo' ? 'foo' : NULL;
+  public function __construct(protected MediaTypeInterface $mediaType) {
+  }
+
+  public function getBundleFromString(string $input): ?MediaTypeInterface {
+    return $input == 'foo' ? $this->mediaType : NULL;
   }
 
   public function getName($input): ?string {
-    return $input == 'foo' ? 'foo': NULL;
+    return $input == 'foo' ? 'foo' : NULL;
   }
 
 }

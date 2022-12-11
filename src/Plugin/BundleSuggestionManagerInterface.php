@@ -23,7 +23,7 @@ interface BundleSuggestionManagerInterface extends PluginManagerInterface {
    *
    * @throws \Drupal\Component\Plugin\Exception\PluginException
    */
-  public function getSuggestedBundle(string $input): ?string;
+  public function getSuggestedBundle(string $input): ?MediaTypeInterface;
 
   /**
    * Get the suggested name of the media entity from the input value.

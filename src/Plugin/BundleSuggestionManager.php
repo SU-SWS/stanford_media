@@ -96,7 +96,7 @@ class BundleSuggestionManager extends DefaultPluginManager implements BundleSugg
   /**
    * {@inheritdoc}
    */
-  public function getSuggestedBundle(string $input): ?string {
+  public function getSuggestedBundle(string $input): ?MediaTypeInterface {
     if ($plugin = $this->getSuggestedBundlePlugin($input)) {
       return $plugin->getBundleFromString($input);
     }

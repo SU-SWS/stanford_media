@@ -21,7 +21,7 @@ interface BundleSuggestionInterface {
    * @return \Drupal\media\MediaTypeInterface|null
    *   Media type object if matched.
    */
-  public function getBundleFromString(string $input): ?string;
+  public function getBundleFromString(string $input): ?MediaTypeInterface;
 
   /**
    * Get the name that should be used on the media entity.
