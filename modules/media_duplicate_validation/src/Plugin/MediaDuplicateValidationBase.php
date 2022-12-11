@@ -8,6 +8,7 @@ use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\PluginBase;
 use Drupal\Core\Queue\QueueFactory;
+use Drupal\file\FileInterface;
 use Drupal\media\MediaInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -73,26 +74,26 @@ abstract class MediaDuplicateValidationBase extends PluginBase implements MediaD
   /**
    * {@inheritdoc}
    */
-  public function mediaSave(MediaInterface $entity) {
+  public function mediaSave(MediaInterface $entity): void {
   }
 
   /**
    * {@inheritdoc}
    */
-  public function mediaDelete(MediaInterface $entity) {
+  public function mediaDelete(MediaInterface $entity): void {
   }
 
   /**
    * {@inheritdoc}
    */
-  public function schema() {
+  public function schema(): array {
     return [];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function populateTable() {
+  public function populateTable(): void {
     /** @var \Drupal\Core\Queue\QueueInterface $queue */
     $queue = $this->queue->get('media_duplicate_validation');
 
@@ -115,13 +116,13 @@ abstract class MediaDuplicateValidationBase extends PluginBase implements MediaD
    * @param array $applicable_types
    *   Optional array of allowed field types.
    *
-   * @return \Drupal\file\Entity\File|null
+   * @return \Drupal\file\FileInterface|null
    *   File entity or null if not applicable.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  protected function getFile(MediaInterface $entity, array $applicable_types = []) {
+  protected function getFile(MediaInterface $entity, array $applicable_types = []): ?FileInterface {
     $media_source = $entity->getSource();
     $definition = $media_source->getPluginDefinition();
 
@@ -132,6 +133,7 @@ abstract class MediaDuplicateValidationBase extends PluginBase implements MediaD
       $fid = $entity->getSource()->getSourceFieldValue($entity);
       return $this->entityTypeManager->getStorage('file')->load($fid);
     }
+    return NULL;
   }
 
 }

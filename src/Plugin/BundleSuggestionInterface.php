@@ -3,6 +3,7 @@
 namespace Drupal\stanford_media\Plugin;
 
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\media\MediaTypeInterface;
 
 /**
  * Interface BundleSuggestionInterface for Bundle Suggestion plugins.
@@ -20,7 +21,7 @@ interface BundleSuggestionInterface extends ContainerFactoryPluginInterface {
    * @return \Drupal\media\MediaTypeInterface|null
    *   Media type object if matched.
    */
-  public function getBundleFromString($input);
+  public function getBundleFromString($input): ?MediaTypeInterface;
 
   /**
    * Get the name that should be used on the media entity.
@@ -31,6 +32,6 @@ interface BundleSuggestionInterface extends ContainerFactoryPluginInterface {
    * @return string|null
    *   A name or null if none suggested.
    */
-  public function getName($input);
+  public function getName($input): ?string;
 
 }

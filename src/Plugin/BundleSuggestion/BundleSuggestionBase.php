@@ -61,7 +61,7 @@ abstract class BundleSuggestionBase extends PluginBase implements BundleSuggesti
   /**
    * {@inheritdoc}
    */
-  public function getName($input) {
+  public function getName($input): ?string {
     return NULL;
   }
 

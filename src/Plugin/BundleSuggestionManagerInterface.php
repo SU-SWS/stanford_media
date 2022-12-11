@@ -23,7 +23,7 @@ interface BundleSuggestionManagerInterface extends PluginManagerInterface {
    *
    * @throws \Drupal\Component\Plugin\Exception\PluginException
    */
-  public function getSuggestedBundle($input);
+  public function getSuggestedBundle(string $input): ?MediaTypeInterface;
 
   /**
    * Get the suggested name of the media entity from the input value.
@@ -34,7 +34,7 @@ interface BundleSuggestionManagerInterface extends PluginManagerInterface {
    * @return string|null
    *   Suggested name or null if none suggested.
    */
-  public function getSuggestedName($input);
+  public function getSuggestedName(string $input): ?string;
 
   /**
    * Get the available extension the user can upload.
@@ -42,7 +42,7 @@ interface BundleSuggestionManagerInterface extends PluginManagerInterface {
    * @return array
    *   All available extensions.
    */
-  public function getAllExtensions();
+  public function getAllExtensions(): array;
 
   /**
    * Get all media type bundles that are configured to have an upload field.
@@ -50,7 +50,7 @@ interface BundleSuggestionManagerInterface extends PluginManagerInterface {
    * @return \Drupal\media\MediaTypeInterface[]
    *   Keyed array of media bundles with upload fields.
    */
-  public function getUploadBundles();
+  public function getUploadBundles(): array;
 
   /**
    * Get all allowed file extensions that can be uploaded for a media type.
@@ -58,10 +58,10 @@ interface BundleSuggestionManagerInterface extends PluginManagerInterface {
    * @param \Drupal\media\MediaTypeInterface $media_type
    *   Media type entity object.
    *
-   * @return array
+   * @return string[]
    *   All file extensions for the given media type.
    */
-  public function getBundleExtensions(MediaTypeInterface $media_type);
+  public function getBundleExtensions(MediaTypeInterface $media_type): array;
 
   /**
    * Get allowed extensions from the allowed media types.
@@ -69,10 +69,10 @@ interface BundleSuggestionManagerInterface extends PluginManagerInterface {
    * @param array $media_types
    *   Array of machine names of the allowed bundles.
    *
-   * @return array
+   * @return string[]
    *   Array of available file extensions.
    */
-  public function getMultipleBundleExtensions(array $media_types);
+  public function getMultipleBundleExtensions(array $media_types): array;
 
   /**
    * Get the maximum file size for all media bundles.
@@ -83,7 +83,7 @@ interface BundleSuggestionManagerInterface extends PluginManagerInterface {
    * @return int
    *   Maximum file size for all bundles.
    */
-  public function getMaxFileSize(array $bundles = []);
+  public function getMaxFileSize(array $bundles = []): int;
 
   /**
    * Get maximum file size for the media type.
@@ -94,7 +94,7 @@ interface BundleSuggestionManagerInterface extends PluginManagerInterface {
    * @return int
    *   The maximum file size.
    */
-  public function getMaxFileSizeBundle(MediaTypeInterface $media_type);
+  public function getMaxFileSizeBundle(MediaTypeInterface $media_type): int;
 
   /**
    * Get the upload path for a specific media type.
@@ -105,6 +105,6 @@ interface BundleSuggestionManagerInterface extends PluginManagerInterface {
    * @return string
    *   Upload path location.
    */
-  public function getUploadPath(MediaTypeInterface $media_type);
+  public function getUploadPath(MediaTypeInterface $media_type): string;
 
 }

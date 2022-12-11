@@ -21,7 +21,7 @@ class File extends BundleSuggestionBase {
   /**
    * {@inheritdoc}
    */
-  public function getBundleFromString($input) {
+  public function getBundleFromString($input): ?MediaTypeInterface {
     $valid_schemes = ['public', 'private', 'temporary'];
     // Only check for local files. Any url or external source is not applicable.
     if (!in_array(StreamWrapperManager::getScheme($input), $valid_schemes)) {
@@ -37,6 +37,7 @@ class File extends BundleSuggestionBase {
         return $media_type;
       }
     }
+    return NULL;
   }
 
   /**
@@ -51,7 +52,7 @@ class File extends BundleSuggestionBase {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  protected function getBundleExtensions(MediaTypeInterface $media_type) {
+  protected function getBundleExtensions(MediaTypeInterface $media_type): array {
     $source_field = $media_type->getSource()
       ->getConfiguration()['source_field'];
 
@@ -63,6 +64,7 @@ class File extends BundleSuggestionBase {
       // Explode the list of file extensions into a more friendly array.
       return explode(' ', $field->getSetting('file_extensions') ?: '');
     }
+    return [];
   }
 
 }

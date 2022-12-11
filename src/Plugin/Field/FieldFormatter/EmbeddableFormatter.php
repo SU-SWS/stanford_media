@@ -6,6 +6,7 @@ use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\media\MediaTypeInterface;
 use Drupal\media\OEmbed\ResourceFetcherInterface;
 use Drupal\media\OEmbed\UrlResolverInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
@@ -70,7 +71,7 @@ class EmbeddableFormatter extends OEmbedFormatter {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  protected static function getMediaType($media_type_id) {
+  protected static function getMediaType($media_type_id): ?MediaTypeInterface {
     return \Drupal::entityTypeManager()
       ->getStorage('media_type')
       ->load($media_type_id);

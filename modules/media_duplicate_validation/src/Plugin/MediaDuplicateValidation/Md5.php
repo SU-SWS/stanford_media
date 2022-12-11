@@ -22,7 +22,7 @@ class Md5 extends MediaDuplicateValidationBase {
   /**
    * {@inheritdoc}
    */
-  public function getSimilarItems(MediaInterface $entity) {
+  public function getSimilarItems(MediaInterface $entity): array {
     $file = $this->getFile($entity);
     if (!$file) {
       return [];
@@ -56,7 +56,7 @@ class Md5 extends MediaDuplicateValidationBase {
   /**
    * {@inheritdoc}
    */
-  public function mediaSave(MediaInterface $entity) {
+  public function mediaSave(MediaInterface $entity): void {
     parent::mediaSave($entity);
 
     // When generating content with devel, we have to check if the entity has
@@ -82,7 +82,7 @@ class Md5 extends MediaDuplicateValidationBase {
   /**
    * {@inheritdoc}
    */
-  public function mediaDelete(MediaInterface $entity) {
+  public function mediaDelete(MediaInterface $entity): void {
     parent::mediaDelete($entity);
     $this->database->delete(self::DATABASE_TABLE)
       ->condition('mid', $entity->id())
@@ -92,7 +92,7 @@ class Md5 extends MediaDuplicateValidationBase {
   /**
    * {@inheritdoc}
    */
-  public function schema() {
+  public function schema(): array {
     $schema = parent::schema();
     $schema[self::DATABASE_TABLE] = [
       'description' => 'Media validation information for md5 plugin',

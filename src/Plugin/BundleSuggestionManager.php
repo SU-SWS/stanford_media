@@ -37,7 +37,7 @@ class BundleSuggestionManager extends DefaultPluginManager implements BundleSugg
   /**
    * Config factory service.
    *
-   * @var \Drupal\Core\Entity\ConfigFactoryInterface
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
   protected $configFactory;
 
@@ -96,7 +96,7 @@ class BundleSuggestionManager extends DefaultPluginManager implements BundleSugg
   /**
    * {@inheritdoc}
    */
-  public function getSuggestedBundle($input) {
+  public function getSuggestedBundle(string $input): ?MediaTypeInterface {
     if ($plugin = $this->getSuggestedBundlePlugin($input)) {
       return $plugin->getBundleFromString($input);
     }
@@ -105,7 +105,7 @@ class BundleSuggestionManager extends DefaultPluginManager implements BundleSugg
   /**
    * {@inheritdoc}
    */
-  public function getSuggestedName($input) {
+  public function getSuggestedName(string $input): ?string {
     if ($plugin = $this->getSuggestedBundlePlugin($input)) {
       return $plugin->getName($input);
     }
@@ -117,12 +117,12 @@ class BundleSuggestionManager extends DefaultPluginManager implements BundleSugg
    * @param string $input
    *   Url or string from the user.
    *
-   * @return \Drupal\stanford_media\Plugin\BundleSuggestionInterface
+   * @return null|\Drupal\stanford_media\Plugin\BundleSuggestionInterface
    *   The matched bundle suggestion plugin.
    *
    * @throws \Drupal\Component\Plugin\Exception\PluginException
    */
-  protected function getSuggestedBundlePlugin($input) {
+  protected function getSuggestedBundlePlugin(string $input): ?BundleSuggestionInterface {
     foreach ($this->getDefinitions() as $definition) {
       /** @var \Drupal\stanford_media\Plugin\BundleSuggestionInterface $plugin */
       $plugin = $this->createInstance($definition['id']);
@@ -130,12 +130,13 @@ class BundleSuggestionManager extends DefaultPluginManager implements BundleSugg
         return $plugin;
       }
     }
+    return NULL;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getAllExtensions() {
+  public function getAllExtensions(): array {
     $media_types = $this->getUploadBundles();
     return $this->getMultipleBundleExtensions(array_keys($media_types));
   }
@@ -143,7 +144,7 @@ class BundleSuggestionManager extends DefaultPluginManager implements BundleSugg
   /**
    * {@inheritdoc}
    */
-  public function getUploadBundles() {
+  public function getUploadBundles(): array {
     $upload_bundles = [];
     $media_types = $this->getMediaBundles();
 
@@ -164,7 +165,7 @@ class BundleSuggestionManager extends DefaultPluginManager implements BundleSugg
   /**
    * {@inheritdoc}
    */
-  public function getBundleExtensions(MediaTypeInterface $media_type) {
+  public function getBundleExtensions(MediaTypeInterface $media_type): array {
     $source_field = $media_type->getSource()
       ->getConfiguration()['source_field'];
 
@@ -180,7 +181,7 @@ class BundleSuggestionManager extends DefaultPluginManager implements BundleSugg
   /**
    * {@inheritdoc}
    */
-  public function getMultipleBundleExtensions(array $media_types) {
+  public function getMultipleBundleExtensions(array $media_types): array {
     $media_types = $this->getMediaBundles($media_types);
     $extensions = [];
     foreach ($media_types as $media_type) {
@@ -192,7 +193,7 @@ class BundleSuggestionManager extends DefaultPluginManager implements BundleSugg
   /**
    * {@inheritdoc}
    */
-  public function getMaxFileSize(array $bundles = []) {
+  public function getMaxFileSize(array $bundles = []): int {
 
     $media_types = $this->getUploadBundles();
     if ($bundles) {
@@ -214,7 +215,7 @@ class BundleSuggestionManager extends DefaultPluginManager implements BundleSugg
   /**
    * {@inheritdoc}
    */
-  public function getMaxFileSizeBundle(MediaTypeInterface $media_type) {
+  public function getMaxFileSizeBundle(MediaTypeInterface $media_type): int {
     $source_field = $media_type->getSource()
       ->getConfiguration()['source_field'];
 
@@ -229,7 +230,7 @@ class BundleSuggestionManager extends DefaultPluginManager implements BundleSugg
   /**
    * {@inheritdoc}
    */
-  public function getUploadPath(MediaTypeInterface $media_type) {
+  public function getUploadPath(MediaTypeInterface $media_type): string {
     $source_field = $media_type->getSource()
       ->getConfiguration()['source_field'];
     $default_scheme = $this->configFactory->get('system.file')
@@ -262,7 +263,7 @@ class BundleSuggestionManager extends DefaultPluginManager implements BundleSugg
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  protected function getMediaBundles(array $bundles = []) {
+  protected function getMediaBundles(array $bundles = []): array {
     /** @var \Drupal\media\MediaTypeInterface[] $media_types */
     $media_types = $this->entityTypeManager->getStorage('media_type')
       ->loadMultiple($bundles ?: NULL);

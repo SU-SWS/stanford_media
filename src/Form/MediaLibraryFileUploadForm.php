@@ -5,6 +5,7 @@ namespace Drupal\stanford_media\Form;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\File\FileSystemInterface;
+use Drupal\file\FileRepositoryInterface;
 use Drupal\file\FileUsage\FileUsageInterface;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -50,18 +51,19 @@ class MediaLibraryFileUploadForm extends FileUploadForm {
       $container->get('element_info'),
       $container->get('renderer'),
       $container->get('file_system'),
-      $container->get('dropzonejs.upload_save'),
-      $container->get('current_user'),
       $container->get('media_library.opener_resolver'),
-      $container->get('file.usage')
+      $container->get('file.usage'),
+      $container->get('file.repository'),
+      $container->get('dropzonejs.upload_save'),
+      $container->get('current_user')
     );
   }
 
   /**
    * {@inheritDoc}
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, MediaLibraryUiBuilder $library_ui_builder, ElementInfoManagerInterface $element_info, RendererInterface $renderer, FileSystemInterface $file_system, DropzoneJsUploadSaveInterface $dropzone_upload, AccountProxyInterface $current_user, OpenerResolverInterface $opener_resolver = NULL, FileUsageInterface $file_usage) {
-    parent::__construct($entity_type_manager, $library_ui_builder, $element_info, $renderer, $file_system, $opener_resolver, $file_usage);
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, MediaLibraryUiBuilder $library_ui_builder, ElementInfoManagerInterface $element_info, RendererInterface $renderer, FileSystemInterface $file_system, OpenerResolverInterface $opener_resolver, FileUsageInterface $file_usage, FileRepositoryInterface $file_repository, DropzoneJsUploadSaveInterface $dropzone_upload, AccountProxyInterface $current_user) {
+    parent::__construct($entity_type_manager, $library_ui_builder, $element_info, $renderer, $file_system, $opener_resolver, $file_usage, $file_repository);
     $this->dropzoneSave = $dropzone_upload;
     $this->currentUser = $current_user;
   }

@@ -49,7 +49,7 @@ class ColorMean extends MediaDuplicateValidationBase {
   /**
    * {@inheritdoc}
    */
-  public function getSimilarItems(MediaInterface $entity) {
+  public function getSimilarItems(MediaInterface $entity): array {
     if (!($file = $this->getFile($entity, ['image']))) {
       return [];
     }
@@ -102,7 +102,7 @@ class ColorMean extends MediaDuplicateValidationBase {
    * @return float|int
    *   Percent of the image that is deemed similar.
    */
-  protected function getLikeness($image_one, $image_two) {
+  protected function getLikeness($image_one, $image_two): float|int {
     $image_one_colors = $this->getColorData($image_one);
     $image_two_colors = $this->getColorData($image_two);
 
@@ -138,10 +138,10 @@ class ColorMean extends MediaDuplicateValidationBase {
    * @param array $color_data
    *   Gray scale multi-dimension array of pixel information.
    *
-   * @return array
+   * @return \Drupal\media\MediaInterface[]
    *   Array of media ids that are within the tolerance.
    */
-  protected function getCloseMedia(MediaInterface $entity, array $color_data) {
+  protected function getCloseMedia(MediaInterface $entity, array $color_data): array {
     $averages = $this->getRowColumnAverages($color_data);
     $query = $this->database->select(self::DATABASE_TABLE, 't')
       ->fields('t', ['mid']);
@@ -178,6 +178,7 @@ class ColorMean extends MediaDuplicateValidationBase {
     // Load the media ids that match the bundle from the compared media item.
     $mids = $this->entityTypeManager->getStorage('media')
       ->getQuery()
+      ->accessCheck()
       ->condition('bundle', $entity->bundle())
       ->condition('mid', $mids, 'IN')
       ->execute();
@@ -191,9 +192,9 @@ class ColorMean extends MediaDuplicateValidationBase {
    *   Image path.
    *
    * @return array|bool
-   *   Array of color data or false if its not an image.
+   *   Array of color data or false if it's not an image.
    */
-  public function getColorData($uri) {
+  public function getColorData($uri): array|bool {
     if (isset($this->imageColors[$uri])) {
       // We've already gotten the data for this URI, lets use that.
       return $this->imageColors[$uri];
@@ -218,9 +219,9 @@ class ColorMean extends MediaDuplicateValidationBase {
    *   Path to image.
    *
    * @return array|bool
-   *   Mime data or false if its not a jpg or png.
+   *   Mime data or false if it's not a jpg or png.
    */
-  protected function mimeType($path) {
+  protected function mimeType($path): array|bool {
     $mime = @getimagesize($path);
     if (!$mime) {
       return FALSE;
@@ -293,7 +294,7 @@ class ColorMean extends MediaDuplicateValidationBase {
    * @return array
    *   Array of data of the color information.
    */
-  protected function getColorValues($resource) {
+  protected function getColorValues($resource): array {
     $colorList = [];
     for ($a = 0; $a < self::RESIZE_DIMENSION; $a++) {
       for ($b = 0; $b < self::RESIZE_DIMENSION; $b++) {
@@ -308,7 +309,7 @@ class ColorMean extends MediaDuplicateValidationBase {
   /**
    * {@inheritdoc}
    */
-  public function mediaSave(MediaInterface $entity) {
+  public function mediaSave(MediaInterface $entity): void {
     parent::mediaSave($entity);
     $file = $this->getFile($entity);
 
@@ -341,7 +342,7 @@ class ColorMean extends MediaDuplicateValidationBase {
    * @return array
    *   Keyed array of average color values for each row and column.
    */
-  protected function getRowColumnAverages(array $color_data) {
+  protected function getRowColumnAverages(array $color_data): array {
     $sums = [
       'columns' => array_fill(0, self::RESIZE_DIMENSION, 0),
       'rows' => array_fill(0, self::RESIZE_DIMENSION, 0),
@@ -368,7 +369,7 @@ class ColorMean extends MediaDuplicateValidationBase {
   /**
    * {@inheritdoc}
    */
-  public function mediaDelete(MediaInterface $entity) {
+  public function mediaDelete(MediaInterface $entity): void {
     parent::mediaDelete($entity);
     // Remove the data from the database.
     $this->database->delete(self::DATABASE_TABLE)
@@ -379,7 +380,7 @@ class ColorMean extends MediaDuplicateValidationBase {
   /**
    * {@inheritdoc}
    */
-  public function schema() {
+  public function schema(): array {
     $schema = parent::schema();
     $schema[self::DATABASE_TABLE] = [
       'description' => 'Media validation information for color_mean plugin',

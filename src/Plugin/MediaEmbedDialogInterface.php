@@ -17,15 +17,15 @@ interface MediaEmbedDialogInterface extends PluginInspectionInterface {
    * @return bool
    *   Plugin is applicable.
    */
-  public function isApplicable();
+  public function isApplicable(): bool;
 
   /**
-   * Get the default form values for the plugin form..
+   * Get the default form values for the plugin form.
    *
    * @return array
    *   Key value paired array of default configuration values.
    */
-  public function getDefaultInput();
+  public function getDefaultInput(): array;
 
   /**
    * Alter the dialog form in any neccessary way and add validation & submit.
@@ -35,7 +35,7 @@ interface MediaEmbedDialogInterface extends PluginInspectionInterface {
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Current Form State.
    */
-  public function alterDialogForm(array &$form, FormStateInterface $form_state);
+  public function alterDialogForm(array &$form, FormStateInterface $form_state): void;
 
   /**
    * Alter the dialog values that will be inserted into the <drupal-media>.
@@ -47,7 +47,7 @@ interface MediaEmbedDialogInterface extends PluginInspectionInterface {
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Submitted form state.
    */
-  public function alterDialogValues(array &$values, array $form, FormStateInterface $form_state);
+  public function alterDialogValues(array &$values, array $form, FormStateInterface $form_state): void;
 
   /**
    * Validate the dialog form.
@@ -57,7 +57,7 @@ interface MediaEmbedDialogInterface extends PluginInspectionInterface {
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Submitted form state.
    */
-  public function validateDialogForm(array $form, FormStateInterface $form_state);
+  public function validateDialogForm(array $form, FormStateInterface $form_state): void;
 
   /**
    * Alter the embed media item before rendering, including adding a preRender.
@@ -69,6 +69,6 @@ interface MediaEmbedDialogInterface extends PluginInspectionInterface {
    *
    * @see stanford_media_entity_embed_alter()
    */
-  public function embedAlter(array &$build, MediaInterface $entity);
+  public function embedAlter(array &$build, MediaInterface $entity): void;
 
 }

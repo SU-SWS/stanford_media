@@ -21,7 +21,7 @@ interface EmbeddableInterface extends OEmbedInterface {
    * @return bool
    *   TRUE means it has an Unstructured embed, FALSE means that field is empty
    */
-  public function hasUnstructured(MediaInterface $media);
+  public function hasUnstructured(MediaInterface $media): bool;
 
   /**
    * Go through all available plugins and validate one of them allows the code.
