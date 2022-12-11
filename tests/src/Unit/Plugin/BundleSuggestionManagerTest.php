@@ -77,6 +77,7 @@ class BundleSuggestionManagerTest extends UnitTestCase {
     $entity_type_manager->method('getStorage')->willReturn($entity_storage);
 
     $this->suggestionManager = new BundleSuggestionManagerOverride($namespaces, $cache, $module_handler, $field_manager, $entity_type_manager, $config_factory);
+    $this->suggestionManager->setMediaType($media_type);
   }
 
   /**
@@ -111,7 +112,7 @@ class BundleSuggestionManagerTest extends UnitTestCase {
     $this->assertInstanceOf('\Drupal\stanford_media\Plugin\BundleSuggestionManagerInterface', $this->suggestionManager);
     $this->assertArrayHasKey('foo', $this->suggestionManager->getDefinitions());
 
-    $this->assertEquals('foo', $this->suggestionManager->getSuggestedBundle('foo'));
+    $this->assertInstanceOf(MediaTypeInterface::class, $this->suggestionManager->getSuggestedBundle('foo'));
     $this->assertNull($this->suggestionManager->getSuggestedBundle('bar'));
   }
 
@@ -198,8 +199,14 @@ class BundleSuggestionManagerTest extends UnitTestCase {
  */
 class BundleSuggestionManagerOverride extends BundleSuggestionManager {
 
+  protected $mediaType;
+
   public function createInstance($plugin_id, array $configuration = []) {
-    return new BundleSuggestionPluginTest();
+    return new BundleSuggestionPluginTest($this->mediaType);
+  }
+
+  public function setMediaType(MediaTypeInterface $mediaType) {
+    $this->mediaType = $mediaType;
   }
 
 }
@@ -211,12 +218,15 @@ class BundleSuggestionManagerOverride extends BundleSuggestionManager {
  */
 class BundleSuggestionPluginTest implements BundleSuggestionInterface {
 
-  public function getBundleFromString(string $input): ?string {
-    return $input == 'foo' ? 'foo' : NULL;
+  public function __construct(protected MediaTypeInterface $mediaType) {
+  }
+
+  public function getBundleFromString(string $input): ?MediaTypeInterface {
+    return $input == 'foo' ? $this->mediaType : NULL;
   }
 
   public function getName($input): ?string {
-    return $input == 'foo' ? 'foo': NULL;
+    return $input == 'foo' ? 'foo' : NULL;
   }
 
 }
