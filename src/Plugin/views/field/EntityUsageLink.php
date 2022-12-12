@@ -69,7 +69,10 @@ class EntityUsageLink extends FieldPluginBase {
 
     $child = $this->entityTypeManager->getStorage($type)->load($id);
     $parent = $this->getParent($child);
-    return $parent->toLink()->toRenderable();
+    if ($parent->hasLinkTemplate('canonical')) {
+      return $parent->toLink()->toRenderable();
+    }
+    return $parent->getEntityType()->getLabel();
   }
 
   /**
@@ -83,8 +86,9 @@ class EntityUsageLink extends FieldPluginBase {
    */
   protected function getParent(EntityInterface $child) {
     if (method_exists($child, 'getParentEntity')) {
-      $sub_parent = $child->getParentEntity();
-      return $this->getParent($sub_parent);
+      if ($sub_parent = $child->getParentEntity()) {
+        return $this->getParent($sub_parent);
+      }
     }
     return $child;
   }
