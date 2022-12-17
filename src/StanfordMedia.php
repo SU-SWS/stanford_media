@@ -102,7 +102,7 @@ class StanfordMedia implements StanfordMediaInterface, TrustedCallbackInterface 
    */
   public static function imageAltValue(array &$element, $input, FormStateInterface $form_state): string {
     if ($input === FALSE) {
-      return $element['#default_value'];
+      return $element['#default_value'] ?: '';
     }
     $parents = array_slice($element['#parents'], 0, -1);
     $decorative_path = $parents;
@@ -111,7 +111,7 @@ class StanfordMedia implements StanfordMediaInterface, TrustedCallbackInterface 
       $form_state->setValue($element['#parents'], '');
       return '';
     }
-    return $input;
+    return $input ?: '';
   }
 
   /**
