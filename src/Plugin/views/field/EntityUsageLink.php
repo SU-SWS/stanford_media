@@ -51,9 +51,10 @@ class EntityUsageLink extends FieldPluginBase {
     $this->ensureMyTable();
     // Add the field.
     $params = $this->options['group_type'] != 'group' ? ['function' => $this->options['group_type']] : [];
-
+dpm($params);
     $this->field_alias = $this->query->addField($this->tableAlias, 'source_type', NULL, $params);
     $this->field_alias_id = $this->query->addField($this->tableAlias, 'source_id', NULL, $params);
+    $this->field_alias_vid = $this->query->addField($this->tableAlias, 'source_vid', NULL, $params);
     $this->addAdditionalFields();
   }
 
@@ -63,11 +64,20 @@ class EntityUsageLink extends FieldPluginBase {
   public function render(ResultRow $values) {
     $type = $values->{$this->field_alias};
     $id = $values->{$this->field_alias_id};
+    $vid = $values->{$this->field_alias_vid};
     if (!$type || !$id) {
-      return '';
+      return null;
     }
-
-    $child = $this->entityTypeManager->getStorage($type)->load($id);
+    if ($vid) {
+      /** @var \Drupal\Core\Entity\RevisionLogInterface $child */
+      $child = $this->entityTypeManager->getStorage($type)->loadRevision($vid);
+      if (!$child->isLatestRevision()) {
+        return NULL;
+      }
+    }
+    else {
+      $child = $this->entityTypeManager->getStorage($type)->load($id);
+    }
     $parent = $this->getParent($child);
     if ($parent->hasLinkTemplate('canonical')) {
       return $parent->toLink()->toRenderable();
