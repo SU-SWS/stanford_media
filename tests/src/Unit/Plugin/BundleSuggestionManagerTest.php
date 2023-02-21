@@ -9,9 +9,11 @@ use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\field\FieldConfigInterface;
+use Drupal\media\Entity\MediaType;
 use Drupal\media\MediaInterface;
 use Drupal\media\MediaSourceInterface;
 use Drupal\media\MediaTypeInterface;
+use Drupal\stanford_media\Plugin\BundleSuggestionInterface;
 use Drupal\stanford_media\Plugin\BundleSuggestionManager;
 use Drupal\Tests\UnitTestCase;
 
@@ -75,6 +77,7 @@ class BundleSuggestionManagerTest extends UnitTestCase {
     $entity_type_manager->method('getStorage')->willReturn($entity_storage);
 
     $this->suggestionManager = new BundleSuggestionManagerOverride($namespaces, $cache, $module_handler, $field_manager, $entity_type_manager, $config_factory);
+    $this->suggestionManager->setMediaType($media_type);
   }
 
   /**
@@ -109,7 +112,7 @@ class BundleSuggestionManagerTest extends UnitTestCase {
     $this->assertInstanceOf('\Drupal\stanford_media\Plugin\BundleSuggestionManagerInterface', $this->suggestionManager);
     $this->assertArrayHasKey('foo', $this->suggestionManager->getDefinitions());
 
-    $this->assertEquals('foo', $this->suggestionManager->getSuggestedBundle('foo'));
+    $this->assertInstanceOf(MediaTypeInterface::class, $this->suggestionManager->getSuggestedBundle('foo'));
     $this->assertNull($this->suggestionManager->getSuggestedBundle('bar'));
   }
 
@@ -136,7 +139,7 @@ class BundleSuggestionManagerTest extends UnitTestCase {
    * File size should be the correct number.
    */
   public function testFilesize() {
-    $this->assertEquals(2097152, (int) $this->suggestionManager->getMaxFileSize());
+    $this->assertEquals(2097152, $this->suggestionManager->getMaxFileSize());
   }
 
   /**
@@ -157,7 +160,7 @@ class BundleSuggestionManagerTest extends UnitTestCase {
    * Verify upload path comes back appropriately.
    */
   public function testPrivateUploadPath() {
-    $this->fieldUriScheme= 'private';
+    $this->fieldUriScheme = 'private';
     $source = $this->createMock(MediaSourceInterface::class);
     $source->method('getConfiguration')
       ->willReturn(['source_field' => $this->randomMachineName()]);
@@ -196,8 +199,14 @@ class BundleSuggestionManagerTest extends UnitTestCase {
  */
 class BundleSuggestionManagerOverride extends BundleSuggestionManager {
 
+  protected $mediaType;
+
   public function createInstance($plugin_id, array $configuration = []) {
-    return new BundleSuggestionPluginTest();
+    return new BundleSuggestionPluginTest($this->mediaType);
+  }
+
+  public function setMediaType(MediaTypeInterface $mediaType) {
+    $this->mediaType = $mediaType;
   }
 
 }
@@ -207,13 +216,16 @@ class BundleSuggestionManagerOverride extends BundleSuggestionManager {
  *
  * @package Drupal\Tests\stanford_media\Unit\Plugin
  */
-class BundleSuggestionPluginTest {
+class BundleSuggestionPluginTest implements BundleSuggestionInterface {
 
-  public function getBundleFromString($input) {
-    return $input == 'foo' ? 'foo' : NULL;
+  public function __construct(protected MediaTypeInterface $mediaType) {
   }
 
-  public function getName($input) {
+  public function getBundleFromString(string $input): ?MediaTypeInterface {
+    return $input == 'foo' ? $this->mediaType : NULL;
+  }
+
+  public function getName($input): ?string {
     return $input == 'foo' ? 'foo' : NULL;
   }
 

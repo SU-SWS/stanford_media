@@ -19,15 +19,9 @@ use Drupal\Core\Render\Element;
 class MediaResponsiveImageFormatter extends MediaImageFormatterBase {
 
   /**
-   * Get available responsive image styles.
-   *
-   * @return array
-   *   Keyed array of image styles.
-   *
-   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
-   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * {@inheritDoc}
    */
-  protected function getStyleOptions() {
+  protected function getStyleOptions(): array {
     $styles = $this->entityTypeManager->getStorage('responsive_image_style')
       ->loadMultiple();
     /** @var \Drupal\responsive_image\Entity\ResponsiveImageStyle $style */
@@ -40,7 +34,7 @@ class MediaResponsiveImageFormatter extends MediaImageFormatterBase {
   /**
    * {@inheritdoc}
    */
-  public static function preRender($element) {
+  public static function preRender($element): array {
     $source_field = self::getSourceField($element['#media']);
     // If the source field is not an image field, don't modify anything.
     if (empty($element[$source_field]['#field_type']) || $element[$source_field]['#field_type'] != 'image') {

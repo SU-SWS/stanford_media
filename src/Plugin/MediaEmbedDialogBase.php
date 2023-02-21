@@ -54,32 +54,32 @@ abstract class MediaEmbedDialogBase extends PluginBase implements MediaEmbedDial
   /**
    * {@inheritdoc}
    */
-  public function getDefaultInput() {
+  public function getDefaultInput(): array {
     return [];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function alterDialogForm(array &$form, FormStateInterface $form_state) {
+  public function alterDialogForm(array &$form, FormStateInterface $form_state): void {
   }
 
   /**
    * {@inheritdoc}
    */
-  public function validateDialogForm(array $form, FormStateInterface $form_state) {
+  public function validateDialogForm(array $form, FormStateInterface $form_state): void {
   }
 
   /**
    * {@inheritdoc}
    */
-  public function alterDialogValues(array &$values, array $form, FormStateInterface $form_state) {
+  public function alterDialogValues(array &$values, array $form, FormStateInterface $form_state): void {
   }
 
   /**
    * {@inheritdoc}
    */
-  public function embedAlter(array &$build, MediaInterface $entity) {
+  public function embedAlter(array &$build, MediaInterface $entity): void {
   }
 
   /**
@@ -91,7 +91,7 @@ abstract class MediaEmbedDialogBase extends PluginBase implements MediaEmbedDial
    * @return string
    *   The configured field name.
    */
-  public static function getMediaSourceField(MediaInterface $entity) {
+  public static function getMediaSourceField(MediaInterface $entity): string {
     return $entity->getSource()->getConfiguration()['source_field'];
   }
 

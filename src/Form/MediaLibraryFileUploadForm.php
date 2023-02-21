@@ -2,9 +2,11 @@
 
 namespace Drupal\stanford_media\Form;
 
+use Drupal\Component\Render\MarkupInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\File\FileSystemInterface;
+use Drupal\file\FileRepositoryInterface;
 use Drupal\file\FileUsage\FileUsageInterface;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -14,6 +16,7 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Url;
 use Drupal\dropzonejs\DropzoneJsUploadSaveInterface;
 use Drupal\media\MediaInterface;
+use Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationManager;
 use Drupal\media_library\Form\FileUploadForm;
 use Drupal\media_library\MediaLibraryUiBuilder;
 use Drupal\media_library\OpenerResolverInterface;
@@ -50,18 +53,19 @@ class MediaLibraryFileUploadForm extends FileUploadForm {
       $container->get('element_info'),
       $container->get('renderer'),
       $container->get('file_system'),
-      $container->get('dropzonejs.upload_save'),
-      $container->get('current_user'),
       $container->get('media_library.opener_resolver'),
-      $container->get('file.usage')
+      $container->get('file.usage'),
+      $container->get('file.repository'),
+      $container->get('dropzonejs.upload_save'),
+      $container->get('current_user')
     );
   }
 
   /**
    * {@inheritDoc}
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, MediaLibraryUiBuilder $library_ui_builder, ElementInfoManagerInterface $element_info, RendererInterface $renderer, FileSystemInterface $file_system, DropzoneJsUploadSaveInterface $dropzone_upload, AccountProxyInterface $current_user, OpenerResolverInterface $opener_resolver = NULL, FileUsageInterface $file_usage) {
-    parent::__construct($entity_type_manager, $library_ui_builder, $element_info, $renderer, $file_system, $opener_resolver, $file_usage);
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, MediaLibraryUiBuilder $library_ui_builder, ElementInfoManagerInterface $element_info, RendererInterface $renderer, FileSystemInterface $file_system, OpenerResolverInterface $opener_resolver, FileUsageInterface $file_usage, FileRepositoryInterface $file_repository, DropzoneJsUploadSaveInterface $dropzone_upload, AccountProxyInterface $current_user) {
+    parent::__construct($entity_type_manager, $library_ui_builder, $element_info, $renderer, $file_system, $opener_resolver, $file_usage, $file_repository);
     $this->dropzoneSave = $dropzone_upload;
     $this->currentUser = $current_user;
   }
@@ -77,7 +81,7 @@ class MediaLibraryFileUploadForm extends FileUploadForm {
    * @return array
    *   Modified form render array.
    */
-  public static function afterBuildDropzone(array $element, FormStateInterface $form_state) {
+  public static function afterBuildDropzone(array $element, FormStateInterface $form_state): array {
     $token_generator = \Drupal::service('csrf_token');
     $url = Url::fromRoute('dropzonejs.upload');
     $url = Url::fromRoute('dropzonejs.upload', [], ['query' => ['token' => $token_generator->get($url->getInternalPath())]]);
@@ -88,7 +92,7 @@ class MediaLibraryFileUploadForm extends FileUploadForm {
   /**
    * {@inheritDoc}
    */
-  protected function buildInputElement(array $form, FormStateInterface $form_state) {
+  protected function buildInputElement(array $form, FormStateInterface $form_state): array {
     $element = parent::buildInputElement($form, $form_state);
 
     // Dropzone uses 0 to denote unlimited files.
@@ -142,7 +146,7 @@ class MediaLibraryFileUploadForm extends FileUploadForm {
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The form state.
    */
-  public function uploadDropzoneSubmit(array $form, FormStateInterface $form_state) {
+  public function uploadDropzoneSubmit(array $form, FormStateInterface $form_state): void {
     $media_type = $this->getMediaType($form_state);
     $field_config = $media_type->getSource()
       ->getSourceFieldDefinition($media_type);
@@ -159,7 +163,7 @@ class MediaLibraryFileUploadForm extends FileUploadForm {
   /**
    * {@inheritDoc}
    */
-  public function validateUploadElement(array $element, FormStateInterface $form_state) {
+  public function validateUploadElement(array $element, FormStateInterface $form_state): array {
     $form_state->setValue('upload', ['fids' => []]);
     return parent::validateUploadElement($element, $form_state);
   }
@@ -167,7 +171,7 @@ class MediaLibraryFileUploadForm extends FileUploadForm {
   /**
    * {@inheritDoc}
    */
-  protected function buildEntityFormElement(MediaInterface $media, array $form, FormStateInterface $form_state, $delta) {
+  protected function buildEntityFormElement(MediaInterface $media, array $form, FormStateInterface $form_state, $delta): array {
     $element = parent::buildEntityFormElement($media, $form, $form_state, $delta);
 
     // If similar media items already exist, present those options to the user.
@@ -197,12 +201,12 @@ class MediaLibraryFileUploadForm extends FileUploadForm {
    * @param \Drupal\media\MediaInterface $media
    *   Media item to compare.
    *
-   * @return array
+   * @return \Drupal\media\MediaInterface[]
    *   Similar media rendered options for radios.
    *
    * @throws \Drupal\Component\Plugin\Exception\PluginException
    */
-  protected function getSimilarMediaOptions(MediaInterface $media) {
+  protected function getSimilarMediaOptions(MediaInterface $media): array {
     $options = [];
     $duplication_service = static::getMediaDuplicationService();
 
@@ -254,14 +258,16 @@ class MediaLibraryFileUploadForm extends FileUploadForm {
    * @param array $render_array
    *   Entity render array.
    *
-   * @return string
+   * @return \Drupal\Component\Render\MarkupInterface|string
    *   Rendered contents.
    *
    * @codeCoverageIgnore
    *   Ignore this because `render()` is not established during unit tests.
    */
-  protected static function getRenderDisplay(array &$render_array) {
-    return \Drupal::service('renderer')->render($render_array);
+  protected static function getRenderDisplay(array &$render_array): MarkupInterface|string {
+    /** @var \Drupal\Core\Render\RendererInterface $renderer */
+    $renderer = \Drupal::service('renderer');
+    return $renderer->render($render_array);
   }
 
   /**
@@ -270,10 +276,11 @@ class MediaLibraryFileUploadForm extends FileUploadForm {
    * @return \Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationManager|null
    *   Duplication plugin manager service.
    */
-  protected static function getMediaDuplicationService() {
+  protected static function getMediaDuplicationService(): ?MediaDuplicateValidationManager {
     if (\Drupal::hasService('plugin.manager.media_duplicate_validation')) {
       return \Drupal::service('plugin.manager.media_duplicate_validation');
     }
+    return NULL;
   }
 
 }

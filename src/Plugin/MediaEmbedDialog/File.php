@@ -18,7 +18,7 @@ class File extends MediaEmbedDialogBase {
   /**
    * {@inheritdoc}
    */
-  public function isApplicable() {
+  public function isApplicable(): bool {
     if ($this->entity instanceof MediaInterface) {
       return $this->entity->bundle() == 'file';
     }
@@ -28,7 +28,7 @@ class File extends MediaEmbedDialogBase {
   /**
    * {@inheritdoc}
    */
-  public function getDefaultInput() {
+  public function getDefaultInput(): array {
     $input = ['data-display-description' => NULL];
     return $input + parent::getDefaultInput();
   }
@@ -36,7 +36,7 @@ class File extends MediaEmbedDialogBase {
   /**
    * {@inheritdoc}
    */
-  public function alterDialogForm(array &$form, FormStateInterface $form_state) {
+  public function alterDialogForm(array &$form, FormStateInterface $form_state): void {
     parent::alterDialogForm($form, $form_state);
     $user_input = $this->getUserInput($form_state);
     unset($form['caption']);
@@ -51,14 +51,14 @@ class File extends MediaEmbedDialogBase {
   /**
    * {@inheritdoc}
    */
-  public function alterDialogValues(array &$values, array $form, FormStateInterface $form_state) {
+  public function alterDialogValues(array &$values, array $form, FormStateInterface $form_state): void {
     $values['attributes']['data-display-description'] = $form_state->getValue('description');
   }
 
   /**
    * {@inheritdoc}
    */
-  public function embedAlter(array &$build, MediaInterface $entity) {
+  public function embedAlter(array &$build, MediaInterface $entity): void {
     parent::embedAlter($build, $entity);
     if (!empty($build['#attributes']['data-display-description'])) {
       $source_field = static::getMediaSourceField($build['#media']);

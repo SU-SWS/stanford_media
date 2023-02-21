@@ -9,6 +9,7 @@ use Drupal\Core\Field\FieldTypePluginManagerInterface;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\Core\Utility\Token;
 use Drupal\media\IFrameUrlHelper;
 use Drupal\media\MediaInterface;
 use Drupal\media\OEmbed\ResourceFetcherInterface;
@@ -62,6 +63,7 @@ class Embeddable extends OEmbed implements EmbeddableInterface {
       $container->get('media.oembed.url_resolver'),
       $container->get('media.oembed.iframe_url_helper'),
       $container->get('file_system'),
+      $container->get('token'),
       $container->get('plugin.manager.embed_validator_plugin_manager')
     );
   }
@@ -69,8 +71,8 @@ class Embeddable extends OEmbed implements EmbeddableInterface {
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, EntityFieldManagerInterface $entity_field_manager, ConfigFactoryInterface $config_factory, FieldTypePluginManagerInterface $field_type_manager, LoggerInterface $logger, MessengerInterface $messenger, ClientInterface $http_client, ResourceFetcherInterface $resource_fetcher, UrlResolverInterface $url_resolver, IFrameUrlHelper $iframe_url_helper, FileSystemInterface $file_system = NULL, EmbedValidatorPluginManager $embed_validation = NULL) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager, $entity_field_manager, $config_factory, $field_type_manager, $logger, $messenger, $http_client, $resource_fetcher, $url_resolver, $iframe_url_helper, $file_system);
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, EntityFieldManagerInterface $entity_field_manager, ConfigFactoryInterface $config_factory, FieldTypePluginManagerInterface $field_type_manager, LoggerInterface $logger, MessengerInterface $messenger, ClientInterface $http_client, ResourceFetcherInterface $resource_fetcher, UrlResolverInterface $url_resolver, IFrameUrlHelper $iframe_url_helper, FileSystemInterface $file_system, Token $token, EmbedValidatorPluginManager $embed_validation = NULL) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager, $entity_field_manager, $config_factory, $field_type_manager, $logger, $messenger, $http_client, $resource_fetcher, $url_resolver, $iframe_url_helper, $file_system, $token);
     $this->embedValidation = $embed_validation;
   }
 
@@ -117,11 +119,11 @@ class Embeddable extends OEmbed implements EmbeddableInterface {
   /**
    * {@inheritDoc}
    */
-  public function getMetadata(MediaInterface $media, $name) {
+  public function getMetadata(MediaInterface $media, $attribute_name) {
     if ($this->hasUnstructured($media)) {
-      return $this->getUnstructuredMetadata($media, $name);
+      return $this->getUnstructuredMetadata($media, $attribute_name);
     }
-    return parent::getMetadata($media, $name);
+    return parent::getMetadata($media, $attribute_name);
   }
 
   /**
@@ -147,7 +149,7 @@ class Embeddable extends OEmbed implements EmbeddableInterface {
   /**
    * {@inheritDoc}
    */
-  public function hasUnstructured(MediaInterface $media) {
+  public function hasUnstructured(MediaInterface $media): bool {
     return (
       !$media->get($this->configuration['unstructured_field_name'])
         ->isEmpty() &&

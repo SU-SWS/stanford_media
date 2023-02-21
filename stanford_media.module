@@ -72,9 +72,9 @@ function stanford_media_media_presave(MediaInterface $entity) {
 }
 
 /**
- * Implements hook_field_widget_form_alter().
+ * Implements hook_field_widget_single_element_form_alter().
  */
-function stanford_media_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
+function stanford_media_field_widget_single_element_form_alter(array &$element, FormStateInterface $form_state, array $context) {
   /** @var \Drupal\Core\Field\FieldItemListInterface $items */
   $items = $context['items'];
   if ($items->getFieldDefinition()->getType() == 'image') {
@@ -85,11 +85,12 @@ function stanford_media_field_widget_form_alter(&$element, FormStateInterface $f
   }
 }
 
+
 /**
  * Implements hook_field_widget_WIDGET_TYPE_form_alter().
  */
 function stanford_media_field_widget_text_textarea_form_alter(&$element, FormStateInterface $form_state, $context) {
-  // Adds the library outside of ckeditor iframe.
+  // Adds the library outside ckeditor iframe.
   $element['#attached']['library'][] = 'stanford_media/admin';
 }
 
@@ -250,8 +251,8 @@ function stanford_media_entity_access(EntityInterface $entity, $operation, Accou
   foreach ($configs as $config_name) {
     $config = \Drupal::config($config_name);
 
-    // Check for the fields we are interested by checking their type and handler
-    // settings.
+    // Check for the fields we are interested in by checking their type and
+    // handler settings.
     if (
       $config->get('field_type') == 'entity_reference' &&
       $config->get('settings.handler') == 'default:media' &&
@@ -259,7 +260,7 @@ function stanford_media_entity_access(EntityInterface $entity, $operation, Accou
     ) {
       $default_value = $config->get('default_value');
 
-      // The field default value matches the current media entity so we want to
+      // The field default value matches the current media entity, so we want to
       // forbid editing/deleting if the user doesn't have the proper permission.
       if (!empty($default_value[0]['target_uuid']) && $entity->uuid() == $default_value[0]['target_uuid']) {
         return AccessResult::forbiddenIf(!$account->hasPermission('edit field default media'), 'The entity is set as a default field value.');

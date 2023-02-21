@@ -35,14 +35,14 @@ class Image extends MediaEmbedDialogBase {
   /**
    * {@inheritdoc}
    */
-  public function getDefaultInput() {
+  public function getDefaultInput(): array {
     return ['data-caption' => NULL];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function isApplicable() {
+  public function isApplicable(): bool {
     if ($this->entity instanceof MediaInterface) {
       return $this->entity->getSource() instanceof ImageSource;
     }
@@ -52,7 +52,7 @@ class Image extends MediaEmbedDialogBase {
   /**
    * {@inheritdoc}
    */
-  public function alterDialogForm(array &$form, FormStateInterface $form_state) {
+  public function alterDialogForm(array &$form, FormStateInterface $form_state): void {
     parent::alterDialogForm($form, $form_state);
     $user_input = $this->getUserInput($form_state);
 
@@ -89,7 +89,7 @@ class Image extends MediaEmbedDialogBase {
    * @return array
    *   Modified field element.
    */
-  public static function imageWidgetProcess(array $element, FormStateInterface $form_state, array $form) {
+  public static function imageWidgetProcess(array $element, FormStateInterface $form_state, array $form): array {
     if (isset($element['alt']) && isset($element['decorative'])) {
       $element['decorative']['#default_value'] = $form['alt']['#default_value'] == self::DECORATIVE;
       $element['alt']['#default_value'] = $form['alt']['#default_value'] == self::DECORATIVE ? '' : $form['alt']['#default_value'];
@@ -100,7 +100,7 @@ class Image extends MediaEmbedDialogBase {
   /**
    * {@inheritdoc}
    */
-  public function alterDialogValues(array &$values, array $form, FormStateInterface $form_state) {
+  public function alterDialogValues(array &$values, array $form, FormStateInterface $form_state): void {
     if ($form_state->getValue('decorative')) {
       // Set the alt text to some token that we can replace later.
       $form_state->setValue(['attributes', 'alt'], self::DECORATIVE);
@@ -121,7 +121,7 @@ class Image extends MediaEmbedDialogBase {
   /**
    * {@inheritdoc}
    */
-  public function embedAlter(array &$build, MediaInterface $entity) {
+  public function embedAlter(array &$build, MediaInterface $entity): void {
     $source_field = self::getMediaSourceField($entity);
     // If the image is embed as decorative, set the alt text to an empty string.
     foreach (Element::children($build[$source_field]) as $delta) {

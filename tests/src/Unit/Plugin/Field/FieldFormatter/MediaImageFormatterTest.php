@@ -103,7 +103,7 @@ class TestMediaImageFormatter extends MediaImageFormatter {
   /**
    * {@inheritDoc}
    */
-  protected function getStyleOptions() {
+  protected function getStyleOptions(): array {
     return [
       'foo' => 'Foo',
       'bar' => 'Bar',

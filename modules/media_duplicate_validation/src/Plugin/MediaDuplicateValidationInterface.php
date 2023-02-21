@@ -25,7 +25,7 @@ interface MediaDuplicateValidationInterface {
    * @return \Drupal\media\Entity\Media[]
    *   Array of similar entities.
    */
-  public function getSimilarItems(MediaInterface $entity);
+  public function getSimilarItems(MediaInterface $entity): array;
 
   /**
    * Perform any necessary actions after a media entity has been saved.
@@ -36,7 +36,7 @@ interface MediaDuplicateValidationInterface {
    * @param \Drupal\media\MediaInterface $entity
    *   Media entity that has been saved.
    */
-  public function mediaSave(MediaInterface $entity);
+  public function mediaSave(MediaInterface $entity): void;
 
   /**
    * Perform any necessary action when a media entity is deleted.
@@ -44,21 +44,21 @@ interface MediaDuplicateValidationInterface {
    * @param \Drupal\media\MediaInterface $entity
    *   Deleted entity.
    */
-  public function mediaDelete(MediaInterface $entity);
+  public function mediaDelete(MediaInterface $entity): void;
 
   /**
    * If the plugin requires a database table, define it here.
    *
-   * @see hook_schema()
-   *
    * @return array
    *   Database schema definition.
+   *
+   * @see hook_schema()
    */
-  public function schema();
+  public function schema(): array;
 
   /**
    * Perform necessary action when the table is created.
    */
-  public function populateTable();
+  public function populateTable(): void;
 
 }

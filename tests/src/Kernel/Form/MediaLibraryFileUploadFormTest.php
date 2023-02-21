@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\stanford_media\Kernel\Form;
 
+use Drupal\Component\Render\MarkupInterface;
 use Drupal\Core\Form\FormState;
 use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
@@ -182,7 +183,7 @@ class TestForm extends MediaLibraryFileUploadForm {
   /**
    * {@inheritDoc}
    */
-  protected static function getRenderDisplay(array &$render_array) {
+  protected static function getRenderDisplay(array &$render_array): MarkupInterface|string {
     return implode(', ', array_keys($render_array));
   }
 

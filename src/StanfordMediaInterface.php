@@ -15,6 +15,6 @@ interface StanfordMediaInterface {
    * @param \Drupal\media\MediaInterface $media
    *   Media entity.
    */
-  public function deleteMediaFiles(MediaInterface $media):void;
+  public function deleteMediaFiles(MediaInterface $media): void;
 
 }

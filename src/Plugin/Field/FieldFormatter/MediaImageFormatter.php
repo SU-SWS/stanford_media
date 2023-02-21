@@ -23,14 +23,14 @@ class MediaImageFormatter extends MediaImageFormatterBase {
    *
    * @codeCoverageIgnore
    */
-  protected function getStyleOptions() {
+  protected function getStyleOptions(): array {
     return image_style_options(FALSE);
   }
 
   /**
    * {@inheritdoc}
    */
-  public static function preRender($element) {
+  public static function preRender($element): array {
     $source_field = self::getSourceField($element['#media']);
 
     // If the field isn't an image, don't do anything.
