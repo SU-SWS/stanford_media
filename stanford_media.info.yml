@@ -1,13 +1,12 @@
 name: Stanford Media
 description: Provides media module configuration and plugins.
-core_version_requirement: ^8.8 || ^9
+core_version_requirement: ^9.4 || ^10
 package: media
 type: module
 version: 8.x-3.6-dev
 dependencies:
   - dropzonejs:dropzonejs
   - drupal:breakpoint
-  - drupal:ckeditor
   - drupal:editor
   - drupal:field
   - drupal:media

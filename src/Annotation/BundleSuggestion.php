@@ -5,7 +5,7 @@ namespace Drupal\stanford_media\Annotation;
 use Drupal\Component\Annotation\Plugin;
 
 /**
- * Defines an bundle suggestion annotation object.
+ * Defines a bundle suggestion object.
  *
  * We need this so that our docblock annotation is unique.
  *
@@ -15,6 +15,11 @@ use Drupal\Component\Annotation\Plugin;
  */
 class BundleSuggestion extends Plugin {
 
+  /**
+   * Field type names.
+   *
+   * @var string[]
+   */
   protected $field_types = [];
 
 }

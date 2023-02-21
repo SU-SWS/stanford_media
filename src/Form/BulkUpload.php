@@ -146,7 +146,7 @@ class BulkUpload extends FormBase {
   public function validateForm(array &$form, FormStateInterface $form_state) {
     parent::validateForm($form, $form_state);
 
-    // Dont create the media entities if any errors exist.
+    // Don't create the media entities if any errors exist.
     if ($form_state::hasAnyErrors()) {
       return;
     }
@@ -155,7 +155,7 @@ class BulkUpload extends FormBase {
     $media_entities = $this->createMediaEntities($form, $form_state);
 
     // Save the files and the media entites on them.
-    foreach ($media_entities as &$media_entity) {
+    foreach ($media_entities as $media_entity) {
       if ($media_entity instanceof Media) {
         $source_field = $media_entity->getSource()
           ->getConfiguration()['source_field'];
@@ -226,7 +226,7 @@ class BulkUpload extends FormBase {
    *
    * @throws \Drupal\Component\Plugin\Exception\PluginException
    */
-  protected function getFiles(array $form, FormStateInterface $form_state) {
+  protected function getFiles(array $form, FormStateInterface $form_state): array {
 
     $files = $form_state->getValue(['dropzonejs', 'files']);
 
@@ -277,7 +277,7 @@ class BulkUpload extends FormBase {
    * @throws \Drupal\Component\Plugin\Exception\PluginException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  private function getEntityForm(array &$form, FormStateInterface $form_state) {
+  protected function getEntityForm(array &$form, FormStateInterface $form_state): void {
     if (isset($form['actions'])) {
       $form['actions']['#weight'] = 100;
     }
@@ -305,10 +305,8 @@ class BulkUpload extends FormBase {
       ];
     }
 
-    // Make sure to add it's own submit handler before adding an IEF submit.
-    $form['#submit'] = isset($form['#submit']) ? $form['#submit'] : [
-      [$this, 'submitForm'],
-    ];
+    // Make sure to add its own submit handler before adding an IEF submit.
+    $form['#submit'] = $form['#submit'] ?? [[$this, 'submitForm']];
     // Without this, IEF won't know where to hook into the widget.
     ElementSubmit::addCallback($form['actions']['submit'], $form);
   }
@@ -321,14 +319,14 @@ class BulkUpload extends FormBase {
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Form State object.
    *
-   * @return array
+   * @return \Drupal\media\MediaInterface[]
    *   Array of media entities before saving.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  private function createMediaEntities(array $form, FormStateInterface $form_state) {
+  protected function createMediaEntities(array $form, FormStateInterface $form_state): array {
     $media_entities = [];
 
     // Media entities were already created.

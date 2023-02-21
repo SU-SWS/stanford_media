@@ -17,14 +17,14 @@ class Media extends MediaEmbedDialogBase {
   /**
    * {@inheritDoc}
    */
-  public function isApplicable() {
+  public function isApplicable(): bool {
     return TRUE;
   }
 
   /**
    * {@inheritDoc}
    */
-  public function alterDialogForm(array &$form, FormStateInterface $form_state) {
+  public function alterDialogForm(array &$form, FormStateInterface $form_state): void {
     parent::alterDialogForm($form, $form_state);
     // The text editor is not configured to allow a choice of view modes.
     if (!isset($form['view_mode'])) {

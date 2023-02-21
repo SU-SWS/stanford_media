@@ -3,6 +3,7 @@
 namespace Drupal\stanford_media\Plugin\BundleSuggestion;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\PluginBase;
 use Drupal\stanford_media\Plugin\BundleSuggestionInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -12,7 +13,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @package Drupal\stanford_media\Plugin\BundleSuggestion
  */
-abstract class BundleSuggestionBase extends PluginBase implements BundleSuggestionInterface {
+abstract class BundleSuggestionBase extends PluginBase implements BundleSuggestionInterface, ContainerFactoryPluginInterface {
 
   /**
    * Entity Type Manager service.
@@ -53,7 +54,7 @@ abstract class BundleSuggestionBase extends PluginBase implements BundleSuggesti
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  protected function getMediaBundles(array $bundles = []) {
+  protected function getMediaBundles(array $bundles = []): array {
     return $this->entityTypeManager->getStorage('media_type')
       ->loadMultiple($bundles ?: NULL);
   }
@@ -61,7 +62,7 @@ abstract class BundleSuggestionBase extends PluginBase implements BundleSuggesti
   /**
    * {@inheritdoc}
    */
-  public function getName($input) {
+  public function getName($input): ?string {
     return NULL;
   }
 

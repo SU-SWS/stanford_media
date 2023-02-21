@@ -4,6 +4,7 @@ namespace Drupal\Tests\stanford_media\Unit\Form;
 
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Form\FormState;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\stanford_media\Form\MediaLibraryEmbeddableForm;
 use Drupal\Tests\UnitTestCase;
 use Drupal\field\Entity\FieldConfig;
@@ -42,7 +43,6 @@ class MediaLibraryEmbeddableFormTest extends UnitTestCase {
   }
 
 
-
   public function testGetFormId() {
     $form_object = new TestMediaLibraryEmbeddableForm();
     $this->assertStringContainsString('_embeddable', $form_object->getFormId());
@@ -62,14 +62,16 @@ class MediaLibraryEmbeddableFormTest extends UnitTestCase {
  */
 class TestMediaLibraryEmbeddableForm extends MediaLibraryEmbeddableForm {
 
-  public function __construct() {}
+  public function __construct() {
+  }
+
   /**
    * We override this so unit tests work without a full form state.
    *
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current form state.
    */
-  public function setFieldNames(\Drupal\Core\Form\FormStateInterface $form_state) {
+  public function setFieldNames(FormStateInterface $form_state): void {
     $this->oEmbedField = 'field_media_embeddable_oembed';
     $this->unstructuredField = 'field_media_embeddable_unstructured';
   }

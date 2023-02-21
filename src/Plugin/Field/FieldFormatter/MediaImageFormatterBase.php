@@ -16,22 +16,22 @@ abstract class MediaImageFormatterBase extends MediaFormatterBase implements Tru
   /**
    * Get an array of image style options in order to choose and apply in render.
    *
-   * @return array
+   * @return string[]
    *   Keyed array of style options.
    */
-  abstract protected function getStyleOptions();
+  abstract protected function getStyleOptions(): array;
 
   /**
    * {@inheritdoc}
    */
-  public static function trustedCallbacks() {
+  public static function trustedCallbacks(): array {
     return ['preRender'];
   }
 
   /**
    * {@inheritdoc}
    */
-  public static function defaultSettings() {
+  public static function defaultSettings(): array {
     $settings = [
       'image_style' => NULL,
       'link' => 0,
@@ -142,6 +142,6 @@ abstract class MediaImageFormatterBase extends MediaFormatterBase implements Tru
    * @return array
    *   Altered render array.
    */
-  abstract public static function preRender($element);
+  abstract public static function preRender($element): array;
 
 }

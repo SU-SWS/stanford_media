@@ -63,7 +63,7 @@ class StanfordMedia implements StanfordMediaInterface, TrustedCallbackInterface 
    * @return array
    *   Modified field element.
    */
-  public static function imageWidgetProcess(array $element, FormStateInterface $form_state, array $form) {
+  public static function imageWidgetProcess(array $element, FormStateInterface $form_state, array $form): array {
     if (!empty($element['alt']['#description'])) {
       $url = Url::fromUri('https://uit.stanford.edu/accessibility/concepts/images');
       $link = Link::fromTextAndUrl($url->toString(), $url)->toString();
@@ -100,9 +100,9 @@ class StanfordMedia implements StanfordMediaInterface, TrustedCallbackInterface 
    * @return string
    *   Adjusted input string.
    */
-  public static function imageAltValue(array &$element, $input, FormStateInterface $form_state) {
+  public static function imageAltValue(array &$element, $input, FormStateInterface $form_state): string {
     if ($input === FALSE) {
-      return $element['#default_value'];
+      return $element['#default_value'] ?: '';
     }
     $parents = array_slice($element['#parents'], 0, -1);
     $decorative_path = $parents;
@@ -111,7 +111,7 @@ class StanfordMedia implements StanfordMediaInterface, TrustedCallbackInterface 
       $form_state->setValue($element['#parents'], '');
       return '';
     }
-    return $input;
+    return $input ?: '';
   }
 
   /**
