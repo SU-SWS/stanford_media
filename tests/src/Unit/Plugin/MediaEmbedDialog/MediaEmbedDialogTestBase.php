@@ -45,11 +45,7 @@ abstract class MediaEmbedDialogTestBase extends UnitTestCase {
   /**
    * {@inheritDoc}
    */
-<<<<<<< HEAD
   public function setup(): void {
-=======
-  protected function setUp(): void {
->>>>>>> should be able to support d9.4
     parent::setUp();
 
     $entity_storage = $this->createMock(EntityStorageInterface::class);

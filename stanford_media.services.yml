@@ -16,3 +16,8 @@ services:
   plugin.manager.embed_validator_plugin_manager:
     class: Drupal\stanford_media\Plugin\EmbedValidatorPluginManager
     parent: default_plugin_manager
+
+  stanford_media.event_subscriber:
+    class: Drupal\stanford_media\EventSubscriber\StanfordMediaSubscriber
+    tags:
+      - { name: event_subscriber }

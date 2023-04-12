@@ -20,6 +20,32 @@ use Drupal\stanford_media\Form\MediaLibraryFileUploadForm;
 use Drupal\stanford_media\Form\MediaLibraryGoogleFormForm;
 
 /**
+ * Implements hook_entity_type_alter().
+ */
+function stanford_media_entity_type_alter(array &$entity_types) {
+  // Add route for media entity type to view the usage details.
+  $entity_types['media']->setLinkTemplate('usage', '/media/{media}/usage');
+}
+
+/**
+ * Implements hook_entity_operation_alter().
+ */
+/**
+ * Implements hook_entity_operation().
+ */
+function stanford_media_entity_operation(EntityInterface $entity) {
+  $operations = [];
+  if ($entity->getEntityTypeId() == 'media' && $entity->access('update')) {
+    $operations['usage'] = [
+      'title' => t('Usage'),
+      'weight' => 100,
+      'url' => $entity->toUrl('usage'),
+    ];
+  }
+  return $operations;
+}
+
+/**
  * Implements hook_ENTITY_TYPE_delete().
  */
 function stanford_media_media_delete(MediaInterface $media) {
@@ -92,17 +118,6 @@ function stanford_media_field_widget_single_element_form_alter(array &$element, 
 function stanford_media_field_widget_text_textarea_form_alter(&$element, FormStateInterface $form_state, $context) {
   // Adds the library outside ckeditor iframe.
   $element['#attached']['library'][] = 'stanford_media/admin';
-}
-
-/**
- * Implements hook_ckeditor_css_alter().
- */
-function stanford_media_ckeditor_css_alter(array &$css, Editor $editor) {
-  /** @var \Drupal\Core\Extension\ModuleExtensionList $extensions */
-  $extensions = \Drupal::service('extension.list.module');
-  // Add styles inside the ckeditor iframe.
-  $css[] = $extensions->getPath('stanford_media') . '/dist/css/stanford_media.admin.css';
-  $css[] = $extensions->getPath('stanford_media') . '/dist/css/stanford_media.css';
 }
 
 /**
