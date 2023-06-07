@@ -2,7 +2,7 @@ name: 'Media Duplicate Validation'
 type: module
 description: 'Media Validation plugins to help prevent duplication of media items'
 core_version_requirement: ^9.4 || ^10
-version: 9.0.0
+version: 9.0.1
 package: media
 dependencies:
   - drupal:media
