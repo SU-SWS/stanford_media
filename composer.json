@@ -22,11 +22,11 @@
     "require": {
         "php": ">=8.1",
         "davidbarratt/custom-installer": "^1.1",
-        "drupal/core": "^9.4 || ^10.0",
+        "drupal/core": "^10.0",
         "drupal/dropzonejs": "^2.7",
         "drupal/entity_usage": "^2.0@beta",
         "drupal/focal_point": "^2.0@alpha",
-        "drupal/inline_entity_form": "^1.0 || ^2.0",
+        "drupal/inline_entity_form": "^2.0",
         "drupal/oembed_providers": "^2.1",
         "drupal/transliterate_filenames": "^2.0",
         "enyo/dropzone": "^5.9"
@@ -37,11 +37,7 @@
                 "enyo/dropzone"
             ]
         },
-        "patches": {
-            "drupal/core": {
-                "https://www.drupal.org/project/drupal/issues/3059955": "https://www.drupal.org/files/issues/2019-12-28/3082690-80.patch"
-            }
-        }
+        "patches": {}
     },
     "autoload": {
         "psr-4": {

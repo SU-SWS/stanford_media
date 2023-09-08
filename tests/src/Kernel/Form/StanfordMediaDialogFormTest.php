@@ -31,7 +31,7 @@ class StanfordMediaDialogFormTest extends StanfordMediaTestBase {
     'media_library',
     'views',
     'editor',
-    'ckeditor',
+    'ckeditor5',
     'filter',
   ];
 
@@ -49,7 +49,7 @@ class StanfordMediaDialogFormTest extends StanfordMediaTestBase {
     FilterFormat::create(['format' => 'html', 'name' => 'test format'])->save();
     $editor = Editor::create([
       'format' => 'html',
-      'editor' => 'ckeditor',
+      'editor' => 'ckeditor5',
     ]);
     $editor->save();
     $media = Media::create(['bundle' => 'file']);

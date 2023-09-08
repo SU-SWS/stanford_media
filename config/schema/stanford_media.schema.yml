@@ -86,9 +86,17 @@ field.formatter.settings.embeddable_formatter:
     max_height:
       type: integer
       label: 'Maximum height'
+    loading:
+      type: mapping
+      label: 'oEmbed loading settings'
+      mapping:
+        attribute:
+          type: string
+          label: 'Loading attribute'
     allowed_tags:
       type: string
       label: 'Allowed HTML tags'
+
 
 media.source.google_form:
   type: media.source.field_aware

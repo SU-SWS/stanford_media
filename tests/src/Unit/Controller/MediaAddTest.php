@@ -10,6 +10,7 @@ use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Render\RendererInterface;
+use Drupal\Core\Routing\CurrentRouteMatch;
 use Drupal\Core\Routing\UrlGeneratorInterface;
 use Drupal\Core\Utility\LinkGeneratorInterface;
 use Drupal\media\MediaTypeInterface;
@@ -40,7 +41,7 @@ class MediaAddTest extends UnitTestCase {
   /**
    * {@inheritDoc}
    */
-  protected function setUp(): void {
+  public function setup(): void {
     parent::setUp();
 
     $media_definition = $this->createMock(EntityTypeInterface::class);
@@ -75,6 +76,8 @@ class MediaAddTest extends UnitTestCase {
 
     $link_generator = $this->createMock(LinkGeneratorInterface::class);
 
+    $current_route_match = $this->createMock(CurrentRouteMatch::class);
+
     $this->container = new ContainerBuilder();
     $this->container->set('entity_type.manager', $entity_type_manager);
     $this->container->set('entity_type.bundle.info', $bundle_info);
@@ -84,7 +87,7 @@ class MediaAddTest extends UnitTestCase {
     $this->container->set('url_generator', $url_generator);
     $this->container->set('plugin.manager.bundle_suggestion_manager', $bundle_suggestion);
     $this->container->set('link_generator', $link_generator);
-
+    $this->container->set('current_route_match', $current_route_match);
     \Drupal::setContainer($this->container);
   }
 

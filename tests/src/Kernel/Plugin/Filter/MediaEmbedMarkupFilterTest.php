@@ -31,7 +31,6 @@ class MediaEmbedMarkupFilterTest extends MediaEmbedFilterTestBase {
     'system',
     'text',
     'user',
-    'entity_reference',
     'breakpoint',
     'responsive_image',
     'responsive_image_test_module',

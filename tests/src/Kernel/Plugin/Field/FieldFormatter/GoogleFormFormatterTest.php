@@ -51,7 +51,7 @@ class GoogleFormFormatterTest extends KernelTestBase {
   /**
    * {@inheritDoc}
    */
-  protected function setUp(): void {
+  public function setup(): void {
     parent::setUp();
     $this->installEntitySchema('user');
     $this->installEntitySchema('media');
@@ -160,7 +160,7 @@ class GoogleFormFormatterTest extends KernelTestBase {
     $view_builder = \Drupal::entityTypeManager()->getViewBuilder('media');
     $display = $view_builder->view($this->media, 'default');
     $display = \Drupal::service('renderer')->renderPlain($display);
-    
+
     preg_match('/<iframe.*src="http:\/\/google.com\/forms\/a\/b\/formid\/viewform"/', $display, $matches);
     $this->assertCount(1, $matches);
     preg_match('/<iframe.*height="750".*/', $display, $matches);

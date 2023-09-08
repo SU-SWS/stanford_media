@@ -45,7 +45,7 @@ abstract class MediaEmbedDialogTestBase extends UnitTestCase {
   /**
    * {@inheritDoc}
    */
-  protected function setUp(): void {
+  public function setup(): void {
     parent::setUp();
 
     $entity_storage = $this->createMock(EntityStorageInterface::class);

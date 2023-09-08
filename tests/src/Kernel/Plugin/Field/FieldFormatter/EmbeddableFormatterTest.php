@@ -78,7 +78,7 @@ class EmbeddableFormatterTest extends KernelTestBase {
   /**
    * {@inheritDoc}
    */
-  protected function setUp(): void {
+  public function setup(): void {
     parent::setUp();
     $this->installEntitySchema('user');
     $this->installEntitySchema('media');
@@ -106,14 +106,12 @@ class EmbeddableFormatterTest extends KernelTestBase {
     ]);
     $this->mediaType->save();
 
-    $this->mediaType
-      ->set('source_configuration', [
-        'oembed_field_name' => 'field_media_embeddable_oembed',
-        'unstructured_field_name' => 'field_media_embeddable_code',
-        'thumbnails_directory' => 'public://oembed_thumbnails',
-        'source_field' => 'field_media_embeddable_oembed',
-      ])
-      ->save();
+    $this->mediaType->set('source_configuration', [
+      'oembed_field_name' => 'field_media_embeddable_oembed',
+      'unstructured_field_name' => 'field_media_embeddable_code',
+      'thumbnails_directory' => 'public://oembed_thumbnails',
+      'source_field' => 'field_media_embeddable_oembed',
+    ])->save();
 
     // Create the fields we need.
     $field_storage = FieldStorageConfig::create([
@@ -162,15 +160,13 @@ class EmbeddableFormatterTest extends KernelTestBase {
     ];
 
     /** @var \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display */
-
     $display = EntityViewDisplay::create([
       'targetEntityType' => 'media',
       'bundle' => 'embeddable',
       'mode' => 'default',
       'status' => TRUE,
     ]);
-    $display
-      ->setComponent('field_media_embeddable_code', $display_options)
+    $display->setComponent('field_media_embeddable_code', $display_options)
       ->setComponent('field_media_embeddable_oembed', $display_options)
       ->removeComponent('thumbnail')
       ->save();
@@ -237,7 +233,6 @@ class EmbeddableFormatterTest extends KernelTestBase {
    * Formatter should not apply to things that aren't media.
    */
   public function testNonMediaField() {
-
     EntityTestBundle::create(['id' => 'test'])->save();
 
     $field_storage = FieldStorageConfig::create([
@@ -257,14 +252,12 @@ class EmbeddableFormatterTest extends KernelTestBase {
     $field_config->save();
 
     $this->assertFalse(EmbeddableFormatter::isApplicable($field_config));
-
   }
 
   /**
    * Formatter should not apply to things that aren't embeddable.
    */
   public function testOtherMediaTypeField() {
-
     $mediaType = MediaType::create([
       'id' => 'video',
       'label' => 'video',
@@ -274,7 +267,6 @@ class EmbeddableFormatterTest extends KernelTestBase {
     $source_field = $mediaType->getSource()->createSourceField($mediaType);
 
     $this->assertFalse(EmbeddableFormatter::isApplicable($source_field));
-
   }
 
   /**

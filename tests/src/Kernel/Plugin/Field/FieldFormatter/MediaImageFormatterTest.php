@@ -35,7 +35,6 @@ class MediaImageFormatterTest extends KernelTestBase {
     'field',
     'file',
     'media',
-    'entity_reference',
   ];
 
   /**
@@ -48,7 +47,7 @@ class MediaImageFormatterTest extends KernelTestBase {
   /**
    * {@inheritDoc}
    */
-  protected function setUp(): void {
+  public function setup(): void {
     parent::setUp();
     $this->installEntitySchema('user');
     $this->installEntitySchema('node');

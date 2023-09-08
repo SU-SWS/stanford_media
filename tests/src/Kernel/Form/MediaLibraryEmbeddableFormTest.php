@@ -39,7 +39,7 @@ class MediaLibraryEmbeddableFormTest extends StanfordMediaTestBase {
   /**
    * {@inheritDoc}
    */
-  protected function setUp(): void {
+  public function setup(): void {
     parent::setUp();
     $this->installConfig('media_library');
 
