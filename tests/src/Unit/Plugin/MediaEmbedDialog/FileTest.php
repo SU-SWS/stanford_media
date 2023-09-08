@@ -16,7 +16,7 @@ class FileTest extends MediaEmbedDialogTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp(): void {
+  public function setup(): void {
     parent::setUp();
     $this->mediaBundle = 'file';
   }

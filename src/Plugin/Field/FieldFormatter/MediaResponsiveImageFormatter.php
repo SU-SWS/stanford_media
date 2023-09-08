@@ -10,8 +10,8 @@ use Drupal\Core\Render\Element;
  * @FieldFormatter (
  *   id = "media_responsive_image_formatter",
  *   label = @Translation("Media Responsive Image Style"),
- *   description = @Translation("Apply a responsive image style to image media
- *   items."), field_types = {
+ *   description = @Translation("Apply a responsive image style to image media items."),
+ *   field_types = {
  *     "entity_reference"
  *   }
  * )

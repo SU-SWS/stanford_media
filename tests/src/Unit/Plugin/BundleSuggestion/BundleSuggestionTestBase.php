@@ -28,7 +28,7 @@ abstract class BundleSuggestionTestBase extends UnitTestCase {
   /**
    * {@inheritDoc}
    */
-  protected function setUp(): void {
+  public function setup(): void {
     parent::setUp();
 
     $media_source = $this->createMock(MediaSourceInterface::class);

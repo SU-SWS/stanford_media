@@ -95,17 +95,6 @@ function stanford_media_field_widget_text_textarea_form_alter(&$element, FormSta
 }
 
 /**
- * Implements hook_ckeditor_css_alter().
- */
-function stanford_media_ckeditor_css_alter(array &$css, Editor $editor) {
-  /** @var \Drupal\Core\Extension\ModuleExtensionList $extensions */
-  $extensions = \Drupal::service('extension.list.module');
-  // Add styles inside the ckeditor iframe.
-  $css[] = $extensions->getPath('stanford_media') . '/dist/css/stanford_media.admin.css';
-  $css[] = $extensions->getPath('stanford_media') . '/dist/css/stanford_media.css';
-}
-
-/**
  * Implements hook_theme_registry_alter().
  */
 function stanford_media_theme_registry_alter(&$theme_registry) {

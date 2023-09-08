@@ -22,7 +22,7 @@ class MultiMediaFormatterTest extends FieldFormatterTestBase {
   /**
    * {@inheritDoc}
    */
-  protected function setUp(): void {
+  public function setup(): void {
     parent::setUp();
 
     $this->container->set('string_translation', $this->getStringTranslationStub());

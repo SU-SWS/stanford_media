@@ -23,7 +23,7 @@ class GoogleIframeValidatorTest extends UnitTestCase {
   /**
    * {@inheritDoc}
    */
-  protected function setup(): void {
+  public function setup(): void {
     parent::setUp();
     $this->plugin = new GoogleIframeValidator([], '', []);
   }
