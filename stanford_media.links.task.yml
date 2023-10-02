@@ -1,0 +1,10 @@
+# Media usage local task.
+entity.media.usage:
+  route_name: entity.media.usage
+  title: 'Usage'
+  base_route: entity.media.canonical
+  weight: 10
+  options:
+    parameters:
+      media:
+        type: entity:media

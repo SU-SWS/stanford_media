@@ -7,3 +7,18 @@ stanford_media.bulk_upload:
     _custom_access: '\Drupal\stanford_media\Form\BulkUpload::access'
   options:
     _admin_route: TRUE
+
+# Media entity usage route.
+entity.media.usage:
+  path: '/media/{media}/usage'
+  defaults:
+    _controller: '\Drupal\stanford_media\Controller\MediaUsageController::view'
+    _title_callback: '\Drupal\stanford_media\Controller\MediaUsageController::title'
+  options:
+    _admin_route: TRUE
+    parameters:
+      media:
+        type: entity:media
+  requirements:
+    _entity_access: 'media.update'
+    media: \d+
