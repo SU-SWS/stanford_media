@@ -20,6 +20,32 @@ use Drupal\stanford_media\Form\MediaLibraryFileUploadForm;
 use Drupal\stanford_media\Form\MediaLibraryGoogleFormForm;
 
 /**
+ * Implements hook_entity_type_alter().
+ */
+function stanford_media_entity_type_alter(array &$entity_types) {
+  // Add route for media entity type to view the usage details.
+  $entity_types['media']->setLinkTemplate('usage', '/media/{media}/usage');
+}
+
+/**
+ * Implements hook_entity_operation_alter().
+ */
+/**
+ * Implements hook_entity_operation().
+ */
+function stanford_media_entity_operation(EntityInterface $entity) {
+  $operations = [];
+  if ($entity->getEntityTypeId() == 'media' && $entity->access('update')) {
+    $operations['usage'] = [
+      'title' => t('Usage'),
+      'weight' => 100,
+      'url' => $entity->toUrl('usage'),
+    ];
+  }
+  return $operations;
+}
+
+/**
  * Implements hook_ENTITY_TYPE_delete().
  */
 function stanford_media_media_delete(MediaInterface $media) {
