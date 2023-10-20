@@ -1,5 +1,12 @@
 # Stanford Media
 
+10.1.0
+--------------------------------------------------------------------------------
+_Release Date: 2023-09-20_
+
+- HSD8-1416 Media usage page with links to the the parent content
+- D8CORE-6976: removed the italics on the caption
+
 9.1.0
 --------------------------------------------------------------------------------
 _Release Date: 2023-09-07_
