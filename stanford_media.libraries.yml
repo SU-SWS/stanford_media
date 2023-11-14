@@ -10,3 +10,7 @@ display:
   css:
     component:
       dist/css/stanford_media.css: {}
+  js:
+    js/stanford-media.js: {}
+  dependencies:
+    - core/once
