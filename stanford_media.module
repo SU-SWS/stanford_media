@@ -184,7 +184,7 @@ function stanford_media_media_view_alter(array &$build, EntityInterface $entity,
   foreach (_stanford_media_get_dialog_plugins($entity) as $plugin) {
     $plugin->embedAlter($build, $entity);
   }
-//  $build['#attached']['library'][] = 'stanford_media/display';
+  $build['#attached']['library'][] = 'stanford_media/display';
 }
 
 /**
