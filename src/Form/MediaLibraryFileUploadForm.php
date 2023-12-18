@@ -101,13 +101,16 @@ class MediaLibraryFileUploadForm extends FileUploadForm {
       $remaining_files = 0;
     }
 
+    $allowed_extensions = $element['container']['upload']['#upload_validators']['file_validate_extensions'][0] ?? $element['container']['upload']['#upload_validators']['FileExtension']['extensions'];
+    $max_size = $element['container']['upload']['#upload_validators']['file_validate_size'][0] ?? $element['container']['upload']['#upload_validators']['FileSizeLimit']['fileLimit'];
+
     $element['container']['dropzone'] = [
       '#title' => $element['container']['upload']['#title'],
       '#type' => 'dropzonejs',
       '#required' => TRUE,
       '#dropzone_description' => $this->t('Drop files here to upload them'),
-      '#max_filesize' => $element['container']['upload']['#upload_validators']['file_validate_size'][0],
-      '#extensions' => $element['container']['upload']['#upload_validators']['file_validate_extensions'][0],
+      '#max_filesize' => $max_size,
+      '#extensions' => $allowed_extensions,
       '#max_files' => $remaining_files,
       '#clientside_resize' => FALSE,
       '#after_build' => [[get_class($this), 'afterBuildDropzone']],
