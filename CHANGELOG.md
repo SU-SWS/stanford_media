@@ -1,5 +1,12 @@
 # Stanford Media
 
+11.0.0
+--------------------------------------------------------------------------------
+_Release Date: 2024-01-08_
+
+- Removed deprecated filter plugin.
+- Removed dependency on transliterate_filenames in favor of D10.2 settings.
+
 10.1.4
 --------------------------------------------------------------------------------
 _Release Date: 2023-12-18_
