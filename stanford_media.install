@@ -30,3 +30,16 @@ function stanford_media_update_11000() {
   }
   stanford_media_install();
 }
+
+/**
+ * Remove filter plugin settings.
+ */
+function stanford_media_update_11001() {
+  $config_factory = \Drupal::configFactory();
+  foreach ($config_factory->listAll('filter.format.') as $config_name) {
+    $config = $config_factory->getEditable($config_name);
+    if ($config->get('filters.stanford_media_embed_markup')) {
+      $config->clear('filters.stanford_media_embed_markup')->save();
+    }
+  }
+}
