@@ -6,8 +6,27 @@
  */
 
 /**
- * Removed 9.0.0.
+ * Implements hook_install().
  */
-function stanford_media_update_8220() {
-  // Removed 9.0.0.
+function stanford_media_install() {
+  \Drupal::configFactory()->getEditable('file.settings')
+    ->set('filename_sanitization.deduplicate_separators', TRUE)
+    ->set('filename_sanitization.lowercase', TRUE)
+    ->set('filename_sanitization.replace_non_alphanumeric', TRUE)
+    ->set('filename_sanitization.replace_whitespace', TRUE)
+    ->set('filename_sanitization.transliterate', TRUE)
+    ->set('filename_sanitization.replacement_character', '-')
+    ->save();
+}
+
+/**
+ * Uninstall transliterate_filenames module.
+ */
+function stanford_media_update_11000() {
+  if (\Drupal::moduleHandler()->moduleExists('transliterate_filenames')) {
+    \Drupal::service('module_installer')->uninstall([
+      'transliterate_filenames',
+    ]);
+  }
+  stanford_media_install();
 }

@@ -3,7 +3,7 @@ description: Provides media module configuration and plugins.
 core_version_requirement: ^10
 package: media
 type: module
-version: 10.1.4
+version: 11.0.0
 dependencies:
   - dropzonejs:dropzonejs
   - drupal:breakpoint
@@ -18,4 +18,3 @@ dependencies:
   - focal_point:focal_point
   - inline_entity_form:inline_entity_form
   - oembed_providers:oembed_providers
-  - transliterate_filenames:transliterate_filenames
