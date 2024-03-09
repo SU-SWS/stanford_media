@@ -6,7 +6,11 @@
         const $oembedElement = $(this);
         fetch($oembedElement.attr('data-oembed-resource'))
           .then(response => response.json())
-          .then(oembedData => $oembedElement.attr('title', oembedData.title || `${oembedData.provider_name} ${oembedData.type}`));
+          .then(oembedData => {
+            const elementTitle = oembedData.title || `${oembedData.provider_name} ${oembedData.type} ${oembedData.video_id}`.trim();
+            $oembedElement.attr('title', elementTitle);
+            $oembedElement.siblings('a.oembed-lazyload__button').attr('aria-label', `View ${elementTitle}`);
+          });
       });
     },
   };
