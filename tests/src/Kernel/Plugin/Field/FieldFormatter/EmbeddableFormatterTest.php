@@ -199,6 +199,7 @@ class EmbeddableFormatterTest extends KernelTestBase {
         break;
 
       case 'http://www.test.com/oembed?url=http://www.test.com/media-test':
+      case 'http://www.test.com/oembed?url=http%3A//www.test.com/media-test':
         $payload = [
           'url' => 'https://twitter.com/_mcchris/status/1304093398182191104',
           'author_name' => 'mc chris',
