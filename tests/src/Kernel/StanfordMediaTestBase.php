@@ -21,6 +21,8 @@ abstract class StanfordMediaTestBase extends KernelTestBase {
     'media',
     'media_library',
     'views',
+    'filter',
+    'path_alias',
   ];
 
   /**
@@ -36,6 +38,7 @@ abstract class StanfordMediaTestBase extends KernelTestBase {
     $this->installEntitySchema('file');
     $this->installEntitySchema('user');
     $this->installEntitySchema('media');
+    $this->installEntitySchema('path_alias');
     $this->installSchema('file', ['file_usage']);
     $this->installSchema('system', ['sequences']);
     $this->installConfig('system');

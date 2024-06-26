@@ -30,6 +30,9 @@
         "drupal/oembed_providers": "^2.1",
         "enyo/dropzone": "^5.9"
     },
+    "conflict": {
+        "drupal/ckeditor": "*"
+    },
     "extra": {
         "custom-installer": {
             "docroot/libraries/{$name}/": [

@@ -36,6 +36,7 @@ class EmbeddableFormatterTest extends KernelTestBase {
     'field',
     'file',
     'entity_test',
+    'path_alias',
   ];
 
   /**
@@ -82,6 +83,7 @@ class EmbeddableFormatterTest extends KernelTestBase {
     parent::setUp();
     $this->installEntitySchema('user');
     $this->installEntitySchema('media');
+    $this->installEntitySchema('path_alias');
     $this->installConfig('media');
     $this->installEntitySchema('field_storage_config');
     $this->installEntitySchema('field_config');

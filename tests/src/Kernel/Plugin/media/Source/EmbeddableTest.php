@@ -29,6 +29,7 @@ class EmbeddableTest extends KernelTestBase {
     'field',
     'file',
     'stanford_media',
+    'path_alias',
   ];
 
   /**
@@ -70,6 +71,7 @@ class EmbeddableTest extends KernelTestBase {
     $this->installEntitySchema('field_storage_config');
     $this->installEntitySchema('field_config');
     $this->installEntitySchema('file');
+    $this->installEntitySchema('path_alias');
     $this->installSchema('file', ['file_usage']);
     $this->installConfig('system');
 
