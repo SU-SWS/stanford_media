@@ -238,7 +238,7 @@ class MultiMediaFormatterTest extends KernelTestBase {
     $view_builder = \Drupal::entityTypeManager()
       ->getViewBuilder('node');
     $node_render = $view_builder->view($node, $view_mode);
-    return \Drupal::service('renderer')->renderPlain($node_render);
+    return \Drupal::service('renderer')->renderInIsolation($node_render);
   }
 
   /**

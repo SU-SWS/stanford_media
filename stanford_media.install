@@ -43,3 +43,12 @@ function stanford_media_update_11001() {
     }
   }
 }
+
+/**
+ * Check if ckeditor installed.
+ */
+function stanford_media_update_11002() {
+  if (\Drupal::moduleHandler()->moduleExists('ckeditor')) {
+    throw new \Exception('Stanford Media is not compatible with ckeditor');
+  }
+}

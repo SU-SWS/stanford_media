@@ -156,7 +156,7 @@ class MediaImageFormatterTest extends KernelTestBase {
     $view_builder = \Drupal::entityTypeManager()
       ->getViewBuilder('node');
     $node_render = $view_builder->view($node, 'default');
-    $rendered_node = \Drupal::service('renderer')->renderPlain($node_render);
+    $rendered_node = \Drupal::service('renderer')->renderInIsolation($node_render);
     preg_match_all('/<a.*href="\/node\/.*\/large\/.*\/logo.png.*\/a>/s', $rendered_node, $preg_match);
     $this->assertNotEmpty($preg_match[0]);
     preg_match_all('/alt="Foo Bar Alt"/', $rendered_node, $preg_match);
@@ -175,7 +175,7 @@ class MediaImageFormatterTest extends KernelTestBase {
     $view_builder = \Drupal::entityTypeManager()
       ->getViewBuilder('node');
     $node_render = $view_builder->view($node, 'default');
-    $rendered_node = \Drupal::service('renderer')->renderPlain($node_render);
+    $rendered_node = \Drupal::service('renderer')->renderInIsolation($node_render);
     preg_match_all('/<a.*href="\/node\/.*\/large\/.*\/logo.png.*\/a>/s', $rendered_node, $preg_match);
     $this->assertNotEmpty($preg_match[0]);
     preg_match_all('/alt="Foo Bar Alt"/', $rendered_node, $preg_match);

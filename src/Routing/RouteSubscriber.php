@@ -19,9 +19,6 @@ class RouteSubscriber extends RouteSubscriberBase {
     if ($route = $collection->get('entity.media.add_page')) {
       $route->setDefault('_controller', MediaAdd::class . '::addPage');
     }
-    if ($route = $collection->get('editor.media_dialog')) {
-      $route->setDefault('_form', StanfordMediaDialogForm::class);
-    }
   }
 
 }

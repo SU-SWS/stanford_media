@@ -159,7 +159,7 @@ class GoogleFormFormatterTest extends KernelTestBase {
 
     $view_builder = \Drupal::entityTypeManager()->getViewBuilder('media');
     $display = $view_builder->view($this->media, 'default');
-    $display = \Drupal::service('renderer')->renderPlain($display);
+    $display = \Drupal::service('renderer')->renderInIsolation($display);
 
     preg_match('/<iframe.*src="http:\/\/google.com\/forms\/a\/b\/formid\/viewform"/', $display, $matches);
     $this->assertCount(1, $matches);
