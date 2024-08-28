@@ -5,7 +5,7 @@ jobs:
     name: PHPUnit Coverage Tests
     runs-on: ubuntu-latest
     container:
-      image: pookmish/drupal8ci:latest
+      image: pookmish/drupal8ci:php8.3
     services:
       mysql:
         image: mysql:5.7
@@ -18,7 +18,7 @@ jobs:
           - 33306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           path: project
       - name: Build project
@@ -37,7 +37,7 @@ jobs:
     name: Drupal 11 PHPUnit Coverage Tests
     runs-on: ubuntu-latest
     container:
-      image: pookmish/drupal8ci:latest
+      image: pookmish/drupal8ci:php8.3
     services:
       mysql:
         image: mysql:5.7
@@ -50,7 +50,7 @@ jobs:
           - 33306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           path: project
       - name: Build project
@@ -74,7 +74,7 @@ jobs:
 #      DRUPAL_DATABASE_PASSWORD: drupal
 #      DRUPAL_DATABASE_HOST: mysql
 #    container:
-#      image: pookmish/drupal8ci:latest
+#      image: pookmish/drupal8ci:php8.3
 #      options: '--network-alias drupal8ci'
 #    services:
 #      mysql:
@@ -110,7 +110,7 @@ jobs:
 #      DRUPAL_DATABASE_PASSWORD: drupal
 #      DRUPAL_DATABASE_HOST: mysql
 #    container:
-#      image: pookmish/drupal8ci:latest
+#      image: pookmish/drupal8ci:php8.3
 #      options: '--network-alias=drupal8ci'
 #    services:
 #      selenium:
