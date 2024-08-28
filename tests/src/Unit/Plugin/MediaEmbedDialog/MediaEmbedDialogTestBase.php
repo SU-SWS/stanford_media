@@ -50,9 +50,9 @@ abstract class MediaEmbedDialogTestBase extends UnitTestCase {
 
     $entity_storage = $this->createMock(EntityStorageInterface::class);
     $entity_storage->method('load')
-      ->will($this->returnCallback([$this, 'loadCallback']));
+      ->willReturnCallback([$this, 'loadCallback']);
     $entity_storage->method('loadMultiple')
-      ->will($this->returnCallback([$this, 'loadMultipleCallback']));
+      ->willReturnCallback([$this, 'loadMultipleCallback']);
 
     $entity_type_manager = $this->createMock(EntityTypeManagerInterface::class);
     $entity_type_manager->method('getStorage')->willReturn($entity_storage);
@@ -77,12 +77,23 @@ abstract class MediaEmbedDialogTestBase extends UnitTestCase {
 
     $field_list = $this->createMock(FieldItemListInterface::class);
     $field_list->method('getString')
-      ->will($this->returnCallback([$this, 'fieldGetStringCallback']));
+      ->willReturnCallback([$this, 'fieldGetStringCallback']);
 
     $this->mediaEntity = $this->createMock(MediaInterface::class);
     $this->mediaEntity->method('bundle')->willReturnReference($this->mediaBundle);
     $this->mediaEntity->method('getSource')->willReturnReference($this->mediaSource);
     $this->mediaEntity->method('get')->willReturn($field_list);
+  }
+
+  public function loadCallback($display_id) {
+
+  }
+
+  public function loadMultipleCallback(){
+
+  }
+
+  public function fieldGetStringCallback(){
   }
 
 }

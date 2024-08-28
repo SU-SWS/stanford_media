@@ -8,6 +8,7 @@ use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Render\RendererInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Routing\UrlGeneratorInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
@@ -39,6 +40,7 @@ class MediaAdd extends EntityController {
       $container->get('renderer'),
       $container->get('string_translation'),
       $container->get('url_generator'),
+      $container->get('current_route_match'),
       $container->get('plugin.manager.bundle_suggestion_manager')
     );
   }
@@ -46,8 +48,8 @@ class MediaAdd extends EntityController {
   /**
    * {@inheritdoc}
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, EntityTypeBundleInfoInterface $bundle_info, EntityRepositoryInterface $entity_repository, RendererInterface $renderer, TranslationInterface $string_translation, UrlGeneratorInterface $url_generator, BundleSuggestionManagerInterface $bundle_suggestion) {
-    parent::__construct($entity_type_manager, $bundle_info, $entity_repository, $renderer, $string_translation, $url_generator);
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, EntityTypeBundleInfoInterface $bundle_info, EntityRepositoryInterface $entity_repository, RendererInterface $renderer, TranslationInterface $string_translation, UrlGeneratorInterface $url_generator, RouteMatchInterface $route_match, BundleSuggestionManagerInterface $bundle_suggestion) {
+    parent::__construct($entity_type_manager, $bundle_info, $entity_repository, $renderer, $string_translation, $url_generator, $route_match);
     $this->bundleSuggestion = $bundle_suggestion;
   }
 

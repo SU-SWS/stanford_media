@@ -70,7 +70,7 @@ class MediaAddTest extends UnitTestCase {
 
     $bundle_suggestion = $this->createMock(BundleSuggestionManagerInterface::class);
     $bundle_suggestion->method('getUploadBundles')
-      ->will($this->returnCallback([$this, 'getUploadBundlesCallback']));
+      ->willReturnCallback([$this, 'getUploadBundlesCallback']);
 
     $url_generator = $this->createMock(UrlGeneratorInterface::class);
 

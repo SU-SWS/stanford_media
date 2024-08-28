@@ -70,7 +70,7 @@ abstract class FieldFormatterTestBase extends UnitTestCase {
 
     $field_storage = $this->createMock(FieldStorageConfigInterface::class);
     $field_storage->method('getSetting')
-      ->will($this->returnCallback([$this, 'fieldStorageGetSettingCallback']));
+      ->willReturnCallback([$this, 'fieldStorageGetSettingCallback']);
 
     $this->fieldDefinition = $this->createMock(FieldDefinitionInterface::class);
     $this->fieldDefinition->method('getFieldStorageDefinition')

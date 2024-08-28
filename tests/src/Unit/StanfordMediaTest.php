@@ -25,7 +25,7 @@ class StanfordMediaTest extends UnitTestCase {
     parent::setUp();
     $url_assembler = $this->createMock(UnroutedUrlAssemblerInterface::class);
     $link_generator = $this->createMock(LinkGeneratorInterface::class);
-    $link_generator->method('generateFromLink')->willReturn('<a href="http://foobar.com">Foobar</a>');
+    $link_generator->method('generate')->willReturn('<a href="http://foobar.com">Foobar</a>');
     $container = new ContainerBuilder();
     $container->set('unrouted_url_assembler', $url_assembler);
     $container->set('link_generator', $link_generator);

@@ -94,10 +94,10 @@ class EmbeddableFormatterTest extends KernelTestBase {
     $this->client = $this->createMock(Client::class);
     $this->client
       ->method('request')
-      ->will($this->returnCallback([$this, 'getOembedCallback']));
+      ->willReturnCallback([$this, 'getOembedCallback']);
     $this->client
       ->method('__call')
-      ->will($this->returnCallback([$this, 'getMagicMethodCallback']));
+      ->willReturnCallback([$this, 'getMagicMethodCallback']);
 
     \Drupal::getContainer()->set('http_client', $this->client);
 

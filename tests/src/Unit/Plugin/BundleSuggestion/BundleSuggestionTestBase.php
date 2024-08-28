@@ -39,14 +39,14 @@ abstract class BundleSuggestionTestBase extends UnitTestCase {
     $media_type->method('getSource')->willReturn($media_source);
 
     $field_type = $this->createMock(FieldConfigInterface::class);
-    $field_type->method('getSetting')->will($this->returnCallback([
+    $field_type->method('getSetting')->willReturnCallback([
       $this,
       'fieldGetSetting',
-    ]));
-    $field_type->method('getType')->will($this->returnCallback([
+    ]);
+    $field_type->method('getType')->willReturnCallback([
       $this,
       'fieldGetTypeCallback',
-    ]));
+    ]);
 
     $entity_storage = $this->createMock(EntityStorageInterface::class);
     $entity_storage->method('loadMultiple')

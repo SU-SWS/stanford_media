@@ -58,10 +58,10 @@ class BundleSuggestionManagerTest extends UnitTestCase {
     $media_type->method('getSource')->willReturn($source);
 
     $field_config = $this->createMock(FieldConfigInterface::class);
-    $field_config->method('getSetting')->will($this->returnCallback([
+    $field_config->method('getSetting')->willReturnCallback([
       $this,
       'getFieldSettingCallback',
-    ]));
+    ]);
 
     $entity_storage = $this->createMock(EntityStorageInterface::class);
     $entity_storage->method('loadMultiple')->willReturn(['foo' => $media_type]);
