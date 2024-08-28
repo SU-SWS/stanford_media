@@ -25,7 +25,7 @@
         "drupal/core": "^10.3 || ^11",
         "drupal/dropzonejs": "^2.7",
         "drupal/entity_usage": "^2.0@beta",
-        "drupal/focal_point": "^2.0@alpha",
+        "drupal/focal_point": "^2.0",
         "drupal/inline_entity_form": "^3.0",
         "drupal/oembed_providers": "^2.1",
         "enyo/dropzone": "^5.9"
