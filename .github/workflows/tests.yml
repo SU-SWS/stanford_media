@@ -57,7 +57,7 @@ jobs:
         env:
           CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
         run: |
-          mysql -u root -e 'CREATE DATABASE IF NOT EXISTS drupal8'
+          mysql -h 127.0.0.1 -u drupal -pdrupal -e 'CREATE DATABASE drupal'
           composer global require su-sws/stanford-caravan:11.x-dev
           ~/.config/composer/vendor/bin/sws-caravan phpunit /var/www/html --extension-dir=$GITHUB_WORKSPACE/project --with-coverage
       - name: Save Test Results
