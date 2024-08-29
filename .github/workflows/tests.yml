@@ -47,7 +47,7 @@ jobs:
           MYSQL_PASSWORD: drupal
           MYSQL_ROOT_PASSWORD: drupal
         ports:
-          - 3306:3306
+          - 33306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
       - uses: actions/checkout@v4
@@ -57,7 +57,7 @@ jobs:
         env:
           CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
         run: |
-          mysql -h 127.0.0.1 -u drupal -pdrupal -e 'CREATE DATABASE drupal'
+          mysql -h 127.0.0.1 -P 3306 -u drupal -pdrupal -e 'CREATE DATABASE drupal'
           composer global require su-sws/stanford-caravan:11.x-dev
           ~/.config/composer/vendor/bin/sws-caravan phpunit /var/www/html --extension-dir=$GITHUB_WORKSPACE/project --with-coverage
       - name: Save Test Results
