@@ -75,7 +75,7 @@ class MediaAdd extends EntityController {
     $page['#bundles']['bulk'] = [
       'label' => $this->t('Upload File(s)'),
       'description' => $this->t('Add one or more files to the Media Library.'),
-      'add_link' => new Link($this->t('Bulk Upload'), $url),
+      'add_link' => new Link($this->t('Bulk Upload: @bulk_bundles', ['@bulk_bundles' => implode(', ', $bulk_bundles)]), $url),
     ];
 
     return $page;
