@@ -5,17 +5,15 @@ namespace Drupal\stanford_media\Plugin\MediaEmbedDialog;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
 use Drupal\media\MediaInterface;
+use Drupal\stanford_media\Attribute\MediaEmbedDialog;
 use Drupal\stanford_media\Plugin\MediaEmbedDialogBase;
 use Drupal\media\Plugin\media\Source\Image as ImageSource;
 use Drupal\stanford_media\StanfordMedia;
 
 /**
  * Changes embedded Image media form.
- *
- * @MediaEmbedDialog(
- *   id = "image"
- * )
  */
+#[MediaEmbedDialog('image')]
 class Image extends MediaEmbedDialogBase {
 
   /**
@@ -59,6 +57,7 @@ class Image extends MediaEmbedDialogBase {
     if (!isset($form['caption'])) {
       return;
     }
+    @trigger_error('Embedded alters are deprecated in 11.2.0 due to CKEditor 5 plugins providing the functionality. Update embedded media to use CKEditor 5 plugins.', E_USER_DEPRECATED);
 
     $form['#process'][] = [StanfordMedia::class, 'imageWidgetProcess'];
     $form['#process'][] = [self::class, 'imageWidgetProcess'];
@@ -128,6 +127,7 @@ class Image extends MediaEmbedDialogBase {
       /** @var \Drupal\image\Plugin\Field\FieldType\ImageItem $item */
       $item = $build[$source_field][$delta]['#item'];
       if ($item->get('alt')->getString() == self::DECORATIVE) {
+        @trigger_error('Embedded alters are deprecated in 11.2.0 due to CKEditor 5 plugins providing the functionality. Update embedded media to use CKEditor 5 plugins.', E_USER_DEPRECATED);
         $item->set('alt', '');
       }
     }

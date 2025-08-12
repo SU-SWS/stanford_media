@@ -2,21 +2,22 @@
 
 namespace Drupal\stanford_media\Plugin\media\Source;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\media\Attribute\MediaSource;
 use Drupal\media\MediaInterface;
 use Drupal\media\MediaSourceBase;
 use Drupal\media\MediaSourceFieldConstraintsInterface;
 
 /**
  * Provides media source plugin for Google Forms iframe.
- *
- * @MediaSource(
- *   id = "google_form",
- *   label = @Translation("Google Form"),
- *   description = @Translation("Embed a google form."),
- *   allowed_field_types = {"string"},
- *   default_thumbnail_filename = "generic.png"
- * )
  */
+#[MediaSource(
+   id: "google_form",
+   label: new TranslatableMarkup("Google Form"),
+   description: new TranslatableMarkup("Embed a google form."),
+   allowed_field_types: ["string"],
+   default_thumbnail_filename: "generic.png"
+)]
 class GoogleForm extends MediaSourceBase implements MediaSourceFieldConstraintsInterface {
 
   /**

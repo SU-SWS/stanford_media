@@ -2,16 +2,17 @@
 
 namespace Drupal\stanford_media\Plugin\EmbedValidator;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\stanford_media\Attribute\EmbedValidator;
 use Drupal\stanford_media\Plugin\EmbedValidatorBase;
 
 /**
  * Twitter validation.
- *
- * @EmbedValidator (
- *   id = "twitter",
- *   label = "Twitter"
- * )
  */
+#[EmbedValidator(
+  id: 'twitter',
+  label: new TranslatableMarkup('Twitter')
+)]
 class TwitterValidator extends EmbedValidatorBase {
 
   /**

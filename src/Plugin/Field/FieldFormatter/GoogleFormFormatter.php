@@ -2,24 +2,23 @@
 
 namespace Drupal\stanford_media\Plugin\Field\FieldFormatter;
 
+use Drupal\Core\Field\Attribute\FieldFormatter;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\FormatterBase;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\media\Entity\MediaType;
 use Drupal\stanford_media\Plugin\media\Source\GoogleForm;
 
 /**
  * Field formatter for google form iframes.
- *
- * @FieldFormatter (
- *   id = "google_form_formatter",
- *   label = @Translation("Google Form iFrame"),
- *   description = @Translation("Apply an image style to image media items."),
- *   field_types = {
- *     "string"
- *   }
- * )
  */
+#[FieldFormatter(
+  id: "google_form_formatter",
+  label: new TranslatableMarkup("Google Form iFrame"),
+  description: new TranslatableMarkup("Apply an image style to image media items."),
+  field_types: ["string"]
+)]
 class GoogleFormFormatter extends FormatterBase {
 
   /**

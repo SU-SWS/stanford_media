@@ -2,20 +2,19 @@
 
 namespace Drupal\stanford_media\Plugin\Field\FieldFormatter;
 
+use Drupal\Core\Field\Attribute\FieldFormatter;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
  * Plugin implementation of the 'multi media' formatter.
- *
- * @FieldFormatter(
- *   id = "media_multimedia_formatter",
- *   label = @Translation("Multiple Media Formatter"),
- *   field_types = {
- *     "entity_reference"
- *   }
- * )
  */
+#[FieldFormatter(
+  id: "media_multimedia_formatter",
+  label: new TranslatableMarkup("Multiple Media Formatter"),
+  field_types: ["entity_reference"]
+)]
 class MultiMediaFormatter extends MediaFormatterBase {
 
   /**
