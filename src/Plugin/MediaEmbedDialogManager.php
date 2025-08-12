@@ -5,6 +5,8 @@ namespace Drupal\stanford_media\Plugin;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
+use Drupal\stanford_media\Attribute\MediaEmbedDialog;
+use Drupal\stanford_media\Annotation\MediaEmbedDialog as MediaEmbedDialogAnnotation;
 
 /**
  * Class MediaEmbedManager.
@@ -29,8 +31,9 @@ class MediaEmbedDialogManager extends DefaultPluginManager {
       'Plugin/MediaEmbedDialog',
       $namespaces,
       $module_handler,
-      'Drupal\stanford_media\Plugin\MediaEmbedDialogInterface',
-      'Drupal\stanford_media\Annotation\MediaEmbedDialog'
+      MediaEmbedDialogInterface::class,
+      MediaEmbedDialog::class,
+      MediaEmbedDialogAnnotation::class
     );
     $this->alterInfo('media_embed_dialog_info');
     $this->setCacheBackend($cache_backend, 'media_embed_dialog_info_plugins');

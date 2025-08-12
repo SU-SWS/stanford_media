@@ -2,16 +2,17 @@
 
 namespace Drupal\stanford_media\Plugin\EmbedValidator;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\stanford_media\Attribute\EmbedValidator;
 use Drupal\stanford_media\Plugin\IframeEmbedValidatorBase;
 
 /**
  * Google Calendar Iframe validation.
- *
- * @EmbedValidator (
- *   id = "google_iframe",
- *   label = "Google IFrames"
- * )
  */
+#[EmbedValidator(
+  id: 'google_iframe',
+  label: new TranslatableMarkup('Google IFrames')
+)]
 class GoogleIframeValidator extends IframeEmbedValidatorBase {
 
   const EMBED_DOMAIN = '.google.com';

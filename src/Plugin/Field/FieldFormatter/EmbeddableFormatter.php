@@ -2,10 +2,12 @@
 
 namespace Drupal\stanford_media\Plugin\Field\FieldFormatter;
 
+use Drupal\Core\Field\Attribute\FieldFormatter;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\media\MediaTypeInterface;
 use Drupal\media\OEmbed\ResourceFetcherInterface;
 use Drupal\media\OEmbed\UrlResolverInterface;
@@ -17,18 +19,17 @@ use Drupal\media\Plugin\Field\FieldFormatter\OEmbedFormatter;
 
 /**
  * Field formatter for embeddables.
- *
- * @FieldFormatter (
- *   id = "embeddable_formatter",
- *   label = @Translation("Embeddable field formatter"),
- *   description = @Translation("Field formatter for Embeddable media."),
- *   field_types = {
- *     "link",
- *     "string",
- *     "string_long",
- *   }
- * )
  */
+#[FieldFormatter(
+  id: "embeddable_formatter",
+  label: new TranslatableMarkup("Embeddable field formatter"),
+  description: new TranslatableMarkup("Field formatter for Embeddable media."),
+  field_types: [
+    "link",
+    "string",
+    "string_long",
+  ]
+)]
 class EmbeddableFormatter extends OEmbedFormatter {
 
   /**
@@ -144,10 +145,8 @@ class EmbeddableFormatter extends OEmbedFormatter {
   protected function viewOEmbedElements(FieldItemListInterface $items, string $langcode): array {
     $elements = parent::viewElements($items, $langcode);
     foreach ($elements as &$render_array) {
-
       // We only care about modifying iframes.
       if ($render_array['#type'] == 'html_tag' && $render_array['#tag'] == 'iframe') {
-
         // iFrame heights are a problem here. Some oEmbed providers don't give you one.
         // Some providers get it wrong, so we add a few pixels to be safe.
         // Here, we make some sane defaults.
@@ -163,7 +162,6 @@ class EmbeddableFormatter extends OEmbedFormatter {
         unset($render_array['#attributes']['width']);
         $render_array['#attributes']['style'] = 'height: ' . $iframe_height . 'px;';
       }
-
     }
     return $elements;
   }

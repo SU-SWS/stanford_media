@@ -4,15 +4,13 @@ namespace Drupal\stanford_media\Plugin\MediaEmbedDialog;
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\media\MediaInterface;
+use Drupal\stanford_media\Attribute\MediaEmbedDialog;
 use Drupal\stanford_media\Plugin\MediaEmbedDialogBase;
 
 /**
  * Changes embedded file media items.
- *
- * @MediaEmbedDialog(
- *   id = "file"
- * )
  */
+#[MediaEmbedDialog('file')]
 class File extends MediaEmbedDialogBase {
 
   /**
@@ -46,6 +44,7 @@ class File extends MediaEmbedDialogBase {
       '#description' => $this->t('Optionally enter text to use as the link text.'),
       '#default_value' => $user_input['data-display-description'] ?: $this->entity->label(),
     ];
+    @trigger_error('Embedded alters are deprecated in 11.2.0 due to CKEditor 5 plugins providing the functionality. Update embedded media to use CKEditor 5 plugins.', E_USER_DEPRECATED);
   }
 
   /**
@@ -61,6 +60,7 @@ class File extends MediaEmbedDialogBase {
   public function embedAlter(array &$build, MediaInterface $entity): void {
     parent::embedAlter($build, $entity);
     if (!empty($build['#attributes']['data-display-description'])) {
+      @trigger_error('Embedded alters are deprecated in 11.2.0 due to CKEditor 5 plugins providing the functionality. Update embedded media to use CKEditor 5 plugins.', E_USER_DEPRECATED);
       $source_field = static::getMediaSourceField($build['#media']);
       $build[$source_field][0]['#description'] = $build['#attributes']['data-display-description'];
       // Set a shortened hash key for unique configuration.

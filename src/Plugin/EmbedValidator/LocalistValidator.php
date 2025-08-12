@@ -2,16 +2,18 @@
 
 namespace Drupal\stanford_media\Plugin\EmbedValidator;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\stanford_media\Attribute\EmbedValidator;
 use Drupal\stanford_media\Plugin\EmbedValidatorBase;
 
 /**
  * Localist Events embed code validation.
- *
- * @EmbedValidator (
- *   id = "localist",
- *   label = "Localist Events"
- * )
  */
+#[EmbedValidator(
+  id: 'localist',
+  label: new TranslatableMarkup('Localist Events')
+)]
+
 class LocalistValidator extends EmbedValidatorBase {
 
   /**

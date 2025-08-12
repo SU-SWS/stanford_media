@@ -5,6 +5,8 @@ namespace Drupal\stanford_media\Plugin;
 use Drupal\Core\Plugin\DefaultPluginManager;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\stanford_media\Attribute\EmbedValidator;
+use Drupal\stanford_media\Annotation\EmbedValidator as EmbedValidatorAnnotation;
 
 /**
  * Provides the Oembed validator plugin plugin manager.
@@ -23,8 +25,13 @@ class EmbedValidatorPluginManager extends DefaultPluginManager {
    *   The module handler to invoke the alter hook with.
    */
   public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler) {
-    parent::__construct('Plugin/EmbedValidator', $namespaces, $module_handler, 'Drupal\stanford_media\Plugin\EmbedValidatorInterface', 'Drupal\stanford_media\Annotation\EmbedValidator');
-
+    parent::__construct('Plugin/EmbedValidator',
+      $namespaces,
+      $module_handler,
+      EmbedValidatorInterface::class,
+      EmbedValidator::class,
+      EmbedValidatorAnnotation::class
+    );
     $this->alterInfo('stanford_media_embed_validator_plugin_info');
     $this->setCacheBackend($cache_backend, 'stanford_media_embed_validator_plugin_plugins');
   }

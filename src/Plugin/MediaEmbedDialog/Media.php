@@ -3,15 +3,13 @@
 namespace Drupal\stanford_media\Plugin\MediaEmbedDialog;
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\stanford_media\Attribute\MediaEmbedDialog;
 use Drupal\stanford_media\Plugin\MediaEmbedDialogBase;
 
 /**
  * Modifies all embed dialogs for all media types.
- *
- * @MediaEmbedDialog(
- *   id = "all_media"
- * )
  */
+#[MediaEmbedDialog('all_media')]
 class Media extends MediaEmbedDialogBase {
 
   /**
@@ -30,6 +28,8 @@ class Media extends MediaEmbedDialogBase {
     if (!isset($form['view_mode'])) {
       return;
     }
+
+    @trigger_error('Embedded alters are deprecated in 11.2.0 due to CKEditor 5 plugins providing the functionality. Update embedded media to use CKEditor 5 plugins.', E_USER_DEPRECATED);
 
     $display_storage = $this->entityTypeManager->getStorage('entity_view_display');
     $entity_bundle = $this->entity->bundle();

@@ -11,7 +11,8 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
 use Drupal\media\MediaTypeInterface;
-use Drupal\stanford_media\Annotation\BundleSuggestion;
+use Drupal\stanford_media\Attribute\BundleSuggestion;
+use Drupal\stanford_media\Annotation\BundleSuggestion as BundleSuggestionAnnotation;
 
 /**
  * Class MediaEmbedManager.
@@ -57,12 +58,12 @@ class BundleSuggestionManager extends DefaultPluginManager implements BundleSugg
    *   Entity type manager service.
    */
   public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler, EntityFieldManagerInterface $field_manager, EntityTypeManagerInterface $entity_type_manager, ConfigFactoryInterface $config_factory) {
-    parent::__construct(
-      'Plugin/BundleSuggestion',
+    parent::__construct('Plugin/BundleSuggestion',
       $namespaces,
       $module_handler,
       BundleSuggestionInterface::class,
-      BundleSuggestion::class
+      BundleSuggestion::class,
+      BundleSuggestionAnnotation::class
     );
     $this->alterInfo('bundle_suggestion_info');
     $this->setCacheBackend($cache_backend, 'bundle_suggestion_info_plugins');
@@ -81,7 +82,6 @@ class BundleSuggestionManager extends DefaultPluginManager implements BundleSugg
     // Find out which plugins should be used based on their field_types.
     foreach ($definitions as $plugin_id => $definition) {
       foreach ($definition['field_types'] as $field_type) {
-
         // A field for this plugin exists, so we can use this plugin.
         if ($this->fieldManager->getFieldMapByFieldType($field_type)) {
           $valid_definitions[$plugin_id] = $definition;
@@ -196,7 +196,6 @@ class BundleSuggestionManager extends DefaultPluginManager implements BundleSugg
    * {@inheritdoc}
    */
   public function getMaxFileSize(array $bundles = []): int {
-
     $media_types = $this->getUploadBundles();
     if ($bundles) {
       $media_types = $this->getMediaBundles($bundles);
@@ -271,7 +270,7 @@ class BundleSuggestionManager extends DefaultPluginManager implements BundleSugg
       ->loadMultiple($bundles ?: NULL);
 
     // Check the current user has access to create the various media types.
-    return array_filter($media_types, function (MediaTypeInterface $media_type) {
+    return array_filter($media_types, function(MediaTypeInterface $media_type) {
       /** @var \Drupal\media\Entity\Media $empty_media */
       $empty_media = $this->entityTypeManager->getStorage('media')
         ->create(['bundle' => $media_type->id()]);

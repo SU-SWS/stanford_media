@@ -7,7 +7,8 @@ use Drupal\Core\Database\Connection;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
 use Drupal\media\MediaInterface;
-use Drupal\media_duplicate_validation\Annotation\MediaDuplicateValidation;
+use Drupal\media_duplicate_validation\Annotation\MediaDuplicateValidation as MediaDuplicateValidationAnnotation;
+use Drupal\media_duplicate_validation\Attribute\MediaDuplicateValidation;
 
 /**
  * Class MediaDuplicateValidationManager.
@@ -42,7 +43,8 @@ class MediaDuplicateValidationManager extends DefaultPluginManager {
       $namespaces,
       $module_handler,
       MediaDuplicateValidationInterface::class,
-      MediaDuplicateValidation::class
+      MediaDuplicateValidation::class,
+      MediaDuplicateValidationAnnotation::class
     );
     $this->alterInfo('media_duplicate_validation_info');
     $this->setCacheBackend($cache_backend, 'media_duplicate_validation_info_plugins');
@@ -97,9 +99,9 @@ class MediaDuplicateValidationManager extends DefaultPluginManager {
    * @param string $plugin_id
    *   Plugin id.
    *
+   * @throws \Drupal\Component\Plugin\Exception\PluginException
    * @see \Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationInterface::schema()
    *
-   * @throws \Drupal\Component\Plugin\Exception\PluginException
    */
   public function removeSchemas($plugin_id) {
     /** @var \Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationInterface $plugin */

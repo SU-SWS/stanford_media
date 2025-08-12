@@ -4,18 +4,15 @@ namespace Drupal\stanford_media\Plugin\BundleSuggestion;
 
 use Drupal\Core\StreamWrapper\StreamWrapperManager;
 use Drupal\media\MediaTypeInterface;
+use Drupal\stanford_media\Attribute\BundleSuggestion;
 
 /**
  * Upload file plugin suggestion.
- *
- * @BundleSuggestion (
- *   id = "file",
- *   field_types = {
- *     "file",
- *     "image"
- *   }
- * )
  */
+#[BundleSuggestion(
+  id: 'file',
+  field_types: ['file', 'image']
+)]
 class File extends BundleSuggestionBase {
 
   /**
