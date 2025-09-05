@@ -254,7 +254,7 @@ class BulkUpload extends FormBase {
             $this->bundleSuggestion->getUploadPath($media_type),
             implode(' ', $this->bundleSuggestion->getAllExtensions()),
             $this->currentUser,
-            ['file_validate_size' => [$max_size, 0]]
+            ['FileSizeLimit' => ['fileLimit' => [$max_size ,0]]]
           );
         }
       }
