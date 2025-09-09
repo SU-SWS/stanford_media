@@ -30,7 +30,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
   label: new TranslatableMarkup('Stanford Embedded Media'),
   description: new TranslatableMarkup('Embeds a third-party resource'),
   allowed_field_types: ["string", "string_long"],
-  default_thumbnail_filename: 'generic.png',
   providers: [
     "ArcGIS StoryMaps",
     "CircuitLab",
@@ -49,7 +48,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
     "Spotify",
     "Stanford Digital Repository",
     "Twitter",
-  ]
+  ],
+  default_thumbnail_filename: 'generic.png'
 )]
 class Embeddable extends OEmbed implements EmbeddableInterface {
 
@@ -159,7 +159,11 @@ class Embeddable extends OEmbed implements EmbeddableInterface {
     switch ($name) {
       case 'title':
         return $media->label();
+
+      case 'default_name':
+        return $this->getPluginDefinition()['label'];
     }
+    return NULL;
   }
 
   /**
