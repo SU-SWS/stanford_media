@@ -4,19 +4,21 @@ namespace Drupal\media_duplicate_validation\Plugin\QueueWorker;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\Queue\Attribute\QueueWorker;
 use Drupal\Core\Queue\QueueWorkerBase;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\media\MediaInterface;
 use Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * A cron worker to populate validation plugin data.
- *
- * @QueueWorker(
- *   id = "media_duplicate_validation",
- *   title = @Translation("Media Duplicate Validation"),
- *   cron = {"time" = 60}
- * )
  */
+#[QueueWorker(
+  id: 'media_duplicate_validation',
+  title: new TranslatableMarkup('Media Duplicate Validation'),
+  cron: ['time' => 60]
+)]
 class CronMediaValidationPopulate extends QueueWorkerBase implements ContainerFactoryPluginInterface {
 
   /**
@@ -63,7 +65,7 @@ class CronMediaValidationPopulate extends QueueWorkerBase implements ContainerFa
     $plugin = $this->duplicationManager->createInstance($data->plugin);
     $media = $this->entityTypeManager->getStorage('media')->load($data->mid);
 
-    if ($media) {
+    if ($media instanceof MediaInterface) {
       // Perform the media save method which should store any necessary data.
       $plugin->mediaSave($media);
     }
