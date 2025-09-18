@@ -69,7 +69,11 @@ class StanfordMedia implements StanfordMediaInterface, TrustedCallbackInterface 
       $link = Link::fromTextAndUrl($url->toString(), $url)->toString();
       $element['alt']['#description'] = new TranslatableMarkup('Short description of the image used by screen readers and displayed when the image is not loaded. Leave blank if image is decorative. Learn more about alternative text: @link', ['@link' => $link]);
     }
-    if ($element['#alt_field_required'] || !$element['alt']['#access']) {
+    if (
+      !isset($element['#alt_field_required']) ||
+      $element['#alt_field_required'] ||
+      (isset($element['alt']['#access']) && !$element['alt']['#access'])
+    ) {
       return $element;
     }
 
