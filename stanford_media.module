@@ -10,6 +10,7 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Session\AccountInterface;
@@ -30,10 +31,17 @@ function stanford_media_preprocess_field(&$variables) {
 
   /** @var \Drupal\Core\Field\FieldItemListInterface $field_items */
   $field_items = $variables['element']['#items'];
+  if (!$field_items instanceof FieldItemListInterface) {
+    return;
+  }
   /** @var \Drupal\media\MediaInterface $media */
   $media = $field_items->getEntity();
 
-  if ($media->getSource()->getPluginId() != 'oembed:video') {
+  // Make sure we're only working on the oembed source field.
+  if (
+    $media->getSource()->getPluginId() != 'oembed:video' ||
+    $media->getSource()->getConfiguration()['source_field'] != $field_items->getName()
+  ) {
     return;
   }
 
