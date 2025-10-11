@@ -1,5 +1,13 @@
 # Stanford Media
 
+11.2.3
+--------------------------------------------------------------------------------
+_Release Date: 2025-10-10_
+
+- Dont process non-source fields on oembed video media entities
+- Fixed undefined index for media with migration field readonly
+
+
 11.2.2
 --------------------------------------------------------------------------------
 _Release Date: 2025-09-09_
