@@ -7,14 +7,14 @@ use Drupal\Core\Config\ImmutableConfig;
 use Drupal\stanford_media\Controller\MediaAdd;
 use Drupal\stanford_media\Routing\RouteSubscriber;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
 
 /**
  * Test the Stanford Media route subscriber.
- *
- * @group stanford_media
  */
+#[Group('stanford_media')]
 class RouteSubscriberTest extends UnitTestCase {
 
   /**
