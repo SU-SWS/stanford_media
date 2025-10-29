@@ -4,13 +4,12 @@ namespace Drupal\Tests\stanford_media\Unit\Plugin\MediaEmbedDialog;
 
 use Drupal\Core\Form\FormState;
 use Drupal\stanford_media\Plugin\MediaEmbedDialog\File;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Class File.
- *
- * @group stanford_media
- * @coversDefaultClass \Drupal\stanford_media\Plugin\MediaEmbedDialog\File
  */
+#[Group('stanford_media')]
 class FileTest extends MediaEmbedDialogTestBase {
 
   /**

@@ -22,6 +22,17 @@ use Drupal\stanford_media\Form\MediaLibraryFileUploadForm;
 use Drupal\stanford_media\Form\MediaLibraryGoogleFormForm;
 
 /**
+ * Implements hook_ENTITY_TYPE_access().
+ */
+function stanford_media_media_access(MediaInterface $entity, $operation, AccountInterface $account) {
+  if ($operation != 'view_standalone') {
+    return AccessResult::neutral();
+  }
+  $permission = sprintf('view %s media standalone url', $entity->bundle());
+  return AccessResult::allowedIf($account->hasPermission($permission));
+}
+
+/**
  * Implements hook_preprocess_HOOK().
  */
 function stanford_media_preprocess_field(&$variables) {
@@ -69,7 +80,6 @@ function stanford_media_preprocess_field(&$variables) {
       $variables['#attached']['library'][] = 'stanford_media/display';
     }
   }
-
 }
 
 /**
@@ -169,7 +179,8 @@ function stanford_media_field_widget_single_element_form_alter(array &$element, 
  */
 function stanford_media_theme_registry_alter(&$theme_registry) {
   // Register the path to the template files.
-  $path = \Drupal::service('extension.list.module')->getPath('stanford_media') . '/templates';
+  $path = \Drupal::service('extension.list.module')
+      ->getPath('stanford_media') . '/templates';
   $theme_registry['dropzonejs']['path'] = $path;
 }
 
@@ -237,7 +248,6 @@ function stanford_media_preprocess_dropzonejs(&$variables) {
  * Implements hook_preprocess_HOOK().
  */
 function stanford_media_preprocess_media(&$variables) {
-
   /** @var \Drupal\media\MediaInterface $media */
   $media = $variables['media'];
   if ($media->getSource()->getPluginId() != 'file') {
@@ -298,7 +308,6 @@ function stanford_media_media_prepare_form(MediaInterface $media, $operation, Fo
     );
     \Drupal::messenger()->addWarning($message);
   }
-
 }
 
 /**
@@ -315,7 +324,6 @@ function stanford_media_form_media_form_alter(&$form, &$form_state) {
  * Restrict access to media entities that are used as field default values.
  */
 function stanford_media_entity_access(EntityInterface $entity, $operation, AccountInterface $account) {
-
   // Only lock down the media entities since they are the default field values
   // that we care about.
   if (

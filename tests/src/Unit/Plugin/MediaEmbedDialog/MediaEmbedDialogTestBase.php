@@ -11,12 +11,12 @@ use Drupal\Core\Path\PathValidatorInterface;
 use Drupal\media\MediaInterface;
 use Drupal\media\MediaSourceInterface;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Class MediaEmbedDialogTestBase.
- *
- * @group stanford_media
  */
+#[Group('stanford_media')]
 abstract class MediaEmbedDialogTestBase extends UnitTestCase {
 
   /**
@@ -80,20 +80,17 @@ abstract class MediaEmbedDialogTestBase extends UnitTestCase {
       ->willReturnCallback([$this, 'fieldGetStringCallback']);
 
     $this->mediaEntity = $this->createMock(MediaInterface::class);
-    $this->mediaEntity->method('bundle')->willReturnReference($this->mediaBundle);
-    $this->mediaEntity->method('getSource')->willReturnReference($this->mediaSource);
+    $this->mediaEntity->method('bundle')
+      ->willReturnReference($this->mediaBundle);
+    $this->mediaEntity->method('getSource')
+      ->willReturnReference($this->mediaSource);
     $this->mediaEntity->method('get')->willReturn($field_list);
   }
 
-  public function loadCallback($display_id) {
+  public function loadCallback($display_id) {}
 
-  }
+  public function loadMultipleCallback() {}
 
-  public function loadMultipleCallback(){
-
-  }
-
-  public function fieldGetStringCallback(){
-  }
+  public function fieldGetStringCallback() {}
 
 }

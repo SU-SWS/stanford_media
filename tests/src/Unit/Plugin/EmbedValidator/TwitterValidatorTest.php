@@ -4,13 +4,12 @@ namespace Drupal\Tests\stanford_media\Unit\Plugin\EmbedValidator;
 
 use Drupal\stanford_media\Plugin\EmbedValidator\TwitterValidator;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Test the Twitter embed validator.
- *
- * @group stanford_media
- * @coversDefaultClass \Drupal\stanford_media\Plugin\EmbedValidator\TwitterValidator
  */
+#[Group('stanford_media')]
 class TwitterValidatorTest extends UnitTestCase {
 
   /**
@@ -51,8 +50,8 @@ Felis erat varius dolor proin eu orci bibendum <a href="https://twitter.com/hash
   /**
    * Remove everything not necessary for the iframe.
    */
-  public function testPreparedCode(){
-    $expected  = '<a class="twitter-timeline">Follow this twitter feed.</a><script src="//platform.twitter.com/widgets.js"></script>';
+  public function testPreparedCode() {
+    $expected = '<a class="twitter-timeline">Follow this twitter feed.</a><script src="//platform.twitter.com/widgets.js"></script>';
 
     $this->assertEquals('', $this->plugin->prepareEmbedCode(''));
     $this->assertEquals('', $this->plugin->prepareEmbedCode('<div id="foo-bar"><script src="foo.bar"></script>'));

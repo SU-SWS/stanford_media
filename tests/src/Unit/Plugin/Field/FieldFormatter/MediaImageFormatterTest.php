@@ -3,13 +3,12 @@
 namespace Drupal\Tests\stanford_media\Unit\Plugin\Field\FieldFormatter;
 
 use Drupal\stanford_media\Plugin\Field\FieldFormatter\MediaImageFormatter;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Class MediaFormatterTest.
- *
- * @group stanford_media
- * @coversDefaultClass \Drupal\stanford_media\Plugin\Field\FieldFormatter\MediaImageFormatter
  */
+#[Group('stanford_media')]
 class MediaImageFormatterTest extends FieldFormatterTestBase {
 
   /**

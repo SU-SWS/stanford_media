@@ -6,14 +6,12 @@ use Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidation\Md5;
 use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
 use Drupal\Tests\media_duplicate_validation\Kernel\Plugin\MediaDuplicateValidationTestBase;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Class ColorMeanTest.
- *
- * @coversDefaultClass \Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidation\Md5
- *
- * @group media_duplicate_validation
  */
+#[Group('media_duplicate_validation')]
 class Md5Test extends MediaDuplicateValidationTestBase {
 
   /**
@@ -32,7 +30,6 @@ class Md5Test extends MediaDuplicateValidationTestBase {
   }
 
   /**
-   * @covers ::schema
    */
   public function testDatabase() {
     $schema = \Drupal::database()->schema();
@@ -42,8 +39,6 @@ class Md5Test extends MediaDuplicateValidationTestBase {
   }
 
   /**
-   * @covers ::mediaSave
-   * @covers ::mediaDelete
    */
   public function testMediaSaveDelete() {
     $mid = $this->mediaEntity->id();
@@ -63,7 +58,6 @@ class Md5Test extends MediaDuplicateValidationTestBase {
   }
 
   /**
-   * @covers ::getSimilarItems
    */
   public function testSimilarItems() {
     $path = 'public://logo2.png';

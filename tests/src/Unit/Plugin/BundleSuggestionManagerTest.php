@@ -16,13 +16,12 @@ use Drupal\media\MediaTypeInterface;
 use Drupal\stanford_media\Plugin\BundleSuggestionInterface;
 use Drupal\stanford_media\Plugin\BundleSuggestionManager;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Class BundleSuggestionManagerTest
- *
- * @group stanford_media
- * @coversDefaultClass \Drupal\stanford_media\Plugin\BundleSuggestionManager
  */
+#[Group('stanford_media')]
 class BundleSuggestionManagerTest extends UnitTestCase {
 
   /**
@@ -218,8 +217,7 @@ class BundleSuggestionManagerOverride extends BundleSuggestionManager {
  */
 class BundleSuggestionPluginTest implements BundleSuggestionInterface {
 
-  public function __construct(protected MediaTypeInterface $mediaType) {
-  }
+  public function __construct(protected MediaTypeInterface $mediaType) {}
 
   public function getBundleFromString(string $input): ?MediaTypeInterface {
     return $input == 'foo' ? $this->mediaType : NULL;

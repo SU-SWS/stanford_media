@@ -6,14 +6,12 @@ use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
 use Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidation\ColorMean;
 use Drupal\Tests\media_duplicate_validation\Kernel\Plugin\MediaDuplicateValidationTestBase;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Class ColorMeanTest.
- *
- * @coversDefaultClass \Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidation\ColorMean
- *
- * @group media_duplicate_validation
  */
+#[Group('media_duplicate_validation')]
 class ColorMeanTest extends MediaDuplicateValidationTestBase {
 
   /**
@@ -31,9 +29,6 @@ class ColorMeanTest extends MediaDuplicateValidationTestBase {
     $this->plugin = $this->duplicationManager->createInstance('color_mean');
   }
 
-  /**
-   * @covers ::schema
-   */
   public function testDatabase() {
     $schema = \Drupal::database()->schema();
 
@@ -45,10 +40,6 @@ class ColorMeanTest extends MediaDuplicateValidationTestBase {
     $this->assertTrue($schema->fieldExists(ColorMean::DATABASE_TABLE, 'mid'));
   }
 
-  /**
-   * @covers ::mediaSave
-   * @covers ::mediaDelete
-   */
   public function testMediaSaveDelete() {
     $mid = $this->mediaEntity->id();
 
@@ -65,9 +56,6 @@ class ColorMeanTest extends MediaDuplicateValidationTestBase {
       ->condition('mid', $mid)->execute()->fetchAssoc());
   }
 
-  /**
-   * @covers ::populateTable
-   */
   public function testPopulateTable() {
     $this->plugin->populateTable();
     $queue = \Drupal::database()
@@ -81,16 +69,6 @@ class ColorMeanTest extends MediaDuplicateValidationTestBase {
 
   /**
    * Test that we get similar items from two images.
-   *
-   * @covers ::getSimilarItems
-   * @covers ::getLikeness
-   * @covers ::getCloseMedia
-   * @covers ::getColorData
-   * @covers ::mimeType
-   * @covers ::createImage
-   * @covers ::resizeImage
-   * @covers ::getColorValues
-   * @covers ::getRowColumnAverages
    */
   public function testSimilarItems() {
     $path = 'public://smaller_logo.jpg';
@@ -110,15 +88,6 @@ class ColorMeanTest extends MediaDuplicateValidationTestBase {
   /**
    * Test that we get no similar items from two images.
    *
-   * @covers ::getSimilarItems
-   * @covers ::getLikeness
-   * @covers ::getCloseMedia
-   * @covers ::getColorData
-   * @covers ::mimeType
-   * @covers ::createImage
-   * @covers ::resizeImage
-   * @covers ::getColorValues
-   * @covers ::getRowColumnAverages
    */
   public function testDifferentItems() {
     $path = 'public://different_logo.png';
@@ -156,7 +125,6 @@ class ColorMeanTest extends MediaDuplicateValidationTestBase {
   /**
    * Test similar documents that aren't images.
    *
-   * @covers ::getSimilarItems
    */
   public function testNonImage() {
     $path = 'public://testfile.txt';

@@ -8,13 +8,12 @@ use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\media\Entity\Media;
 use Drupal\media\Entity\MediaType;
 use Drupal\Core\Form\FormState;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Class EmbeddableTest.
- *
- * @group stanford_media
- * @coversDefaultClass \Drupal\stanford_media\Plugin\media\Source\Embeddable
  */
+#[Group('stanford_media')]
 class EmbeddableTest extends KernelTestBase {
 
   /**
@@ -64,7 +63,6 @@ class EmbeddableTest extends KernelTestBase {
    * {@inheritDoc}
    */
   public function setup(): void {
-
     parent::setUp();
     $this->installEntitySchema('user');
     $this->installEntitySchema('media');
@@ -90,7 +88,6 @@ class EmbeddableTest extends KernelTestBase {
         'source_field' => 'field_media_embeddable_oembed',
       ])
       ->save();
-
 
     // Create the fields we need.
     $field_storage = FieldStorageConfig::create([
@@ -137,18 +134,10 @@ class EmbeddableTest extends KernelTestBase {
       'field_media_embeddable_code' => $this->iframe_code,
     ]);
     $this->unstructured_media->save();
-
   }
 
   /**
    * Test methods on the embeddable source.
-   *
-   * @covers ::getMetadata
-   * @covers ::getUnstructuredMetadata
-   * @covers ::getMetadata
-   * @covers ::getSourceFieldConstraints
-   * @covers ::getSourceFieldValue
-   * @covers ::hasUnstructured
    *
    */
   public function testEmbeddableSource() {
@@ -167,11 +156,8 @@ class EmbeddableTest extends KernelTestBase {
     $this->assertStringContainsString('iframe src', $unstructured_media_source->getSourceFieldValue($this->unstructured_media));
   }
 
-
   /**
    * Tests the configuration form.
-   *
-   * @covers ::buildConfigurationForm
    */
   public function testBuildConfigurationForm() {
     $form_state = new FormState();

@@ -4,13 +4,12 @@ namespace Drupal\Tests\stanford_media\Unit\Plugin\Field\FieldFormatter;
 
 use Drupal\Core\Field\FieldItemInterface;
 use Drupal\stanford_media\Plugin\Field\FieldFormatter\MediaResponsiveImageFormatter;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Class MediaResponsiveImageFormatterTest.
- *
- * @group stanford_media
- * @coversDefaultClass \Drupal\stanford_media\Plugin\Field\FieldFormatter\MediaResponsiveImageFormatter
  */
+#[Group('stanford_media')]
 class MediaResponsiveImageFormatterTest extends FieldFormatterTestBase {
 
   /**

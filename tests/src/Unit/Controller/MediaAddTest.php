@@ -17,13 +17,12 @@ use Drupal\media\MediaTypeInterface;
 use Drupal\stanford_media\Controller\MediaAdd;
 use Drupal\stanford_media\Plugin\BundleSuggestionManagerInterface;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Class MediaAddTest.
- *
- * @group stanford_media
- * @coversDefaultClass \Drupal\stanford_media\Controller\MediaAdd
  */
+#[Group('stanford_media')]
 class MediaAddTest extends UnitTestCase {
 
   /**

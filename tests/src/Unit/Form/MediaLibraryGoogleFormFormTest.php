@@ -6,13 +6,12 @@ use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Form\FormState;
 use Drupal\stanford_media\Form\MediaLibraryGoogleFormForm;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Class MediaLibraryGoogleFormFormTest.
- *
- * @group stanford_media
- * @coversDefaultClass \Drupal\stanford_media\Form\MediaLibraryGoogleFormForm
  */
+#[Group('stanford_media')]
 class MediaLibraryGoogleFormFormTest extends UnitTestCase {
 
   /**
@@ -54,7 +53,6 @@ class TestMediaLibraryGoogleFormForm extends MediaLibraryGoogleFormForm {
   /**
    * {@inheritDoc}
    */
-  public function __construct() {
-  }
+  public function __construct() {}
 
 }

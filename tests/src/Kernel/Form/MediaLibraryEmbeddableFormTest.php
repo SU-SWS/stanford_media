@@ -11,13 +11,12 @@ use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\Tests\stanford_media\Kernel\StanfordMediaTestBase;
 use Drupal\Tests\user\Traits\UserCreationTrait;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Class MediaLibraryEmbeddableFormTest.
- *
- * @group stanford_media
- * @coversDefaultClass \Drupal\stanford_media\Form\MediaLibraryEmbeddableForm
  */
+#[Group('stanford_media')]
 class MediaLibraryEmbeddableFormTest extends StanfordMediaTestBase {
 
   use UserCreationTrait;
@@ -67,7 +66,6 @@ class MediaLibraryEmbeddableFormTest extends StanfordMediaTestBase {
       ])
       ->save();
 
-
     // Create the fields we need.
     $field_storage = FieldStorageConfig::create([
       'field_name' => 'field_media_embeddable_oembed',
@@ -95,7 +93,6 @@ class MediaLibraryEmbeddableFormTest extends StanfordMediaTestBase {
       'label' => 'unstructured',
     ])->save();
 
-
     $user = $this->createUser(['create embeddable media', 'view media']);
     $this->setCurrentUser($user);
   }
@@ -115,7 +112,8 @@ class MediaLibraryEmbeddableFormTest extends StanfordMediaTestBase {
 
     $form_state = new FormState();
     $form_state->set('media_library_state', $state);
-    $form = \Drupal::formBuilder()->buildForm(MediaLibraryEmbeddableForm::class, $form_state);
+    $form = \Drupal::formBuilder()
+      ->buildForm(MediaLibraryEmbeddableForm::class, $form_state);
 
     $this->assertArrayHasKey('field_media_embeddable_oembed', $form['container']);
     $this->assertArrayHasKey('field_media_embeddable_code', $form['container']);
@@ -147,7 +145,8 @@ class MediaLibraryEmbeddableFormTest extends StanfordMediaTestBase {
     $form_state = new FormState();
     $form_state->set('media_library_state', $state);
     $this->expectException('\InvalidArgumentException');
-    \Drupal::formBuilder()->buildForm(MediaLibraryEmbeddableForm::class, $form_state);
+    \Drupal::formBuilder()
+      ->buildForm(MediaLibraryEmbeddableForm::class, $form_state);
   }
 
 }

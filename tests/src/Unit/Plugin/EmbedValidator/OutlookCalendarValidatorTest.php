@@ -5,13 +5,12 @@ namespace Drupal\Tests\stanford_media\Unit\Plugin\EmbedValidator;
 use Drupal\stanford_media\Plugin\EmbedValidator\LocalistValidator;
 use Drupal\stanford_media\Plugin\EmbedValidator\OutlookCalendarValidator;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Test the Outlook Calendar embed validator.
- *
- * @group stanford_media
- * @coversDefaultClass \Drupal\stanford_media\Plugin\EmbedValidator\OutlookCalendarValidator
  */
+#[Group('stanford_media')]
 class OutlookCalendarValidatorTest extends UnitTestCase {
 
   /**
@@ -28,6 +27,7 @@ class OutlookCalendarValidatorTest extends UnitTestCase {
     parent::setUp();
     $this->plugin = new OutlookCalendarValidator([], '', []);
   }
+
   /**
    * Only airtable iframe code is allowed.
    */
@@ -41,7 +41,7 @@ class OutlookCalendarValidatorTest extends UnitTestCase {
   /**
    * Remove everything not necessary for the iframe.
    */
-  public function testPreparedCode(){
+  public function testPreparedCode() {
     $this->assertEquals('', $this->plugin->prepareEmbedCode(''));
     $this->assertEquals('', $this->plugin->prepareEmbedCode('<div id="foo-bar"><script src="foo.bar"></script>'));
     $this->assertEquals('<iframe src="foo-bar" title="test embed"></iframe>', $this->plugin->prepareEmbedCode('<div></div><iframe src="foo-bar" title="test embed"><p></p></iframe><div></div>'));

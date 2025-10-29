@@ -7,13 +7,12 @@ use Drupal\editor\EditorInterface;
 use Drupal\filter\FilterFormatInterface;
 use Drupal\filter\Plugin\FilterInterface;
 use Drupal\stanford_media\Plugin\MediaEmbedDialog\Media;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Class MediaTest.
- *
- * @group stanford_media
- * @coversDefaultClass \Drupal\stanford_media\Plugin\MediaEmbedDialog\File
  */
+#[Group('stanford_media')]
 class MediaTest extends MediaEmbedDialogTestBase {
 
   /**

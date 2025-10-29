@@ -14,13 +14,12 @@ use Drupal\media\Entity\MediaType;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use Drupal\stanford_media\Plugin\Field\FieldFormatter\EmbeddableFormatter;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Class EmbeddableFormatterTest.
- *
- * @group stanford_media
- * @coversDefaultClass \Drupal\stanford_media\Plugin\Field\FieldFormatter\EmbeddableFormatter
  */
+#[Group('stanford_media')]
 class EmbeddableFormatterTest extends KernelTestBase {
 
   /**
@@ -175,7 +174,6 @@ class EmbeddableFormatterTest extends KernelTestBase {
   }
 
   /**
-   *
    */
   public function getOembedCallback($method, $url, $options) {
     switch ($url) {
@@ -273,10 +271,6 @@ class EmbeddableFormatterTest extends KernelTestBase {
   }
 
   /**
-   * @covers Drupal\stanford_media\Plugin\Field\FieldFormatter\EmbeddableFormatter::isApplicable
-   * @covers Drupal\stanford_media\Plugin\Field\FieldFormatter\EmbeddableFormatter::viewElements
-   * @covers Drupal\stanford_media\Plugin\Field\FieldFormatter\EmbeddableFormatter::viewUnstructuredElements
-   * @covers Drupal\stanford_media\Plugin\Field\FieldFormatter\EmbeddableFormatter::viewOEmbedElements
    */
   public function testEmbeddableFormatter() {
     $source_field = $this->oembed_media->getSource()
@@ -290,7 +284,8 @@ class EmbeddableFormatterTest extends KernelTestBase {
     $view_builder = \Drupal::entityTypeManager()
       ->getViewBuilder('media');
     $view_render = $view_builder->view($this->unstructured_media, 'default');
-    $rendered_view = \Drupal::service('renderer')->renderInIsolation($view_render);
+    $rendered_view = \Drupal::service('renderer')
+      ->renderInIsolation($view_render);
     $this->assertStringContainsString('http://www.test.com', $rendered_view);
 
     $view_builder = \Drupal::entityTypeManager()

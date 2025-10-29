@@ -3,6 +3,7 @@
 namespace Drupal\Tests\stanford_media\Unit\Plugin\Validation\Constraint;
 
 use Drupal\Core\Field\FieldItemListInterface;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\Validator\Context\ExecutionContext;
 use Drupal\Core\Validation\DrupalTranslator;
 use Drupal\media\MediaInterface;
@@ -16,10 +17,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Class GoogleFormsConstraintValidatorTest
- *
- * @group stanford_media
- * @coversDefaultClass \Drupal\stanford_media\Plugin\Validation\Constraint\GoogleFormsConstraintValidator
  */
+#[Group('stanford_media')]
 class GoogleFormsConstraintValidatorTest extends UnitTestCase {
 
   /**
@@ -76,9 +75,9 @@ class GoogleFormsConstraintValidatorTest extends UnitTestCase {
    * Various field values from the media will validate in different ways.
    */
   public function testValidationGoogleForm() {
-
     $source = $this->createMock(GoogleForm::class);
-    $source->method('getSourceFieldValue')->willReturnReference($this->sourceFieldValue);
+    $source->method('getSourceFieldValue')
+      ->willReturnReference($this->sourceFieldValue);
     $entity = $this->createMock(MediaInterface::class);
     $entity->method('getSource')->willReturn($source);
     $field_item_list = $this->createMock(FieldItemListInterface::class);

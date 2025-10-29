@@ -4,6 +4,7 @@ services:
     arguments: ['@entity_type.manager', '@file.usage', '@config.factory']
   stanford_media.route_subscriber:
     class: Drupal\stanford_media\Routing\RouteSubscriber
+    arguments: ['@config.factory']
     tags:
       - { name: event_subscriber }
   plugin.manager.media_embed_dialog_manager:

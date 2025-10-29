@@ -51,7 +51,8 @@ abstract class StanfordMediaTestBase extends KernelTestBase {
     ]);
     $this->mediaType->save();
     // Create the source field.
-    $source_field = $this->mediaType->getSource()->createSourceField($this->mediaType);
+    $source_field = $this->mediaType->getSource()
+      ->createSourceField($this->mediaType);
     $source_field->getFieldStorageDefinition()->save();
     $source_field->save();
     $this->mediaType->set('source_configuration', ['source_field' => $source_field->getName()])

@@ -4,13 +4,12 @@ namespace Drupal\Tests\stanford_media\Unit\Plugin\BundleSuggestion;
 
 use Drupal\media\MediaTypeInterface;
 use Drupal\stanford_media\Plugin\BundleSuggestion\File;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Class FileTest
- *
- * @group stanford_media
- * @coversDefaultClass \Drupal\stanford_media\Plugin\BundleSuggestion\File
  */
+#[Group('stanford_media')]
 class FileTest extends BundleSuggestionTestBase {
 
   /**
