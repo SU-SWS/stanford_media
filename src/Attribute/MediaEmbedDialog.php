@@ -5,19 +5,18 @@ namespace Drupal\stanford_media\Attribute;
 use Drupal\Component\Plugin\Attribute\AttributeBase;
 
 /**
- * The foo_bar attribute.
+ * The Media Embed Dialog attribute.
+ *
+ * @codeCoverageIgnore
  */
 #[\Attribute(\Attribute::TARGET_CLASS)]
 final class MediaEmbedDialog extends AttributeBase {
 
   /**
-   * Constructs a new FooBar instance.
+   * Constructs a new Dialog Plugin instance.
    *
    * @param string $id
-   *   The plugin ID. There are some implementation bugs that make the plugin
-   *   available only if the ID follows a specific pattern. It must be either
-   *   identical to group or prefixed with the group. E.g. if the group is "foo"
-   *   the ID must be either "foo" or "foo:bar".
+   *   The plugin ID.
    */
   public function __construct(public readonly string $id) {}
 
