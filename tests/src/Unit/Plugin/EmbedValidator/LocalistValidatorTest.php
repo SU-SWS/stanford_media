@@ -8,7 +8,6 @@ use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Test the localist embed validator.
- *
  */
 #[Group('stanford_media')]
 class LocalistValidatorTest extends UnitTestCase {
@@ -41,7 +40,7 @@ class LocalistValidatorTest extends UnitTestCase {
   /**
    * Remove everything not necessary for localist.
    */
-  public function testPreparedCode(){
+  public function testPreparedCode() {
     $this->assertEquals('', $this->plugin->prepareEmbedCode(''));
     $this->assertEquals('', $this->plugin->prepareEmbedCode('<div id="foo-bar"><script src="foo.bar"></script>'));
 

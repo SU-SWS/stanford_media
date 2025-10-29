@@ -11,7 +11,6 @@ use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Class MediaTest.
- *
  */
 #[Group('stanford_media')]
 class MediaTest extends MediaEmbedDialogTestBase {

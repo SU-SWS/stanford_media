@@ -13,7 +13,6 @@ use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Class MediaLibraryEmbeddableFormTest.
- *
  */
 #[Group('stanford_media')]
 class MediaLibraryEmbeddableFormTest extends UnitTestCase {
@@ -42,7 +41,6 @@ class MediaLibraryEmbeddableFormTest extends UnitTestCase {
     \Drupal::setContainer($container);
   }
 
-
   public function testGetFormId() {
     $form_object = new TestMediaLibraryEmbeddableForm();
     $this->assertStringContainsString('_embeddable', $form_object->getFormId());
@@ -62,8 +60,7 @@ class MediaLibraryEmbeddableFormTest extends UnitTestCase {
  */
 class TestMediaLibraryEmbeddableForm extends MediaLibraryEmbeddableForm {
 
-  public function __construct() {
-  }
+  public function __construct() {}
 
   /**
    * We override this so unit tests work without a full form state.

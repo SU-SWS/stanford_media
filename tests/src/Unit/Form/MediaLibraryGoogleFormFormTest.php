@@ -10,7 +10,6 @@ use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Class MediaLibraryGoogleFormFormTest.
- *
  */
 #[Group('stanford_media')]
 class MediaLibraryGoogleFormFormTest extends UnitTestCase {
@@ -54,7 +53,6 @@ class TestMediaLibraryGoogleFormForm extends MediaLibraryGoogleFormForm {
   /**
    * {@inheritDoc}
    */
-  public function __construct() {
-  }
+  public function __construct() {}
 
 }

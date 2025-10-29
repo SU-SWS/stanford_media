@@ -7,7 +7,6 @@ use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Class MediaFormatterTest.
- *
  */
 #[Group('stanford_media')]
 class MediaImageFormatterTest extends FieldFormatterTestBase {

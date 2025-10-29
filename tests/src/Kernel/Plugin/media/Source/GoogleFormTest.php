@@ -12,7 +12,6 @@ use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Class GoogleFormTest.
- *
  */
 #[Group('stanford_media')]
 class GoogleFormTest extends KernelTestBase {
@@ -103,7 +102,5 @@ class GoogleFormTest extends KernelTestBase {
     $this->assertArrayHasKey('height', $media_source->getMetadataAttributes());
     $this->assertArrayHasKey('google_forms', $media_source->getSourceFieldConstraints());
   }
-
-
 
 }

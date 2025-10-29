@@ -14,7 +14,6 @@ use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Class MediaLibraryFileUploadFormTest.
- *
  */
 #[Group('stanford_media')]
 class MediaLibraryFileUploadFormTest extends StanfordMediaTestBase {

@@ -20,7 +20,6 @@ use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Class BundleSuggestionManagerTest
- *
  */
 #[Group('stanford_media')]
 class BundleSuggestionManagerTest extends UnitTestCase {
@@ -218,8 +217,7 @@ class BundleSuggestionManagerOverride extends BundleSuggestionManager {
  */
 class BundleSuggestionPluginTest implements BundleSuggestionInterface {
 
-  public function __construct(protected MediaTypeInterface $mediaType) {
-  }
+  public function __construct(protected MediaTypeInterface $mediaType) {}
 
   public function getBundleFromString(string $input): ?MediaTypeInterface {
     return $input == 'foo' ? $this->mediaType : NULL;

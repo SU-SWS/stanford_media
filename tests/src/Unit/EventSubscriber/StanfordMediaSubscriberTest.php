@@ -12,7 +12,6 @@ use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Test the Stanford Media event subscriber.
- *
  */
 #[Group('stanford_media')]
 class StanfordMediaSubscriberTest extends UnitTestCase {
@@ -48,7 +47,6 @@ class StanfordMediaSubscriberTest extends UnitTestCase {
 
   /**
    * Test that the subscriber subscribes to the correct events.
-   *
    */
   public function testGetSubscribedEvents() {
     $events = StanfordMediaSubscriber::getSubscribedEvents();
@@ -62,7 +60,6 @@ class StanfordMediaSubscriberTest extends UnitTestCase {
 
   /**
    * Test cache invalidation for media entity usage.
-   *
    */
   public function testOnRegisterEntityUsageWithMediaTarget() {
     $event = $this->createMock(EntityUsageEvent::class);
@@ -74,7 +71,7 @@ class StanfordMediaSubscriberTest extends UnitTestCase {
     // Expect both media and source cache tags to be invalidated.
     $this->cacheTagsInvalidator->expects($this->exactly(2))
       ->method('invalidateTags')
-      ->willReturnCallback(function ($tags) {
+      ->willReturnCallback(function($tags) {
         static $callCount = 0;
         $callCount++;
         if ($callCount === 1) {
@@ -90,7 +87,6 @@ class StanfordMediaSubscriberTest extends UnitTestCase {
 
   /**
    * Test cache invalidation when target is not media.
-   *
    */
   public function testOnRegisterEntityUsageWithNonMediaTarget() {
     $event = $this->createMock(EntityUsageEvent::class);
@@ -109,7 +105,6 @@ class StanfordMediaSubscriberTest extends UnitTestCase {
 
   /**
    * Test cache invalidation when target entity ID is null.
-   *
    */
   public function testOnRegisterEntityUsageWithNullTargetId() {
     $event = $this->createMock(EntityUsageEvent::class);
@@ -128,7 +123,6 @@ class StanfordMediaSubscriberTest extends UnitTestCase {
 
   /**
    * Test cache invalidation when source entity info is missing.
-   *
    */
   public function testOnRegisterEntityUsageWithMissingSourceInfo() {
     $event = $this->createMock(EntityUsageEvent::class);
@@ -147,7 +141,6 @@ class StanfordMediaSubscriberTest extends UnitTestCase {
 
   /**
    * Test cache invalidation with only source entity type.
-   *
    */
   public function testOnRegisterEntityUsageWithSourceTypeOnly() {
     $event = $this->createMock(EntityUsageEvent::class);
@@ -165,7 +158,6 @@ class StanfordMediaSubscriberTest extends UnitTestCase {
 
   /**
    * Test cache invalidation with only source entity ID.
-   *
    */
   public function testOnRegisterEntityUsageWithSourceIdOnly() {
     $event = $this->createMock(EntityUsageEvent::class);

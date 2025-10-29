@@ -7,7 +7,6 @@ use Drupal\media\Entity\Media;
 
 /**
  * Tests for the stanford media service.
- *
  */
 class StanfordMediaTest extends StanfordMediaTestBase {
 
@@ -15,7 +14,6 @@ class StanfordMediaTest extends StanfordMediaTestBase {
    * Media deletion should delete the associated file from the server.
    */
   public function testFileDelete() {
-
     $source_field = $this->mediaType->getSource()
       ->getSourceFieldDefinition($this->mediaType)
       ->getName();

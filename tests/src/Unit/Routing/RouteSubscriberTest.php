@@ -19,7 +19,6 @@ class RouteSubscriberTest extends UnitTestCase {
 
   /**
    * Test that media add page route controller is altered.
-   *
    */
   public function testMediaAddPageRouteAltered() {
     $route_collection = new RouteCollection();
@@ -47,7 +46,6 @@ class RouteSubscriberTest extends UnitTestCase {
 
   /**
    * Test that canonical route is altered when standalone URL is enabled.
-   *
    */
   public function testMediaCanonicalRouteAlteredWithStandaloneUrl() {
     $route_collection = new RouteCollection();
@@ -75,7 +73,6 @@ class RouteSubscriberTest extends UnitTestCase {
 
   /**
    * Test that canonical route is not altered when standalone URL is disabled.
-   *
    */
   public function testMediaCanonicalRouteNotAlteredWithoutStandaloneUrl() {
     $route_collection = new RouteCollection();
@@ -103,7 +100,6 @@ class RouteSubscriberTest extends UnitTestCase {
 
   /**
    * Test that both routes can be altered together.
-   *
    */
   public function testBothRoutesAltered() {
     $route_collection = new RouteCollection();
@@ -134,13 +130,13 @@ class RouteSubscriberTest extends UnitTestCase {
 
     $this->assertEquals(
       'media.view_standalone',
-      $route_collection->get('entity.media.canonical')->getRequirement('_entity_access')
+      $route_collection->get('entity.media.canonical')
+        ->getRequirement('_entity_access')
     );
   }
 
   /**
    * Test when routes don't exist in collection.
-   *
    */
   public function testMissingRoutes() {
     $route_collection = new RouteCollection();
@@ -161,12 +157,12 @@ class RouteSubscriberTest extends UnitTestCase {
     // No errors should occur and the collection should be unchanged.
     $this->assertNull($route_collection->get('entity.media.add_page'));
     $this->assertNull($route_collection->get('entity.media.canonical'));
-    $this->assertEquals('/some/other/route', $route_collection->get('some.other.route')->getPath());
+    $this->assertEquals('/some/other/route', $route_collection->get('some.other.route')
+      ->getPath());
   }
 
   /**
    * Test when only add page route exists.
-   *
    */
   public function testOnlyAddPageRouteExists() {
     $route_collection = new RouteCollection();
@@ -194,7 +190,6 @@ class RouteSubscriberTest extends UnitTestCase {
 
   /**
    * Test when only canonical route exists.
-   *
    */
   public function testOnlyCanonicalRouteExists() {
     $route_collection = new RouteCollection();
@@ -215,7 +210,8 @@ class RouteSubscriberTest extends UnitTestCase {
 
     $this->assertEquals(
       'media.view_standalone',
-      $route_collection->get('entity.media.canonical')->getRequirement('_entity_access')
+      $route_collection->get('entity.media.canonical')
+        ->getRequirement('_entity_access')
     );
     $this->assertNull($route_collection->get('entity.media.add_page'));
   }

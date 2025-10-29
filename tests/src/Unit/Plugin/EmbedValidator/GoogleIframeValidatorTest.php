@@ -8,7 +8,6 @@ use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Test the Google Iframe embed validator.
- *
  */
 #[Group('stanford_media')]
 class GoogleIframeValidatorTest extends UnitTestCase {
@@ -27,6 +26,7 @@ class GoogleIframeValidatorTest extends UnitTestCase {
     parent::setUp();
     $this->plugin = new GoogleIframeValidator([], '', []);
   }
+
   /**
    * Only airtable iframe code is allowed.
    */
@@ -40,7 +40,7 @@ class GoogleIframeValidatorTest extends UnitTestCase {
   /**
    * Remove everything not necessary for the iframe.
    */
-  public function testPreparedCode(){
+  public function testPreparedCode() {
     $this->assertEquals('', $this->plugin->prepareEmbedCode(''));
     $this->assertEquals('', $this->plugin->prepareEmbedCode('<div id="foo-bar"><script src="foo.bar"></script>'));
     $this->assertEquals('<iframe src="foo-bar" title="test embed"></iframe>', $this->plugin->prepareEmbedCode('<div></div><iframe src="foo-bar" title="test embed"><p></p></iframe><div></div>'));

@@ -13,7 +13,6 @@ use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Class BulkUploadFormTest.
- *
  */
 #[Group('stanford_media')]
 class BulkUploadFormTest extends StanfordMediaTestBase {
@@ -111,14 +110,15 @@ class BulkUploadFormTest extends StanfordMediaTestBase {
     $admin_role->grantPermission('administer media');
     $admin_role->save();
 
-    $user = User::create(['name' => 'admin','roles' => ['admin']]);
+    $user = User::create(['name' => 'admin', 'roles' => ['admin']]);
     $user->activate();
     $user->save();
     \Drupal::currentUser()->setAccount($user);
 
     drupal_flush_all_caches();
 
-    $this->assertTrue($form_object->access(\Drupal::currentUser())->isAllowed());
+    $this->assertTrue($form_object->access(\Drupal::currentUser())
+      ->isAllowed());
   }
 
 }

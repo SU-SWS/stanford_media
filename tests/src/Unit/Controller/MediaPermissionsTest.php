@@ -14,7 +14,6 @@ use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Class MediaPermissionsTest.
- *
  */
 #[Group('stanford_media')]
 class MediaPermissionsTest extends UnitTestCase {
@@ -51,8 +50,8 @@ class MediaPermissionsTest extends UnitTestCase {
   }
 
   /**
-   * Test standAlonePermissions returns empty array when standalone URL disabled.
-   *
+   * Test standAlonePermissions returns empty array when standalone URL
+   * disabled.
    */
   public function testStandAlonePermissionsDisabled() {
     $media_settings = $this->createMock(ImmutableConfig::class);
@@ -73,7 +72,6 @@ class MediaPermissionsTest extends UnitTestCase {
 
   /**
    * Test standAlonePermissions generates permissions for media types.
-   *
    */
   public function testStandAlonePermissionsEnabled() {
     $media_settings = $this->createMock(ImmutableConfig::class);
@@ -132,7 +130,6 @@ class MediaPermissionsTest extends UnitTestCase {
 
   /**
    * Test standAlonePermissions handles no media types.
-   *
    */
   public function testStandAlonePermissionsNoMediaTypes() {
     $media_settings = $this->createMock(ImmutableConfig::class);
@@ -161,7 +158,6 @@ class MediaPermissionsTest extends UnitTestCase {
 
   /**
    * Test controller create method.
-   *
    */
   public function testCreate() {
     $controller = MediaPermissions::create($this->container);

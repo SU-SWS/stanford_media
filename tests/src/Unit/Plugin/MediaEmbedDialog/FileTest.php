@@ -8,7 +8,6 @@ use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Class File.
- *
  */
 #[Group('stanford_media')]
 class FileTest extends MediaEmbedDialogTestBase {

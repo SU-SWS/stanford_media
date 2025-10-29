@@ -17,7 +17,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Class GoogleFormsConstraintValidatorTest
- *
  */
 #[Group('stanford_media')]
 class GoogleFormsConstraintValidatorTest extends UnitTestCase {
@@ -76,9 +75,9 @@ class GoogleFormsConstraintValidatorTest extends UnitTestCase {
    * Various field values from the media will validate in different ways.
    */
   public function testValidationGoogleForm() {
-
     $source = $this->createMock(GoogleForm::class);
-    $source->method('getSourceFieldValue')->willReturnReference($this->sourceFieldValue);
+    $source->method('getSourceFieldValue')
+      ->willReturnReference($this->sourceFieldValue);
     $entity = $this->createMock(MediaInterface::class);
     $entity->method('getSource')->willReturn($source);
     $field_item_list = $this->createMock(FieldItemListInterface::class);

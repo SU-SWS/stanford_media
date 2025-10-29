@@ -19,7 +19,6 @@ use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Class MultiMediaFormatterTest.
- *
  */
 #[Group('stanford_media')]
 class MultiMediaFormatterTest extends KernelTestBase {

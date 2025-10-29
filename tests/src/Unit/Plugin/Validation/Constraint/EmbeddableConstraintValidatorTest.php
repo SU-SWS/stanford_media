@@ -22,7 +22,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Class GoogleFormsConstraintValidatorTest
- *
  */
 #[Group('stanford_media')]
 class EmbeddableConstraintValidatorTest extends UnitTestCase {
@@ -95,7 +94,7 @@ class EmbeddableConstraintValidatorTest extends UnitTestCase {
     $this->validator->validate($field_item_list, $constraint);
   }
 
-  public function testOembedEmbeddable(){
+  public function testOembedEmbeddable() {
     $source = $this->createMock(EmbeddableInterface::class);
     $entity = $this->createMock(MediaInterface::class);
     $entity->method('getSource')->willReturn($source);
@@ -104,10 +103,12 @@ class EmbeddableConstraintValidatorTest extends UnitTestCase {
     $constraint = $this->createMock(EmbeddableConstraint::class);
 
     $this->validator->validate($field_item_list, $constraint);
-    $this->assertStringContainsString('valid oEmbed resource', $this->validationContext->getViolations()->get(0)->getMessageTemplate());
+    $this->assertStringContainsString('valid oEmbed resource', $this->validationContext->getViolations()
+      ->get(0)
+      ->getMessageTemplate());
   }
 
-  public function testUnstructuredEmbeddable(){
+  public function testUnstructuredEmbeddable() {
     $source = $this->createMock(EmbeddableInterface::class);
     $source->method('hasUnstructured')->willReturn(TRUE);
     $source->method('embedCodeIsAllowed')->willReturn(TRUE);

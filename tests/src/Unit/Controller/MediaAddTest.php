@@ -21,7 +21,6 @@ use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Class MediaAddTest.
- *
  */
 #[Group('stanford_media')]
 class MediaAddTest extends UnitTestCase {

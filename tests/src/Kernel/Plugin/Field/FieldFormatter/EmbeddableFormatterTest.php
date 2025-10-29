@@ -18,7 +18,6 @@ use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Class EmbeddableFormatterTest.
- *
  */
 #[Group('stanford_media')]
 class EmbeddableFormatterTest extends KernelTestBase {
@@ -175,7 +174,6 @@ class EmbeddableFormatterTest extends KernelTestBase {
   }
 
   /**
-   *
    */
   public function getOembedCallback($method, $url, $options) {
     switch ($url) {
@@ -286,7 +284,8 @@ class EmbeddableFormatterTest extends KernelTestBase {
     $view_builder = \Drupal::entityTypeManager()
       ->getViewBuilder('media');
     $view_render = $view_builder->view($this->unstructured_media, 'default');
-    $rendered_view = \Drupal::service('renderer')->renderInIsolation($view_render);
+    $rendered_view = \Drupal::service('renderer')
+      ->renderInIsolation($view_render);
     $this->assertStringContainsString('http://www.test.com', $rendered_view);
 
     $view_builder = \Drupal::entityTypeManager()

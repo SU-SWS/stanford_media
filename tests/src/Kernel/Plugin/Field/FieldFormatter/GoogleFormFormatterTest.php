@@ -14,7 +14,6 @@ use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Class GoogleFormFormatterTest
- *
  */
 #[Group('stanford_media')]
 class GoogleFormFormatterTest extends KernelTestBase {
@@ -69,7 +68,8 @@ class GoogleFormFormatterTest extends KernelTestBase {
       'source' => 'google_form',
     ]);
     $this->mediaType->save();
-    $source_field = $this->mediaType->getSource()->createSourceField($this->mediaType);
+    $source_field = $this->mediaType->getSource()
+      ->createSourceField($this->mediaType);
     $source_field->getFieldStorageDefinition()->save();
     $source_field->save();
     $this->mediaType
@@ -118,43 +118,43 @@ class GoogleFormFormatterTest extends KernelTestBase {
       ->save();
   }
 
-    public function testNonMediaField() {
+  public function testNonMediaField() {
+    EntityTestBundle::create(['id' => 'test'])->save();
 
-      EntityTestBundle::create(['id' => 'test'])->save();
+    $field_storage = FieldStorageConfig::create([
+      'type' => 'entity_reference',
+      'field_name' => 'field_test_media',
+      'entity_type' => 'entity_test',
+      'settings' => [
+        'target_type' => 'media',
+      ],
+    ]);
+    $field_storage->save();
 
-      $field_storage = FieldStorageConfig::create([
-        'type' => 'entity_reference',
-        'field_name' => 'field_test_media',
-        'entity_type' => 'entity_test',
-        'settings' => [
-          'target_type' => 'media',
-        ],
-      ]);
-      $field_storage->save();
+    $field_config = FieldConfig::create([
+      'field_storage' => $field_storage,
+      'bundle' => 'test',
+    ]);
+    $field_config->save();
 
-      $field_config = FieldConfig::create([
-        'field_storage' => $field_storage,
-        'bundle' => 'test',
-      ]);
-      $field_config->save();
+    $this->assertFalse(GoogleFormFormatter::isApplicable($field_config));
+  }
 
-      $this->assertFalse(GoogleFormFormatter::isApplicable($field_config));
-    }
+  public function testOtherMediaTypeField() {
+    $mediaType = MediaType::create([
+      'id' => 'video',
+      'label' => 'video',
+      'source' => 'oembed:video',
+    ]);
+    $mediaType->save();
+    $source_field = $mediaType->getSource()->createSourceField($mediaType);
 
-    public function testOtherMediaTypeField() {
-      $mediaType = MediaType::create([
-        'id' => 'video',
-        'label' => 'video',
-        'source' => 'oembed:video',
-      ]);
-      $mediaType->save();
-      $source_field = $mediaType->getSource()->createSourceField($mediaType);
-
-      $this->assertFalse(GoogleFormFormatter::isApplicable($source_field));
-    }
+    $this->assertFalse(GoogleFormFormatter::isApplicable($source_field));
+  }
 
   public function testGoogleFormatter() {
-    $source_field = $this->media->getSource()->getSourceFieldDefinition($this->mediaType);
+    $source_field = $this->media->getSource()
+      ->getSourceFieldDefinition($this->mediaType);
     $this->assertTrue(GoogleFormFormatter::isApplicable($source_field));
 
     $view_builder = \Drupal::entityTypeManager()->getViewBuilder('media');

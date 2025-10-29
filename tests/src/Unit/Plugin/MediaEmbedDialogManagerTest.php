@@ -10,17 +10,16 @@ use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Class MediaEmbedDialogManagerTest.
- *
  */
 #[Group('stanford_media')]
 class MediaEmbedDialogManagerTest extends UnitTestCase {
 
-  public function testManager(){
-    $namespaces  = $this->createMock(\Traversable::class);
+  public function testManager() {
+    $namespaces = $this->createMock(\Traversable::class);
     $cache_backend = $this->createMock(CacheBackendInterface::class);
     $module_handler = $this->createMock(ModuleHandlerInterface::class);
 
-    $manager = new MediaEmbedDialogManager($namespaces,  $cache_backend,  $module_handler);
+    $manager = new MediaEmbedDialogManager($namespaces, $cache_backend, $module_handler);
     $this->assertInstanceOf(MediaEmbedDialogManager::class, $manager);
   }
 

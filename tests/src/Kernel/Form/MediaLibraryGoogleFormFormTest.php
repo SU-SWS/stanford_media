@@ -13,7 +13,6 @@ use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Class MediaLibraryGoogleFormFormTest.
- *
  */
 #[Group('stanford_media')]
 class MediaLibraryGoogleFormFormTest extends StanfordMediaTestBase {
@@ -36,7 +35,8 @@ class MediaLibraryGoogleFormFormTest extends StanfordMediaTestBase {
     $source_field = $media_type->getSource()->createSourceField($media_type);
     $source_field->getFieldStorageDefinition()->save();
     $source_field->save();
-    $media_type->set('source_configuration', ['source_field' => $source_field->getName()])->save();
+    $media_type->set('source_configuration', ['source_field' => $source_field->getName()])
+      ->save();
 
     $user = $this->createUser(['create google_form media', 'view media']);
     $this->setCurrentUser($user);
@@ -57,7 +57,8 @@ class MediaLibraryGoogleFormFormTest extends StanfordMediaTestBase {
 
     $form_state = new FormState();
     $form_state->set('media_library_state', $state);
-    $form = \Drupal::formBuilder()->buildForm(MediaLibraryGoogleFormForm::class, $form_state);
+    $form = \Drupal::formBuilder()
+      ->buildForm(MediaLibraryGoogleFormForm::class, $form_state);
 
     $this->assertArrayHasKey('url', $form['container']);
     $this->assertArrayHasKey('submit', $form['container']);
@@ -88,7 +89,8 @@ class MediaLibraryGoogleFormFormTest extends StanfordMediaTestBase {
     $form_state = new FormState();
     $form_state->set('media_library_state', $state);
     $this->expectException('\InvalidArgumentException');
-    \Drupal::formBuilder()->buildForm(MediaLibraryGoogleFormForm::class, $form_state);
+    \Drupal::formBuilder()
+      ->buildForm(MediaLibraryGoogleFormForm::class, $form_state);
   }
 
 }
