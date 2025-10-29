@@ -15,13 +15,13 @@ use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
 use Drupal\user\Entity\Role;
 use Drupal\responsive_image\Entity\ResponsiveImageStyle;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Class MultiMediaFormatterTest.
  *
- * @group stanford_media
- * @coversDefaultClass \Drupal\stanford_media\Plugin\Field\FieldFormatter\MultiMediaFormatter
  */
+#[Group('stanford_media')]
 class MultiMediaFormatterTest extends KernelTestBase {
 
   /**

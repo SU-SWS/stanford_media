@@ -8,13 +8,13 @@ use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\media\Entity\Media;
 use Drupal\media\Entity\MediaType;
 use Drupal\Core\Form\FormState;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Class EmbeddableTest.
  *
- * @group stanford_media
- * @coversDefaultClass \Drupal\stanford_media\Plugin\media\Source\Embeddable
  */
+#[Group('stanford_media')]
 class EmbeddableTest extends KernelTestBase {
 
   /**
@@ -143,12 +143,6 @@ class EmbeddableTest extends KernelTestBase {
   /**
    * Test methods on the embeddable source.
    *
-   * @covers ::getMetadata
-   * @covers ::getUnstructuredMetadata
-   * @covers ::getMetadata
-   * @covers ::getSourceFieldConstraints
-   * @covers ::getSourceFieldValue
-   * @covers ::hasUnstructured
    *
    */
   public function testEmbeddableSource() {
@@ -171,7 +165,6 @@ class EmbeddableTest extends KernelTestBase {
   /**
    * Tests the configuration form.
    *
-   * @covers ::buildConfigurationForm
    */
   public function testBuildConfigurationForm() {
     $form_state = new FormState();

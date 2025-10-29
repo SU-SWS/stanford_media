@@ -9,13 +9,13 @@ use Drupal\Core\Utility\LinkGeneratorInterface;
 use Drupal\Core\Utility\UnroutedUrlAssemblerInterface;
 use Drupal\stanford_media\StanfordMedia;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Class StanfordMediaTest.
  *
- * @coversDefaultClass \Drupal\stanford_media\StanfordMedia
- * @group stanford_media
  */
+#[Group('stanford_media')]
 class StanfordMediaTest extends UnitTestCase {
 
   /**

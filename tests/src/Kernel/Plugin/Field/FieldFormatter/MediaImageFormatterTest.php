@@ -14,13 +14,13 @@ use Drupal\media\Entity\MediaType;
 use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
 use Drupal\user\Entity\Role;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Class MediaFormatterTest.
  *
- * @group stanford_media
- * @coversDefaultClass \Drupal\stanford_media\Plugin\Field\FieldFormatter\MediaImageFormatter
  */
+#[Group('stanford_media')]
 class MediaImageFormatterTest extends KernelTestBase {
 
   /**

@@ -9,13 +9,13 @@ use Drupal\stanford_media\Form\MediaLibraryEmbeddableForm;
 use Drupal\Tests\UnitTestCase;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Class MediaLibraryEmbeddableFormTest.
  *
- * @group stanford_media
- * @coversDefaultClass \Drupal\stanford_media\Form\MediaLibraryEmbeddableForm
  */
+#[Group('stanford_media')]
 class MediaLibraryEmbeddableFormTest extends UnitTestCase {
 
   /**

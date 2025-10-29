@@ -8,7 +8,6 @@ use Drupal\media\Entity\Media;
 /**
  * Tests for the stanford media service.
  *
- * @coversDefaultClass \Drupal\stanford_media\StanfordMedia
  */
 class StanfordMediaTest extends StanfordMediaTestBase {
 

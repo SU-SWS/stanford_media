@@ -4,13 +4,13 @@ namespace Drupal\Tests\stanford_media\Unit\Plugin\EmbedValidator;
 
 use Drupal\stanford_media\Plugin\EmbedValidator\GoogleIframeValidator;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Test the Google Iframe embed validator.
  *
- * @group stanford_media
- * @coversDefaultClass \Drupal\stanford_media\Plugin\EmbedValidator\GoogleIframeValidator
  */
+#[Group('stanford_media')]
 class GoogleIframeValidatorTest extends UnitTestCase {
 
   /**

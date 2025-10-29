@@ -9,13 +9,13 @@ use Drupal\media_library\MediaLibraryState;
 use Drupal\stanford_media\Form\MediaLibraryGoogleFormForm;
 use Drupal\Tests\stanford_media\Kernel\StanfordMediaTestBase;
 use Drupal\Tests\user\Traits\UserCreationTrait;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Class MediaLibraryGoogleFormFormTest.
  *
- * @group stanford_media
- * @coversDefaultClass \Drupal\stanford_media\Form\MediaLibraryGoogleFormForm
  */
+#[Group('stanford_media')]
 class MediaLibraryGoogleFormFormTest extends StanfordMediaTestBase {
 
   use UserCreationTrait;

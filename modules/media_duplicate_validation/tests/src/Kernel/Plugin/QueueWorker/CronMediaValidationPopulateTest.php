@@ -7,15 +7,10 @@ use Drupal\Tests\media_duplicate_validation\Kernel\Plugin\MediaDuplicateValidati
 
 /**
  * Queue worker test class.
- *
- * @coversDefaultClass \Drupal\media_duplicate_validation\Plugin\QueueWorker\CronMediaValidationPopulate
  */
 class CronMediaValidationPopulateTest extends MediaDuplicateValidationTestBase {
 
   /**
-   * @covers ::create
-   * @covers ::__construct
-   * @covers ::processItem
    */
   public function testQueueWorker() {
     \Drupal::database()->schema()->dropTable(Md5::DATABASE_TABLE);

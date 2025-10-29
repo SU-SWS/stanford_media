@@ -8,13 +8,13 @@ use Drupal\media\Entity\MediaType;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\Core\Form\FormState;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Class GoogleFormTest.
  *
- * @group stanford_media
- * @coversDefaultClass \Drupal\stanford_media\Plugin\media\Source\GoogleForm
  */
+#[Group('stanford_media')]
 class GoogleFormTest extends KernelTestBase {
 
   /**

@@ -11,12 +11,13 @@ use Drupal\Core\Path\PathValidatorInterface;
 use Drupal\media\MediaInterface;
 use Drupal\media\MediaSourceInterface;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Class MediaEmbedDialogTestBase.
  *
- * @group stanford_media
  */
+#[Group('stanford_media')]
 abstract class MediaEmbedDialogTestBase extends UnitTestCase {
 
   /**

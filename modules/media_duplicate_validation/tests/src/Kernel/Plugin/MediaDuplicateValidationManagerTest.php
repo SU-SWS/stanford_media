@@ -6,15 +6,12 @@ use Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidation\Md5;
 
 /**
  * Class MediaDuplicateValidationManagerTest.
- *
- * @coversDefaultClass \Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationManager
  */
 class MediaDuplicateValidationManagerTest extends MediaDuplicateValidationTestBase {
 
   /**
    * Test similar entities.
    *
-   * @covers ::getSimilarEntities
    */
   public function testSimilarEntities() {
     $this->assertNotEmpty($this->duplicationManager->getSimilarEntities($this->mediaEntity));

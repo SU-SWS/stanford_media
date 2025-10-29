@@ -10,13 +10,13 @@ use Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationManager;
 use Drupal\media_library\MediaLibraryState;
 use Drupal\stanford_media\Form\MediaLibraryFileUploadForm;
 use Drupal\Tests\stanford_media\Kernel\StanfordMediaTestBase;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Class MediaLibraryFileUploadFormTest.
  *
- * @group stanford_media
- * @coversDefaultClass \Drupal\stanford_media\Form\MediaLibraryFileUploadForm
  */
+#[Group('stanford_media')]
 class MediaLibraryFileUploadFormTest extends StanfordMediaTestBase {
 
   /**

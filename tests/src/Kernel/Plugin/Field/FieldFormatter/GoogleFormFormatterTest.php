@@ -10,13 +10,13 @@ use Drupal\KernelTests\KernelTestBase;
 use Drupal\media\Entity\Media;
 use Drupal\media\Entity\MediaType;
 use Drupal\stanford_media\Plugin\Field\FieldFormatter\GoogleFormFormatter;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Class GoogleFormFormatterTest
  *
- * @group stanford_media
- * @coversDefaultClass \Drupal\stanford_media\Plugin\Field\FieldFormatter\GoogleFormFormatter
  */
+#[Group('stanford_media')]
 class GoogleFormFormatterTest extends KernelTestBase {
 
   /**

@@ -9,13 +9,13 @@ use Drupal\stanford_media\Form\BulkUpload;
 use Drupal\Tests\stanford_media\Kernel\StanfordMediaTestBase;
 use Drupal\user\Entity\Role;
 use Drupal\user\Entity\User;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Class BulkUploadFormTest.
  *
- * @group stanford_media
- * @coversDefaultClass \Drupal\stanford_media\Form\BulkUpload
  */
+#[Group('stanford_media')]
 class BulkUploadFormTest extends StanfordMediaTestBase {
 
   /**

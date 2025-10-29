@@ -11,13 +11,13 @@ use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\Tests\stanford_media\Kernel\StanfordMediaTestBase;
 use Drupal\Tests\user\Traits\UserCreationTrait;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Class MediaLibraryEmbeddableFormTest.
  *
- * @group stanford_media
- * @coversDefaultClass \Drupal\stanford_media\Form\MediaLibraryEmbeddableForm
  */
+#[Group('stanford_media')]
 class MediaLibraryEmbeddableFormTest extends StanfordMediaTestBase {
 
   use UserCreationTrait;

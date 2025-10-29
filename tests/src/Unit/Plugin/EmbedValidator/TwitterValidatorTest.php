@@ -4,13 +4,13 @@ namespace Drupal\Tests\stanford_media\Unit\Plugin\EmbedValidator;
 
 use Drupal\stanford_media\Plugin\EmbedValidator\TwitterValidator;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Test the Twitter embed validator.
  *
- * @group stanford_media
- * @coversDefaultClass \Drupal\stanford_media\Plugin\EmbedValidator\TwitterValidator
  */
+#[Group('stanford_media')]
 class TwitterValidatorTest extends UnitTestCase {
 
   /**

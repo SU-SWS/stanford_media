@@ -10,13 +10,13 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\media\MediaTypeInterface;
 use Drupal\stanford_media\Controller\MediaPermissions;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Class MediaPermissionsTest.
  *
- * @group stanford_media
- * @coversDefaultClass \Drupal\stanford_media\Controller\MediaPermissions
  */
+#[Group('stanford_media')]
 class MediaPermissionsTest extends UnitTestCase {
 
   /**
@@ -53,7 +53,6 @@ class MediaPermissionsTest extends UnitTestCase {
   /**
    * Test standAlonePermissions returns empty array when standalone URL disabled.
    *
-   * @covers ::standAlonePermissions
    */
   public function testStandAlonePermissionsDisabled() {
     $media_settings = $this->createMock(ImmutableConfig::class);
@@ -75,7 +74,6 @@ class MediaPermissionsTest extends UnitTestCase {
   /**
    * Test standAlonePermissions generates permissions for media types.
    *
-   * @covers ::standAlonePermissions
    */
   public function testStandAlonePermissionsEnabled() {
     $media_settings = $this->createMock(ImmutableConfig::class);
@@ -135,7 +133,6 @@ class MediaPermissionsTest extends UnitTestCase {
   /**
    * Test standAlonePermissions handles no media types.
    *
-   * @covers ::standAlonePermissions
    */
   public function testStandAlonePermissionsNoMediaTypes() {
     $media_settings = $this->createMock(ImmutableConfig::class);
@@ -165,7 +162,6 @@ class MediaPermissionsTest extends UnitTestCase {
   /**
    * Test controller create method.
    *
-   * @covers ::create
    */
   public function testCreate() {
     $controller = MediaPermissions::create($this->container);

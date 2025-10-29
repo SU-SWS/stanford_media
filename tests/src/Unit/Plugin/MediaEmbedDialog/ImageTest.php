@@ -7,13 +7,13 @@ use Drupal\Core\TypedData\TypedDataInterface;
 use Drupal\image\Plugin\Field\FieldType\ImageItem;
 use Drupal\stanford_media\Plugin\MediaEmbedDialog\Image;
 use Drupal\media\Plugin\media\Source\Image as ImageSource;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Class Image.
  *
- * @group stanford_media
- * @coversDefaultClass \Drupal\stanford_media\Plugin\MediaEmbedDialog\Image
  */
+#[Group('stanford_media')]
 class ImageTest extends MediaEmbedDialogTestBase {
 
   /**

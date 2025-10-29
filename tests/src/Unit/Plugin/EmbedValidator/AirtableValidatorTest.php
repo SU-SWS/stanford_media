@@ -4,13 +4,12 @@ namespace Drupal\Tests\stanford_media\Unit\Plugin\EmbedValidator;
 
 use Drupal\stanford_media\Plugin\EmbedValidator\AirtableValidator;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Test the localist embed validator.
- *
- * @group stanford_media
- * @coversDefaultClass \Drupal\stanford_media\Plugin\EmbedValidator\AirtableValidator
  */
+#[Group('stanford_media')]
 class AirtableValidatorTest extends UnitTestCase {
 
   /**

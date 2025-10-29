@@ -6,6 +6,7 @@ use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Session\AccountProxyInterface;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\Validator\Context\ExecutionContext;
 use Drupal\media\MediaInterface;
 use Drupal\media\MediaSourceInterface;
@@ -22,9 +23,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * Class GoogleFormsConstraintValidatorTest
  *
- * @group stanford_media
- * @coversDefaultClass \Drupal\stanford_media\Plugin\Validation\Constraint\EmbeddableConstraintValidator
  */
+#[Group('stanford_media')]
 class EmbeddableConstraintValidatorTest extends UnitTestCase {
 
   /**

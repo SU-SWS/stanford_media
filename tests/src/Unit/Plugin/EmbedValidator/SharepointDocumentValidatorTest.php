@@ -5,13 +5,13 @@ namespace Drupal\Tests\stanford_media\Unit\Plugin\EmbedValidator;
 use Drupal\stanford_media\Plugin\EmbedValidator\LocalistValidator;
 use Drupal\stanford_media\Plugin\EmbedValidator\SharepointDocumentValidator;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Test the Sharepoint Document embed validator.
  *
- * @group stanford_media
- * @coversDefaultClass \Drupal\stanford_media\Plugin\EmbedValidator\SharepointDocumentValidator
  */
+#[Group('stanford_media')]
 class SharepointDocumentValidatorTest extends UnitTestCase {
 
   /**
