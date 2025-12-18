@@ -14,6 +14,7 @@ use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
 use Drupal\stanford_media\Plugin\BundleSuggestionManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Class MediaAdd to provide links to upload media.
@@ -56,8 +57,8 @@ class MediaAdd extends EntityController {
   /**
    * {@inheritdoc}
    */
-  public function addPage($entity_type_id) {
-    $page = parent::addPage($entity_type_id);
+  public function addPage($entity_type_id, ?Request $request = NULL) {
+    $page = parent::addPage($entity_type_id, $request);
     $bulk_bundles = [];
 
     foreach ($this->bundleSuggestion->getUploadBundles() as $media_type) {
