@@ -15,6 +15,7 @@ use Drupal\Core\Url;
 use Drupal\stanford_media\Plugin\BundleSuggestionManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Class MediaAdd to provide links to upload media.
@@ -42,6 +43,7 @@ class MediaAdd extends EntityController {
       $container->get('string_translation'),
       $container->get('url_generator'),
       $container->get('current_route_match'),
+      $container->get('request_stack'),
       $container->get('plugin.manager.bundle_suggestion_manager')
     );
   }
@@ -49,8 +51,18 @@ class MediaAdd extends EntityController {
   /**
    * {@inheritdoc}
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, EntityTypeBundleInfoInterface $bundle_info, EntityRepositoryInterface $entity_repository, RendererInterface $renderer, TranslationInterface $string_translation, UrlGeneratorInterface $url_generator, RouteMatchInterface $route_match, BundleSuggestionManagerInterface $bundle_suggestion) {
-    parent::__construct($entity_type_manager, $bundle_info, $entity_repository, $renderer, $string_translation, $url_generator, $route_match);
+  public function __construct(
+    EntityTypeManagerInterface $entityTypeManager,
+    EntityTypeBundleInfoInterface $entityTypeBundleInfo,
+    EntityRepositoryInterface $entityRepository,
+    RendererInterface $renderer,
+    TranslationInterface $stringTranslation,
+    UrlGeneratorInterface $urlGenerator,
+    RouteMatchInterface $routeMatch,
+    RequestStack $requestStack,
+    BundleSuggestionManagerInterface $bundle_suggestion
+  ) {
+    parent::__construct($entityTypeManager, $entityTypeBundleInfo, $entityRepository, $renderer, $stringTranslation, $urlGenerator, $routeMatch, $requestStack);
     $this->bundleSuggestion = $bundle_suggestion;
   }
 

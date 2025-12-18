@@ -18,6 +18,7 @@ use Drupal\stanford_media\Controller\MediaAdd;
 use Drupal\stanford_media\Plugin\BundleSuggestionManagerInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Class MediaAddTest.
@@ -77,6 +78,8 @@ class MediaAddTest extends UnitTestCase {
 
     $current_route_match = $this->createMock(CurrentRouteMatch::class);
 
+    $request_stack = $this->createMock(RequestStack::class);
+
     $this->container = new ContainerBuilder();
     $this->container->set('entity_type.manager', $entity_type_manager);
     $this->container->set('entity_type.bundle.info', $bundle_info);
@@ -87,6 +90,7 @@ class MediaAddTest extends UnitTestCase {
     $this->container->set('plugin.manager.bundle_suggestion_manager', $bundle_suggestion);
     $this->container->set('link_generator', $link_generator);
     $this->container->set('current_route_match', $current_route_match);
+    $this->container->set('request_stack', $request_stack);
     \Drupal::setContainer($this->container);
   }
 
