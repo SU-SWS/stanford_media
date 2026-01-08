@@ -1,5 +1,12 @@
 # Stanford Media
 
+11.3.1
+--------------------------------------------------------------------------------
+_Release Date: 2026-01-08_
+
+- Removed granular standalone permissions for media canonical urls.
+- Updated method signature for D11.3
+
 11.3.0
 --------------------------------------------------------------------------------
 _Release Date: 2025-10-29_
