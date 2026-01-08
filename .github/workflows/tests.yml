@@ -28,38 +28,6 @@ jobs:
         env:
           CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
         run: |
-          composer global require su-sws/stanford-caravan:10.x-dev
-          ~/.config/composer/vendor/bin/sws-caravan phpunit /var/www/html --extension-dir=$GITHUB_WORKSPACE/project --with-coverage
-      - name: Save Test Results
-        uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: unit-tests-results
-          path: /var/www/html/artifacts
-  phpunit_d11:
-    name: Drupal 11 PHPUnit Coverage Tests
-    runs-on: ubuntu-latest
-    container:
-      image: pookmish/drupal8ci:php8.3
-    services:
-      mysql:
-        image: mysql:8.0
-        env:
-          MYSQL_DATABASE: drupal
-          MYSQL_USER: drupal
-          MYSQL_PASSWORD: drupal
-          MYSQL_ROOT_PASSWORD: drupal
-        ports:
-          - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          path: project
-      - name: Build project
-        env:
-          CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
-        run: |
           composer global require su-sws/stanford-caravan:11.x-dev
           ~/.config/composer/vendor/bin/sws-caravan phpunit /var/www/html --extension-dir=$GITHUB_WORKSPACE/project --with-coverage
       - name: Save Test Results
