@@ -13,4 +13,6 @@ display:
   js:
     js/stanford-media.js: {}
   dependencies:
+    - core/drupal
+    - core/jquery
     - core/once
