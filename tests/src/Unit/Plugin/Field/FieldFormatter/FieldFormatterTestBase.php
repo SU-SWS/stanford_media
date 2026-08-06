@@ -65,6 +65,9 @@ abstract class FieldFormatterTestBase extends UnitTestCase {
     $this->container->set('entity_type.manager', $entity_type_manager);
     $this->container->set('entity_display.repository', $entity_display_repo);
     $this->container->set('entity.manager', $entity_type_manager);
+    $this->container->set(LoggerChannelFactoryInterface::class, $logger_factory);
+    $this->container->set(EntityTypeManagerInterface::class, $entity_type_manager);
+    $this->container->set(EntityDisplayRepositoryInterface::class, $entity_display_repo);
 
     \Drupal::setContainer($this->container);
 
