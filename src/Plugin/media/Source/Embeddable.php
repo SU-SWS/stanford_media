@@ -170,9 +170,11 @@ class Embeddable extends OEmbed implements EmbeddableInterface {
    * {@inheritDoc}
    */
   public function hasUnstructured(MediaInterface $media): bool {
+    $field_name = $this->configuration['unstructured_field_name'] ?? NULL;
     return (
-      !$media->get($this->configuration['unstructured_field_name'])
-        ->isEmpty() &&
+      $field_name &&
+      $media->hasField($field_name) &&
+      !$media->get($field_name)->isEmpty() &&
       $media->get($this->configuration['source_field'])->isEmpty()
     );
   }
