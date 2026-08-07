@@ -88,7 +88,7 @@ class EmbeddableConstraintValidatorTest extends UnitTestCase {
     $entity->method('getSource')->willReturn($source);
     $field_item_list = $this->createMock(FieldItemListInterface::class);
     $field_item_list->method('getEntity')->willReturn($entity);
-    $constraint = $this->createMock(EmbeddableConstraint::class);
+    $constraint = new EmbeddableConstraint();
 
     $this->expectException(\LogicException::class);
     $this->validator->validate($field_item_list, $constraint);
@@ -100,7 +100,7 @@ class EmbeddableConstraintValidatorTest extends UnitTestCase {
     $entity->method('getSource')->willReturn($source);
     $field_item_list = $this->createMock(FieldItemListInterface::class);
     $field_item_list->method('getEntity')->willReturn($entity);
-    $constraint = $this->createMock(EmbeddableConstraint::class);
+    $constraint = new EmbeddableConstraint();
 
     $this->validator->validate($field_item_list, $constraint);
     $this->assertStringContainsString('valid oEmbed resource', $this->validationContext->getViolations()
@@ -116,7 +116,7 @@ class EmbeddableConstraintValidatorTest extends UnitTestCase {
     $entity->method('getSource')->willReturn($source);
     $field_item_list = $this->createMock(FieldItemListInterface::class);
     $field_item_list->method('getEntity')->willReturn($entity);
-    $constraint = $this->createMock(EmbeddableConstraint::class);
+    $constraint = new EmbeddableConstraint();
 
     $this->validationContext->setNode(NULL, $entity, NULL, 'foo');
 
