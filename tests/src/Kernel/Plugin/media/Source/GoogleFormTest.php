@@ -9,11 +9,13 @@ use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\Core\Form\FormState;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
  * Class GoogleFormTest.
  */
 #[Group('stanford_media')]
+#[RunTestsInSeparateProcesses]
 class GoogleFormTest extends KernelTestBase {
 
   /**
@@ -40,7 +42,7 @@ class GoogleFormTest extends KernelTestBase {
   /**
    * {@inheritDoc}
    */
-  public function setup(): void {
+  protected function setUp(): void {
     parent::setUp();
     $this->installEntitySchema('user');
     $this->installEntitySchema('media');

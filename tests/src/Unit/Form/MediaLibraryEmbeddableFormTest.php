@@ -34,7 +34,7 @@ class MediaLibraryEmbeddableFormTest extends UnitTestCase {
   /**
    * {@inheritDoc}
    */
-  public function setup(): void {
+  protected function setUp(): void {
     parent::setUp();
     $container = new ContainerBuilder();
     $container->set('string_translation', $this->getStringTranslationStub());
@@ -69,8 +69,8 @@ class TestMediaLibraryEmbeddableForm extends MediaLibraryEmbeddableForm {
    *   The current form state.
    */
   public function setFieldNames(FormStateInterface $form_state): void {
-    $this->oEmbedField = 'field_media_embeddable_oembed';
-    $this->unstructuredField = 'field_media_embeddable_unstructured';
+    $form_state->set('source_field', 'field_media_embeddable_oembed');
+    $form_state->set('unstructured_field_name', 'field_media_embeddable_unstructured');
   }
 
 }

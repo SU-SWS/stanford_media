@@ -4,10 +4,14 @@ namespace Drupal\Tests\media_duplicate_validation\Kernel\Plugin\QueueWorker;
 
 use Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidation\Md5;
 use Drupal\Tests\media_duplicate_validation\Kernel\Plugin\MediaDuplicateValidationTestBase;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
  * Queue worker test class.
  */
+#[Group('media_duplicate_validation')]
+#[RunTestsInSeparateProcesses]
 class CronMediaValidationPopulateTest extends MediaDuplicateValidationTestBase {
 
   /**

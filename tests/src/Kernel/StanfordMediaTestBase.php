@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\stanford_media\Kernel;
 
+use Drupal\Core\File\FileExists;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\media\Entity\MediaType;
 
@@ -33,14 +34,13 @@ abstract class StanfordMediaTestBase extends KernelTestBase {
   /**
    * {@inheritDoc}
    */
-  public function setup(): void {
+  protected function setUp(): void {
     parent::setUp();
     $this->installEntitySchema('file');
     $this->installEntitySchema('user');
     $this->installEntitySchema('media');
     $this->installEntitySchema('path_alias');
     $this->installSchema('file', ['file_usage']);
-    $this->installSchema('system', ['sequences']);
     $this->installConfig('system');
     $this->installConfig('media');
 
@@ -59,7 +59,7 @@ abstract class StanfordMediaTestBase extends KernelTestBase {
       ->save();
 
     \Drupal::service('file_system')
-      ->copy(__DIR__ . '/testfile.txt', 'temporary://testfile.txt', TRUE);
+      ->copy(__DIR__ . '/testfile.txt', 'temporary://testfile.txt', FileExists::Replace);
   }
 
 }

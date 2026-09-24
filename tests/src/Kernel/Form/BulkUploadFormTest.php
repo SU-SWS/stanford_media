@@ -10,11 +10,13 @@ use Drupal\Tests\stanford_media\Kernel\StanfordMediaTestBase;
 use Drupal\user\Entity\Role;
 use Drupal\user\Entity\User;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
  * Class BulkUploadFormTest.
  */
 #[Group('stanford_media')]
+#[RunTestsInSeparateProcesses]
 class BulkUploadFormTest extends StanfordMediaTestBase {
 
   /**

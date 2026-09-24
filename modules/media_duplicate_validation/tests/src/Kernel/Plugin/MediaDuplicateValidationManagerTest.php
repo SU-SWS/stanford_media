@@ -3,10 +3,14 @@
 namespace Drupal\Tests\media_duplicate_validation\Kernel\Plugin;
 
 use Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidation\Md5;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
  * Class MediaDuplicateValidationManagerTest.
  */
+#[Group('media_duplicate_validation')]
+#[RunTestsInSeparateProcesses]
 class MediaDuplicateValidationManagerTest extends MediaDuplicateValidationTestBase {
 
   /**

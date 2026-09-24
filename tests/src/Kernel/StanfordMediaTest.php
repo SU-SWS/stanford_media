@@ -4,10 +4,14 @@ namespace Drupal\Tests\stanford_media\Kernel;
 
 use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
  * Tests for the stanford media service.
  */
+#[Group('stanford_media')]
+#[RunTestsInSeparateProcesses]
 class StanfordMediaTest extends StanfordMediaTestBase {
 
   /**

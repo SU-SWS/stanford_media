@@ -45,7 +45,7 @@ class GoogleFormsConstraintValidatorTest extends UnitTestCase {
   /**
    * {@inheritDoc}
    */
-  public function setup(): void {
+  protected function setUp(): void {
     parent::setUp();
 
     $validator = $this->createMock(ValidatorInterface::class);
@@ -65,7 +65,7 @@ class GoogleFormsConstraintValidatorTest extends UnitTestCase {
     $entity->method('getSource')->willReturn($source);
     $field_item_list = $this->createMock(FieldItemListInterface::class);
     $field_item_list->method('getEntity')->willReturn($entity);
-    $constraint = $this->createMock(GoogleFormsConstraint::class);
+    $constraint = new GoogleFormsConstraint();
 
     $this->expectException(\LogicException::class);
     $this->validator->validate($field_item_list, $constraint);
@@ -82,7 +82,7 @@ class GoogleFormsConstraintValidatorTest extends UnitTestCase {
     $entity->method('getSource')->willReturn($source);
     $field_item_list = $this->createMock(FieldItemListInterface::class);
     $field_item_list->method('getEntity')->willReturn($entity);
-    $constraint = $this->createMock(GoogleFormsConstraint::class);
+    $constraint = new GoogleFormsConstraint();
 
     $this->sourceFieldValue = 'not a url';
     $this->validator->validate($field_item_list, $constraint);

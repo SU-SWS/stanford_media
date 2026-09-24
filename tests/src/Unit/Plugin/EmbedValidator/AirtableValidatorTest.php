@@ -22,7 +22,7 @@ class AirtableValidatorTest extends UnitTestCase {
   /**
    * {@inheritDoc}
    */
-  public function setup(): void {
+  protected function setUp(): void {
     parent::setUp();
     $this->plugin = new AirtableValidator([], '', []);
   }

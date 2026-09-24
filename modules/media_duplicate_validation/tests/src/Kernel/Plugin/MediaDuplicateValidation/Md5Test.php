@@ -7,11 +7,13 @@ use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
 use Drupal\Tests\media_duplicate_validation\Kernel\Plugin\MediaDuplicateValidationTestBase;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
  * Class ColorMeanTest.
  */
 #[Group('media_duplicate_validation')]
+#[RunTestsInSeparateProcesses]
 class Md5Test extends MediaDuplicateValidationTestBase {
 
   /**
@@ -24,7 +26,7 @@ class Md5Test extends MediaDuplicateValidationTestBase {
   /**
    * {@inheritdoc}
    */
-  public function setup(): void {
+  protected function setUp(): void {
     parent::setUp();
     $this->plugin = $this->duplicationManager->createInstance('md5');
   }

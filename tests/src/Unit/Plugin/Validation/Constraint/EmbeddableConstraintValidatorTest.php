@@ -50,7 +50,7 @@ class EmbeddableConstraintValidatorTest extends UnitTestCase {
   /**
    * {@inheritDoc}
    */
-  public function setup(): void {
+  protected function setUp(): void {
     parent::setUp();
 
     $validator = $this->createMock(ValidatorInterface::class);

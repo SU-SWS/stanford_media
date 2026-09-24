@@ -4,6 +4,7 @@ namespace Drupal\Tests\stanford_media\Kernel\Plugin\Field\FieldFormatter;
 
 use Drupal\Core\Datetime\Entity\DateFormat;
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
+use Drupal\Core\File\FileExists;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\file\Entity\File;
@@ -15,11 +16,13 @@ use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
 use Drupal\user\Entity\Role;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
  * Class MediaFormatterTest.
  */
 #[Group('stanford_media')]
+#[RunTestsInSeparateProcesses]
 class MediaImageFormatterTest extends KernelTestBase {
 
   /**
@@ -46,7 +49,7 @@ class MediaImageFormatterTest extends KernelTestBase {
   /**
    * {@inheritDoc}
    */
-  public function setup(): void {
+  protected function setUp(): void {
     parent::setUp();
     $this->installEntitySchema('user');
     $this->installEntitySchema('node');
@@ -116,7 +119,7 @@ class MediaImageFormatterTest extends KernelTestBase {
     $display->save();
 
     \Drupal::service('file_system')
-      ->copy(__DIR__ . '/logo.png', 'public://logo.png', TRUE);
+      ->copy(__DIR__ . '/logo.png', 'public://logo.png', FileExists::Replace);
     $file = File::create(['uri' => 'public://logo.png']);
     $file->save();
     $this->mediaEntity = Media::create([

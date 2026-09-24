@@ -7,11 +7,13 @@ use Drupal\media\Entity\Media;
 use Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidation\ColorMean;
 use Drupal\Tests\media_duplicate_validation\Kernel\Plugin\MediaDuplicateValidationTestBase;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
  * Class ColorMeanTest.
  */
 #[Group('media_duplicate_validation')]
+#[RunTestsInSeparateProcesses]
 class ColorMeanTest extends MediaDuplicateValidationTestBase {
 
   /**
@@ -24,7 +26,7 @@ class ColorMeanTest extends MediaDuplicateValidationTestBase {
   /**
    * {@inheritdoc}
    */
-  public function setup(): void {
+  protected function setUp(): void {
     parent::setUp();
     $this->plugin = $this->duplicationManager->createInstance('color_mean');
   }
