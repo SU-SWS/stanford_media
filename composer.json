@@ -30,6 +30,9 @@
         "drupal/oembed_providers": "^2.1",
         "enyo/dropzone": "^5.9"
     },
+    "require-dev": {
+        "drupal/paragraphs": ">=1.23"
+    },
     "conflict": {
         "drupal/ckeditor": "*"
     },
