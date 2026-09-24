@@ -27,7 +27,7 @@
         "drupal/entity_usage": "^5.0",
         "drupal/focal_point": "^2.0",
         "drupal/inline_entity_form": "^3.0",
-        "drupal/oembed_providers": "^2.1",
+        "drupal/oembed_providers": "^3.0",
         "enyo/dropzone": "^5.9"
     },
     "require-dev": {
