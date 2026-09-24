@@ -127,12 +127,17 @@ class MediaUsageController extends ControllerBase {
       foreach ($entities as $entity) {
         $parent_entity = $this->getParentEntity($entity);
 
-        // Check if we've loaded this entity already.
-        if (!$parent_entity || isset($deduped[$parent_entity->id()])) {
+        // Check if we've loaded this entity already. Different entity types
+        // can share the same ID, so key by both.
+        if (!$parent_entity) {
+          continue;
+        }
+        $key = $parent_entity->getEntityTypeId() . ':' . $parent_entity->id();
+        if (isset($deduped[$key])) {
           continue;
         }
 
-        $deduped[$parent_entity->id()] = TRUE;
+        $deduped[$key] = TRUE;
         $parent_entities[] = $parent_entity;
       }
     }
@@ -145,8 +150,9 @@ class MediaUsageController extends ControllerBase {
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   Entity object.
    *
-   * @return \Drupal\Core\Entity\EntityInterface[]
-   *   Parent entity, or the original entity if it has no parent.
+   * @return \Drupal\Core\Entity\EntityInterface|null
+   *   Parent entity, the original entity if it has no parent, or NULL if the
+   *   entity has no canonical page.
    */
   protected function getParentEntity(EntityInterface $entity) {
     if (method_exists($entity, 'getParentEntity') && $entity->getParentEntity()) {
