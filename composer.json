@@ -20,15 +20,18 @@
         }
     ],
     "require": {
-        "php": ">=8.1",
+        "php": ">=8.3",
         "davidbarratt/custom-installer": "^1.1",
-        "drupal/core": "^11.3",
+        "drupal/core": "^11.3 || ^12",
         "drupal/dropzonejs": "^2.7",
         "drupal/entity_usage": "^2.0@beta",
         "drupal/focal_point": "^2.0",
         "drupal/inline_entity_form": "^3.0",
         "drupal/oembed_providers": "^2.1",
         "enyo/dropzone": "^5.9"
+    },
+    "require-dev": {
+        "drupal/paragraphs": ">=1.23"
     },
     "conflict": {
         "drupal/ckeditor": "*"

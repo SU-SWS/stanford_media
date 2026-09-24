@@ -12,11 +12,13 @@ use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\Tests\stanford_media\Kernel\StanfordMediaTestBase;
 use Drupal\Tests\user\Traits\UserCreationTrait;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
  * Class MediaLibraryEmbeddableFormTest.
  */
 #[Group('stanford_media')]
+#[RunTestsInSeparateProcesses]
 class MediaLibraryEmbeddableFormTest extends StanfordMediaTestBase {
 
   use UserCreationTrait;
@@ -38,7 +40,7 @@ class MediaLibraryEmbeddableFormTest extends StanfordMediaTestBase {
   /**
    * {@inheritDoc}
    */
-  public function setup(): void {
+  protected function setUp(): void {
     parent::setUp();
     $this->installConfig('media_library');
 

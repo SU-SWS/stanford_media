@@ -18,7 +18,7 @@ class ImageTest extends MediaEmbedDialogTestBase {
   /**
    * {@inheritdoc}
    */
-  public function setup(): void {
+  protected function setUp(): void {
     parent::setUp();
     $this->mediaBundle = 'image';
     $this->mediaSource = $this->createMock(ImageSource::class);

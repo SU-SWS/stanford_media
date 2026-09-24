@@ -67,7 +67,7 @@ interface MediaEmbedDialogInterface extends PluginInspectionInterface {
    * @param \Drupal\media\MediaInterface $entity
    *   Selected media entity.
    *
-   * @see stanford_media_entity_embed_alter()
+   * @see \Drupal\stanford_media\Hook\StanfordMediaHooks::mediaViewAlter()
    */
   public function embedAlter(array &$build, MediaInterface $entity): void;
 

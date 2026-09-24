@@ -9,11 +9,13 @@ use Drupal\media\Entity\Media;
 use Drupal\media\Entity\MediaType;
 use Drupal\Core\Form\FormState;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
  * Class EmbeddableTest.
  */
 #[Group('stanford_media')]
+#[RunTestsInSeparateProcesses]
 class EmbeddableTest extends KernelTestBase {
 
   /**
@@ -48,7 +50,7 @@ class EmbeddableTest extends KernelTestBase {
   /**
    * The Media Type.
    *
-   * @var \Drupal\media\entity\MediaType
+   * @var \Drupal\media\Entity\MediaType
    */
   protected $media_type;
 
@@ -62,7 +64,7 @@ class EmbeddableTest extends KernelTestBase {
   /**
    * {@inheritDoc}
    */
-  public function setup(): void {
+  protected function setUp(): void {
     parent::setUp();
     $this->installEntitySchema('user');
     $this->installEntitySchema('media');

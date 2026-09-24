@@ -23,7 +23,7 @@ class SmartsheetValidatorTest extends UnitTestCase {
   /**
    * {@inheritDoc}
    */
-  public function setup(): void {
+  protected function setUp(): void {
     parent::setUp();
     $this->plugin = new SmartsheetValidator([], '', []);
   }

@@ -11,11 +11,13 @@ use Drupal\media_library\MediaLibraryState;
 use Drupal\stanford_media\Form\MediaLibraryFileUploadForm;
 use Drupal\Tests\stanford_media\Kernel\StanfordMediaTestBase;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
  * Class MediaLibraryFileUploadFormTest.
  */
 #[Group('stanford_media')]
+#[RunTestsInSeparateProcesses]
 class MediaLibraryFileUploadFormTest extends StanfordMediaTestBase {
 
   /**

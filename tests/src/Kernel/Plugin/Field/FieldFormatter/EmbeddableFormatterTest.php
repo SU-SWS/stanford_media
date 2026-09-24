@@ -15,11 +15,13 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use Drupal\stanford_media\Plugin\Field\FieldFormatter\EmbeddableFormatter;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
  * Class EmbeddableFormatterTest.
  */
 #[Group('stanford_media')]
+#[RunTestsInSeparateProcesses]
 class EmbeddableFormatterTest extends KernelTestBase {
 
   /**
@@ -78,7 +80,7 @@ class EmbeddableFormatterTest extends KernelTestBase {
   /**
    * {@inheritDoc}
    */
-  public function setup(): void {
+  protected function setUp(): void {
     parent::setUp();
     $this->installEntitySchema('user');
     $this->installEntitySchema('media');
@@ -87,6 +89,7 @@ class EmbeddableFormatterTest extends KernelTestBase {
     $this->installEntitySchema('field_storage_config');
     $this->installEntitySchema('field_config');
     $this->installEntitySchema('file');
+    $this->installEntitySchema('entity_test');
     $this->installSchema('file', ['file_usage']);
     $this->installConfig('system');
 

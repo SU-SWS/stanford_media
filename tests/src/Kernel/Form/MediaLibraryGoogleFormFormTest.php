@@ -10,11 +10,13 @@ use Drupal\stanford_media\Form\MediaLibraryGoogleFormForm;
 use Drupal\Tests\stanford_media\Kernel\StanfordMediaTestBase;
 use Drupal\Tests\user\Traits\UserCreationTrait;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
  * Class MediaLibraryGoogleFormFormTest.
  */
 #[Group('stanford_media')]
+#[RunTestsInSeparateProcesses]
 class MediaLibraryGoogleFormFormTest extends StanfordMediaTestBase {
 
   use UserCreationTrait;
@@ -22,7 +24,7 @@ class MediaLibraryGoogleFormFormTest extends StanfordMediaTestBase {
   /**
    * {@inheritDoc}
    */
-  public function setup(): void {
+  protected function setUp(): void {
     parent::setUp();
     $this->installConfig('media_library');
 

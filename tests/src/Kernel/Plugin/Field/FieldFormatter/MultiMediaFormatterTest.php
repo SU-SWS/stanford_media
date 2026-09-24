@@ -4,6 +4,7 @@ namespace Drupal\Tests\stanford_media\Kernel\Plugin\Field\FieldFormatter;
 
 use Drupal\Core\Datetime\Entity\DateFormat;
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
+use Drupal\Core\File\FileExists;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\file\Entity\File;
@@ -16,11 +17,13 @@ use Drupal\node\Entity\NodeType;
 use Drupal\user\Entity\Role;
 use Drupal\responsive_image\Entity\ResponsiveImageStyle;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
  * Class MultiMediaFormatterTest.
  */
 #[Group('stanford_media')]
+#[RunTestsInSeparateProcesses]
 class MultiMediaFormatterTest extends KernelTestBase {
 
   /**
@@ -77,7 +80,7 @@ class MultiMediaFormatterTest extends KernelTestBase {
   /**
    * {@inheritDoc}
    */
-  public function setup(): void {
+  protected function setUp(): void {
     parent::setUp();
     $this->installEntitySchema('user');
     $this->installEntitySchema('node');
@@ -141,7 +144,7 @@ class MultiMediaFormatterTest extends KernelTestBase {
 
     // Create a file.
     \Drupal::service('file_system')
-      ->copy(__DIR__ . '/logo.png', 'public://logo.png', TRUE);
+      ->copy(__DIR__ . '/logo.png', 'public://logo.png', FileExists::Replace);
     $this->file = File::create(['uri' => 'public://logo.png']);
     $this->file->save();
 

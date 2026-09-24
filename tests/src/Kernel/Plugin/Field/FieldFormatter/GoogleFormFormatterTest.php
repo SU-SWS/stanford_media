@@ -11,11 +11,13 @@ use Drupal\media\Entity\Media;
 use Drupal\media\Entity\MediaType;
 use Drupal\stanford_media\Plugin\Field\FieldFormatter\GoogleFormFormatter;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
  * Class GoogleFormFormatterTest
  */
 #[Group('stanford_media')]
+#[RunTestsInSeparateProcesses]
 class GoogleFormFormatterTest extends KernelTestBase {
 
   /**
@@ -50,7 +52,7 @@ class GoogleFormFormatterTest extends KernelTestBase {
   /**
    * {@inheritDoc}
    */
-  public function setup(): void {
+  protected function setUp(): void {
     parent::setUp();
     $this->installEntitySchema('user');
     $this->installEntitySchema('media');

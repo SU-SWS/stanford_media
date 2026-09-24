@@ -41,7 +41,7 @@ class BundleSuggestionManagerTest extends UnitTestCase {
   /**
    * {@inheritDoc}
    */
-  public function setup(): void {
+  protected function setUp(): void {
     parent::setUp();
     $namespaces = $this->createMock(\Traversable::class);
     $cache = $this->getCacheStub();
