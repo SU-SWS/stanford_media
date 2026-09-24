@@ -45,6 +45,8 @@ class MediaUsageControllerTest extends UnitTestCase {
     $node = $this->getEntity(1, 'Node Title', TRUE, TRUE);
     // A second node that only uses the media through a paragraph.
     $paragraph_parent = $this->getEntity(2, 'Paragraph Parent', FALSE, TRUE);
+    // A term that shares its ID with the node, so it must not be deduped.
+    $term = $this->getEntity(1, 'Term Title', TRUE, FALSE, 'taxonomy_term');
     // A paragraph that has a parent, and one that has no canonical parent.
     $paragraph = $this->createMock(ParagraphInterface::class);
     $paragraph->method('getParentEntity')->willReturn($paragraph_parent);
@@ -58,12 +60,15 @@ class MediaUsageControllerTest extends UnitTestCase {
     $paragraph_storage = $this->createMock(EntityStorageInterface::class);
     $paragraph_storage->method('loadMultiple')
       ->willReturn([$paragraph, $orphan_paragraph]);
+    $term_storage = $this->createMock(EntityStorageInterface::class);
+    $term_storage->method('loadMultiple')->willReturn([$term]);
 
     $entity_type_manager = $this->createMock(EntityTypeManagerInterface::class);
     $entity_type_manager->method('getStorage')
       ->willReturnMap([
         ['node', $node_storage],
         ['paragraph', $paragraph_storage],
+        ['taxonomy_term', $term_storage],
       ]);
 
     $cache = $this->createMock(CacheBackendInterface::class);
@@ -76,6 +81,7 @@ class MediaUsageControllerTest extends UnitTestCase {
     $entity_usage->method('listSources')->willReturn([
       'node' => [1 => [], 3 => []],
       'paragraph' => [4 => [], 5 => []],
+      'taxonomy_term' => [1 => []],
     ]);
 
     $container = new ContainerBuilder();
@@ -106,8 +112,9 @@ class MediaUsageControllerTest extends UnitTestCase {
 
     $build = $this->controller->view($media);
     $this->assertEquals('table', $build['#theme']);
-    // The duplicate node and the orphaned paragraph are skipped.
-    $this->assertCount(2, $build['#rows']);
+    // The duplicate node and the orphaned paragraph are skipped, but the term
+    // with the same ID as the node is kept.
+    $this->assertCount(3, $build['#rows']);
 
     $this->assertEquals('Node Title', $build['#rows'][0]['title']['data']['#title']);
     $links = $build['#rows'][0]['operations']['data']['#links'];
@@ -119,6 +126,8 @@ class MediaUsageControllerTest extends UnitTestCase {
     $links = $build['#rows'][1]['operations']['data']['#links'];
     $this->assertArrayNotHasKey('view', $links);
     $this->assertArrayHasKey('edit', $links);
+
+    $this->assertEquals('Term Title', $build['#rows'][2]['title']['data']['#title']);
 
     $this->assertArrayHasKey('stanford_media:media_usage:99', $this->cacheData);
 
@@ -138,13 +147,16 @@ class MediaUsageControllerTest extends UnitTestCase {
    *   If the user can view the entity.
    * @param bool $update_access
    *   If the user can update the entity.
+   * @param string $entity_type_id
+   *   Entity type id.
    *
    * @return \Drupal\Core\Entity\EntityInterface
    *   Mocked entity.
    */
-  protected function getEntity(int $id, string $label, bool $view_access, bool $update_access): EntityInterface {
+  protected function getEntity(int $id, string $label, bool $view_access, bool $update_access, string $entity_type_id = 'node'): EntityInterface {
     $entity = $this->createMock(EntityInterface::class);
     $entity->method('id')->willReturn($id);
+    $entity->method('getEntityTypeId')->willReturn($entity_type_id);
     $entity->method('label')->willReturn($label);
     $entity->method('hasLinkTemplate')->willReturn(TRUE);
     $entity->method('toUrl')->willReturn($this->createMock(Url::class));
