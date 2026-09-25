@@ -173,6 +173,9 @@ class StanfordMediaHooks {
    */
   #[Hook('media_prepare_form')]
   public function mediaPrepareForm(MediaInterface $media, $operation, FormStateInterface $form_state): void {
+    if ($media->isNew()) {
+      return;
+    }
     // The entity usage service is fetched lazily so the hook class can still
     // be built when entity_usage is not enabled, such as in kernel tests.
     /** @var \Drupal\entity_usage\EntityUsageInterface $entity_usage */
