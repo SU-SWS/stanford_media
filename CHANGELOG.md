@@ -1,5 +1,12 @@
 # Stanford Media
 
+11.5.3
+--------------------------------------------------------------------------------
+_Release Date: 2026-09-29_
+
+- Removed the usage tab entirely since entity_usage does that for us.
+- Added an update hook.
+
 11.5.2
 --------------------------------------------------------------------------------
 _Release Date: 2026-09-29_
