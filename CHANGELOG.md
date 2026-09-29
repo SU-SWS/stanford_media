@@ -1,5 +1,11 @@
 # Stanford Media
 
+11.5.5
+--------------------------------------------------------------------------------
+_Release Date: 2026-09-29_
+
+- Fixed post update hook failing when entity_usage warning message config is empty.
+
 11.5.4
 --------------------------------------------------------------------------------
 _Release Date: 2026-09-29_
