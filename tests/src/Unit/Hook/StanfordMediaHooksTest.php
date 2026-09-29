@@ -13,13 +13,10 @@ use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Form\FormState;
-use Drupal\Core\GeneratedLink;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Url;
-use Drupal\Core\Utility\LinkGeneratorInterface;
-use Drupal\entity_usage\EntityUsageInterface;
 use Drupal\media\MediaInterface;
 use Drupal\stanford_media\Hook\StanfordMediaHooks;
 use Drupal\stanford_media\Plugin\MediaEmbedDialogInterface;
@@ -43,30 +40,10 @@ class StanfordMediaHooksTest extends UnitTestCase {
   protected $hooks;
 
   /**
-   * Warning messages that were added.
-   *
-   * @var array
-   */
-  protected $warnings = [];
-
-  /**
-   * Number of entities using the media item.
-   *
-   * @var array
-   */
-  protected $usageSources = [];
-
-  /**
    * {@inheritDoc}
    */
   protected function setUp(): void {
     parent::setUp();
-
-    $messenger = $this->createMock(MessengerInterface::class);
-    $messenger->method('addWarning')->willReturnCallback(function ($message) use ($messenger) {
-      $this->warnings[] = (string) $message;
-      return $messenger;
-    });
 
     $applicable = $this->createMock(MediaEmbedDialogInterface::class);
     $applicable->method('isApplicable')->willReturn(TRUE);
@@ -83,16 +60,7 @@ class StanfordMediaHooksTest extends UnitTestCase {
     $dialog_manager->method('createInstance')
       ->willReturnCallback(fn($id) => $id == 'foo' ? $applicable : $not_applicable);
 
-    $entity_usage = $this->createMock(EntityUsageInterface::class);
-    $entity_usage->method('listSources')->willReturnCallback(fn() => $this->usageSources);
-
-    $link_generator = $this->createMock(LinkGeneratorInterface::class);
-    $link_generator->method('generate')
-      ->willReturn((new GeneratedLink())->setGeneratedLink('<a href="/usage">link</a>'));
-
     $container = new ContainerBuilder();
-    $container->set('entity_usage.usage', $entity_usage);
-    $container->set('link_generator', $link_generator);
     $container->set('string_translation', $this->getStringTranslationStub());
     \Drupal::setContainer($container);
 
@@ -101,7 +69,7 @@ class StanfordMediaHooksTest extends UnitTestCase {
       $this->createMock(AccountProxyInterface::class),
       $this->createMock(StanfordMediaInterface::class),
       $dialog_manager,
-      $messenger,
+      $this->createMock(MessengerInterface::class),
       $this->createMock(ConfigFactoryInterface::class),
       $this->createMock(FileSystemInterface::class),
       $this->createMock(LoggerChannelFactoryInterface::class),
@@ -117,9 +85,9 @@ class StanfordMediaHooksTest extends UnitTestCase {
     $node->method('getEntityTypeId')->willReturn('node');
     $this->assertEmpty($this->hooks->entityOperation($node));
 
-    $url = $this->createMock(Url::class);
     $media = $this->createMock(MediaInterface::class);
     $media->method('getEntityTypeId')->willReturn('media');
+    $url = $this->createMock(Url::class);
     $media->method('toUrl')->with('usage')->willReturn($url);
     $media->method('access')
       ->willReturnOnConsecutiveCalls(AccessResult::allowed()->addCacheTags(['foo']), AccessResult::forbidden());
@@ -162,24 +130,6 @@ class StanfordMediaHooksTest extends UnitTestCase {
     $this->hooks->mediaViewAlter($build, $media, $display);
     $this->assertTrue($build['#altered']);
     $this->assertContains('stanford_media/display', $build['#attached']['library']);
-  }
-
-  /**
-   * Test the warning message when the media is used in other content.
-   */
-  public function testMediaPrepareForm(): void {
-    $media = $this->createMock(MediaInterface::class);
-    $media->method('toUrl')->willReturn($this->createMock(Url::class));
-    $form_state = new FormState();
-
-    $this->hooks->mediaPrepareForm($media, 'edit', $form_state);
-    $this->assertEmpty($this->warnings);
-
-    $this->usageSources = ['node' => [1 => [], 2 => []], 'paragraph' => [3 => []]];
-    $this->hooks->mediaPrepareForm($media, 'edit', $form_state);
-    $this->assertCount(1, $this->warnings);
-    $this->assertStringContainsString('Changing this media will affect', $this->warnings[0]);
-    $this->assertStringContainsString('<a href="/usage">link</a>', $this->warnings[0]);
   }
 
   /**

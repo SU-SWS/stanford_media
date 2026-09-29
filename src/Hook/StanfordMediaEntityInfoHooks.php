@@ -28,7 +28,7 @@ class StanfordMediaEntityInfoHooks {
   #[Hook('entity_type_alter')]
   public function entityTypeAlter(array &$entity_types): void {
     // Add route for media entity type to view the usage details.
-    $entity_types['media']->setLinkTemplate('usage', '/media/{media}/usage');
+    $entity_types['media']->setLinkTemplate('usage', '/admin/content/entity-usage/media/{media}');
   }
 
   /**
