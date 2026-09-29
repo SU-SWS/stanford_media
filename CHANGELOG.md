@@ -1,5 +1,11 @@
 # Stanford Media
 
+11.5.2
+--------------------------------------------------------------------------------
+_Release Date: 2026-09-29_
+
+- Remove custom media usage controller in favor of entity_usage module route.
+
 11.5.1
 --------------------------------------------------------------------------------
 _Release Date: 2026-09-25_
