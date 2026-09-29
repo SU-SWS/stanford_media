@@ -2,12 +2,9 @@
 
 namespace Drupal\Tests\stanford_media\Unit\Hook;
 
-use Drupal\Core\Access\AccessResult;
-use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
-use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
@@ -16,7 +13,6 @@ use Drupal\Core\Form\FormState;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Session\AccountProxyInterface;
-use Drupal\Core\Url;
 use Drupal\media\MediaInterface;
 use Drupal\stanford_media\Hook\StanfordMediaHooks;
 use Drupal\stanford_media\Plugin\MediaEmbedDialogInterface;
@@ -75,30 +71,6 @@ class StanfordMediaHooksTest extends UnitTestCase {
       $this->createMock(LoggerChannelFactoryInterface::class),
     );
     $this->hooks->setStringTranslation($this->getStringTranslationStub());
-  }
-
-  /**
-   * Test the usage operation is only added to media the user can update.
-   */
-  public function testEntityOperation(): void {
-    $node = $this->createMock(EntityInterface::class);
-    $node->method('getEntityTypeId')->willReturn('node');
-    $this->assertEmpty($this->hooks->entityOperation($node));
-
-    $media = $this->createMock(MediaInterface::class);
-    $media->method('getEntityTypeId')->willReturn('media');
-    $url = $this->createMock(Url::class);
-    $media->method('toUrl')->with('usage')->willReturn($url);
-    $media->method('access')
-      ->willReturnOnConsecutiveCalls(AccessResult::allowed()->addCacheTags(['foo']), AccessResult::forbidden());
-
-    $cacheability = new CacheableMetadata();
-    $operations = $this->hooks->entityOperation($media, $cacheability);
-    $this->assertArrayHasKey('usage', $operations);
-    $this->assertSame($url, $operations['usage']['url']);
-    $this->assertContains('foo', $cacheability->getCacheTags());
-
-    $this->assertEmpty($this->hooks->entityOperation($media));
   }
 
   /**

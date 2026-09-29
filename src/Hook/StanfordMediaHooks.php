@@ -4,7 +4,6 @@ namespace Drupal\stanford_media\Hook;
 
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
-use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
@@ -63,28 +62,6 @@ class StanfordMediaHooks {
     protected FileSystemInterface $fileSystem,
     protected LoggerChannelFactoryInterface $loggerFactory,
   ) {}
-
-  /**
-   * Implements hook_entity_operation().
-   */
-  #[Hook('entity_operation')]
-  public function entityOperation(EntityInterface $entity, ?CacheableMetadata $cacheability = NULL): array {
-    $operations = [];
-    if ($entity->getEntityTypeId() != 'media') {
-      return $operations;
-    }
-
-    $access = $entity->access('update', NULL, TRUE);
-    $cacheability?->addCacheableDependency($access);
-    if ($access->isAllowed()) {
-      $operations['usage'] = [
-        'title' => $this->t('Usage'),
-        'weight' => 100,
-        'url' => $entity->toUrl('usage'),
-      ];
-    }
-    return $operations;
-  }
 
   /**
    * Implements hook_ENTITY_TYPE_delete().
