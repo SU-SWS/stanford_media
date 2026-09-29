@@ -8,17 +8,19 @@ stanford_media.bulk_upload:
   options:
     _admin_route: TRUE
 
-# Media entity usage route.
+# Media entity usage route, using the entity usage local task controller.
 entity.media.usage:
-  path: '/media/{media}/usage'
+  path: '/admin/content/entity-usage/media/{media}'
   defaults:
-    _controller: '\Drupal\stanford_media\Controller\MediaUsageController::view'
-    _title_callback: '\Drupal\stanford_media\Controller\MediaUsageController::title'
+    _controller: '\Drupal\entity_usage\Controller\LocalTaskUsageController::listUsageLocalTask'
+    _title_callback: '\Drupal\entity_usage\Controller\LocalTaskUsageController::getTitleLocalTask'
   options:
     _admin_route: TRUE
+    _entity_usage_entity_type_id: media
     parameters:
       media:
         type: entity:media
   requirements:
-    _entity_access: 'media.update'
+    _permission: 'access entity usage statistics'
+    _custom_access: '\Drupal\entity_usage\Controller\LocalTaskUsageController::checkAccessLocalTask'
     media: \d+

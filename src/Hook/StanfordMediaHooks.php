@@ -12,7 +12,6 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
-use Drupal\Core\Link;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -166,47 +165,6 @@ class StanfordMediaHooks {
       }
     }
     return $plugins;
-  }
-
-  /**
-   * Implements hook_ENTITY_TYPE_prepare_form().
-   */
-  #[Hook('media_prepare_form')]
-  public function mediaPrepareForm(MediaInterface $media, $operation, FormStateInterface $form_state): void {
-    if ($media->isNew()) {
-      return;
-    }
-    // The entity usage service is fetched lazily so the hook class can still
-    // be built when entity_usage is not enabled, such as in kernel tests.
-    /** @var \Drupal\entity_usage\EntityUsageInterface $entity_usage */
-    $entity_usage = \Drupal::service('entity_usage.usage');
-    $sources = $entity_usage->listSources($media);
-    $count = 0;
-    foreach ($sources as $source) {
-      $count += count($source);
-    }
-    // Display a message to the user to alert them than editing will affect
-    // multiple pieces of content.
-    if ($count) {
-      $plural_text = $this->formatPlural(
-        $count,
-        '@count piece of content',
-        '@count pieces of content',
-        [
-          '@count' => $count,
-        ]
-      );
-
-      $formatted_link = Link::fromTextAndUrl($plural_text, $media->toUrl('usage'));
-
-      $message = $this->t(
-        'Changing this media will affect @formatted_link.',
-        [
-          '@formatted_link' => $formatted_link->toString(),
-        ]
-      );
-      $this->messenger->addWarning($message);
-    }
   }
 
   /**

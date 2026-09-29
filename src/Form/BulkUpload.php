@@ -3,15 +3,15 @@
 namespace Drupal\stanford_media\Form;
 
 use Drupal\Core\Access\AccessResult;
-use Drupal\Core\Entity\EntityTypeManager;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\Core\Session\AccountProxy;
+use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Url;
-use Drupal\dropzonejs\DropzoneJsUploadSave;
+use Drupal\dropzonejs\DropzoneJsUploadSaveInterface;
 use Drupal\file\Entity\File;
 use Drupal\inline_entity_form\ElementSubmit;
 use Drupal\media\Entity\Media;
@@ -28,7 +28,7 @@ class BulkUpload extends FormBase {
   /**
    * Entity manager used to load media types.
    *
-   * @var \Drupal\Core\Entity\EntityTypeManager
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityTypeManager;
 
@@ -42,14 +42,14 @@ class BulkUpload extends FormBase {
   /**
    * Dropzone file save.
    *
-   * @var \Drupal\dropzonejs\DropzoneJsUploadSave
+   * @var \Drupal\dropzonejs\DropzoneJsUploadSaveInterface
    */
   protected $dropzoneSave;
 
   /**
    * Current user on the site.
    *
-   * @var \Drupal\Core\Session\AccountProxy
+   * @var \Drupal\Core\Session\AccountProxyInterface
    */
   protected $currentUser;
 
@@ -76,7 +76,7 @@ class BulkUpload extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function __construct(EntityTypeManager $entity_manager, BundleSuggestionManagerInterface $bundle_suggestion, DropzoneJsUploadSave $dropzone_save, AccountProxy $current_user, MessengerInterface $messenger) {
+  public function __construct(EntityTypeManagerInterface $entity_manager, BundleSuggestionManagerInterface $bundle_suggestion, DropzoneJsUploadSaveInterface $dropzone_save, AccountProxyInterface $current_user, MessengerInterface $messenger) {
     $this->entityTypeManager = $entity_manager;
     $this->bundleSuggestion = $bundle_suggestion;
     $this->dropzoneSave = $dropzone_save;
