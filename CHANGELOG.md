@@ -1,5 +1,11 @@
 # Stanford Media
 
+11.5.4
+--------------------------------------------------------------------------------
+_Release Date: 2026-09-29_
+
+- Removed the media usage entity operation since entity_usage provides it.
+
 11.5.3
 --------------------------------------------------------------------------------
 _Release Date: 2026-09-29_
