@@ -23,15 +23,6 @@ class StanfordMediaEntityInfoHooks {
   public function __construct(protected EntityTypeManagerInterface $entityTypeManager) {}
 
   /**
-   * Implements hook_entity_type_alter().
-   */
-  #[Hook('entity_type_alter')]
-  public function entityTypeAlter(array &$entity_types): void {
-    // Add route for media entity type to view the usage details.
-    $entity_types['media']->setLinkTemplate('usage', '/admin/content/entity-usage/media/{media}');
-  }
-
-  /**
    * Implements hook_entity_bundle_field_info_alter().
    */
   #[Hook('entity_bundle_field_info_alter')]
