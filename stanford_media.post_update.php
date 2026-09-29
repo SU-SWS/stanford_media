@@ -29,13 +29,13 @@ function stanford_media_post_update_11000() {
     $config->set('local_task_enabled_entity_types', $local_tasks);
   }
 
-  $warning = $config->get('edit_warning_message_entity_types');
+  $warning = $config->get('edit_warning_message_entity_types') ?: [];
   if (!in_array('media', $warning)) {
     $warning[] = 'media';
     $config->set('edit_warning_message_entity_types', $warning);
   }
 
-  $warning = $config->get('delete_warning_message_entity_types');
+  $warning = $config->get('delete_warning_message_entity_types') ?: [];
   if (!in_array('media', $warning)) {
     $warning[] = 'media';
     $config->set('delete_warning_message_entity_types', $warning);
