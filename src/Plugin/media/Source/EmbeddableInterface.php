@@ -6,9 +6,7 @@ use Drupal\media\MediaInterface;
 use Drupal\media\Plugin\media\Source\OEmbedInterface;
 
 /**
- * Interface EmbeddableInterface.
- *
- * @package Drupal\stanford_media\Plugin\media\Source
+ * Defines a media source for oEmbed URLs or allowed iframe embed codes.
  */
 interface EmbeddableInterface extends OEmbedInterface {
 

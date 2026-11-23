@@ -13,7 +13,7 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
- * Class BulkUploadFormTest.
+ * Tests the bulk media upload form.
  */
 #[Group('stanford_media')]
 #[RunTestsInSeparateProcesses]

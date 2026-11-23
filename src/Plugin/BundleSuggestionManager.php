@@ -56,6 +56,8 @@ class BundleSuggestionManager extends DefaultPluginManager implements BundleSugg
    *   Field manager service.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   Entity type manager service.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   Config factory service.
    */
   public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler, EntityFieldManagerInterface $field_manager, EntityTypeManagerInterface $entity_type_manager, ConfigFactoryInterface $config_factory) {
     parent::__construct('Plugin/BundleSuggestion',
@@ -270,7 +272,7 @@ class BundleSuggestionManager extends DefaultPluginManager implements BundleSugg
       ->loadMultiple($bundles ?: NULL);
 
     // Check the current user has access to create the various media types.
-    return array_filter($media_types, function(MediaTypeInterface $media_type) {
+    return array_filter($media_types, function (MediaTypeInterface $media_type) {
       /** @var \Drupal\media\Entity\Media $empty_media */
       $empty_media = $this->entityTypeManager->getStorage('media')
         ->create(['bundle' => $media_type->id()]);

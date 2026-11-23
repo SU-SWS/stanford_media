@@ -12,9 +12,7 @@ use Drupal\media\MediaTypeInterface;
 use Drupal\Tests\UnitTestCase;
 
 /**
- * Class BundleSuggestionTestBase
- *
- * @package Drupal\Tests\stanford_media\Unit\Plugin\BundleSuggestion
+ * Base class for bundle suggestion plugin unit tests.
  */
 abstract class BundleSuggestionTestBase extends UnitTestCase {
 
@@ -63,6 +61,15 @@ abstract class BundleSuggestionTestBase extends UnitTestCase {
     $this->container->set('file_system', $file_system);
   }
 
+  /**
+   * Returns a fake field setting value.
+   *
+   * @param string $setting
+   *   The setting name.
+   *
+   * @return string|null
+   *   The setting value.
+   */
   public function fieldGetSetting($setting) {
     if ($setting == 'file_extensions') {
       return 'foo';

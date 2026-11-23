@@ -7,7 +7,7 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
- * Class MediaDuplicateValidationManagerTest.
+ * Tests the media duplicate validation plugin manager.
  */
 #[Group('media_duplicate_validation')]
 #[RunTestsInSeparateProcesses]
@@ -15,7 +15,6 @@ class MediaDuplicateValidationManagerTest extends MediaDuplicateValidationTestBa
 
   /**
    * Test similar entities.
-   *
    */
   public function testSimilarEntities() {
     $this->assertNotEmpty($this->duplicationManager->getSimilarEntities($this->mediaEntity));

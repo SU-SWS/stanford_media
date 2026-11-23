@@ -14,7 +14,7 @@ use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
- * Class MediaEmbedDialogTestBase.
+ * Base class for media embed dialog plugin unit tests.
  */
 #[Group('stanford_media')]
 abstract class MediaEmbedDialogTestBase extends UnitTestCase {
@@ -40,6 +40,11 @@ abstract class MediaEmbedDialogTestBase extends UnitTestCase {
    */
   protected $mediaBundle;
 
+  /**
+   * Mocked media source plugin.
+   *
+   * @var \PHPUnit\Framework\MockObject\MockObject
+   */
   protected $mediaSource;
 
   /**
@@ -87,10 +92,22 @@ abstract class MediaEmbedDialogTestBase extends UnitTestCase {
     $this->mediaEntity->method('get')->willReturn($field_list);
   }
 
+  /**
+   * Entity storage load callback that returns nothing.
+   *
+   * @param string $display_id
+   *   The display ID to load.
+   */
   public function loadCallback($display_id) {}
 
+  /**
+   * Entity storage loadMultiple callback that returns nothing.
+   */
   public function loadMultipleCallback() {}
 
+  /**
+   * Field item list getString callback that returns nothing.
+   */
   public function fieldGetStringCallback() {}
 
 }

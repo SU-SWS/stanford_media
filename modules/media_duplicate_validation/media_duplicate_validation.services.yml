@@ -3,3 +3,6 @@ services:
     class: Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationManager
     arguments: ['@database']
     parent: default_plugin_manager
+  logger.channel.media_duplicate_validation:
+    parent: logger.channel_base
+    arguments: ['media_duplicate_validation']

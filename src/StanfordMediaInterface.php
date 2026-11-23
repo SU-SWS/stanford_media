@@ -5,7 +5,7 @@ namespace Drupal\stanford_media;
 use Drupal\media\MediaInterface;
 
 /**
- * Interface StanfordMediaInterface.
+ * Defines the Stanford Media helper service.
  */
 interface StanfordMediaInterface {
 

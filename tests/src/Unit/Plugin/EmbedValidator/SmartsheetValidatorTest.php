@@ -2,7 +2,6 @@
 
 namespace Drupal\Tests\stanford_media\Unit\Plugin\EmbedValidator;
 
-use Drupal\stanford_media\Plugin\EmbedValidator\LocalistValidator;
 use Drupal\stanford_media\Plugin\EmbedValidator\SmartsheetValidator;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;

@@ -14,7 +14,7 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
- * Class GoogleFormFormatterTest
+ * Tests the Google Form field formatter.
  */
 #[Group('stanford_media')]
 #[RunTestsInSeparateProcesses]
@@ -120,6 +120,9 @@ class GoogleFormFormatterTest extends KernelTestBase {
       ->save();
   }
 
+  /**
+   * Tests the formatter doesn't apply to fields on non-media entities.
+   */
   public function testNonMediaField() {
     EntityTestBundle::create(['id' => 'test'])->save();
 
@@ -142,6 +145,9 @@ class GoogleFormFormatterTest extends KernelTestBase {
     $this->assertFalse(GoogleFormFormatter::isApplicable($field_config));
   }
 
+  /**
+   * Tests the formatter doesn't apply to other media type source fields.
+   */
   public function testOtherMediaTypeField() {
     $mediaType = MediaType::create([
       'id' => 'video',
@@ -154,6 +160,9 @@ class GoogleFormFormatterTest extends KernelTestBase {
     $this->assertFalse(GoogleFormFormatter::isApplicable($source_field));
   }
 
+  /**
+   * Tests the formatter applies to and renders the Google Form source field.
+   */
   public function testGoogleFormatter() {
     $source_field = $this->media->getSource()
       ->getSourceFieldDefinition($this->mediaType);

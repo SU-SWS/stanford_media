@@ -9,8 +9,9 @@ use Symfony\Component\Validator\ConstraintValidator;
 /**
  * Validation constraint for google forms URLs.
  *
- * https://docs.google.com/forms/[a-z]/[a-z]/[some-form-id]/viewform?embedded=true
- * https://docs.google.com/forms/[a-z]/[a-z]/[some-form-id]/viewform?usp=sf_link
+ * Valid URLs look like one of these:
+ * - https://docs.google.com/forms/[a-z]/[a-z]/[form-id]/viewform?embedded=true
+ * - https://docs.google.com/forms/[a-z]/[a-z]/[form-id]/viewform?usp=sf_link.
  */
 class GoogleFormsConstraintValidator extends ConstraintValidator {
 

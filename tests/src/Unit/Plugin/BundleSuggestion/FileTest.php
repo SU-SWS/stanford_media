@@ -7,7 +7,7 @@ use Drupal\stanford_media\Plugin\BundleSuggestion\File;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
- * Class FileTest
+ * Tests the file bundle suggestion plugin.
  */
 #[Group('stanford_media')]
 class FileTest extends BundleSuggestionTestBase {

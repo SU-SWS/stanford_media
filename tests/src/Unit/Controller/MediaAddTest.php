@@ -21,12 +21,14 @@ use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Class MediaAddTest.
+ * Tests the media add controller.
  */
 #[Group('stanford_media')]
 class MediaAddTest extends UnitTestCase {
 
   /**
+   * The service container.
+   *
    * @var \Drupal\Core\DependencyInjection\ContainerBuilder
    */
   protected $container;

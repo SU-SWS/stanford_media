@@ -10,7 +10,7 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
- * Class ColorMeanTest.
+ * Tests the color mean duplicate validation plugin.
  */
 #[Group('media_duplicate_validation')]
 #[RunTestsInSeparateProcesses]
@@ -31,6 +31,9 @@ class ColorMeanTest extends MediaDuplicateValidationTestBase {
     $this->plugin = $this->duplicationManager->createInstance('color_mean');
   }
 
+  /**
+   * Tests that the color mean database table and columns are created.
+   */
   public function testDatabase() {
     $schema = \Drupal::database()->schema();
 
@@ -42,6 +45,9 @@ class ColorMeanTest extends MediaDuplicateValidationTestBase {
     $this->assertTrue($schema->fieldExists(ColorMean::DATABASE_TABLE, 'mid'));
   }
 
+  /**
+   * Tests that saving and deleting media adds and removes its color row.
+   */
   public function testMediaSaveDelete() {
     $mid = $this->mediaEntity->id();
 
@@ -58,6 +64,9 @@ class ColorMeanTest extends MediaDuplicateValidationTestBase {
       ->condition('mid', $mid)->execute()->fetchAssoc());
   }
 
+  /**
+   * Tests that populating the table queues existing media for processing.
+   */
   public function testPopulateTable() {
     $this->plugin->populateTable();
     $queue = \Drupal::database()
@@ -89,7 +98,6 @@ class ColorMeanTest extends MediaDuplicateValidationTestBase {
 
   /**
    * Test that we get no similar items from two images.
-   *
    */
   public function testDifferentItems() {
     $path = 'public://different_logo.png';
@@ -126,7 +134,6 @@ class ColorMeanTest extends MediaDuplicateValidationTestBase {
 
   /**
    * Test similar documents that aren't images.
-   *
    */
   public function testNonImage() {
     $path = 'public://testfile.txt';

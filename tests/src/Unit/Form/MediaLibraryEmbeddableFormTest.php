@@ -7,12 +7,10 @@ use Drupal\Core\Form\FormState;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\stanford_media\Form\MediaLibraryEmbeddableForm;
 use Drupal\Tests\UnitTestCase;
-use Drupal\field\Entity\FieldConfig;
-use Drupal\field\Entity\FieldStorageConfig;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
- * Class MediaLibraryEmbeddableFormTest.
+ * Unit tests for the media library embeddable form.
  */
 #[Group('stanford_media')]
 class MediaLibraryEmbeddableFormTest extends UnitTestCase {
@@ -41,15 +39,20 @@ class MediaLibraryEmbeddableFormTest extends UnitTestCase {
     \Drupal::setContainer($container);
   }
 
+  /**
+   * Tests the form ID contains the embeddable suffix.
+   */
   public function testGetFormId() {
     $form_object = new TestMediaLibraryEmbeddableForm();
     $this->assertStringContainsString('_embeddable', $form_object->getFormId());
   }
 
+  /**
+   * Tests detection of unstructured embed code in the form state.
+   */
   public function testIsUnstructured() {
     $form_object = new TestMediaLibraryEmbeddableForm();
     $form_state = new FormState();
-    $form = [];
     $this->assertFalse($form_object->isUnstructured($form_state));
   }
 

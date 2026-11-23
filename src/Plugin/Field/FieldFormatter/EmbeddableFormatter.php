@@ -19,6 +19,8 @@ use Drupal\media\Plugin\Field\FieldFormatter\OEmbedFormatter;
 
 /**
  * Field formatter for embeddables.
+ *
+ * @phpstan-ignore classExtendsInternalClass.classExtendsInternalClass
  */
 #[FieldFormatter(
   id: "embeddable_formatter",
@@ -126,7 +128,7 @@ class EmbeddableFormatter extends OEmbedFormatter {
    */
   public function viewElements(FieldItemListInterface $items, $langcode) {
     $embed_type = $items->getName();
-    return $embed_type == $this->oEmbedField ? $this->viewOEmbedElements($items, $langcode) : $this->viewUnstructuredElements($items, $langcode);
+    return $embed_type == $this->oEmbedField ? $this->viewOembedElements($items, $langcode) : $this->viewUnstructuredElements($items, $langcode);
   }
 
   /**
@@ -142,20 +144,21 @@ class EmbeddableFormatter extends OEmbedFormatter {
    * @return array
    *   A render array.
    */
-  protected function viewOEmbedElements(FieldItemListInterface $items, string $langcode): array {
+  protected function viewOembedElements(FieldItemListInterface $items, string $langcode): array {
     $elements = parent::viewElements($items, $langcode);
     foreach ($elements as &$render_array) {
       // We only care about modifying iframes.
       if ($render_array['#type'] == 'html_tag' && $render_array['#tag'] == 'iframe') {
-        // iFrame heights are a problem here. Some oEmbed providers don't give you one.
-        // Some providers get it wrong, so we add a few pixels to be safe.
-        // Here, we make some sane defaults.
+        // iFrame heights are a problem here. Some oEmbed providers don't give
+        // you one. Some providers get it wrong, so we add a few pixels to be
+        // safe. Here, we make some sane defaults.
         $max_height = $this->getSetting('max_height');
         $iframe_height = $render_array['#attributes']['height'];
         $iframe_height = (!empty($iframe_height)) ? $iframe_height + 20 : 300;
         $iframe_height = ($iframe_height < $max_height) ? $max_height : $iframe_height;
 
-        // Correct the render array to make it a117 compliant and appropriate to our purposes.
+        // Correct the render array to make it a11y compliant and appropriate
+        // to our purposes.
         unset($render_array['#attributes']['frameborder']);
         unset($render_array['#attributes']['scrolling']);
         unset($render_array['#attributes']['allowtransparency']);
@@ -178,8 +181,8 @@ class EmbeddableFormatter extends OEmbedFormatter {
    *   A render array.
    */
   protected function viewUnstructuredElements(FieldItemListInterface $items, string $langcode): array {
-    // Here, we will handle Embeddables that are unstructured, and just inject the
-    // markup unchanged.
+    // Here, we will handle Embeddables that are unstructured, and just inject
+    // the markup unchanged.
     $elements = [];
     /** @var \Drupal\Core\Field\Plugin\Field\FieldType\StringItem $item */
     foreach ($items as $delta => $item) {

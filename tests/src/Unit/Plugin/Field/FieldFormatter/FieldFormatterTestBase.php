@@ -15,6 +15,9 @@ use Drupal\media\MediaSourceInterface;
 use Drupal\responsive_image\ResponsiveImageStyleInterface;
 use Drupal\Tests\UnitTestCase;
 
+/**
+ * Base class for Stanford Media field formatter unit tests.
+ */
 abstract class FieldFormatterTestBase extends UnitTestCase {
 
   /**
@@ -32,6 +35,8 @@ abstract class FieldFormatterTestBase extends UnitTestCase {
   protected $fieldDefinition;
 
   /**
+   * If the mocked field references media entities.
+   *
    * @var bool
    */
   protected $fieldTargetIsMedia = TRUE;
@@ -80,6 +85,12 @@ abstract class FieldFormatterTestBase extends UnitTestCase {
       ->willReturn($field_storage);
   }
 
+  /**
+   * Gets a mocked media entity with a source field configured.
+   *
+   * @return \PHPUnit\Framework\MockObject\MockObject
+   *   The mocked media entity.
+   */
   protected function getMockMediaEntity() {
     $media_source = $this->createMock(MediaSourceInterface::class);
     $media_source->method('getConfiguration')
@@ -90,6 +101,12 @@ abstract class FieldFormatterTestBase extends UnitTestCase {
     return $entity;
   }
 
+  /**
+   * Returns the field storage target type setting.
+   *
+   * @return string
+   *   The target entity type ID.
+   */
   public function fieldStorageGetSettingCallback() {
     return $this->fieldTargetIsMedia ? 'media' : 'node';
   }

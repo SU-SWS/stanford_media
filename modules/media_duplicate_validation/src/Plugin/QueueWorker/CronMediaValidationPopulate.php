@@ -51,7 +51,7 @@ class CronMediaValidationPopulate extends QueueWorkerBase implements ContainerFa
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, MediaDuplicateValidationManager $duplication_manager) {
+  final public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, MediaDuplicateValidationManager $duplication_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->entityTypeManager = $entity_type_manager;
     $this->duplicationManager = $duplication_manager;

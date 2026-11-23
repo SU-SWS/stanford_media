@@ -6,7 +6,7 @@ use Drupal\stanford_media\Plugin\Field\FieldFormatter\MultiMediaFormatter;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
- * Class MultiMediaFormatterTest.
+ * Unit tests for the multi media field formatter.
  */
 #[Group('stanford_media')]
 class MultiMediaFormatterTest extends FieldFormatterTestBase {

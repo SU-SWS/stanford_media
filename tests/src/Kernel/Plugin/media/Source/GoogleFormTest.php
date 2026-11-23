@@ -7,12 +7,11 @@ use Drupal\media\Entity\Media;
 use Drupal\media\Entity\MediaType;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
-use Drupal\Core\Form\FormState;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
- * Class GoogleFormTest.
+ * Tests the Google Form media source.
  */
 #[Group('stanford_media')]
 #[RunTestsInSeparateProcesses]

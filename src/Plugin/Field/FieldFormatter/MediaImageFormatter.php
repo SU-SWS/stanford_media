@@ -2,9 +2,12 @@
 
 namespace Drupal\stanford_media\Plugin\Field\FieldFormatter;
 
+use Drupal\Component\Utility\DeprecationHelper;
 use Drupal\Core\Field\Attribute\FieldFormatter;
 use Drupal\Core\Render\Element;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\image\ImageDerivativeUtilities;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Plugin implementation of the 'media_image_formatter' formatter.
@@ -18,12 +21,35 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 class MediaImageFormatter extends MediaImageFormatterBase {
 
   /**
+   * Image style utilities, only available on Drupal 11.4 and later.
+   *
+   * @var \Drupal\image\ImageDerivativeUtilities|null
+   */
+  protected ?ImageDerivativeUtilities $imageDerivativeUtilities = NULL;
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition);
+    if ($container->has(ImageDerivativeUtilities::class)) {
+      $instance->imageDerivativeUtilities = $container->get(ImageDerivativeUtilities::class);
+    }
+    return $instance;
+  }
+
+  /**
    * {@inheritdoc}
    *
    * @codeCoverageIgnore
    */
   protected function getStyleOptions(): array {
-    return image_style_options(FALSE);
+    return DeprecationHelper::backwardsCompatibleCall(
+      \Drupal::VERSION,
+      '11.4.0',
+      fn() => $this->imageDerivativeUtilities->styleOptions(FALSE),
+      fn() => image_style_options(FALSE),
+    );
   }
 
   /**

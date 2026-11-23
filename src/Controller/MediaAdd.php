@@ -49,7 +49,7 @@ class MediaAdd extends EntityController {
   /**
    * {@inheritdoc}
    */
-  public function __construct(
+  final public function __construct(
     EntityTypeManagerInterface $entityTypeManager,
     EntityTypeBundleInfoInterface $entityTypeBundleInfo,
     EntityRepositoryInterface $entityRepository,
@@ -57,7 +57,7 @@ class MediaAdd extends EntityController {
     TranslationInterface $stringTranslation,
     UrlGeneratorInterface $urlGenerator,
     RouteMatchInterface $routeMatch,
-    BundleSuggestionManagerInterface $bundle_suggestion
+    BundleSuggestionManagerInterface $bundle_suggestion,
   ) {
     parent::__construct($entityTypeManager, $entityTypeBundleInfo, $entityRepository, $renderer, $stringTranslation, $urlGenerator, $routeMatch);
     $this->bundleSuggestion = $bundle_suggestion;

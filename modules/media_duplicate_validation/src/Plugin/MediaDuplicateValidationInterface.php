@@ -5,9 +5,7 @@ namespace Drupal\media_duplicate_validation\Plugin;
 use Drupal\media\MediaInterface;
 
 /**
- * Interface MediaDuplicateValidationInterface.
- *
- * @package Drupal\media_duplicate_validation\Plugin
+ * Defines a plugin that detects duplicates of newly uploaded media.
  */
 interface MediaDuplicateValidationInterface {
 

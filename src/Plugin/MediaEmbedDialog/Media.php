@@ -29,7 +29,7 @@ class Media extends MediaEmbedDialogBase {
       return;
     }
 
-    @trigger_error('Embedded alters are deprecated in 11.2.0 due to CKEditor 5 plugins providing the functionality. Update embedded media to use CKEditor 5 plugins.', E_USER_DEPRECATED);
+    @trigger_error('Altering embedded media with MediaEmbedDialog plugins is deprecated in stanford_media:11.2.0 and is removed from stanford_media:12.0.0. Use CKEditor 5 plugins for embedded media instead. See https://github.com/SU-SWS/stanford_media/pull/160', E_USER_DEPRECATED);
 
     $display_storage = $this->entityTypeManager->getStorage('entity_view_display');
     $entity_bundle = $this->entity->bundle();

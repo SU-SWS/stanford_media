@@ -10,9 +10,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 
 /**
- * Class MediaEmbedDialogBase.
- *
- * @package Drupal\stanford_media
+ * Base class for plugins that alter the media embed dialog form.
  */
 abstract class MediaEmbedDialogBase extends PluginBase implements MediaEmbedDialogInterface, ContainerFactoryPluginInterface {
 
@@ -46,7 +44,7 @@ abstract class MediaEmbedDialogBase extends PluginBase implements MediaEmbedDial
   /**
    * {@inheritdoc}
    */
-  public function __construct($configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_manager) {
+  final public function __construct($configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->entityTypeManager = $entity_manager;
     $this->entity = $configuration['entity'];

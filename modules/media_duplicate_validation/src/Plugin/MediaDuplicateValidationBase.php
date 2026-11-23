@@ -4,12 +4,12 @@ namespace Drupal\media_duplicate_validation\Plugin;
 
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\PluginBase;
 use Drupal\Core\Queue\QueueFactory;
 use Drupal\file\FileInterface;
 use Drupal\media\MediaInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -39,9 +39,9 @@ abstract class MediaDuplicateValidationBase extends PluginBase implements MediaD
   protected $queue;
 
   /**
-   * Database logging service.
+   * Logger channel for this module.
    *
-   * @var \Drupal\Core\Logger\LoggerChannelInterface
+   * @var \Psr\Log\LoggerInterface
    */
   protected $logger;
 
@@ -56,19 +56,19 @@ abstract class MediaDuplicateValidationBase extends PluginBase implements MediaD
       $container->get('entity_type.manager'),
       $container->get('database'),
       $container->get('queue'),
-      $container->get('logger.factory')
+      $container->get('logger.channel.media_duplicate_validation')
     );
   }
 
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, Connection $database, QueueFactory $queue, LoggerChannelFactoryInterface $logger_factory) {
+  final public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, Connection $database, QueueFactory $queue, LoggerInterface $logger) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->entityTypeManager = $entity_type_manager;
     $this->database = $database;
     $this->queue = $queue;
-    $this->logger = $logger_factory->get($this->getPluginId());
+    $this->logger = $logger;
   }
 
   /**

@@ -9,11 +9,14 @@ use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
- * Class MediaEmbedDialogManagerTest.
+ * Tests the media embed dialog plugin manager.
  */
 #[Group('stanford_media')]
 class MediaEmbedDialogManagerTest extends UnitTestCase {
 
+  /**
+   * Tests the plugin manager can be constructed with mocked services.
+   */
   public function testManager() {
     $namespaces = $this->createMock(\Traversable::class);
     $cache_backend = $this->createMock(CacheBackendInterface::class);
