@@ -8,6 +8,8 @@ use Drupal\media\Plugin\Validation\Constraint\OEmbedResourceConstraint;
 
 /**
  * Checks that a value is a valid oEmbed URL or allowed embed code.
+ *
+ * @phpstan-ignore classExtendsInternalClass.classExtendsInternalClass
  */
 #[Constraint(
   id: 'embeddable',

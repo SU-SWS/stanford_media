@@ -11,6 +11,8 @@ use Drupal\media_library\Form\OEmbedForm;
  * Media library add stanford embed input form.
  *
  * @package Drupal\stanford_media\Form
+ *
+ * @phpstan-ignore classExtendsInternalClass.classExtendsInternalClass
  */
 class MediaLibraryEmbeddableForm extends OEmbedForm {
 

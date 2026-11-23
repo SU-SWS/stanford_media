@@ -14,6 +14,8 @@ use Drupal\media\Plugin\Validation\Constraint\OEmbedResourceConstraintValidator;
 
 /**
  * Validation constraint for Embeddables.
+ *
+ * @phpstan-ignore classExtendsInternalClass.classExtendsInternalClass
  */
 class EmbeddableConstraintValidator extends OEmbedResourceConstraintValidator {
 

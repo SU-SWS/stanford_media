@@ -26,6 +26,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Overrides media library file upload form to extend its functionality.
  *
  * @package Drupal\stanford_media\Form
+ *
+ * @phpstan-ignore classExtendsInternalClass.classExtendsInternalClass
  */
 class MediaLibraryFileUploadForm extends FileUploadForm {
 

@@ -19,6 +19,8 @@ use Drupal\media\Plugin\Field\FieldFormatter\OEmbedFormatter;
 
 /**
  * Field formatter for embeddables.
+ *
+ * @phpstan-ignore classExtendsInternalClass.classExtendsInternalClass
  */
 #[FieldFormatter(
   id: "embeddable_formatter",
