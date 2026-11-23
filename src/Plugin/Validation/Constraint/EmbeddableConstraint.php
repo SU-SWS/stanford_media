@@ -7,7 +7,7 @@ use Drupal\Core\Validation\Attribute\Constraint;
 use Drupal\media\Plugin\Validation\Constraint\OEmbedResourceConstraint;
 
 /**
- * Class EmbeddableConstraint.
+ * Checks that a value is a valid oEmbed URL or allowed embed code.
  */
 #[Constraint(
   id: 'embeddable',
@@ -16,6 +16,11 @@ use Drupal\media\Plugin\Validation\Constraint\OEmbedResourceConstraint;
 )]
 class EmbeddableConstraint extends OEmbedResourceConstraint {
 
+  /**
+   * Message shown when the embed code isn't on the allowed list.
+   *
+   * @var string
+   */
   public $embedCodeNotAllowed = 'The given embeddable code is not permitted.';
 
 }

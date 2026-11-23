@@ -14,7 +14,7 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
- * Class MediaLibraryFileUploadFormTest.
+ * Tests the media library form for uploading files.
  */
 #[Group('stanford_media')]
 #[RunTestsInSeparateProcesses]
@@ -110,7 +110,7 @@ class MediaLibraryFileUploadFormTest extends StanfordMediaTestBase {
    * @throws \Drupal\Core\Form\FormAjaxException
    */
   public function testEntityFormElement() {
-    [$form, $form_state] = $this->runEntityFormSetup();
+    [$form] = $this->runEntityFormSetup();
     $this->assertArrayNotHasKey('similar_media', $form['media'][0]);
   }
 
@@ -123,7 +123,7 @@ class MediaLibraryFileUploadFormTest extends StanfordMediaTestBase {
    */
   public function testEntityFormWithSimilar() {
     $this->addDuplicationService();
-    [$form, $form_state] = $this->runEntityFormSetup();
+    [$form] = $this->runEntityFormSetup();
     $this->assertCount(4, $form['media'][0]['similar_media'][0]['#options']);
   }
 
@@ -131,6 +131,8 @@ class MediaLibraryFileUploadFormTest extends StanfordMediaTestBase {
    * Build the entity form with a form state.
    *
    * @return array
+   *   The built form and its form state.
+   *
    * @throws \Drupal\Core\Entity\EntityStorageException
    * @throws \Drupal\Core\Form\EnforcedResponseException
    * @throws \Drupal\Core\Form\FormAjaxException
@@ -161,6 +163,8 @@ class MediaLibraryFileUploadFormTest extends StanfordMediaTestBase {
   }
 
   /**
+   * Tests that selecting a similar media item replaces the uploaded media.
+   *
    * @throws \Drupal\Core\Entity\EntityStorageException
    * @throws \Drupal\Core\Form\EnforcedResponseException
    * @throws \Drupal\Core\Form\FormAjaxException
@@ -177,7 +181,7 @@ class MediaLibraryFileUploadFormTest extends StanfordMediaTestBase {
 }
 
 /**
- * Class TestForm.
+ * Test form that renders elements as a list of their keys.
  */
 class TestForm extends MediaLibraryFileUploadForm {
 

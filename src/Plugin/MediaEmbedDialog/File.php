@@ -44,7 +44,7 @@ class File extends MediaEmbedDialogBase {
       '#description' => $this->t('Optionally enter text to use as the link text.'),
       '#default_value' => $user_input['data-display-description'] ?: $this->entity->label(),
     ];
-    @trigger_error('Embedded alters are deprecated in 11.2.0 due to CKEditor 5 plugins providing the functionality. Update embedded media to use CKEditor 5 plugins.', E_USER_DEPRECATED);
+    @trigger_error('Altering embedded media with MediaEmbedDialog plugins is deprecated in stanford_media:11.2.0 and is removed from stanford_media:12.0.0. Use CKEditor 5 plugins for embedded media instead. See https://github.com/SU-SWS/stanford_media/pull/160', E_USER_DEPRECATED);
   }
 
   /**
@@ -60,7 +60,7 @@ class File extends MediaEmbedDialogBase {
   public function embedAlter(array &$build, MediaInterface $entity): void {
     parent::embedAlter($build, $entity);
     if (!empty($build['#attributes']['data-display-description'])) {
-      @trigger_error('Embedded alters are deprecated in 11.2.0 due to CKEditor 5 plugins providing the functionality. Update embedded media to use CKEditor 5 plugins.', E_USER_DEPRECATED);
+      @trigger_error('Altering embedded media with MediaEmbedDialog plugins is deprecated in stanford_media:11.2.0 and is removed from stanford_media:12.0.0. Use CKEditor 5 plugins for embedded media instead. See https://github.com/SU-SWS/stanford_media/pull/160', E_USER_DEPRECATED);
       $source_field = static::getMediaSourceField($build['#media']);
       $build[$source_field][0]['#description'] = $build['#attributes']['data-display-description'];
       // Set a shortened hash key for unique configuration.

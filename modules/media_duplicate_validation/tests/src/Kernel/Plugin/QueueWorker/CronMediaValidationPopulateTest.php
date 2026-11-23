@@ -15,6 +15,7 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 class CronMediaValidationPopulateTest extends MediaDuplicateValidationTestBase {
 
   /**
+   * Tests that processing a queue item populates the md5 table.
    */
   public function testQueueWorker() {
     \Drupal::database()->schema()->dropTable(Md5::DATABASE_TABLE);

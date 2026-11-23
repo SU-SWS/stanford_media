@@ -3,7 +3,6 @@
 namespace Drupal\Tests\stanford_media\Kernel\Form;
 
 use Drupal\Core\Form\FormState;
-use Drupal\media\Entity\Media;
 use Drupal\media\Entity\MediaType;
 use Drupal\media_library\MediaLibraryState;
 use Drupal\stanford_media\Form\MediaLibraryGoogleFormForm;
@@ -13,7 +12,7 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
- * Class MediaLibraryGoogleFormFormTest.
+ * Tests the media library form for adding Google Forms.
  */
 #[Group('stanford_media')]
 #[RunTestsInSeparateProcesses]

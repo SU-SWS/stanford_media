@@ -10,7 +10,7 @@ use Drupal\stanford_media\Plugin\MediaEmbedDialog\Media;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
- * Class MediaTest.
+ * Tests the generic media embed dialog plugin.
  */
 #[Group('stanford_media')]
 class MediaTest extends MediaEmbedDialogTestBase {
@@ -22,10 +22,11 @@ class MediaTest extends MediaEmbedDialogTestBase {
     $plugin = Media::create($this->container, ['entity' => $this->mediaEntity], '', []);
     $this->assertTrue($plugin->isApplicable());
 
+    $view_modes = ['full' => 'Full', 'foo' => 'Foo', 'bar' => 'Bar'];
     $form = [];
     $form['view_mode'] = [
       '#type' => 'select',
-      '#options' => ['full' => 'Full', 'foo' => 'Foo', 'bar' => 'Bar'],
+      '#options' => $view_modes,
       '#default_value' => 'bar',
     ];
 

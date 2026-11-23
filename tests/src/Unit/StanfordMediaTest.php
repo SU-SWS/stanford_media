@@ -4,7 +4,6 @@ namespace Drupal\Tests\stanford_media\Unit;
 
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Form\FormState;
-use Drupal\Core\GeneratedUrl;
 use Drupal\Core\Utility\LinkGeneratorInterface;
 use Drupal\Core\Utility\UnroutedUrlAssemblerInterface;
 use Drupal\stanford_media\StanfordMedia;
@@ -12,7 +11,7 @@ use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
- * Class StanfordMediaTest.
+ * Tests the Stanford Media helper service.
  */
 #[Group('stanford_media')]
 class StanfordMediaTest extends UnitTestCase {
@@ -39,9 +38,10 @@ class StanfordMediaTest extends UnitTestCase {
   public function testCallbacks() {
     $this->assertNotEmpty(StanfordMedia::trustedCallbacks());
 
+    $alt_description = 'Foo Bar Baz';
     $element = [
       '#alt_field_required' => FALSE,
-      'alt' => ['#access' => TRUE, '#description' => 'Foo Bar Baz'],
+      'alt' => ['#access' => TRUE, '#description' => $alt_description],
       '#default_value' => 'Foo',
       '#parents' => [],
     ];

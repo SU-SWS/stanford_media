@@ -20,7 +20,7 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
- * Class MultiMediaFormatterTest.
+ * Tests the multi media field formatter.
  */
 #[Group('stanford_media')]
 #[RunTestsInSeparateProcesses]
@@ -232,9 +232,12 @@ class MultiMediaFormatterTest extends KernelTestBase {
    * Get the rendered output of a node.
    *
    * @param \Drupal\node\NodeInterface $node
+   *   The node to render.
    * @param string $view_mode
+   *   The view mode to render the node in.
    *
    * @return string
+   *   The rendered markup.
    */
   private function getRenderedNode($node, $view_mode = 'default') {
     $view_builder = \Drupal::entityTypeManager()
@@ -247,11 +250,14 @@ class MultiMediaFormatterTest extends KernelTestBase {
    * Get a node object with a reference to a type.
    *
    * @param string $entity
+   *   The media type key of the media entity to reference.
    *
    * @return \Drupal\Core\Entity\FieldableEntityInterface
+   *   The saved node.
+   *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  private function getANode($entity = "image") {
+  private function getNodeWithMedia($entity = "image") {
     /** @var \Drupal\Core\Entity\FieldableEntityInterface $node */
     $node = Node::create([
       'title' => $this->randomString(),
@@ -266,6 +272,7 @@ class MultiMediaFormatterTest extends KernelTestBase {
    * Get the formatter settings.
    *
    * @return array
+   *   The display component options for the formatter.
    */
   private function getFormatterSettings() {
     return [
@@ -299,7 +306,7 @@ class MultiMediaFormatterTest extends KernelTestBase {
     $this->entityDisplay->setComponent('foo', $formatter);
     $this->entityDisplay->save();
 
-    $node = $this->getANode();
+    $node = $this->getNodeWithMedia();
     $rendered_node = $this->getRenderedNode($node);
     preg_match_all('/<img.*src=".*\/large\/.*\/logo.png.*\/>/s', $rendered_node, $preg_match);
     $this->assertNotEmpty($preg_match[0]);
@@ -314,7 +321,7 @@ class MultiMediaFormatterTest extends KernelTestBase {
     $this->entityDisplay->setComponent('foo', $formatter);
     $this->entityDisplay->save();
 
-    $node = $this->getANode();
+    $node = $this->getNodeWithMedia();
     $rendered_node = $this->getRenderedNode($node);
     preg_match_all('/<picture.*\/>/s', $rendered_node, $preg_match);
     $this->assertNotEmpty($preg_match[0]);
@@ -329,7 +336,7 @@ class MultiMediaFormatterTest extends KernelTestBase {
     $this->entityDisplay->setComponent('foo', $formatter);
     $this->entityDisplay->save();
 
-    $node = $this->getANode();
+    $node = $this->getNodeWithMedia();
     $rendered_node = $this->getRenderedNode($node);
     preg_match_all('/<img.*src=".*\/logo.png.*\/>/s', $rendered_node, $preg_match);
     $this->assertNotEmpty($preg_match[0]);
@@ -350,7 +357,7 @@ class MultiMediaFormatterTest extends KernelTestBase {
     $formatter = $this->getFormatterSettings();
     $this->entityDisplay->setComponent('foo', $formatter);
     $this->entityDisplay->save();
-    $node = $this->getANode("file");
+    $node = $this->getNodeWithMedia("file");
     $rendered_node = $this->getRenderedNode($node);
     preg_match_all('/file--mime-image-png/', $rendered_node, $preg_match);
     $this->assertNotEmpty($preg_match[0]);

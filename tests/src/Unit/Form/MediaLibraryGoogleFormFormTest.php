@@ -9,7 +9,7 @@ use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
- * Class MediaLibraryGoogleFormFormTest.
+ * Unit tests for the media library Google Form form.
  */
 #[Group('stanford_media')]
 class MediaLibraryGoogleFormFormTest extends UnitTestCase {

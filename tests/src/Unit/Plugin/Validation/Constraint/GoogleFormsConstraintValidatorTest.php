@@ -5,7 +5,6 @@ namespace Drupal\Tests\stanford_media\Unit\Plugin\Validation\Constraint;
 use Drupal\Core\Field\FieldItemListInterface;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\Validator\Context\ExecutionContext;
-use Drupal\Core\Validation\DrupalTranslator;
 use Drupal\media\MediaInterface;
 use Drupal\media\MediaSourceInterface;
 use Drupal\stanford_media\Plugin\media\Source\GoogleForm;
@@ -16,7 +15,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * Class GoogleFormsConstraintValidatorTest
+ * Tests the Google Forms constraint validator.
  */
 #[Group('stanford_media')]
 class GoogleFormsConstraintValidatorTest extends UnitTestCase {

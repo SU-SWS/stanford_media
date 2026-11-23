@@ -7,7 +7,7 @@ use Drupal\stanford_media\Plugin\Field\FieldFormatter\MediaResponsiveImageFormat
 use PHPUnit\Framework\Attributes\Group;
 
 /**
- * Class MediaResponsiveImageFormatterTest.
+ * Unit tests for the media responsive image field formatter.
  */
 #[Group('stanford_media')]
 class MediaResponsiveImageFormatterTest extends FieldFormatterTestBase {
@@ -40,7 +40,7 @@ class MediaResponsiveImageFormatterTest extends FieldFormatterTestBase {
    * Style options array.
    */
   public function testStyleOptions() {
-    $options = $this->plugin->getStyleOptions();
+    $options = $this->plugin->callGetStyleOptions();
     $this->assertEquals(['foo' => 'Foo'], $options);
   }
 
@@ -87,10 +87,10 @@ class MediaResponsiveImageFormatterTest extends FieldFormatterTestBase {
 class TestMediaResponsiveImageFormatter extends MediaResponsiveImageFormatter {
 
   /**
-   * {@inheritDoc}
+   * Exposes the protected getStyleOptions() method to the test.
    */
-  public function getStyleOptions(): array {
-    return parent::getStyleOptions();
+  public function callGetStyleOptions(): array {
+    return $this->getStyleOptions();
   }
 
 }

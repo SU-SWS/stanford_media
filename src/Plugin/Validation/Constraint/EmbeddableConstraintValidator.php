@@ -47,7 +47,7 @@ class EmbeddableConstraintValidator extends OEmbedResourceConstraintValidator {
   /**
    * {@inheritDoc}
    */
-  public function __construct(UrlResolverInterface $url_resolver, ResourceFetcherInterface $resource_fetcher, LoggerChannelFactoryInterface $logger_factory, EmbedValidatorPluginManager $validation_plugin_manager, AccountProxyInterface $current_user) {
+  final public function __construct(UrlResolverInterface $url_resolver, ResourceFetcherInterface $resource_fetcher, LoggerChannelFactoryInterface $logger_factory, EmbedValidatorPluginManager $validation_plugin_manager, AccountProxyInterface $current_user) {
     parent::__construct($url_resolver, $resource_fetcher, $logger_factory);
     $this->validationManager = $validation_plugin_manager;
     $this->account = $current_user;

@@ -32,6 +32,7 @@ class Md5Test extends MediaDuplicateValidationTestBase {
   }
 
   /**
+   * Tests that the md5 database table and columns are created.
    */
   public function testDatabase() {
     $schema = \Drupal::database()->schema();
@@ -41,6 +42,7 @@ class Md5Test extends MediaDuplicateValidationTestBase {
   }
 
   /**
+   * Tests that saving and deleting media adds and removes its md5 row.
    */
   public function testMediaSaveDelete() {
     $mid = $this->mediaEntity->id();
@@ -60,6 +62,7 @@ class Md5Test extends MediaDuplicateValidationTestBase {
   }
 
   /**
+   * Tests that a matching image is reported as similar to existing media.
    */
   public function testSimilarItems() {
     $path = 'public://logo2.png';

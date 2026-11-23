@@ -12,7 +12,7 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
- * Class EmbeddableTest.
+ * Tests the embeddable media source.
  */
 #[Group('stanford_media')]
 #[RunTestsInSeparateProcesses]
@@ -38,28 +38,28 @@ class EmbeddableTest extends KernelTestBase {
    *
    * @var \Drupal\media\MediaInterface
    */
-  protected $oembed_media;
+  protected $oembedMedia;
 
   /**
    * Generated Media entity.
    *
    * @var \Drupal\media\MediaInterface
    */
-  protected $unstructured_media;
+  protected $unstructuredMedia;
 
   /**
    * The Media Type.
    *
    * @var \Drupal\media\Entity\MediaType
    */
-  protected $media_type;
+  protected $mediaType;
 
   /**
    * A test embed string.
    *
    * @var string
    */
-  protected $iframe_code = '<iframe src="http://www.test.com"></iframe>';
+  protected $iframeCode = '<iframe src="http://www.test.com"></iframe>';
 
   /**
    * {@inheritDoc}
@@ -75,14 +75,14 @@ class EmbeddableTest extends KernelTestBase {
     $this->installSchema('file', ['file_usage']);
     $this->installConfig('system');
 
-    $this->media_type = MediaType::create([
+    $this->mediaType = MediaType::create([
       'id' => 'embeddable',
       'label' => 'embeddable',
       'source' => 'embeddable',
     ]);
-    $this->media_type->save();
+    $this->mediaType->save();
 
-    $this->media_type
+    $this->mediaType
       ->set('source_configuration', [
         'oembed_field_name' => 'field_media_embeddable_oembed',
         'unstructured_field_name' => 'field_media_embeddable_code',
@@ -118,44 +118,42 @@ class EmbeddableTest extends KernelTestBase {
       'label' => 'unstructured',
     ])->save();
 
-    // set up media instances.
-
+    // Set up media instances.
     // We have to test this with a null value.
     // Otherwise, the outbound http request fails
     // see also: https://www.drupal.org/project/drupal/issues/2571475
-    $this->oembed_media = Media::create([
+    $this->oembedMedia = Media::create([
       'bundle' => 'embeddable',
       'name' => 'oembed embeddable',
       'field_media_embeddable_oembed' => NULL,
     ]);
-    $this->oembed_media->save();
+    $this->oembedMedia->save();
 
-    $this->unstructured_media = Media::create([
+    $this->unstructuredMedia = Media::create([
       'bundle' => 'embeddable',
       'name' => 'unstructured embeddable',
-      'field_media_embeddable_code' => $this->iframe_code,
+      'field_media_embeddable_code' => $this->iframeCode,
     ]);
-    $this->unstructured_media->save();
+    $this->unstructuredMedia->save();
   }
 
   /**
    * Test methods on the embeddable source.
-   *
    */
   public function testEmbeddableSource() {
-    $oembed_media_source = $this->oembed_media->getSource();
-    $this->assertEquals(NULL, $oembed_media_source->getMetadata($this->oembed_media, 'url'));
-    $this->assertEquals(NULL, $oembed_media_source->getSourceFieldValue($this->oembed_media));
-    $this->assertFalse($oembed_media_source->hasUnstructured($this->oembed_media));
+    $oembed_media_source = $this->oembedMedia->getSource();
+    $this->assertEquals(NULL, $oembed_media_source->getMetadata($this->oembedMedia, 'url'));
+    $this->assertEquals(NULL, $oembed_media_source->getSourceFieldValue($this->oembedMedia));
+    $this->assertFalse($oembed_media_source->hasUnstructured($this->oembedMedia));
     $this->assertCount(15, $oembed_media_source->getMetadataAttributes());
     $this->assertArrayHasKey('embeddable', $oembed_media_source->getSourceFieldConstraints());
 
-    $unstructured_media_source = $this->unstructured_media->getSource();
-    $this->assertEquals($this->iframe_code, $unstructured_media_source->getSourceFieldValue($this->unstructured_media));
-    $this->assertTrue($unstructured_media_source->hasUnstructured($this->unstructured_media));
+    $unstructured_media_source = $this->unstructuredMedia->getSource();
+    $this->assertEquals($this->iframeCode, $unstructured_media_source->getSourceFieldValue($this->unstructuredMedia));
+    $this->assertTrue($unstructured_media_source->hasUnstructured($this->unstructuredMedia));
     $this->assertCount(15, $unstructured_media_source->getMetadataAttributes());
-    $this->assertNotNull($unstructured_media_source->getMetadata($this->unstructured_media, 'title'));
-    $this->assertStringContainsString('iframe src', $unstructured_media_source->getSourceFieldValue($this->unstructured_media));
+    $this->assertNotNull($unstructured_media_source->getMetadata($this->unstructuredMedia, 'title'));
+    $this->assertStringContainsString('iframe src', $unstructured_media_source->getSourceFieldValue($this->unstructuredMedia));
   }
 
   /**
@@ -164,7 +162,7 @@ class EmbeddableTest extends KernelTestBase {
   public function testBuildConfigurationForm() {
     $form_state = new FormState();
     $form = [];
-    $source = $this->unstructured_media->getSource();
+    $source = $this->unstructuredMedia->getSource();
     $form_array = $source->buildConfigurationForm($form, $form_state);
     $this->assertArrayHasKey('source_field', $form_array);
     $this->assertArrayHasKey('unstructured_field_name', $form_array);
@@ -175,7 +173,7 @@ class EmbeddableTest extends KernelTestBase {
    */
   public function testAllowedEmbeds() {
     /** @var \Drupal\stanford_media\Plugin\media\Source\EmbeddableInterface $source */
-    $source = $this->unstructured_media->getSource();
+    $source = $this->unstructuredMedia->getSource();
     $this->assertTrue($source->embedCodeIsAllowed('<script src="foo.bar"></script>'));
 
     $config = $source->getConfiguration();

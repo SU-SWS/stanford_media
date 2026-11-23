@@ -15,7 +15,7 @@ use Drupal\file\FileUsage\FileUsageInterface;
 use Drupal\media\MediaInterface;
 
 /**
- * Class StanfordMedia.
+ * Helper service for Stanford media entities and their files.
  */
 class StanfordMedia implements StanfordMediaInterface, TrustedCallbackInterface {
 

@@ -2,7 +2,6 @@
 
 namespace Drupal\stanford_media\Plugin;
 
-use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\media\MediaTypeInterface;
 
 /**

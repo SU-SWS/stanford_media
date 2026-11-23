@@ -64,7 +64,7 @@ class MediaLibraryFileUploadForm extends FileUploadForm {
   /**
    * {@inheritDoc}
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, MediaLibraryUiBuilder $library_ui_builder, ElementInfoManagerInterface $element_info, RendererInterface $renderer, FileSystemInterface $file_system, OpenerResolverInterface $opener_resolver, FileUsageInterface $file_usage, FileRepositoryInterface $file_repository, DropzoneJsUploadSaveInterface $dropzone_upload, AccountProxyInterface $current_user) {
+  final public function __construct(EntityTypeManagerInterface $entity_type_manager, MediaLibraryUiBuilder $library_ui_builder, ElementInfoManagerInterface $element_info, RendererInterface $renderer, FileSystemInterface $file_system, OpenerResolverInterface $opener_resolver, FileUsageInterface $file_usage, FileRepositoryInterface $file_repository, DropzoneJsUploadSaveInterface $dropzone_upload, AccountProxyInterface $current_user) {
     parent::__construct($entity_type_manager, $library_ui_builder, $element_info, $renderer, $file_system, $opener_resolver, $file_usage, $file_repository);
     $this->dropzoneSave = $dropzone_upload;
     $this->currentUser = $current_user;
@@ -129,8 +129,8 @@ class MediaLibraryFileUploadForm extends FileUploadForm {
         'url' => Url::fromRoute('media_library.ui'),
         'options' => [
           'query' => $this->getMediaLibraryState($form_state)->all() + [
-              FormBuilderInterface::AJAX_FORM_REQUEST => TRUE,
-            ],
+            FormBuilderInterface::AJAX_FORM_REQUEST => TRUE,
+          ],
         ],
       ],
     ];
@@ -142,7 +142,7 @@ class MediaLibraryFileUploadForm extends FileUploadForm {
   }
 
   /**
-   * Submit handler for the upload button, below the dropzone area..
+   * Submit handler for the upload button, below the dropzone area.
    *
    * @param array $form
    *   The form render array.

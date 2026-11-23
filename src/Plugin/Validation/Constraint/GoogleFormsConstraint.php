@@ -8,7 +8,7 @@ use Symfony\Component\Validator\Attribute\HasNamedArguments;
 use Symfony\Component\Validator\Constraint;
 
 /**
- * Class GoogleFormsConstraint.
+ * Checks that a value is a valid Google Forms URL.
  */
 #[ConstraintAttribute(
   id: 'google_forms',

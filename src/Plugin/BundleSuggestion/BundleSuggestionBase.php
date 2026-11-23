@@ -9,9 +9,7 @@ use Drupal\stanford_media\Plugin\BundleSuggestionInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class BundleSuggestionBase.
- *
- * @package Drupal\stanford_media\Plugin\BundleSuggestion
+ * Base class for plugins that suggest a media bundle for an input.
  */
 abstract class BundleSuggestionBase extends PluginBase implements BundleSuggestionInterface, ContainerFactoryPluginInterface {
 
@@ -37,7 +35,7 @@ abstract class BundleSuggestionBase extends PluginBase implements BundleSuggesti
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager) {
+  final public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->entityTypeManager = $entity_type_manager;
   }

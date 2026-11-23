@@ -6,6 +6,9 @@ use Drupal\Core\File\FileExists;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\media\Entity\MediaType;
 
+/**
+ * Base class for Stanford Media kernel tests.
+ */
 abstract class StanfordMediaTestBase extends KernelTestBase {
 
   /**
@@ -27,6 +30,8 @@ abstract class StanfordMediaTestBase extends KernelTestBase {
   ];
 
   /**
+   * The media type used in the tests.
+   *
    * @var \Drupal\media\MediaTypeInterface
    */
   protected $mediaType;

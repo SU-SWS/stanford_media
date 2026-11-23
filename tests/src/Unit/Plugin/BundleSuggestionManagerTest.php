@@ -3,13 +3,11 @@
 namespace Drupal\Tests\stanford_media\Unit\Plugin;
 
 use Drupal\Core\Cache\CacheBackendInterface;
-use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\field\FieldConfigInterface;
-use Drupal\media\Entity\MediaType;
 use Drupal\media\MediaInterface;
 use Drupal\media\MediaSourceInterface;
 use Drupal\media\MediaTypeInterface;
@@ -19,7 +17,7 @@ use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
- * Class BundleSuggestionManagerTest
+ * Tests the bundle suggestion plugin manager.
  */
 #[Group('stanford_media')]
 class BundleSuggestionManagerTest extends UnitTestCase {
@@ -85,8 +83,8 @@ class BundleSuggestionManagerTest extends UnitTestCase {
    * @param string $setting
    *   Field setting.
    *
-   * @return string
-   *   Setting value.
+   * @return string|null
+   *   Setting value, or NULL for an unknown setting.
    */
   public function getFieldSettingCallback($setting) {
     switch ($setting) {
@@ -102,10 +100,11 @@ class BundleSuggestionManagerTest extends UnitTestCase {
       case 'uri_scheme':
         return $this->fieldUriScheme;
     }
+    return NULL;
   }
 
   /**
-   * Test the manager gets a bundle suggestion plugin..
+   * Test the manager gets a bundle suggestion plugin.
    */
   public function testSuggestedBundle() {
     $this->assertInstanceOf('\Drupal\stanford_media\Plugin\BundleSuggestionManagerInterface', $this->suggestionManager);
@@ -174,6 +173,7 @@ class BundleSuggestionManagerTest extends UnitTestCase {
    * Get a mocked cache object.
    *
    * @return \PHPUnit\Framework\MockObject\MockObject
+   *   Cache backend that returns a single plugin definition.
    */
   protected function getCacheStub() {
     $cache = $this->createMock(CacheBackendInterface::class);
@@ -193,17 +193,29 @@ class BundleSuggestionManagerTest extends UnitTestCase {
 
 /**
  * Override manager to return a fake bundle suggestion plugin.
- *
- * @package Drupal\Tests\stanford_media\Unit\Plugin
  */
 class BundleSuggestionManagerOverride extends BundleSuggestionManager {
 
+  /**
+   * The media type the fake plugin returns.
+   *
+   * @var \Drupal\media\MediaTypeInterface
+   */
   protected $mediaType;
 
+  /**
+   * {@inheritdoc}
+   */
   public function createInstance($plugin_id, array $configuration = []) {
     return new BundleSuggestionPluginTest($this->mediaType);
   }
 
+  /**
+   * Sets the media type the fake plugin returns.
+   *
+   * @param \Drupal\media\MediaTypeInterface $mediaType
+   *   The media type.
+   */
   public function setMediaType(MediaTypeInterface $mediaType) {
     $this->mediaType = $mediaType;
   }
@@ -212,17 +224,21 @@ class BundleSuggestionManagerOverride extends BundleSuggestionManager {
 
 /**
  * Fake bundle suggestion plugin.
- *
- * @package Drupal\Tests\stanford_media\Unit\Plugin
  */
 class BundleSuggestionPluginTest implements BundleSuggestionInterface {
 
   public function __construct(protected MediaTypeInterface $mediaType) {}
 
+  /**
+   * {@inheritdoc}
+   */
   public function getBundleFromString(string $input): ?MediaTypeInterface {
     return $input == 'foo' ? $this->mediaType : NULL;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function getName($input): ?string {
     return $input == 'foo' ? 'foo' : NULL;
   }

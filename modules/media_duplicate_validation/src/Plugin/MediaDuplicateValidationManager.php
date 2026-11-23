@@ -11,9 +11,7 @@ use Drupal\media_duplicate_validation\Annotation\MediaDuplicateValidation as Med
 use Drupal\media_duplicate_validation\Attribute\MediaDuplicateValidation;
 
 /**
- * Class MediaDuplicateValidationManager.
- *
- * @package Drupal\media_duplicate_validation\Plugin
+ * Plugin manager for media duplicate validation plugins.
  */
 class MediaDuplicateValidationManager extends DefaultPluginManager {
 
@@ -100,8 +98,8 @@ class MediaDuplicateValidationManager extends DefaultPluginManager {
    *   Plugin id.
    *
    * @throws \Drupal\Component\Plugin\Exception\PluginException
-   * @see \Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationInterface::schema()
    *
+   * @see \Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationInterface::schema()
    */
   public function removeSchemas($plugin_id) {
     /** @var \Drupal\media_duplicate_validation\Plugin\MediaDuplicateValidationInterface $plugin */

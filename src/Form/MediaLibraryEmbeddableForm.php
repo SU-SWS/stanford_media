@@ -145,7 +145,7 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
 
     $source_field_name = $this->isUnstructured($form_state) ? $form_state->get('unstructured_field_name') : $form_state->get('source_field');
 
-    $media = array_map(function($source_field_value) use ($media_type, $media_storage, $source_field_name) {
+    $media = array_map(function ($source_field_value) use ($media_type, $media_storage, $source_field_name) {
       return $this->createMediaFromValue($media_type, $media_storage, $source_field_name, $source_field_value);
     }, $source_field_values);
 
@@ -157,7 +157,7 @@ class MediaLibraryEmbeddableForm extends OEmbedForm {
       ->loadMultiple(explode(',', $form_state->getValue('current_selection')));
 
     // Any ID can be passed to the form, so we have to check access.
-    $form_state->set('current_selection', array_filter($media, function($media_item) {
+    $form_state->set('current_selection', array_filter($media, function ($media_item) {
       return $media_item->access('view');
     }));
     $form_state->setRebuild();

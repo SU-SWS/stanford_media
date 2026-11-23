@@ -3,7 +3,6 @@
 namespace Drupal\Tests\stanford_media\Kernel\Form;
 
 use Drupal\Core\Form\FormState;
-use Drupal\media\Entity\Media;
 use Drupal\media\Entity\MediaType;
 use Drupal\media_library\MediaLibraryState;
 use Drupal\stanford_media\Form\MediaLibraryEmbeddableForm;
@@ -15,7 +14,7 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
- * Class MediaLibraryEmbeddableFormTest.
+ * Tests the media library form for adding embeddable media.
  */
 #[Group('stanford_media')]
 #[RunTestsInSeparateProcesses]
@@ -49,7 +48,7 @@ class MediaLibraryEmbeddableFormTest extends StanfordMediaTestBase {
     $this->installEntitySchema('field_storage_config');
     $this->installEntitySchema('field_config');
     $this->installEntitySchema('file');
-    //$this->installSchema('file', ['file_usage']);
+    // $this->installSchema('file', ['file_usage']);
     $this->installConfig('system');
 
     $media_type = MediaType::create([

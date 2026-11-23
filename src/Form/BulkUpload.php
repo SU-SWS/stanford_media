@@ -76,7 +76,7 @@ class BulkUpload extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function __construct(EntityTypeManagerInterface $entity_manager, BundleSuggestionManagerInterface $bundle_suggestion, DropzoneJsUploadSaveInterface $dropzone_save, AccountProxyInterface $current_user, MessengerInterface $messenger) {
+  final public function __construct(EntityTypeManagerInterface $entity_manager, BundleSuggestionManagerInterface $bundle_suggestion, DropzoneJsUploadSaveInterface $dropzone_save, AccountProxyInterface $current_user, MessengerInterface $messenger) {
     $this->entityTypeManager = $entity_manager;
     $this->bundleSuggestion = $bundle_suggestion;
     $this->dropzoneSave = $dropzone_save;

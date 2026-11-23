@@ -3,7 +3,6 @@
 namespace Drupal\Tests\stanford_media\Kernel\Plugin\Field\FieldFormatter;
 
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
-use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Form\FormState;
 use Drupal\entity_test\Entity\EntityTestBundle;
 use Drupal\field\Entity\FieldConfig;
@@ -18,7 +17,7 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
- * Class EmbeddableFormatterTest.
+ * Tests the embeddable field formatter.
  */
 #[Group('stanford_media')]
 #[RunTestsInSeparateProcesses]
@@ -45,21 +44,21 @@ class EmbeddableFormatterTest extends KernelTestBase {
    *
    * @var \Drupal\media\MediaInterface
    */
-  protected $oembed_media;
+  protected $oembedMedia;
 
   /**
    * Generated Media entity.
    *
    * @var \Drupal\media\MediaInterface
    */
-  protected $unstructured_media;
+  protected $unstructuredMedia;
 
   /**
    * A test embed string.
    *
    * @var string
    */
-  protected $iframe_code = '<iframe src="http://www.test.com/"></iframe>';
+  protected $iframeCode = '<iframe src="http://www.test.com/"></iframe>';
 
   /**
    * Embeddable media type bundle.
@@ -69,13 +68,11 @@ class EmbeddableFormatterTest extends KernelTestBase {
   protected $mediaType;
 
   /**
+   * Mocked HTTP client.
+   *
    * @var \GuzzleHttp\Client
    */
   public $client;
-
-  public $handler;
-
-  public $handler_stack;
 
   /**
    * {@inheritDoc}
@@ -145,19 +142,19 @@ class EmbeddableFormatterTest extends KernelTestBase {
     ])->save();
 
     // Set up media instances.
-    $this->oembed_media = Media::create([
+    $this->oembedMedia = Media::create([
       'bundle' => 'embeddable',
       'name' => 'oembed embeddable',
       'field_media_embeddable_oembed' => 'http://www.test.com/media-test',
     ]);
-    $this->oembed_media->save();
+    $this->oembedMedia->save();
 
-    $this->unstructured_media = Media::create([
+    $this->unstructuredMedia = Media::create([
       'bundle' => 'embeddable',
       'name' => 'unstructured embeddable',
-      'field_media_embeddable_code' => $this->iframe_code,
+      'field_media_embeddable_code' => $this->iframeCode,
     ]);
-    $this->unstructured_media->save();
+    $this->unstructuredMedia->save();
 
     $display_options = [
       'type' => 'embeddable_formatter',
@@ -177,6 +174,17 @@ class EmbeddableFormatterTest extends KernelTestBase {
   }
 
   /**
+   * Returns a fake HTTP response for the oEmbed request to the given URL.
+   *
+   * @param string $method
+   *   The HTTP method.
+   * @param string $url
+   *   The requested URL.
+   * @param array $options
+   *   The request options.
+   *
+   * @return \GuzzleHttp\Psr7\Response
+   *   The mocked response.
    */
   public function getOembedCallback($method, $url, $options) {
     switch ($url) {
@@ -274,19 +282,20 @@ class EmbeddableFormatterTest extends KernelTestBase {
   }
 
   /**
+   * Tests the formatter applies to and renders oEmbed and embed code media.
    */
   public function testEmbeddableFormatter() {
-    $source_field = $this->oembed_media->getSource()
+    $source_field = $this->oembedMedia->getSource()
       ->getSourceFieldDefinition($this->mediaType);
     $this->assertTrue(EmbeddableFormatter::isApplicable($source_field));
 
-    $source_field = $this->unstructured_media->getSource()
+    $source_field = $this->unstructuredMedia->getSource()
       ->getSourceFieldDefinition($this->mediaType);
     $this->assertTrue(EmbeddableFormatter::isApplicable($source_field));
 
     $view_builder = \Drupal::entityTypeManager()
       ->getViewBuilder('media');
-    $view_render = $view_builder->view($this->unstructured_media, 'default');
+    $view_render = $view_builder->view($this->unstructuredMedia, 'default');
     $rendered_view = \Drupal::service('renderer')
       ->renderInIsolation($view_render);
     $this->assertStringContainsString('http://www.test.com', $rendered_view);
@@ -294,7 +303,7 @@ class EmbeddableFormatterTest extends KernelTestBase {
     $view_builder = \Drupal::entityTypeManager()
       ->getViewBuilder('media');
 
-    $view_render = $view_builder->view($this->oembed_media, 'default');
+    $view_render = $view_builder->view($this->oembedMedia, 'default');
     $rendered_view = \Drupal::service('renderer')->renderRoot($view_render);
 
     $this->assertStringContainsString('iframe', $rendered_view);
@@ -309,7 +318,7 @@ class EmbeddableFormatterTest extends KernelTestBase {
    * Display settings on the formatter test.
    */
   public function testDisplayFormSettings() {
-    $source_field = $this->unstructured_media->getSource()
+    $source_field = $this->unstructuredMedia->getSource()
       ->getSourceFieldDefinition($this->mediaType);
     $configuration = [
       'field_definition' => $source_field,
@@ -321,7 +330,7 @@ class EmbeddableFormatterTest extends KernelTestBase {
 
     /** @var \Drupal\Core\Field\FormatterPluginManager $formatter_plugin_manager */
     $formatter_plugin_manager = \Drupal::service('plugin.manager.field.formatter');
-    /** @var EmbeddableFormatter $formatter */
+    /** @var \Drupal\stanford_media\Plugin\Field\FieldFormatter\EmbeddableFormatter $formatter */
     $formatter = $formatter_plugin_manager->createInstance('embeddable_formatter', $configuration);
 
     $element = ['#parents' => ['allowed_tags']];
